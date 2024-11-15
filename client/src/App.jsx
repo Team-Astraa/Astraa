@@ -1,14 +1,44 @@
+// import "./App.css";
+// // import { Badge } from "flowbite-react";
+// import SignupForm from "./Pages/SignUp";
+// import { Toaster } from "react-hot-toast";
+
+// function App() {
+//   return (
+//     <>
+//       <Toaster position="top-right" reverseOrder={false} />
+//       <h1 className=" text-center text-2xl font-bold">
+//         WELCOME TO SIGNUP PAGE
+//       </h1>
+
+//       <SignupForm />
+//     </>
+//   );
+// }
+
+// export default App;
+
+
+
 import "./App.css";
-import { Badge } from "flowbite-react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import SignupForm from "./Pages/SignUp";
+import HomePage from "./Pages/HomePage"; // Example additional page
+import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
 
 function App() {
   return (
-    <>
-      <h1 className="t text-center text-lg">hii babe</h1>
-      <Badge color="info">Default</Badge>
-      <SignupForm />
-    </>
+    <Router>
+      <Toaster position="top-right" reverseOrder={false} />
+      <h1 className="text-center text-2xl font-bold">WELCOME TO OUR APP</h1>
+      <Routes>
+        {/* Define Routes for pages */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<SignupForm />} />
+        <Route path="/Admin"  element={<Admin/>}/>
+      </Routes>
+    </Router>
   );
 }
 

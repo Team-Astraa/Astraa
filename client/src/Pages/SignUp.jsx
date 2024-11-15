@@ -89,7 +89,7 @@ const SignupForm = () => {
       {/* Render form based on selected user type */}
       <div className="form-rendering">
         {selectedUserType === null && (
-          <div>Please select a user type to begin the signup process.</div>
+          <div className="text-xl text-center font-semibold">Please select a user type to begin the signup process.</div>
         )}
         {selectedUserType === "fishermen" && <FishermanForm email={email} />}
         {selectedUserType === "industryCollaborators" && (
