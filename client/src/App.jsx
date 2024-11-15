@@ -24,8 +24,9 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import SignupForm from "./Pages/SignUp";
-import HomePage from "./Pages/HomePage"; // Example additional page
-import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
+import HomePage from "./Pages/Home"; // Example additional page
+import Admin from "./Pages/Admin";
+// import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
 
 function App() {
   return (
