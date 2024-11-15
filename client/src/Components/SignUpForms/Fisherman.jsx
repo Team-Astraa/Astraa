@@ -1,10 +1,15 @@
 // FishermanForm.jsx
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import InputField from "./InputField.jsx"
+import React from "react";
+import { useForm } from "react-hook-form";
+import { InputField, SelectField } from "../Fields/InputField";
+// import SelectField from "./Fields/SelectField";
 
 const FishermanForm = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -18,7 +23,7 @@ const FishermanForm = () => {
           name="name"
           placeholder="Enter your full name"
           register={register}
-          validation={{ required: 'Name is required' }}
+          validation={{ required: "Name is required" }}
           error={errors.name}
         />
         <InputField
@@ -26,7 +31,7 @@ const FishermanForm = () => {
           name="fishingLicenseNumber"
           placeholder="License number"
           register={register}
-          validation={{ required: 'License number is required' }}
+          validation={{ required: "License number is required" }}
           error={errors.fishingLicenseNumber}
         />
         <InputField
@@ -34,7 +39,7 @@ const FishermanForm = () => {
           name="fishingRegion"
           placeholder="Enter fishing region"
           register={register}
-          validation={{ required: 'Fishing region is required' }}
+          validation={{ required: "Fishing region is required" }}
           error={errors.fishingRegion}
         />
         <InputField
@@ -43,10 +48,10 @@ const FishermanForm = () => {
           placeholder="123-456-7890"
           register={register}
           validation={{
-            required: 'Contact number is required',
+            required: "Contact number is required",
             pattern: {
               value: /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/,
-              message: 'Invalid phone number format',
+              message: "Invalid phone number format",
             },
           }}
           error={errors.contactNumber}
@@ -56,7 +61,7 @@ const FishermanForm = () => {
           name="vesselRegistrationNumber"
           placeholder="Vessel registration number"
           register={register}
-          validation={{ required: 'Registration number is required' }}
+          validation={{ required: "Registration number is required" }}
           error={errors.vesselRegistrationNumber}
         />
         <InputField
@@ -64,8 +69,17 @@ const FishermanForm = () => {
           name="vesselSize"
           placeholder="e.g., Small, Medium, Large"
           register={register}
-          validation={{ required: 'Vessel size is required' }}
+          validation={{ required: "Vessel size is required" }}
           error={errors.vesselSize}
+        />
+
+        <SelectField
+          label="Fishing Type"
+          name="fishingType"
+          options={["commercial", "subsistence", "recreational"]}
+          register={register}
+          validation={{ required: "Fishing type is required" }}
+          error={errors.fishingType}
         />
       </div>
 

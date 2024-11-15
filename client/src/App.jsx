@@ -1,6 +1,6 @@
 import "./App.css";
 import { Badge } from "flowbite-react";
-import SignupForm from "./Pages/Signup/SignUp";
+import SignupForm from "./Pages/SignUp";
 
 function App() {
   return (

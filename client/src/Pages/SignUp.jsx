@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import "./SignupForm.css"; // Import the CSS file
-import FishermanForm from "../../Components/FishermanForm";
+import FishermanForm from "../Components/SignUpForms/Fisherman";
+import IndustryCollaboratorForm from "../Components/SignUpForms/IndustryCollaborators";
+import ResearchCruiseForm from "../Components/SignUpForms/ResearchCruise";
+import ResearchInstituteForm from "../Components/SignUpForms/ResearchInstitute";
+
 const SignupForm = () => {
   const [selectedUserType, setSelectedUserType] = useState(null);
   const [clickedButton, setClickedButton] = useState(null);
@@ -38,9 +41,9 @@ const SignupForm = () => {
           </div>
           <input
             type="text"
-            id="input-group-1"
+            // id="input-group-1"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="name@flowbite.com"
+            placeholder="email@gmail.com"
           />
         </div>
       </div>
@@ -85,14 +88,10 @@ const SignupForm = () => {
         )}
         {selectedUserType === "fishermen" && <FishermanForm />}
         {selectedUserType === "industryCollaborators" && (
-          <div>Industry Collaborators Signup Form</div>
+          <IndustryCollaboratorForm />
         )}
-        {selectedUserType === "researchCruise" && (
-          <div>Research Cruise Signup Form</div>
-        )}
-        {selectedUserType === "researchInstitute" && (
-          <div>Research Institute Signup Form</div>
-        )}
+        {selectedUserType === "researchCruise" && <ResearchCruiseForm />}
+        {selectedUserType === "researchInstitute" && <ResearchInstituteForm />}
       </div>
     </div>
   );
