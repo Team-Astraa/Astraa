@@ -18,7 +18,7 @@ const SignupForm = () => {
     setEmail(e.target.value);
   };
   return (
-    <div className=" signup-form ">
+    <div className=" signup-form bg-white">
       <h2>Signup Form</h2>
 
       {/* Email Input */}
