@@ -1,5 +1,6 @@
-const transporter = require("./transporter");
-const createMailOptions = require("./mailOptions");
+import transporter from "./transporter.js";
+import createMailOptions from "./mailOptions.js";
+
 
 // Function to send the welcome email after user signup
 const sendWelcomeEmail = async (to, username, password) => {
@@ -13,4 +14,4 @@ const sendWelcomeEmail = async (to, username, password) => {
   }
 };
 
-module.exports = { sendWelcomeEmail };
+export default sendWelcomeEmail;

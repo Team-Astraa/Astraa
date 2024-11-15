@@ -12,4 +12,4 @@ const createMailOptions = (to, username, password) => ({
     `,
 });
 
-module.exports = createMailOptions;
+export default createMailOptions

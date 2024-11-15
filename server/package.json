@@ -23,6 +23,7 @@
     "firebase-admin": "^13.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
+    "nanoid": "^5.0.8",
     "server": "file:"
   },
   "devDependencies": {
