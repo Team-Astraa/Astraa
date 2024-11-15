@@ -1,0 +1,119 @@
+// IndustryCollaboratorForm.jsx
+import React from "react";
+import { useForm } from "react-hook-form";
+import { InputField } from "../Fields/InputField";
+
+const IndustryCollaboratorForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <InputField
+          label="Organisation Name"
+          name="organisationName"
+          placeholder="Organisation name"
+          register={register}
+          validation={{ required: "Organisation name is required" }}
+          error={errors.organisationName}
+        />
+        <InputField
+          label="Organisation Type"
+          name="organisationType"
+          placeholder="Organisation type"
+          register={register}
+          validation={{ required: "Organisation type is required" }}
+          error={errors.organisationType}
+        />
+        <InputField
+          label="Organisation Contact Number"
+          name="organisationContactNumber"
+          placeholder="Contact number"
+          register={register}
+          validation={{
+            required: "Contact number is required",
+          }}
+          error={errors.organisationContactNumber}
+        />
+        <InputField
+          label="Registration Number"
+          name="registrationNumber"
+          placeholder="Registration number"
+          register={register}
+          validation={{ required: "Registration number is required" }}
+          error={errors.registrationNumber}
+        />
+        <InputField
+          label="Contact Person Name"
+          name="contactPersonName"
+          placeholder="Contact person name"
+          register={register}
+          validation={{ required: "Contact person name is required" }}
+          error={errors.contactPersonName}
+        />
+        <InputField
+          label="Contact Person Email"
+          name="contactPersonEmail"
+          type="email"
+          placeholder="Contact person email"
+          register={register}
+          validation={{
+            required: "Contact person email is required",
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "Invalid email format",
+            },
+          }}
+          error={errors.contactPersonEmail}
+        />
+        <InputField
+          label="Contact Person Contact"
+          name="contactPersonContact"
+          placeholder="Contact person contact"
+          register={register}
+          validation={{
+            required: "Contact person contact is required",
+            pattern: {
+              value: /^[0-9]+$/,
+              message: "Contact must contain only numbers",
+            },
+          }}
+          error={errors.contactPersonContact}
+        />
+        <InputField
+          label="Data Contribution Type"
+          name="dataContributionType"
+          placeholder="Data contribution type"
+          register={register}
+          validation={{ required: "Data contribution type is required" }}
+          error={errors.dataContributionType}
+        />
+        <InputField
+          label="Geographical Focus Area"
+          name="geographicalFocusArea"
+          placeholder="Geographical focus area"
+          register={register}
+          validation={{ required: "Geographical focus area is required" }}
+          error={errors.geographicalFocusArea}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        Submit
+      </button>
+    </form>
+  );
+};
+
+export default IndustryCollaboratorForm;
