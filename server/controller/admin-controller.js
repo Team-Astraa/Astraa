@@ -5,6 +5,9 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchInstitute.js";
 import ResearchInstitute from "../models/ResearchCruise.js";
+import { generateCredentials } from "../helper/helper.js";
+import bcrypt from "bcrypt";
+import sendmail from "../Config/services.js";
 
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
@@ -74,28 +77,35 @@ export const getUnverifiedUser = async (req, res) => {
 
 // API to verify a user by userId
 export const verifyUser = async (req, res) => {
-  const { id } = req.body; // Expect userId in the request body
-
-  if (!id) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
+    const { id } = req.body; // Expect userId in the request body
   
-  try {
-    // Find the user and update their isVerified field to true
-    const user = await User.findByIdAndUpdate(
-      id,
-      { isVerifed: true },
-      { new: true } // Return the updated document
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
     }
-
-    res.status(200).json({ message: "User verified successfully", user });
-  } catch (error) {
-    console.error("Error verifying user:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+  
+    try {
+      // Generate random credentials
+      const { username, password } = generateCredentials();
+  
+    
+  
+      // Update the user with the generated credentials and verify them
+      const user = await User.findByIdAndUpdate(
+        id,
+        { isVerifed: true, username, password: password },
+        { new: true } // Return the updated document
+      );
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      await sendmail(user.email , user.username , user.password)
+     
+  
+      res.status(200).json({ message: "User verified successfully and email sent", user });
+    } catch (error) {
+      console.error("Error verifying user:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };

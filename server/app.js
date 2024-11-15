@@ -1,11 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import aws from "aws-sdk";
 import { nanoid } from "nanoid";
-import { signUp } from "./controller/authController.js";
+import { login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
 import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 import { getUnverifiedUser, verifyUser } from "./controller/admin-controller.js";
@@ -52,9 +53,16 @@ const generateUploadUrl = async () => {
   });
 };
 
+
+
+
+
+
+
 // auth api methods
 
 app.post("/signup", signUp);
+app.post("/login", login);
 
 
 // admin api methods
