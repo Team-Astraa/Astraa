@@ -7,6 +7,7 @@ import ResearchCruise from "../models/ResearchInstitute.js";
 import ResearchInstitute from "../models/ResearchCruise.js";
 import { generateCredentials } from "../helper/helper.js";
 import bcrypt from "bcrypt";
+import sendmail from "../Config/services.js";
 
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
@@ -86,13 +87,12 @@ export const verifyUser = async (req, res) => {
       // Generate random credentials
       const { username, password } = generateCredentials();
   
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
+    
   
       // Update the user with the generated credentials and verify them
       const user = await User.findByIdAndUpdate(
         id,
-        { isVerifed: true, username, password: hashedPassword },
+        { isVerifed: true, username, password: password },
         { new: true } // Return the updated document
       );
   
@@ -100,12 +100,8 @@ export const verifyUser = async (req, res) => {
         return res.status(404).json({ message: "User not found" });
       }
   
-      // Call the function to send the email
-      sendEmail({
-        to: user.email,
-        subject: "Account Verified",
-        text: `Dear ${username},\n\nYour account has been verified. Please use the following credentials to log in:\n\nUsername: ${username}\nPassword: ${password}\n\nThank you!`,
-      });
+      await sendmail(user.email , user.username , user.password)
+     
   
       res.status(200).json({ message: "User verified successfully and email sent", user });
     } catch (error) {

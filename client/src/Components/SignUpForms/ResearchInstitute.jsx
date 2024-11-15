@@ -10,6 +10,7 @@ const ResearchInstituteForm = () => {
     formState: { errors },
   } = useForm();
 
+  console.log("EMAIL in Institute", email);
   const onSubmit = (data) => {
     console.log(data);
   };

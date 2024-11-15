@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { InputField, SelectField } from "../Fields/InputField";
 // import SelectField from "./Fields/SelectField";
 
-const FishermanForm = () => {
+const FishermanForm = ({ email }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  console.log("EMAIL in fishermen", email);
 
   const onSubmit = (data) => {
     console.log(data);
