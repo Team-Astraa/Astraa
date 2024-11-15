@@ -1,12 +1,15 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 // Create the transporter for sending emails
 const transporter = nodemailer.createTransport({
-  host: process.env.GMAIL_HOST,
+  //  const GMAIL_USER:"prathameshk990@gmail.com",
+  // const GMAIL_PASS:"ivwcgjbspkbyyndo",
+  // const GMAIL_HOST:"smtp.gmail.com",
+  host: "smtp.gmail.com",
   auth: {
-    user: process.env.GMAIL_USER,   // Your sender Gmail address
-    pass: process.env.GMAIL_PASS    // Your Gmail app-specific password
-  }
+    user: "prathameshk990@gmail.com", // Your sender Gmail address
+    pass: "ivwcgjbspkbyyndo", // Your Gmail app-specific password
+  },
 });
 
 export default transporter;
