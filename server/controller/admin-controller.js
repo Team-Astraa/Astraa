@@ -5,6 +5,8 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchInstitute.js";
 import ResearchInstitute from "../models/ResearchCruise.js";
+import { generateCredentials } from "../helper/helper.js";
+import bcrypt from "bcrypt";
 
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
@@ -74,28 +76,40 @@ export const getUnverifiedUser = async (req, res) => {
 
 // API to verify a user by userId
 export const verifyUser = async (req, res) => {
-  const { id } = req.body; // Expect userId in the request body
-
-  if (!id) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
+    const { id } = req.body; // Expect userId in the request body
   
-  try {
-    // Find the user and update their isVerified field to true
-    const user = await User.findByIdAndUpdate(
-      id,
-      { isVerifed: true },
-      { new: true } // Return the updated document
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
     }
-
-    res.status(200).json({ message: "User verified successfully", user });
-  } catch (error) {
-    console.error("Error verifying user:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+  
+    try {
+      // Generate random credentials
+      const { username, password } = generateCredentials();
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Update the user with the generated credentials and verify them
+      const user = await User.findByIdAndUpdate(
+        id,
+        { isVerifed: true, username, password: hashedPassword },
+        { new: true } // Return the updated document
+      );
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Call the function to send the email
+      sendEmail({
+        to: user.email,
+        subject: "Account Verified",
+        text: `Dear ${username},\n\nYour account has been verified. Please use the following credentials to log in:\n\nUsername: ${username}\nPassword: ${password}\n\nThank you!`,
+      });
+  
+      res.status(200).json({ message: "User verified successfully and email sent", user });
+    } catch (error) {
+      console.error("Error verifying user:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
