@@ -1,17 +1,9 @@
-
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { InputField } from "../Fields/InputField";
 import { apiConnector } from "../../ApiConnector";
 import { toast } from "react-hot-toast";
-
-// Simple Loader Component
-const Loader = () => (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-    <div className="loader"></div>
-  </div>
-);
+import Loader from "../Loader";
 
 const IndustryCollaboratorForm = ({ email }) => {
   const {
@@ -57,11 +49,24 @@ const IndustryCollaboratorForm = ({ email }) => {
         }
       );
 
-      toast.success("Signup successful!");
-      console.log("Signup successful:", response.data);
+      // Handle successful signup
+      if (response.data.message) {
+        toast.success(response.data.message);
+        console.log("Signup successful:", response);
+      }
     } catch (error) {
       console.error("Signup failed:", error);
-      toast.error(error);
+
+      // Check if the error response contains the user already exists message
+      if (error.response && error.response.data) {
+        if (error.response.data.message === "User already exists") {
+          toast.error("User already exists. Please use a different email.");
+        } else {
+          toast.error("Signup failed. Please try again.");
+        }
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
 
     setLoader(false);

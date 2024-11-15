@@ -7,13 +7,12 @@ const HomePage = () => {
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <h1 className="text-4xl font-bold mb-8">Home Page</h1>
       <div className="space-x-4">
-        <button
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          onClick={() => alert("Login button clicked!")}
-        >
-          Login
-        </button>
-        <Link to={"/signup"}>
+        <Link to={"/signIn"}>
+          <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Login
+          </button>
+        </Link>
+        <Link to={"/signUp"}>
           <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
             Signup
           </button>
