@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./SignupForm.css"; // Import the CSS file
-
+import FishermanForm from "../../Components/FishermanForm";
 const SignupForm = () => {
   const [selectedUserType, setSelectedUserType] = useState(null);
   const [clickedButton, setClickedButton] = useState(null);
@@ -83,7 +83,7 @@ const SignupForm = () => {
         {selectedUserType === null && (
           <div>Please select a user type to begin the signup process.</div>
         )}
-        {selectedUserType === "fishermen" && <div>Fishermen Signup Form</div>}
+        {selectedUserType === "fishermen" && <FishermanForm />}
         {selectedUserType === "industryCollaborators" && (
           <div>Industry Collaborators Signup Form</div>
         )}

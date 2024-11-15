@@ -1,0 +1,82 @@
+// FishermanForm.jsx
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import InputField from "./InputField.jsx"
+
+const FishermanForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <InputField
+          label="Name"
+          name="name"
+          placeholder="Enter your full name"
+          register={register}
+          validation={{ required: 'Name is required' }}
+          error={errors.name}
+        />
+        <InputField
+          label="Fishing License Number"
+          name="fishingLicenseNumber"
+          placeholder="License number"
+          register={register}
+          validation={{ required: 'License number is required' }}
+          error={errors.fishingLicenseNumber}
+        />
+        <InputField
+          label="Fishing Region"
+          name="fishingRegion"
+          placeholder="Enter fishing region"
+          register={register}
+          validation={{ required: 'Fishing region is required' }}
+          error={errors.fishingRegion}
+        />
+        <InputField
+          label="Contact Number"
+          name="contactNumber"
+          placeholder="123-456-7890"
+          register={register}
+          validation={{
+            required: 'Contact number is required',
+            pattern: {
+              value: /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/,
+              message: 'Invalid phone number format',
+            },
+          }}
+          error={errors.contactNumber}
+        />
+        <InputField
+          label="Vessel Registration Number"
+          name="vesselRegistrationNumber"
+          placeholder="Vessel registration number"
+          register={register}
+          validation={{ required: 'Registration number is required' }}
+          error={errors.vesselRegistrationNumber}
+        />
+        <InputField
+          label="Vessel Size"
+          name="vesselSize"
+          placeholder="e.g., Small, Medium, Large"
+          register={register}
+          validation={{ required: 'Vessel size is required' }}
+          error={errors.vesselSize}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        Submit
+      </button>
+    </form>
+  );
+};
+
+export default FishermanForm;
