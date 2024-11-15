@@ -18,15 +18,15 @@ const SignupForm = () => {
     setEmail(e.target.value);
   };
   return (
-    <div className="signup-form">
+    <div className=" signup-form ">
       <h2>Signup Form</h2>
 
       {/* Email Input */}
 
-      <div className="email-input">
+      <div className="email-input w-[50%]   flex flex-col justify-start mx-auto">
         <label
           htmlFor="input-group-1"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          className="block text-start mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
           Your Email
         </label>
@@ -55,7 +55,10 @@ const SignupForm = () => {
 
       {/* User Type Buttons */}
 
-      <div className="inline-flex rounded-md shadow-sm mt-10" role="group">
+      <div
+        className="inline-flex rounded-md shadow-sm mt-6 mb-8"
+        role="group"
+      >
         <button
           type="button"
           className="inline-flex items-center px-6 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
@@ -87,9 +90,11 @@ const SignupForm = () => {
       </div>
 
       {/* Render form based on selected user type */}
-      <div className="form-rendering">
+      <div className="form-rendering ">
         {selectedUserType === null && (
-          <div className="text-xl text-center font-semibold">Please select a user type to begin the signup process.</div>
+          <div className="text-xl text-center font-semibold">
+            Please select a user type to begin the signup process.
+          </div>
         )}
         {selectedUserType === "fishermen" && <FishermanForm email={email} />}
         {selectedUserType === "industryCollaborators" && (
