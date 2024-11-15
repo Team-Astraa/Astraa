@@ -3,13 +3,14 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { InputField } from "../Fields/InputField";
 
-const ResearchCruiseForm = () => {
+const ResearchCruiseForm = ({ email }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  console.log("EMAIL in cruise", email);
   const onSubmit = (data) => {
     console.log(data);
   };

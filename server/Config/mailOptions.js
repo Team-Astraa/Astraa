@@ -1,6 +1,6 @@
 // Function to create mail options for the welcome email
 const createMailOptions = (to, username, password) => ({
-  from: process.env.GMAIL_USER, // Sender's email address
+  from: " prathameshk990@gmail.com", // Sender's email address
   to: to, // Recipient's email address
   subject: "Welcome to Our Platform!",
   html: `
@@ -12,4 +12,4 @@ const createMailOptions = (to, username, password) => ({
     `,
 });
 
-export default createMailOptions
+export default createMailOptions;

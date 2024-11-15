@@ -5,6 +5,7 @@ import ResearchCruiseForm from "../Components/SignUpForms/ResearchCruise";
 import ResearchInstituteForm from "../Components/SignUpForms/ResearchInstitute";
 
 const SignupForm = () => {
+  const [email, setEmail] = useState(""); // Maintain email state
   const [selectedUserType, setSelectedUserType] = useState(null);
   const [clickedButton, setClickedButton] = useState(null);
 
@@ -13,6 +14,9 @@ const SignupForm = () => {
     setClickedButton(userType);
   };
 
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
   return (
     <div className="signup-form">
       <h2>Signup Form</h2>
@@ -41,7 +45,8 @@ const SignupForm = () => {
           </div>
           <input
             type="text"
-            // id="input-group-1"
+            value={email}
+            onChange={handleEmail} // Update email state
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="email@gmail.com"
           />
@@ -86,12 +91,16 @@ const SignupForm = () => {
         {selectedUserType === null && (
           <div>Please select a user type to begin the signup process.</div>
         )}
-        {selectedUserType === "fishermen" && <FishermanForm />}
+        {selectedUserType === "fishermen" && <FishermanForm email={email} />}
         {selectedUserType === "industryCollaborators" && (
-          <IndustryCollaboratorForm />
+          <IndustryCollaboratorForm email={email} />
         )}
-        {selectedUserType === "researchCruise" && <ResearchCruiseForm />}
-        {selectedUserType === "researchInstitute" && <ResearchInstituteForm />}
+        {selectedUserType === "researchCruise" && (
+          <ResearchCruiseForm email={email} />
+        )}
+        {selectedUserType === "researchInstitute" && (
+          <ResearchInstituteForm email={email} />
+        )}
       </div>
     </div>
   );
