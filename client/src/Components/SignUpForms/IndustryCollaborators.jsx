@@ -5,7 +5,6 @@ import { apiConnector } from "../../ApiConnector";
 import { toast } from "react-hot-toast";
 import Loader from "../Loader";
 
-
 const IndustryCollaboratorForm = ({ email }) => {
   const {
     register,
@@ -14,52 +13,6 @@ const IndustryCollaboratorForm = ({ email }) => {
   } = useForm();
 
   const [loader, setLoader] = useState(false);
-
-  // const onSubmit = async (data) => {
-  //   console.log(data);
-
-  //   const requestData = {
-  //     email: email,
-  //     password: "defaultPassword123",
-  //     role: "user",
-  //     userType: "industry-collaborators",
-  //     additionalDetails: {
-  //       organisation_name: data.organisation_name,
-  //       organisation_type: data.organisation_type,
-  //       organisation_contact_number: data.organisation_contact_number,
-  //       registration_number: data.registration_number,
-  //       contact_person: {
-  //         name: data.contact_person_name,
-  //         email: data.contact_person_email,
-  //         contact: data.contact_person_contact,
-  //       },
-  //       data_contribution_type: data.data_contribution_type,
-  //       geographical_focus_area: data.geographical_focus_area,
-  //     },
-  //   };
-
-  //   setLoader(true);
-
-  //   try {
-  //     const response = await apiConnector(
-  //       "post",
-  //       "http://localhost:5000/signup",
-  //       requestData,
-  //       {
-  //         "Content-Type": "application/json",
-  //       }
-  //     );
-
-  //     toast.success(response.data.message);
-
-  //     console.log("Signup successful:", response);
-  //   } catch (error) {
-  //     console.error("Signup failed:", error);
-  //     toast.error("Signup failed");
-  //   }
-
-  //   setLoader(false);
-  // };
 
   const onSubmit = async (data) => {
     console.log(data);

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -52,14 +51,21 @@ const ResearchCruiseForm = ({ email }) => {
       console.log("Response:", response.data);
 
       // Show success toast
-      toast.success("Signup successful!");
-
+      // Handle successful signup
+      if (response.data.message) {
+        toast.success(response.data.message);
+        console.log("Signup successful:", response);
+      }
     } catch (error) {
       console.error("Error:", error);
 
-      // Handle errors and show error toast
+      // Check if the error response contains the user already exists message
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || "Signup failed. Please try again.");
+        if (error.response.data.message === "User already exists") {
+          toast.error("User already exists. Please use a different email.");
+        } else {
+          toast.error("Signup failed. Please try again.");
+        }
       } else {
         toast.error("An unexpected error occurred.");
       }
@@ -71,9 +77,7 @@ const ResearchCruiseForm = ({ email }) => {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      
       {loading && <Loader />} {/* Show loader while loading */}
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
