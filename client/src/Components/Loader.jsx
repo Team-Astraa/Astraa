@@ -1,11 +1,30 @@
+
+
+
+
 import React from "react";
-import "./Loader.css"
+import "./Loader.css";
+
 const Loader = () => {
   return (
-    <div>
-      <span class="loader"></span>
+    <div className="lds-spinner-overlay">
+      <div className="lds-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   );
 };
 
 export default Loader;
+
