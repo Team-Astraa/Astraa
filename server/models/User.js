@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ["admin", "user", "scientist"], // Primary roles
   },
-  isVerifies: {
+  isVerifed: {
     type: Boolean,
     default: false,
   },

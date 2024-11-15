@@ -8,6 +8,7 @@ import { nanoid } from "nanoid";
 import { signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
 import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
+import { getUnverifiedUser, verifyUser } from "./controller/admin-controller.js";
 
 dotenv.config();
 const app = express();
@@ -51,7 +52,15 @@ const generateUploadUrl = async () => {
   });
 };
 
+// auth api methods
+
 app.post("/signup", signUp);
+
+
+// admin api methods
+
+app.post("/admin/getUnverifiesUsers" , getUnverifiedUser)
+app.post("/admin/verifyUser" , verifyUser)
 
 app.get("/get-upload-url", async (req, res) => {
   try {

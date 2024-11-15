@@ -8,9 +8,7 @@ import ResearchInstitute from "../models/ResearchInstitute.js";
 
 export const signUp = async (req, res) => {
   const { email, role, userType, additionalDetails } = req.body;
-  
 
- 
   // Validate the request body
   if (!email || !role) {
     return res
@@ -26,11 +24,9 @@ export const signUp = async (req, res) => {
         .json({ message: "User type is required for user role" });
     }
     if (!additionalDetails) {
-      return res
-        .status(400)
-        .json({
-          message: "Additional details are required for the selected user type",
-        });
+      return res.status(400).json({
+        message: "Additional details are required for the selected user type",
+      });
     }
   }
 
@@ -41,12 +37,11 @@ export const signUp = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-
-
     // Create the user
     const newUser = new User({
       email,
       role,
+      isVerifed: false,
       userType,
     });
 
