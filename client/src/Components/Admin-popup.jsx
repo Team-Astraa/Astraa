@@ -2,10 +2,10 @@ import React from 'react'
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 
-const Adminpopup = () => {
+const Adminpopup = ({model}) => {
     const [openModal, setOpenModal] = useState(true);
     return (
-        <><Button onClick={() => setOpenModal(true)}>Toggle modal</Button>
+        <>
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 <Modal.Header>Terms of Service</Modal.Header>
                 <Modal.Body>

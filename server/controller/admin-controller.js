@@ -3,8 +3,8 @@
 import User from "../models/User.js";
 import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
-import ResearchCruise from "../models/ResearchInstitute.js";
-import ResearchInstitute from "../models/ResearchCruise.js";
+import ResearchCruise from "../models/ResearchCruise.js";
+import ResearchInstitute from "../models/ResearchInstitute.js";
 import { generateCredentials } from "../helper/helper.js";
 import mongoose from "mongoose"; // Ensure you have mongoose imported
 
@@ -109,7 +109,6 @@ export const verifyUser = async (req, res) => {
 
 // Ensure you are getting the correct userId and converting it to ObjectId if needed
 
-
 export const getDetailsData = async (req, res) => {
   const { userId, userType } = req.body; // Get userId and userType from the request body
 
@@ -135,12 +134,30 @@ export const getDetailsData = async (req, res) => {
     console.log(`Fetching data for User ID: ${userId}, User Type: ${userType}`);
 
     // Based on the userType, query the relevant data
-    if (userType === "industry-collaborators") {
-      detaildata = await IndustryCollaborator.find({ userId: new mongoose.Types.ObjectId(userId) });
-    } else if (userType === "research_cruises") {
-      detaildata = await ResearchCruise.find({ userId: new mongoose.Types.ObjectId(userId) });
+    // if (userType === "industry-collaborators") {
+    //   detaildata = await IndustryCollaborator.find({ userId: new mongoose.Types.ObjectId(userId) });
+    // } else if (userType === "research_cruises") {
+    //   detaildata = await ResearchCruise.find({ userId: new mongoose.Types.ObjectId(userId) });
+    // } else if (userType === "research_institute") {
+    //   detaildata = await ResearchInstitute.find({ userId: new mongoose.Types.ObjectId(userId) });
+    // } else {
+    //   return res.status(400).json({ error: "Invalid user type" });
+    // }
+
+    console.log(user);
+
+    if (userType == "research_cruises") {
+      detaildata = await ResearchCruise.find({
+        userId: new mongoose.Types.ObjectId(userId),
+      });
+    } else if (userType === "industry-collaborators") {
+      detaildata = await IndustryCollaborator.find({
+        userId: new mongoose.Types.ObjectId(userId),
+      });
     } else if (userType === "research_institute") {
-      detaildata = await ResearchInstitute.find({ userId: new mongoose.Types.ObjectId(userId) });
+      detaildata = await ResearchInstitute.find({
+        userId: new mongoose.Types.ObjectId(userId),
+      });
     } else {
       return res.status(400).json({ error: "Invalid user type" });
     }
@@ -154,4 +171,3 @@ export const getDetailsData = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch data" });
   }
 };
-
