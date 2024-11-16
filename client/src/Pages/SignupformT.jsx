@@ -19,7 +19,7 @@ const SignupformT = () => {
   return (
     <div className="h-screen flex flex-col lg:flex-row">
       {/* Left Section */}
-      <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full bg-gradient-to-br from-blue-500 to-blue-900 flex flex-col justify-center items-center text-white p-8 lg:rounded-r-lg">
+      <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full bg-gradient-to-br from-blue-500 to-blue-900 flex flex-col justify-center items-center text-white p-8">
         <h1 className="text-5xl font-bold mb-6">Sign Up</h1>
         <p className="text-lg text-center mb-10">
           Enter your personal details to start your journey with us!
