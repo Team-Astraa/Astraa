@@ -34,27 +34,26 @@ const SignupformT = () => {
             Email Address
           </label>
           <div className="relative">
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 16"
-              >
-                <path d="M10.036 8.278L19.294.488A1.979 1.979 0 0018 0H2C1.405 0 .84.236.641.541L10.036 8.278z" />
-                <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 002 2h16a2 2 0 002-2V2.5l-8.759 7.317z" />
-              </svg>
-            </div>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={handleEmail}
-              className="w-full py-3 px-4 rounded-lg border-none text-gray-700 bg-white shadow-lg focus:ring-4 focus:ring-blue-400 placeholder-gray-400"
-              placeholder="Enter your email"
-            />
-            
-          </div>
+  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+    <svg
+      className="w-5 h-5"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 20 16"
+    >
+      <path d="M10.036 8.278L19.294.488A1.979 1.979 0 0018 0H2C1.405 0 .84.236.641.541L10.036 8.278z" />
+      <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 002 2h16a2 2 0 002-2V2.5l-8.759 7.317z" />
+    </svg>
+  </div>
+    <input
+      id="email"
+      type="email"
+      value={email}
+      onChange={handleEmail}
+      className="w-full py-3 px-4 pl-10 rounded-lg border-none text-gray-700 bg-white shadow-lg focus:ring-4 focus:ring-blue-400 placeholder-gray-400"
+      placeholder="Enter your email"
+    />
+      </div>
         </div>
 
         {/* User Type Buttons */}
