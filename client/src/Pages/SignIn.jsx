@@ -54,7 +54,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-blue-900 to-blue-500">
+    <div className="flex h-[87vh] bg-gradient-to-r from-blue-900 to-blue-500">
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
@@ -104,7 +104,7 @@ const LoginForm = () => {
 
           <p className="text-center text-gray-600 mt-4">
             Don't have an account?{" "}
-            <a href="/SignUpT" className="text-blue-500 font-semibold">
+            <a href="/SignUp" className="text-blue-500 font-semibold">
               Sign Up
             </a>
           </p>

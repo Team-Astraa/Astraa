@@ -17,7 +17,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col lg:flex-row">
+    <div className="h-[87vh] flex flex-col lg:flex-row">
       {/* Left Section */}
       <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full bg-gradient-to-br from-blue-500 to-blue-900 flex flex-col justify-center items-center text-white p-8 lg:rounded-r-lg">
         <h1 className="text-5xl font-bold mb-6">Sign Up</h1>
@@ -73,6 +73,20 @@ const SignUp = () => {
               )
             )}
           </div>
+        </div>
+
+        {/* sigin Button */}
+        {/* Sign In Link */}
+        <div className="mt-6 text-center">
+          <p className="text-sm">
+            Already have an account?{" "}
+            <a
+              href="/SignIn"
+              className="text-blue-300 hover:text-blue-500 underline"
+            >
+              Sign In
+            </a>
+          </p>
         </div>
       </div>
 
