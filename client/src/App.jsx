@@ -11,6 +11,8 @@ import SignupformT from "./Pages/SignupformT";
 // import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
 import SignIn from "./Pages/SignIn";
 import NavBar from "./Components/NavBar";
+import Adminverifyfish from "./Pages/Admin-verify-fish";
+import Admindatauploadusers from "./Pages/Admin-data-upload-users";
 
 function App() {
   return (
@@ -28,8 +30,16 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
 
             <Route path="/signIn" element={<LoginForm />} />
+
+
+
+
+            {/* admin routes  */}
             <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
+            <Route path="/admin/get-data-upload-user" element={<Admindatauploadusers />} />
+            <Route path="/admin/unverify-fish-data/:id" element={<Adminverifyfish />} />
+
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>

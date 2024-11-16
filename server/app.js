@@ -5,11 +5,21 @@ import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import aws from "aws-sdk";
+import multer from 'multer';
 import { nanoid } from "nanoid";
 import { login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
 import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
-import { getDetailsData, getUnverifiedUser, verifyUser } from "./controller/admin-controller.js";
+import fs from 'fs';
+import path from 'path';
+import {
+  getCatchDataGroupedByUser,
+  getdataUploaduser,
+  getDetailsData,
+  getUnverifiedUser,
+  verifyUser,
+} from "./controller/admin-controller.js";
+import { uploadCSV } from "./controller/userController.js";
 
 dotenv.config();
 const app = express();
@@ -37,9 +47,6 @@ const s3 = new aws.S3({
 });
 
 // Route Handlers
-app.get("/ping", (req, res) => {
-  res.send("pong");
-});
 
 const generateUploadUrl = async () => {
   const date = new Date();
@@ -53,23 +60,41 @@ const generateUploadUrl = async () => {
   });
 };
 
+const uploadDirectory = './uploads';
+if (!fs.existsSync(uploadDirectory)) {
+  fs.mkdirSync(uploadDirectory);
+}
 
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDirectory);  // Save files in the 'uploads' folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));  // Append timestamp to filename
+  }
+});
 
+// Create multer instance with the storage configuration
+const upload = multer({ storage: storage });
 
-
+// All users api
+app.post("/upload", upload.single("file"), uploadCSV);
 
 // auth api methods
 
 app.post("/signup", signUp);
 app.post("/login", login);
 
-
 // admin api methods
 
-app.post("/admin/getUnverifiesUsers" , getUnverifiedUser)
-app.post("/admin/verifyUser" , verifyUser)
-app.post("/admin/get-detail-data" , getDetailsData)
+app.post("/admin/getUnverifiesUsers", getUnverifiedUser);
+app.post("/admin/verifyUser", verifyUser);
+app.post("/admin/get-detail-data", getDetailsData);
+app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
+app.get("/admin/get-data-upload-users", getdataUploaduser);
+
+
 
 app.get("/get-upload-url", async (req, res) => {
   try {

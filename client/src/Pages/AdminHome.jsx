@@ -12,7 +12,7 @@ const AdminHome = () => {
       <div className='w-full flex items-center justify-center h-[10vh] shadow-md'>
         <h1 className='text-bold text-3xl text-center'>ADMIN PAGE </h1>
       </div>
-      <div className='flex w-full m-4'>
+      <div className='flex w-full m-4 gap-4'>
         <Card
           className="max-w-sm cursor-pointer hover:scale-105 duration-200"
           imgAlt="Meaningful alt text for an image that is not purely decorative"
@@ -23,9 +23,19 @@ const AdminHome = () => {
             
             verify Users
           </h5>
-          {/* <p className="font-normal text-gray-700 dark:text-gray-400">
-            Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
-          </p> */}
+   
+        </Card>
+        <Card
+          className="max-w-sm cursor-pointer hover:scale-105 duration-200"
+          imgAlt="Meaningful alt text for an image that is not purely decorative"
+          imgSrc={userImg}
+          onClick={()=>navigate('/admin/get-data-upload-user')}
+        >
+          <h5 className="text-2xl font-bold tracking-tight text-center text-gray-900 dark:text-white">
+            
+            verify Fish data
+          </h5>
+       
         </Card>
       </div>
     </section>
