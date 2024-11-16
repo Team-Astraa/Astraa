@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+  body {
+    background-color: #0f123f;
+  }
+  
+  .app {
+    display: flex;
+  }
+  

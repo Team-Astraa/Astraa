@@ -78,6 +78,7 @@ const IndustryCollaboratorForm = ({ email }) => {
       {loader && <Loader />}
 
       <form onSubmit={handleSubmit(onSubmit)}>
+      <h1 className="text-2xl font-bold mb-8">Hello Institutes</h1>
         <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
             label="Organisation Name"
@@ -172,7 +173,7 @@ const IndustryCollaboratorForm = ({ email }) => {
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Submit
+          Sign Up
         </button>
       </form>
     </div>
