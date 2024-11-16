@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Loader"; // Assuming you have a Loader component for displaying the loading indicator
-
+import { useNavigate } from "react-router-dom";
 const ResearchCruiseForm = ({ email }) => {
   const {
     register,
@@ -14,7 +14,7 @@ const ResearchCruiseForm = ({ email }) => {
 
   // State for loader visibility
   const [loading, setLoading] = useState(false);
-
+const navigate=useNavigate();
   const onSubmit = async (data) => {
     // Map form data to match API payload structure
     const payload = {
@@ -54,6 +54,7 @@ const ResearchCruiseForm = ({ email }) => {
       // Handle successful signup
       if (response.data.message) {
         toast.success(response.data.message);
+        navigate("/sigin");
         console.log("Signup successful:", response);
       }
     } catch (error) {
