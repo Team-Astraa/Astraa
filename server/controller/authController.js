@@ -98,36 +98,38 @@ export const signUp = async (req, res) => {
   }
 };
 
-
-
-
-
 // Login API - validates user credentials and generates JWT token
 export const login = async (req, res) => {
   const { username, password } = req.body; // Get the username and password from the request body
-
+  const SECRET_KEY = "vard177";
   // Check if the username and password are provided
   if (!username || !password) {
-    return res.status(400).json({ message: "Username and password are required" });
+    return res
+      .status(400)
+      .json({ message: "Username and password are required" });
   }
 
   try {
     // Find the user by username
     const user = await User.findOne({ username });
-    
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if(password !== user.password){
-        return res.status(401).json({ message: "Invalid password" });
+    if (password !== user.password) {
+      return res.status(401).json({ message: "Invalid password" });
     }
-   
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, username: user.username, role: user.role, userType: user.userType },
-      process.env.SECRETE_KEY,
+      {
+        userId: user._id,
+        username: user.username,
+        role: user.role,
+        userType: user.userType,
+      },
+      SECRET_KEY,
       { expiresIn: "1h" }
     );
 
