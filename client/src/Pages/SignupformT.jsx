@@ -3,144 +3,105 @@ import FishermanForm from "../Components/SignUpForms/Fisherman";
 import ResearchCruiseForm from "../Components/SignUpForms/ResearchCruise";
 import ResearchInstituteForm from "../Components/SignUpForms/ResearchInstitute";
 import IndustryCollaboratorForm from "../Components/SignUpForms/IndustryCollaborators";
+
 const SignupformT = () => {
-  const [email, setEmail] = useState(""); // Maintain email state
+  const [email, setEmail] = useState("");
   const [selectedUserType, setSelectedUserType] = useState(null);
-  const [clickedButton, setClickedButton] = useState(null);
 
   const handleUserTypeClick = (userType) => {
     setSelectedUserType(userType);
-    setClickedButton(userType);
   };
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
-  return (
-    <div className="h-screen flex bg-blue-200">
-      <div className="relative w-full lg:w-[35%] h-1/4 lg:h-full  lg:rounded-r-3xl bg-blue-950 flex flex-col justify-center items-center gap-3">
-        <h1 className="text-4xl text-start text-white font-bold absolute top-10">
-          SIGN UP?
-        </h1>
-        <p className="w-1/2  text-base text-white font-thin">
-          Enter Your personal Details and Start Your journey
-        </p>
-        <div className="email-input w-[50%]   flex flex-col justify-start mx-auto ">
-          <label
-            htmlFor="input-group-1"
-            className="block text-xl mb-2 font-semibold text-white text-start dark:text-white"
-          >
-            Your Email?
-          </label>
 
-          <div className="relative mb-6 ">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+  return (
+    <div className="h-screen flex flex-col lg:flex-row">
+      {/* Left Section */}
+      <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full bg-gradient-to-br from-blue-500 to-blue-900 flex flex-col justify-center items-center text-white p-8 lg:rounded-r-lg">
+        <h1 className="text-5xl font-bold mb-6">Sign Up</h1>
+        <p className="text-lg text-center mb-10">
+          Enter your personal details to start your journey with us!
+        </p>
+
+        {/* Email Input */}
+        <div className="email-input w-3/4">
+          <label
+            htmlFor="email"
+            className="block text-lg font-medium mb-2"
+          >
+            Email Address
+          </label>
+          <div className="relative">
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               <svg
-                className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
+                className="w-5 h-5"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
                 viewBox="0 0 20 16"
               >
-                <path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z" />
-                <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z" />
+                <path d="M10.036 8.278L19.294.488A1.979 1.979 0 0018 0H2C1.405 0 .84.236.641.541L10.036 8.278z" />
+                <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 002 2h16a2 2 0 002-2V2.5l-8.759 7.317z" />
               </svg>
             </div>
             <input
-              type="text"
+              id="email"
+              type="email"
               value={email}
-              onChange={handleEmail} // Update email state
-              className="bg-transparent  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 placeholder-white dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 border border-orange-400"
-              placeholder="email@gmail.com"
+              onChange={handleEmail}
+              className="w-full py-3 px-4 rounded-lg border-none text-gray-700 bg-white shadow-lg focus:ring-4 focus:ring-blue-400 placeholder-gray-400"
+              placeholder="Enter your email"
             />
+            
           </div>
         </div>
 
-        {/* <div
-          className="inline-flex rounded-md shadow-sm mt-6 mb-8"
-          role="group"
-        >
-          <button
-            type="button"
-            className="inline-flex items-center px-6 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => handleUserTypeClick("fishermen")}
-          >
-            Fishermen
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => handleUserTypeClick("industryCollaborators")}
-          >
-            Collaborators
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center px-6 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => handleUserTypeClick("researchCruise")}
-          >
-            Cruisers
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center px-8 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => handleUserTypeClick("researchInstitute")}
-          >
-            Institute
-          </button>
-        </div> */}
-
-        <h4 className="text-base  mr-20 font-thin text-orange-400">
-          Select Type of User?
-        </h4>
-        <button
-          className="w-1/2 text-lg px-3 py-2 bg-transparent border-2 border-orange-400 rounded-full text-white"
-          onClick={() => handleUserTypeClick("fishermen")}
-        >
-          Fishermen
-        </button>
-        <button
-          className="w-1/2 text-lg px-3 py-2 bg-transparent border-2 border-orange-400 rounded-full text-white"
-          onClick={() => handleUserTypeClick("industryCollaborators")}
-        >
-          Industry Collaborators
-        </button>
-        <button
-          className="w-1/2 text-lg px-3 py-2 bg-transparent border-2 border-orange-400 rounded-full text-white"
-          onClick={() => handleUserTypeClick("researchCruise")}
-        >
-          Research Cruise
-        </button>
-        <button
-          className="w-1/2 text-lg px-3 py-2 bg-transparent border-2 border-orange-400 rounded-full text-white"
-          onClick={() => handleUserTypeClick("researchInstitute")}
-        >
-          Research Institute
-        </button>
-
-        {/* 
-        <div className="absolute bottom-5 w-[70%] flex  justify-center  gap-2">
-          <p>Already Have an Account?</p>
-          <button className="w-1/2 px-2 text-lg py-2 bg-transparent border-2 border-orange-400 rounded-full text-white ">Sign In</button>
-        </div> */}
+        {/* User Type Buttons */}
+        <div className="mt-8 w-3/4">
+          <h4 className="text-lg font-medium mb-4">Select User Type</h4>
+          <div className="grid grid-cols-2 gap-4">
+            {["Fishermen", "Collaborators", "Cruisers", "Institutes"].map(
+              (type, index) => (
+                <button
+                  key={index}
+                  className={`py-3 px-4 rounded-lg text-white font-semibold transition-all duration-300 ${
+                    selectedUserType === type.toLowerCase()
+                      ? "bg-blue-600 shadow-lg"
+                      : "bg-transparent border border-white hover:bg-blue-700 hover:shadow-lg"
+                  }`}
+                  onClick={() =>
+                    handleUserTypeClick(type.toLowerCase())
+                  }
+                >
+                  {type}
+                </button>
+              )
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="w-[65%] flex justify-center items-center">
-        <div className="form-rendering w-[80%] ">
-          {selectedUserType === null && (
-            <div className="text-xl text-center font-semibold">
-              Please select a user type to begin the signup process.
+      {/* Right Section */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white">
+        <div className="w-4/5 max-w-md">
+          {selectedUserType === null ? (
+            <div className="text-center text-2xl font-semibold text-gray-600">
+              Please select a user type to begin.
             </div>
-          )}
-          {selectedUserType === "fishermen" && <FishermanForm email={email} />}
-          {selectedUserType === "industryCollaborators" && (
-            <IndustryCollaboratorForm email={email} />
-          )}
-          {selectedUserType === "researchCruise" && (
-            <ResearchCruiseForm email={email} />
-          )}
-          {selectedUserType === "researchInstitute" && (
-            <ResearchInstituteForm email={email} />
+          ) : (
+            <div className="text-center">
+              {selectedUserType === "fishermen" && <FishermanForm email={email} />}
+              {selectedUserType === "collaborators" && (
+                <IndustryCollaboratorForm email={email} />
+              )}
+              {selectedUserType === "cruisers" && (
+                <ResearchCruiseForm email={email} />
+              )}
+              {selectedUserType === "institutes" && (
+                <ResearchInstituteForm email={email} />
+              )}
+            </div>
           )}
         </div>
       </div>
