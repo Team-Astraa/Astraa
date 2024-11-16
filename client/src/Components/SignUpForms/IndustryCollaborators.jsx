@@ -78,8 +78,8 @@ const IndustryCollaboratorForm = ({ email }) => {
       {loader && <Loader />}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-      <h1 className="text-2xl font-bold mb-8">Hello Institutes</h1>
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
+      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Institutes</h1>
+      <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
             label="Organisation Name"
             name="organisation_name"

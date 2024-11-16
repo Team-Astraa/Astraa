@@ -79,8 +79,8 @@ const ResearchCruiseForm = ({ email }) => {
       <Toaster position="top-right" reverseOrder={false} />
       {loading && <Loader />} {/* Show loader while loading */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="text-2xl font-bold mb-8 text-center">Hello Institutes</h1>
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
+      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Institutes</h1>
+      <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
             label="Cruise Name"
             name="cruiseName"
