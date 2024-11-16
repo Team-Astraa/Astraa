@@ -10,6 +10,8 @@ import AdminHome from "./Pages/AdminHome";
 import Adminverifyuser from "./Pages/Admin-verify-user";
 import Adminverifyfish from "./Pages/Admin-verify-fish";
 import Admindatauploadusers from "./Pages/Admin-data-upload-users";
+import Adminmap from "./Pages/Admin-map";
+import FishingMap from "./Pages/Admin-map";
 
 function App() {
   return (
@@ -45,6 +47,23 @@ function App() {
               path="/admin/unverify-fish-data/:id"
               element={<PrivateRoute element={<Adminverifyfish />} />}
             />
+            <Route
+              path="/map"
+              element={<PrivateRoute element={<FishingMap />} />}
+            />
+            {/* <Route path="/signIn" element={<LoginForm />} /> */}
+
+
+
+
+            {/* admin routes  */}
+            {/* <Route path="/admin/home" element={<AdminHome />} />
+            <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
+            <Route path="/admin/get-data-upload-user" element={<Admindatauploadusers />} />
+            <Route path="/admin/unverify-fish-data/:id" element={<Adminverifyfish />} />
+
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/map" element={<FishingMap />} /> */}
           </Routes>
         </div>
       </div>

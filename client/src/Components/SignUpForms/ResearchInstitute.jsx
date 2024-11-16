@@ -71,7 +71,7 @@ const ResearchInstituteForm = ({ email }) => {
     <div>
       {loading && <Loader />}
       <form onSubmit={handleSubmit(onSubmit)}>
-      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Institutes</h1>
+      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Research Institutes</h1>
       <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
             label="Institute Name"

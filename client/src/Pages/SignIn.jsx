@@ -15,45 +15,32 @@ const LoginForm = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    setIsLoading(true); // Set loading state to true when form submission starts
+    setIsLoading(true);
 
     const payload = {
       username: data.username,
       password: data.password,
     };
 
-    // Axios configuration (replace with your API URL)
     const config = {
       method: "post",
-      url: "http://localhost:5000/login", // Replace with your actual login API endpoint
+      url: "http://localhost:5000/login",
       headers: {
         "Content-Type": "application/json",
       },
       data: JSON.stringify(payload),
     };
 
-    // Send data to API
     try {
       const response = await axios.request(config);
-      console.log("Response:", response.data);
-
-      // Show success toast notification
       toast.success("Login successful!");
-
-      // Handle successful login response message
       if (response.data.message) {
         toast.success(response.data.message);
-        console.log("Login successful:", response);
       }
     } catch (error) {
-      console.error("Login failed:", error);
-
-      // Check if the error response contains specific error messages
       if (error.response && error.response.data) {
-        if (
-          error.response.data.message === "User not found" ||
-          error.response.data.message === "Password Not Match"
-        ) {
+        const message = error.response.data.message;
+        if (message === "User not found" || message === "Password Not Match") {
           toast.error("Add Correct Credentials");
         } else {
           toast.error("Login failed. Please try again.");
@@ -62,20 +49,24 @@ const LoginForm = () => {
         toast.error("An unexpected error occurred.");
       }
     } finally {
-      setIsLoading(false); // Reset loading state after the request is complete
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-[100%] h-[80vh] border-2 border-yellow-400  flex ">
-      <div className="w-[60%] flex justify-center items-center min-h-[80vh] bg-gray-100 rounded-md">
+    <div className="flex h-screen bg-gradient-to-r from-blue-900 to-blue-500">
+      {/* Left Section */}
+      <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
-        {isLoading && <Loader />} {/* Show loader when loading is true */}
+        {isLoading && <Loader />}
+
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96 md:w-1/3 lg:w-1/2"
+          className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl"
         >
-          <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
+          <h2 className="text-3xl font-semibold text-gray-800 text-center mb-8">
+            Welcome Back
+          </h2>
 
           <div className="grid gap-6 mb-6">
             <InputField
@@ -91,7 +82,7 @@ const LoginForm = () => {
               name="password"
               placeholder="Enter your password"
               register={register}
-              type="password" // Set input type as password
+              type="password"
               validation={{
                 required: "Password is required",
                 minLength: {
@@ -105,15 +96,30 @@ const LoginForm = () => {
 
           <button
             type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            disabled={isLoading} // Disable the button while loading
+            className="text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg w-full py-3"
+            disabled={isLoading}
           >
-            {isLoading ? "Logging in..." : "Login"}{" "}
-            {/* Change button text based on loading state */}
+            {isLoading ? "Logging in..." : "Sign In"}
           </button>
+
+          <p className="text-center text-gray-600 mt-4">
+            Don't have an account?{" "}
+            <a href="/SignUpT" className="text-blue-500 font-semibold">
+              Sign Up
+            </a>
+          </p>
         </form>
       </div>
-      
+
+      {/* Right Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white">
+        <div className="text-center px-8">
+          <h1 className="text-5xl font-bold mb-4">Welcome to Our Platform</h1>
+          <p className="text-xl">
+            Unlock your potential and start your journey with us today.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
