@@ -9,7 +9,7 @@ import Dashboard from "./Pages/Dashboard";
 import HomePage from "./Pages/HomePage";
 import AdminHome from "./Pages/AdminHome";
 import Adminverifyuser from "./Pages/Admin-verify-user";
-
+import SignupformT from "./Pages/SignupformT";
 // import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
 
 function App() {
@@ -26,6 +26,8 @@ function App() {
             {/* Define Routes for pages */}
             <Route path="/" element={<HomePage />} />
             <Route path="/signUp" element={<SignupForm />} />
+            <Route path="/signUpT" element={<SignupformT />} />
+
             <Route path="/signIn" element={<LoginForm />} />
             <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
