@@ -79,7 +79,22 @@ const SignupformT = () => {
             )}
           </div>
         </div>
+
+          {/* Sign In Link */}
+    <div className="mt-6 text-center">
+      <p className="text-sm">
+        Already have an account?{" "}
+        <a
+          href="/SignIn"
+          className="text-blue-300 hover:text-blue-500 underline"
+        >
+          Sign In
+        </a>
+      </p>
+    </div>
       </div>
+
+      
 
       {/* Right Section */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-white">
