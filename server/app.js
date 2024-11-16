@@ -71,6 +71,11 @@ app.post("/admin/getUnverifiesUsers" , getUnverifiedUser)
 app.post("/admin/verifyUser" , verifyUser)
 app.post("/admin/get-detail-data" , getDetailsData)
 
+
+// All users api
+app.post("/" , getAllUsers)
+
+
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();
