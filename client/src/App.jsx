@@ -33,23 +33,23 @@ function App() {
             />
             <Route
               path="/admin/home"
-              element={<PrivateRoute element={<AdminHome />} />}
+              element={<AdminHome />}
             />
             <Route
               path="/admin/unverify-user"
-              element={<PrivateRoute element={<Adminverifyuser />} />}
+              element={<Adminverifyuser />} 
             />
             <Route
               path="/admin/get-data-upload-user"
-              element={<PrivateRoute element={<Admindatauploadusers />} />}
+              element={<Admindatauploadusers />}
             />
             <Route
               path="/admin/unverify-fish-data/:id"
-              element={<PrivateRoute element={<Adminverifyfish />} />}
+              element={<Adminverifyfish />} 
             />
             <Route
               path="/map"
-              element={<PrivateRoute element={<FishingMap />} />}
+              element={<FishingMap />} 
             />
             {/* <Route path="/signIn" element={<LoginForm />} /> */}
 
