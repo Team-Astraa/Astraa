@@ -13,6 +13,8 @@ import SignIn from "./Pages/SignIn";
 import NavBar from "./Components/NavBar";
 import Adminverifyfish from "./Pages/Admin-verify-fish";
 import Admindatauploadusers from "./Pages/Admin-data-upload-users";
+import Adminmap from "./Pages/Admin-map";
+import FishingMap from "./Pages/Admin-map";
 
 function App() {
   return (
@@ -41,6 +43,7 @@ function App() {
             <Route path="/admin/unverify-fish-data/:id" element={<Adminverifyfish />} />
 
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/map" element={<FishingMap />} />
           </Routes>
         </div>
       </div>
