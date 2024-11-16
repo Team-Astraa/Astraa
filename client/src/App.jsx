@@ -11,17 +11,19 @@ import AdminHome from "./Pages/AdminHome";
 import Adminverifyuser from "./Pages/Admin-verify-user";
 import SignupformT from "./Pages/SignupformT";
 // import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
+import NavBar from "./Components/NavBar";
+
 
 function App() {
   return (
     <Router>
-      {/* <Toaster position="top-right" reverseOrder={false} />
-      <h1 className="text-center text-2xl font-bold ">WELCOME TO OUR APP</h1> */}
+
 
       <div style={styles.container}>
-      <Sidebar/>
+        <Sidebar />
 
         <div style={styles.content}>
+          <NavBar />
           <Routes>
             {/* Define Routes for pages */}
             <Route path="/" element={<HomePage />} />
@@ -32,7 +34,7 @@ function App() {
             <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
 
-            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>
       </div>
@@ -47,6 +49,10 @@ const styles = {
   },
   content: {
     padding: '10px',
+    marginLeft: '200px',
+    width: 'calc(100% - 200px)',
+    height: '100vh',
+    overflowY: 'auto',
     width: '100%',
     height: '100vh'
   },

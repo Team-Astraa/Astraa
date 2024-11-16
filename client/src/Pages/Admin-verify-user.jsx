@@ -111,6 +111,25 @@ const Adminverifyuser = () => {
       });
   };
 
+    return (
+        <AnimationWrapper className='w-full min-h-screen'>
+
+            <div className='w-full flex items-center justify-between  p-4 '>
+                <h1 className='text-bold text-3xl text-center text-white font-bold'>Un Verified Users </h1>
+                <div className=''>
+
+                    <Button.Group>
+                        <Button onClick={setType} color="gray">fisherman</Button>
+                        <Button onClick={setType} color="gray">industry-collaborators</Button>
+                        <Button onClick={setType} color="gray">research_institute</Button>
+                        <Button onClick={setType} color="gray">research_cruises</Button>
+                    </Button.Group>
+
+                </div>
+            </div>
+
+            <div>
+
   return (
     <AnimationWrapper className="w-full min-h-screen">
       <div className="w-full flex items-center justify-center h-[10vh] shadow-md">
@@ -135,6 +154,19 @@ const Adminverifyuser = () => {
           </Button.Group>
         </div>
 
+                <div className='overflow-x-auto'>
+                    {
+                        users.length ? <>
+
+                            <div>
+
+                                <div className="border text-center font-bold border-gray-300 rounded-lg overflow-hidden">
+                                    {/* Table Header */}
+                                    <div className="flex bg-gray-200 text-gray-700 font-semibold text-sm">
+                                        <div className="w-1/3 py-2 px-4">Email</div>
+                                        <div className="w-1/3 py-2 px-4 text-center">See Details</div>
+                                        <div className="w-1/3 py-2 px-4 text-center">Verified</div>
+                                    </div>
         <div className="overflow-x-auto">
           {users.length ? (
             <>
@@ -152,8 +184,22 @@ const Adminverifyuser = () => {
                       </div>
                     </div>
 
+                                    {/* Table Body */}
                     {/* Table Body */}
 
+                                    {users.map((user, i) => (
+                                        <AnimationWrapper
+                                            key={i}
+                                            transition={{ duration: 1, delay: i * 0.13 }}
+                                        >
+                                            <div
+                                                key={user._id}
+                                                className="flex items-center border-b border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 transition duration-300 ease-in-out"
+                                            >
+                                                {/* Email Column */}
+                                                <div className="w-1/3 py-3 px-4 text-gray-900 dark:text-white">
+                                                    {user.email}
+                                                </div>
                     {users.map((user, i) => (
                       <AnimationWrapper
                         key={i}
@@ -168,6 +214,15 @@ const Adminverifyuser = () => {
                             {user.email}
                           </div>
 
+                                                {/* See Details Button Column */}
+                                                <div className="w-1/3 py-3 px-4 text-center">
+                                                    <button
+                                                        onClick={() => getDetails(user._id, user.userType)}
+                                                        className="py-2 px-4 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition duration-200"
+                                                    >
+                                                        See
+                                                    </button>
+                                                </div>
                           {/* See Details Button Column */}
                           <div className="w-1/3 py-3 px-4 text-center">
                             <button
@@ -180,6 +235,44 @@ const Adminverifyuser = () => {
                             </button>
                           </div>
 
+                                                {/* Verified Button Column */}
+                                                <div className="w-1/3 py-3 px-4 text-center">
+                                                    {user.isVerifed ? (
+                                                        <button className="py-2 px-4 bg-green-600 text-white font-bold rounded-lg">
+                                                            Yes
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => verifyUser(user._id)}
+                                                            className="py-2 px-4 bg-red-600 text-white font-bold rounded-lg"
+                                                        >
+                                                            No
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </AnimationWrapper>
+                                    ))}
+                                </div>
+
+                            </div>
+
+                        </>
+                            :
+
+                            <h1 className=' text-2xl text-center  mt-12 font-bold text-white'>Please Select The Categories </h1>
+
+                    }
+
+                </div>
+            </div>
+
+
+
+
+        </AnimationWrapper>
+    )
+}
                           {/* Verified Button Column */}
                           <div className="w-1/3 py-3 px-4 text-center">
                             {user.isVerifed ? (

@@ -13,6 +13,7 @@ import { getDetailsData, getUnverifiedUser, verifyUser } from "./controller/admi
 
 dotenv.config();
 const app = express();
+app.use(cors());
 
 // MongoDB Connection
 mongoose
@@ -21,7 +22,6 @@ mongoose
   .catch((error) => console.error("MongoDB connection error:", error));
 
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 
 // Initialize Firebase Admin SDK

@@ -20,7 +20,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-[200px] h-screen bg-[#0f123f] text-white p-5 flex flex-col items-center">
+    <div className="w-[200px] h-screen fixed bg-[#0f123f] text-white p-5 flex flex-col items-center border-r-2 border-[#436ec677]">
       <div className="flex flex-col items-center mb-10">
         <div className="bg-white rounded-full h-20 w-20 mb-4"></div>
         <h1 className="font-bold text-lg">Farhaan</h1>
