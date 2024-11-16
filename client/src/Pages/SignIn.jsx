@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Components/Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
-
+import { Link } from "react-router-dom";
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +54,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-blue-900 to-blue-500">
+    <div className="flex h-[87vh] bg-gradient-to-r from-blue-900 to-blue-500">
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
@@ -104,7 +104,7 @@ const LoginForm = () => {
 
           <p className="text-center text-gray-600 mt-4">
             Don't have an account?{" "}
-            <a href="/SignUpT" className="text-blue-500 font-semibold">
+            <a href="/SignUp" className="text-blue-500 font-semibold">
               Sign Up
             </a>
           </p>
@@ -114,7 +114,7 @@ const LoginForm = () => {
       {/* Right Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white">
         <div className="text-center px-8">
-          <h1 className="text-5xl font-bold mb-4">Welcome to Our Platform</h1>
+          <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
           <p className="text-xl">
             Unlock your potential and start your journey with us today.
           </p>
