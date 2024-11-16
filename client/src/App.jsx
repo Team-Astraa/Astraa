@@ -12,6 +12,8 @@ import Adminverifyuser from "./Pages/Admin-verify-user";
 import SignupformT from "./Pages/SignupformT";
 // import NotFoundPage from "./Pages/NotFoundPage"; // 404 page
 import NavBar from "./Components/NavBar";
+import Adminverifyfish from "./Pages/Admin-verify-fish";
+import Admindatauploadusers from "./Pages/Admin-data-upload-users";
 
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
             <Route path="/signIn" element={<LoginForm />} />
             <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
+            <Route path="/admin/get-data-upload-user" element={<Admindatauploadusers />} />
+            <Route path="/admin/unverify-fish-data/:id" element={<Adminverifyfish />} />
 
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
