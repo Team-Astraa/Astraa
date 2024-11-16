@@ -37,7 +37,7 @@ const LoginForm = () => {
       if (response.data.message) {
         console.log(response);
         localStorage.setItem("token", response.data.token);
-        // localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("userId", response.data.userType);
         toast.success(response.data.message);
         navigate("/");
       }

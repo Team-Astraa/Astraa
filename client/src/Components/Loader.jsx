@@ -4,25 +4,16 @@
 
 import React from "react";
 import "./Loader.css";
+import logo from '../assets/navlogo.png'
 
 const Loader = () => {
   return (
-    <div className="lds-spinner-overlay">
-      <div className="lds-spinner">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </div>
+    <div className="flex items-center justify-center h-full relative">
+    <div className="loader"></div>
+    <img className="w-[250px] rounded-md absolute fade-in-out" src={logo} alt="Logo" />
+  
+  </div>
+  
   );
 };
 
