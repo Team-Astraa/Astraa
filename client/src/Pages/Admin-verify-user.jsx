@@ -144,7 +144,7 @@ const Adminverifyuser = () => {
                         users.length ? <>
 
                             <div>
-                                {userType === "research_cruises" ? (
+                               
                                     <div className="w-full border border-gray-300 rounded-lg overflow-hidden">
                                         {/* Table Header */}
                                         <div className="flex bg-gray-200 text-gray-700 font-semibold text-sm">
@@ -198,9 +198,7 @@ const Adminverifyuser = () => {
                                             </AnimationWrapper>
                                         ))}
                                     </div>
-                                ) : (
-                                    <p>hii</p>
-                                )}
+                                
                             </div>
 
                         </>
