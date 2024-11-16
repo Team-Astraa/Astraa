@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Components/Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
-
+import { Link } from "react-router-dom";
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -113,10 +113,7 @@ const LoginForm = () => {
           </button>
         </form>
       </div>
-      <div className="w-[30%] text-white text-4xl  flex justify-center items-center">
-        {" "}
-        Second dabbaa
-      </div>
+      
     </div>
   );
 };
