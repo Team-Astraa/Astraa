@@ -4,14 +4,14 @@ import { InputField } from "../Fields/InputField";
 import { apiConnector } from "../../ApiConnector";
 import { toast } from "react-hot-toast";
 import Loader from "../Loader";
-
+import { useNavigate } from "react-router-dom";
 const IndustryCollaboratorForm = ({ email }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
 
   const onSubmit = async (data) => {
@@ -52,6 +52,7 @@ const IndustryCollaboratorForm = ({ email }) => {
       // Handle successful signup
       if (response.data.message) {
         toast.success(response.data.message);
+        navigate("/sigin");
         console.log("Signup successful:", response);
       }
     } catch (error) {
@@ -78,8 +79,10 @@ const IndustryCollaboratorForm = ({ email }) => {
       {loader && <Loader />}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Industry Collaborators</h1>
-      <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">
+          Hello Industry Collaborators
+        </h1>
+        <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
             label="Organisation Name"
             name="organisation_name"

@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Components/Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
-
+import { Link, useNavigate } from "react-router-dom";
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -35,7 +35,11 @@ const LoginForm = () => {
       const response = await axios.request(config);
       toast.success("Login successful!");
       if (response.data.message) {
+        console.log(response);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userType);
         toast.success(response.data.message);
+        navigate("/");
       }
     } catch (error) {
       if (error.response && error.response.data) {
@@ -54,7 +58,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-blue-900 to-blue-500">
+    <div className="flex h-[87vh] bg-gradient-to-r from-blue-900 to-blue-500">
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
@@ -104,7 +108,7 @@ const LoginForm = () => {
 
           <p className="text-center text-gray-600 mt-4">
             Don't have an account?{" "}
-            <a href="/SignUpT" className="text-blue-500 font-semibold">
+            <a href="/SignUp" className="text-blue-500 font-semibold">
               Sign Up
             </a>
           </p>
