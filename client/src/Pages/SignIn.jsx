@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Components/Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -35,7 +35,11 @@ const LoginForm = () => {
       const response = await axios.request(config);
       toast.success("Login successful!");
       if (response.data.message) {
+        console.log(response);
+        localStorage.setItem("token", response.data.token);
+        // localStorage.setItem("userId", response.data.userId);
         toast.success(response.data.message);
+        navigate("/");
       }
     } catch (error) {
       if (error.response && error.response.data) {

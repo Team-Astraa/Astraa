@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Fields/InputField";
 import Loader from "../Loader";
 import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 const ResearchInstituteForm = ({ email }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const onSubmit = async (data) => {
     // Map form data to match API payload structure
@@ -47,6 +49,7 @@ const ResearchInstituteForm = ({ email }) => {
       console.log("Response:", response.data);
       if (response.data.message) {
         toast.success(response.data.message);
+        navigate("/sigin");
         console.log("Signup successful:", response);
       }
     } catch (error) {
@@ -71,8 +74,10 @@ const ResearchInstituteForm = ({ email }) => {
     <div>
       {loading && <Loader />}
       <form onSubmit={handleSubmit(onSubmit)}>
-      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Research Institutes</h1>
-      <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">
+          Hello Research Institutes
+        </h1>
+        <div className="grid gap-6 mb-6 md:grid-cols-2">
           <InputField
             label="Institute Name"
             name="instituteName"
