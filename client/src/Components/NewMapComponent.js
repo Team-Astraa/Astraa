@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Map, { Marker, Popup, Source, Layer } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const MapboxVisualization = ({ catchData }) => {
+const MapboxVisualizationT = ({ catchData }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState("markers"); // 'markers', 'heatmap', 'clusters'
 
@@ -273,7 +273,7 @@ const MapboxVisualization = ({ catchData }) => {
   );
 };
 
-export default MapboxVisualization;
+export default MapboxVisualizationT;
 
 
 

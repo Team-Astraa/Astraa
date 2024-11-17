@@ -53,3 +53,5 @@ const CatchSchema = new mongoose.Schema({
 const Catch = mongoose.model("Catch", CatchSchema);
 
 export default Catch;
+
+
