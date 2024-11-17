@@ -279,6 +279,7 @@ const Adminverifyfish = () => {
                                 <th className="px-4 py-2">Latitude</th>
                                 <th className="px-4 py-2">Longitude</th>
                                 <th className="px-4 py-2">Depth</th>
+                                <th className="px-4 py-2">Species</th>
                                 <th className="px-4 py-2">Total Weight</th>
                             </tr>
                         </thead>
@@ -291,6 +292,7 @@ const Adminverifyfish = () => {
                                         <td className="px-4 py-2">{catchItem.latitude}</td>
                                         <td className="px-4 py-2">{catchItem.longitude}</td>
                                         <td className="px-4 py-2">{catchItem.depth}</td>
+                                        <td className="px-4 py-2">{catchItem.species.map((species) => species.name).join(", ")}</td>
                                         <td className="px-4 py-2">{catchItem.total_weight}</td>
                                     </tr>
                                 ))
