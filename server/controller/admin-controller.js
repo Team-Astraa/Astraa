@@ -226,11 +226,11 @@ export const getdataUploaduser = async (req, res) => {
   }
 };
 
-
-
+// correct code
 export const updateCatchData = async (req, res) => {
-  const { userId, modifiedData } = req.body;
-
+  const { modifiedData } = req.body;
+  const { userId } = req.query;
+  console.log("Modified Data:", JSON.stringify(modifiedData, null, 2));
   try {
     // Validate userId and modifiedData
     if (!userId || !Array.isArray(modifiedData)) {
@@ -266,10 +266,14 @@ export const updateCatchData = async (req, res) => {
       }
 
       // Find the catch document by ID
-      const catchDocument = catchDocuments.find(doc => doc._id.toString() === documentId.toString());
+      const catchDocument = catchDocuments.find(
+        (doc) => doc._id.toString() === documentId.toString()
+      );
 
       if (!catchDocument) {
-        console.error(`Catch document with ID ${documentId} not found for user ${userId}.`);
+        console.error(
+          `Catch document with ID ${documentId} not found for user ${userId}.`
+        );
         continue; // Skip if the document doesn't exist in the user's catch data
       }
 
@@ -277,9 +281,11 @@ export const updateCatchData = async (req, res) => {
       let updatedSpecies = catchDocument.species;
 
       if (species && Array.isArray(species)) {
-        updatedSpecies = updatedSpecies.map(existingSpec => {
+        updatedSpecies = updatedSpecies.map((existingSpec) => {
           // Find the species in the modified data by matching the species `id`
-          const modifiedSpec = species.find(modSpec => modSpec.id === existingSpec._id.toString());
+          const modifiedSpec = species.find(
+            (modSpec) => modSpec.id === existingSpec._id.toString()
+          );
 
           if (modifiedSpec) {
             // Merge the updated species with the new catch_weight
@@ -305,7 +311,9 @@ export const updateCatchData = async (req, res) => {
 
       if (updatedCatch) {
         updatedDocuments.push(updatedCatch); // Add the updated document to the result array
-        console.log(`Catch document with ID ${documentId} updated successfully.`);
+        console.log(
+          `Catch document with ID ${documentId} updated successfully.`
+        );
       } else {
         console.error(`Failed to update catch document with ID ${documentId}.`);
       }
@@ -315,7 +323,7 @@ export const updateCatchData = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "Catch data updated successfully.",
-      data: updatedDocuments,
+      updatedDocuments,
     });
   } catch (error) {
     console.error("Error updating catch data:", error);
@@ -325,6 +333,5 @@ export const updateCatchData = async (req, res) => {
     });
   }
 };
-
 
 
