@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import Adminmap from "./Admin-map";
-import MapboxVisualizationT from "./Admin-map";
+import MapboxVisualizationT from "../Components/NewMapComponent";
 const ResearchMap = () => {
   const [catchData, setCatchData] = useState([]);
   let { id } = useParams();
