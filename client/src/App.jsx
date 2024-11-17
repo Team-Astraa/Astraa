@@ -12,6 +12,7 @@ import Adminverifyfish from "./Pages/Admin-verify-fish";
 import Admindatauploadusers from "./Pages/Admin-data-upload-users";
 import Adminmap from "./Pages/Admin-map";
 import FishingMap from "./Pages/Admin-map";
+import Loader from "./Components/Loader";
 
 function App() {
   return (

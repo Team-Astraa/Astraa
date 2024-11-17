@@ -17,9 +17,9 @@ const SignUp = () => {
   };
 
   return (
-    <div className="h-[87vh] flex flex-col lg:flex-row">
+    <div className="bg-white h-[87vh] flex flex-col lg:flex-row">
       {/* Left Section */}
-      <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full bg-gradient-to-br from-blue-500 to-blue-900 flex flex-col justify-center items-center text-white p-8 lg:rounded-r-lg">
+      <div className="relative w-1/2 lg:w-1/2 h-1/2 lg:h-full bg-gradient-to-br from-blue-500 to-blue-900 flex flex-col justify-center items-center text-white p-8">
         <h1 className="text-5xl font-bold mb-6">Sign Up</h1>
         <p className="text-lg text-center mb-10">
           Enter your personal details to start your journey with us!
@@ -91,12 +91,16 @@ const SignUp = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white">
-        <div className="w-4/5 max-w-md">
+      <div className="w-1/2 lg:w-1/2 h-1/2 lg:h-full bg-white flex flex-col justify-center items-center">
           {selectedUserType === null ? (
-            <div className="text-center text-2xl font-semibold text-gray-600">
-              Please select a user type to begin.
+          <div className="w-full h-screen flex items-center justify-center bg-">
+          <div className="text-center text-blue-700">
+            <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
+              <p className="text-l mt-5">
+                Please select your user type to continue.
+              </p>
             </div>
+          </div>
           ) : (
             <div className="text-center">
               {selectedUserType === "fishermen" && (
@@ -115,7 +119,6 @@ const SignUp = () => {
           )}
         </div>
       </div>
-    </div>
   );
 };
 

@@ -118,7 +118,7 @@ const LoginForm = () => {
       {/* Right Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white">
         <div className="text-center px-8">
-          <h1 className="text-5xl font-bold mb-4">Welcome to Our Platform</h1>
+          <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
           <p className="text-xl">
             Unlock your potential and start your journey with us today.
           </p>
