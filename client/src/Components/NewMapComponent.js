@@ -107,6 +107,10 @@ const MapboxVisualizationT = ({ catchData }) => {
     },
   };
 
+
+
+//   addd your new features here
+
   return (
     <div>
       <div

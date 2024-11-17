@@ -25,6 +25,7 @@ const ResearchMap = () => {
   return (
     <div className="text-2xl text-center text-white">
       RESEARCH MAP
+      {/* compinents mein check new map component */}
       <MapboxVisualizationT catchData={catchData} />
     </div>
   );
