@@ -223,3 +223,38 @@ export const getdataUploaduser = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+export const updateCatchData = async (userId, modifiedData) => {
+  try {
+    // Step 1: Find all catch documents associated with the userId
+    const userCatches = await Catch.find({ userId: userId });
+
+    if (!userCatches || userCatches.length === 0) {
+      return { message: "No catch data found for this user" };
+    }
+
+    // Step 2: Iterate over each modified object in the modifiedData array
+    for (const modifiedObj of modifiedData) {
+      // Find the document in the user's catches that matches the criteria (e.g., matching date, species)
+      const catchDoc = userCatches.find(catchItem => {
+        // Adjust this condition based on your criteria for matching (e.g., by date, species, or other fields)
+        return catchItem._id.toString() === modifiedObj.id; // Assuming modifiedObj contains an `id` field to match the document
+      });
+
+      if (catchDoc) {
+        // Step 3: Update the fields of the found document with the new values from modifiedObj
+        Object.assign(catchDoc, modifiedObj); // Merge modifiedObj into the catchDoc
+        
+        // Step 4: Save the updated catch document
+        await catchDoc.save();
+      }
+    }
+
+    return { message: "Catch data updated successfully" };
+  } catch (error) {
+    console.error("Error updating catch data:", error);
+    throw new Error("Failed to update catch data");
+  }
+};

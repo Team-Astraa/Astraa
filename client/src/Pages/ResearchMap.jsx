@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Adminmap from "./Admin-map";
-import MapboxVisualization from "./Admin-map";
+import MapboxVisualizationT from "./Admin-map";
 const ResearchMap = () => {
   const [catchData, setCatchData] = useState([]);
   let { id } = useParams();
@@ -25,7 +25,8 @@ const ResearchMap = () => {
   return (
     <div className="text-2xl text-center text-white">
       RESEARCH MAP
-      <MapboxVisualization catchData={catchData} />
+      {/* compinents mein check new map component */}
+      <MapboxVisualizationT catchData={catchData} />
     </div>
   );
 };
