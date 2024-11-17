@@ -9,7 +9,8 @@ import multer from 'multer';
 import { nanoid } from "nanoid";
 import { login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
-import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" with { type: "json" };
+import { assert } from "console";
+import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 import fs from 'fs';
 import path from 'path';
 import {
@@ -20,6 +21,7 @@ import {
   verifyUser,
 } from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
+import{updateUser} from "./controller/userUpdate.js"
 
 dotenv.config();
 const app = express();
@@ -27,8 +29,8 @@ app.use(cors());
 
 // MongoDB Connection
 mongoose
-  // .connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
-  .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  .connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
+  // .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
@@ -96,6 +98,8 @@ app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
 
 
+//user update-details routes
+app.put('/user-update/:userType/:userId', updateUser);
 
 app.get("/get-upload-url", async (req, res) => {
   try {

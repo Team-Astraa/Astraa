@@ -45,6 +45,8 @@ export const signUp = async (req, res) => {
       userType,
     });
 
+    console.log("newUser", newUser);
+
     // Save the user
     await newUser.save();
 

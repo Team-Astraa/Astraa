@@ -52,7 +52,7 @@ const IndustryCollaboratorForm = ({ email }) => {
       // Handle successful signup
       if (response.data.message) {
         toast.success(response.data.message);
-        navigate("/sigin");
+        navigate("/signin");
         console.log("Signup successful:", response);
       }
     } catch (error) {

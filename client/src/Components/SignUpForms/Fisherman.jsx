@@ -53,7 +53,7 @@ const FishermanForm = ({ email }) => {
           validation={{
             required: "Contact number is required",
             pattern: {
-              value: /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/,
+              value: /^[0-9]{10}$/,
               message: "Invalid phone number format",
             },
           }}
