@@ -166,7 +166,7 @@ export const getCatchDataGroupedByUser = async (req, res) => {
   try {
     const { userId } = req.body;
     console.log(userId);
-     // Assuming the userId is passed as a URL parameter
+    // Assuming the userId is passed as a URL parameter
 
     // Use new to instantiate the ObjectId
     const objectId = new mongoose.Types.ObjectId(userId);
@@ -174,26 +174,28 @@ export const getCatchDataGroupedByUser = async (req, res) => {
     // Aggregate query to filter by userId and then group the data
     const catchData = await Catch.aggregate([
       { $match: { userId: objectId } }, // Match the userId passed in the request
-      { 
+      {
         $group: {
           _id: "$userId",
-          catches: { $push: "$$ROOT" } // Group catches by userId
-        }
-      }
+          catches: { $push: "$$ROOT" }, // Group catches by userId
+        },
+      },
     ]);
 
     if (catchData.length === 0) {
-      return res.status(404).json({ message: "No catch data found for this user" });
+      return res
+        .status(404)
+        .json({ message: "No catch data found for this user" });
     }
 
     return res.status(200).json(catchData);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error fetching data", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error fetching data", error: error.message });
   }
 };
-
-
 
 export const getdataUploaduser = async (req, res) => {
   try {
@@ -224,9 +226,8 @@ export const getdataUploaduser = async (req, res) => {
   }
 };
 
-
-
-export const updateCatchData = async (userId, modifiedData) => {
+export const updateCatchData = async (req, res) => {
+  const { userId, modifiedData } = req.body;
   try {
     // Step 1: Find all catch documents associated with the userId
     const userCatches = await Catch.find({ userId: userId });
@@ -238,7 +239,7 @@ export const updateCatchData = async (userId, modifiedData) => {
     // Step 2: Iterate over each modified object in the modifiedData array
     for (const modifiedObj of modifiedData) {
       // Find the document in the user's catches that matches the criteria (e.g., matching date, species)
-      const catchDoc = userCatches.find(catchItem => {
+      const catchDoc = userCatches.find((catchItem) => {
         // Adjust this condition based on your criteria for matching (e.g., by date, species, or other fields)
         return catchItem._id.toString() === modifiedObj.id; // Assuming modifiedObj contains an `id` field to match the document
       });
@@ -246,15 +247,19 @@ export const updateCatchData = async (userId, modifiedData) => {
       if (catchDoc) {
         // Step 3: Update the fields of the found document with the new values from modifiedObj
         Object.assign(catchDoc, modifiedObj); // Merge modifiedObj into the catchDoc
-        
+
         // Step 4: Save the updated catch document
         await catchDoc.save();
       }
     }
-
-    return { message: "Catch data updated successfully" };
+    return res.json({
+      mmessage: "Catch data updated successfully",
+    });
   } catch (error) {
     console.error("Error updating catch data:", error);
+    res.json({
+      message: "failed to Update",
+    });
     throw new Error("Failed to update catch data");
   }
 };
