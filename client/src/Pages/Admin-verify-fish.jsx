@@ -9,7 +9,8 @@ const Adminverifyfish = () => {
     const [selectedCatchIds, setSelectedCatchIds] = useState([]);
     const [editMode, setEditMode] = useState(false); // State to manage edit mode
     const [modifiedData, setModifiedData] = useState([]); // Track modified data
-    let { id } = useParams()
+    const [viewMode, setViewMode] = useState("card"); // Added state for toggling views
+    let { id } = useParams();
 
     useEffect(() => {
         const fetchCatchData = async () => {
@@ -116,19 +117,33 @@ const Adminverifyfish = () => {
 
             <div className="text-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
                 <h1 className="text-2xl font-bold mb-4 text-center">Admin Dashboard</h1>
-                <button
-                    onClick={() => setEditMode(!editMode)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md mb-6"
-                >
-                    {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
-                </button>
-                <button
-                    onClick={handleSaveChanges}
-                    className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-4"
-                >
-                    Save Changes
-                </button>
-                <div className="space-y-4">
+                <div className="flex justify-center gap-4 mb-6">
+                    <button
+                        onClick={() => setEditMode(!editMode)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md"
+                    >
+                        {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
+                    </button>
+                    <button
+                        onClick={handleSaveChanges}
+                        className="bg-green-600 text-white px-4 py-2 rounded-md"
+                    >
+                        Save Changes
+                    </button>
+
+                    {/* Added toggle view button */}
+                    <button
+                        onClick={() => setViewMode(viewMode === "card" ? "table" : "card")}
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-md"
+                    >
+                        Switch to {viewMode === "card" ? "Table" : "Card"} View
+                    </button>
+                </div>
+
+                {/* Conditional rendering for views */}
+                {viewMode === "card" ? (
+                    // Original Card View
+                    <div className="space-y-4">
                     {catchData.map((data) => (
                         <div key={data._id} className="border-b border-gray-700 py-4">
                             <h2 className="text-lg font-semibold text-indigo-400 mb-2">User ID: {data._id}</h2>
@@ -254,8 +269,36 @@ const Adminverifyfish = () => {
                         </div>
                     ))}
                 </div>
+                ) : (
+                    // Table View
+                    <table className="table-auto w-full bg-gray-800 text-white rounded-lg shadow-lg">
+                        <thead>
+                            <tr className="bg-indigo-600">
+                                <th className="px-4 py-2">Catch ID</th>
+                                <th className="px-4 py-2">Date</th>
+                                <th className="px-4 py-2">Latitude</th>
+                                <th className="px-4 py-2">Longitude</th>
+                                <th className="px-4 py-2">Depth</th>
+                                <th className="px-4 py-2">Total Weight</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {catchData.map((data) =>
+                                data.catches.map((catchItem) => (
+                                    <tr key={catchItem._id} className="border-b border-gray-700">
+                                        <td className="px-4 py-2">{catchItem._id}</td>
+                                        <td className="px-4 py-2">{new Date(catchItem.date).toISOString().split("T")[0]}</td>
+                                        <td className="px-4 py-2">{catchItem.latitude}</td>
+                                        <td className="px-4 py-2">{catchItem.longitude}</td>
+                                        <td className="px-4 py-2">{catchItem.depth}</td>
+                                        <td className="px-4 py-2">{catchItem.total_weight}</td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                )}
             </div>
-
         </>
     );
 };

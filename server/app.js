@@ -30,8 +30,8 @@ app.use(cors());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
-  // .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
+  .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
