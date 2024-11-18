@@ -4,28 +4,28 @@ import { useParams } from "react-router-dom";
 import Adminmap from "./Admin-map";
 import MapboxVisualization from "./Admin-map";
 import { apiConnector } from "../ApiConnector";
+import { toast } from "react-hot-toast";
 const Adminverifyfish = () => {
   const [catchData, setCatchData] = useState([]);
   const [selectedCatchIds, setSelectedCatchIds] = useState([]);
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   let { userId } = useParams();
-  console.log("USER ID", userId);
+  console.log("USER ID in frontend", userId);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const fetchCatchData = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/admin/get-fish-data",
+        { userId: userId }
+      );
+      setCatchData(response.data);
+    } catch (error) {
+      console.error("Error fetching catch data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchCatchData = async () => {
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/admin/get-fish-data",
-          { userId: userId }
-        );
-        setCatchData(response.data);
-      } catch (error) {
-        console.error("Error fetching catch data:", error);
-      }
-    };
-
     fetchCatchData();
   }, []);
 
@@ -109,40 +109,35 @@ const Adminverifyfish = () => {
     });
   };
 
+  console.log("MODIFIED DATA", modifiedData);
   // Handle saving the changes to the database
   const handleSaveChanges = async () => {
-    // try {
-    //   const response = await axios.put(
-    //     `http://localhost:5000/admin/update-catch-data/${userId}`,
-    //     { modifiedData }
-    //   );
-    //   if (response.status === 200) {
-    //     alert("Data saved successfully!");
-    //     setModifiedData([]); // Clear modified data after saving
-    //   }
-    // } catch (error) {
-    //   console.error("Error saving catch data:", error);
-    // }
+    console.log("Calling handle save chnages");
 
     try {
       setIsLoading(true); // Start loading
 
       const response = await axios.put(
-        `http://localhost:5000/admin/update-catch-data/${userId}`,
-        { modifiedData }
+        `http://localhost:5000/admin/update-catch-data/${userId}`, // Ensure userId is passed correctly
+        { modifiedData } // Data payload
       );
 
+      console.log("Response from server:", response.data);
+
       if (response.status === 200) {
-        // Use a toast notification or similar UI to show success
-        toast.success("Data saved successfully!"); // Example using react-toastify
+        toast.success("Catch data updated successfully!"); // Notify success
+        fetchCatchData();
+        // Update the state with the new data
         setModifiedData([]); // Clear modified data after saving
       } else {
-        toast.error("Failed to save data!"); // Handle other response status codes
+        toast.error("Failed to update catch data. Please try again.");
       }
     } catch (error) {
-      console.error("Error saving catch data:", error);
-      setError("Error saving data. Please try again.");
-      toast.error("Error saving data.");
+      console.error("Error updating catch data:", error);
+      setError("Failed to update catch data.");
+      toast.error(
+        "Error saving catch data. Please check the console for details."
+      );
     } finally {
       setIsLoading(false); // Stop loading
     }
@@ -309,12 +304,14 @@ const Adminverifyfish = () => {
 
                   {editMode && (
                     <button
-                      onClick={() =>
+                      onClick={() => {
                         handleEditCatch(catchItem._id, {
                           species: catchItem.species,
                           total_weight: catchItem.total_weight,
-                        })
-                      }
+                        });
+                        handleSaveChanges();
+                        setEditMode(!editMode); // Invoke handleSaveChanges here
+                      }}
                       className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
                     >
                       Save Changes
