@@ -252,6 +252,10 @@ const MapboxVisualizationT = ({ catchData }) => {
                   margin: "0",
                   listStyleType: "none",
                   color: "#555",
+                  maxHeight: "150px", // Set a maximum height for the list
+                  overflowY: "auto", // Enable vertical scrolling when content overflows
+                  border: "1px solid #ccc", // Optional: Add a border for clarity
+                  paddingRight: "10px",
                 }}
               >
                 {popupInfo.species.map((s) => (
