@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import aws from "aws-sdk";
 import multer from "multer";
 import { nanoid } from "nanoid";
-import { login, signUp } from "./controller/authController.js";
+import { getusername, login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
 import { assert } from "console";
 import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" with { type: "json" };
@@ -20,13 +20,21 @@ import {
   getUnverifiedUser,
   verifyUser,
   updateCatchData,
+  validatedCatchData,
 } from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
+import { getFilteredCatches, getUnique } from "./controller/scientist-controller.js";
+
+
 
 dotenv.config();
 const app = express();
 app.use(cors());
+
+console.log(process.env.AWS_ACCESS_KEY);
+console.log(process.env.AWS_SECRETE_KEY);
+
 
 // MongoDB Connection
 mongoose
@@ -47,7 +55,7 @@ admin.initializeApp({
 const s3 = new aws.S3({
   region: "ap-south-1",
   accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+  secretAccessKey: process.env.AWS_SECRETE_KEY,
 });
 
 // Route Handlers
@@ -96,7 +104,9 @@ app.post("/admin/verifyUser", verifyUser);
 app.post("/admin/get-detail-data", getDetailsData);
 app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
-app.put("/admin/update-catch-data", updateCatchData);
+app.put("/admin/update-catch-data/:id", updateCatchData);
+app.get("/admin/usernames", getusername);
+app.post("/admin/validate-catch", validatedCatchData);
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);
@@ -110,6 +120,11 @@ app.get("/get-upload-url", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// scientist routes
+app.get("/scientist/unique-species", getUnique);
+app.post("/scientist/filter-data", getFilteredCatches);
 
 // Start the Server
 const PORT = process.env.PORT || 5000;

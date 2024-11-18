@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-const SpeciesSchema = new mongoose.Schema({
+// Schema for Species data in the cluster
+const ClusteredSpeciesSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true, // Species name is mandatory
@@ -12,7 +13,8 @@ const SpeciesSchema = new mongoose.Schema({
   },
 });
 
-const CatchSchema = new mongoose.Schema(
+// Schema for validated data
+const ValidatedCatchSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
@@ -31,27 +33,21 @@ const CatchSchema = new mongoose.Schema(
       default: null, // Depth can be null if not available
     },
     species: {
-      type: [SpeciesSchema], // Array of species objects
+      type: [ClusteredSpeciesSchema], // Array of species objects
       required: true, // At least one species entry is required
-    },
-    sea: {
-      type: String,
-    },
-    state: {
-      type: String,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId, // Reference to the admin who uploaded the data
-      required: true,
-      ref: "User", // Assumes there's an Admin model
-    },
-    verified: {
-      type: Boolean,
-      default: false, // Default to unverified
     },
     total_weight: {
       type: Number,
-      default: 0,
+      default: 0, // Default total weight to 0
+    },
+    verified_date: {
+      type: Date,
+      required: true, // The date when this data was verified
+    },
+    verifier_id: {
+      type: mongoose.Schema.Types.ObjectId, // Reference to the verifier (admin/user) who validated the data
+      required: true,
+      ref: "User",
     },
   },
   {
@@ -59,6 +55,6 @@ const CatchSchema = new mongoose.Schema(
   }
 );
 
-const Catch = mongoose.model("Catch", CatchSchema);
+const ValidatedCatch = mongoose.model("ValidatedCatch", ValidatedCatchSchema);
 
-export default Catch;
+export default ValidatedCatch;

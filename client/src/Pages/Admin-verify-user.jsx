@@ -141,6 +141,9 @@ const Adminverifyuser = () => {
                 <Button onClick={setType} color="gray">
                   research_cruises
                 </Button>
+                <Button onClick={setType} color="gray">
+                scientist
+                </Button>
               </Button.Group>
             </div>
           </div>

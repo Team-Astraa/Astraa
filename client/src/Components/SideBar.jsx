@@ -7,20 +7,20 @@ import {
   FaPhoneAlt,
   FaSignInAlt,
   FaInfoCircle,
-  FaBars,
-} from "react-icons/fa";
+  FaCloudUploadAlt 
+} from 'react-icons/fa';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const navLinks = [
-    { to: "/dashboard", icon: <FaHome size={30} />, label: "Home", key: "home" },
-    { to: "/notifications", icon: <FaBell size={30} />, label: "Bell", key: "notifications" },
-    { to: "/dashboard", icon: <FaTachometerAlt size={30} />, label: "Dashboard", key: "dashboard" },
-    { to: "/contact", icon: <FaPhoneAlt size={30} />, label: "Contact", key: "contact" },
-    { to: "/signup", icon: <FaSignInAlt size={30} />, label: "Login", key: "login" },
-    { to: "/about", icon: <FaInfoCircle size={30} />, label: "About", key: "about" },
+    { to: '/data-upload', icon: <FaCloudUploadAlt size={30} />, label: 'Home', key: 'home' },
+    { to: '/dashboard', icon: <FaBell size={30} />, label: 'Bell', key: 'notifications' },
+    { to: '/dashboard', icon: <FaTachometerAlt size={30} />, label: 'Dashboard', key: 'dashboard' },
+    { to: '/dashboard', icon: <FaPhoneAlt size={30} />, label: 'Contact', key: 'contact' },
+    { to: '/signup', icon: <FaSignInAlt size={30} />, label: 'Login', key: 'login' },
+    { to: '/dashboard', icon: <FaInfoCircle size={30} />, label: 'About', key: 'about' },
   ];
 
   const handleLinkClick = (to) => {

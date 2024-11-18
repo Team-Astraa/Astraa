@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true, },
+  username: { type: String },
   password: { type: String }, // Store hashed password
   role: {
     type: String,
@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
       "industry-collaborators",
       "research_cruises",
       "research_institute",
+      "scientist"
     ],
     required: function () {
       return this.role === "user";

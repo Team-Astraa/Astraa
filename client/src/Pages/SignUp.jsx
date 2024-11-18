@@ -3,6 +3,9 @@ import FishermanForm from "../Components/SignUpForms/Fisherman";
 import ResearchCruiseForm from "../Components/SignUpForms/ResearchCruise";
 import ResearchInstituteForm from "../Components/SignUpForms/ResearchInstitute";
 import IndustryCollaboratorForm from "../Components/SignUpForms/IndustryCollaborators";
+import { Link } from "react-router-dom";
+import ScientistForm from "../Components/SignUpForms/Scientist";
+
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -54,6 +57,26 @@ const SignUp = () => {
             </div>
           </div>
 
+        {/* User Type Buttons */}
+        <div className="mt-8 w-3/4">
+          <h4 className="text-lg font-medium mb-4">Select User Type</h4>
+          <div className="grid grid-cols-2 gap-4">
+            {["Fishermen", "Collaborators", "Cruisers", "Institutes", "scientist"].map(
+              (type, index) => (
+                <button
+                  key={index}
+                  className={`py-3 px-4 rounded-lg text-white font-semibold transition-all duration-300 ${selectedUserType === type.toLowerCase()
+                      ? "bg-blue-600 shadow-lg"
+                      : "bg-transparent border border-white hover:bg-blue-700 hover:shadow-lg"
+                    }`}
+                  onClick={() => handleUserTypeClick(type.toLowerCase())}
+                >
+                  {type}
+                </button>
+              )
+            )}
+          </div>
+        </div>
           {/* User Type Buttons */}
           <div className="mt-8 w-full lg:w-3/4">
             <h4 className="text-lg font-medium mb-4">Select User Type</h4>
@@ -92,6 +115,15 @@ const SignUp = () => {
       </div>
 
       {/* Right Section */}
+      <div className="w-1/2 lg:w-1/2 h-1/2 lg:h-full bg-white flex flex-col justify-center items-center">
+        {selectedUserType === null ? (
+          <div className="w-full h-screen flex items-center justify-center bg-">
+            <div className="text-center text-blue-700">
+              <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
+              <p className="text-l mt-5">
+                Please select your user type to continue.
+              </p>
+            </div>
       <div
         className={`${
           selectedUserType === null ? "hidden sm:hidden lg:flex" : "flex"
@@ -102,6 +134,27 @@ const SignUp = () => {
             <h1 className="text-4xl font-bold mb-4">Welcome to AquaDB!</h1>
             <p className="text-lg">Please select your user type to continue.</p>
           </div>
+        ) : (
+          <div className="text-center">
+            {selectedUserType === "fishermen" && (
+              <FishermanForm email={email} />
+            )}
+            {selectedUserType === "collaborators" && (
+              <IndustryCollaboratorForm email={email} />
+            )}
+            {selectedUserType === "cruisers" && (
+              <ResearchCruiseForm email={email} />
+            )}
+            {selectedUserType === "institutes" && (
+              <ResearchInstituteForm email={email} />
+            )}
+            {selectedUserType === "scientist" && (
+              <ScientistForm email={email} />
+            )}
+          </div>
+        )}
+      </div>
+    </div>
         ) : (
           <div className="w-full">
             {selectedUserType === "fishermen" && (
