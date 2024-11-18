@@ -13,6 +13,7 @@ import Admindatauploadusers from "./Pages/Admin-data-upload-users";
 import Adminmap from "./Pages/Admin-map";
 import FishingMap from "./Pages/Admin-map";
 import Loader from "./Components/Loader";
+import ResearchMap from "./Pages/Researchmap";
 
 function App() {
   return (
@@ -32,31 +33,23 @@ function App() {
               path="/dashboard"
               element={<PrivateRoute element={<Dashboard />} />}
             />
-            <Route
-              path="/admin/home"
-              element={<AdminHome />}
-            />
-            <Route
-              path="/admin/unverify-user"
-              element={<Adminverifyuser />} 
-            />
+
+            <Route path="/admin/home" element={<AdminHome />} />
+            <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
             <Route
               path="/admin/get-data-upload-user"
               element={<Admindatauploadusers />}
             />
             <Route
-              path="/admin/unverify-fish-data/:id"
-              element={<Adminverifyfish />} 
+              path="/admin/unverify-fish-data/:userId"
+              element={<Adminverifyfish />}
             />
-            <Route
-              path="/map"
-              element={<FishingMap />} 
-            />
+            <Route path="/map" element={<FishingMap />} />
+
+            {/* Researcher Routes */}
+
+            <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
             {/* <Route path="/signIn" element={<LoginForm />} /> */}
-
-
-
-
             {/* admin routes  */}
             {/* <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/unverify-user" element={<Adminverifyuser />} />

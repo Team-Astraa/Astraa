@@ -10,20 +10,26 @@ const Adminverifyfish = () => {
     const [editMode, setEditMode] = useState(false); // State to manage edit mode
     const [modifiedData, setModifiedData] = useState([]); // Track modified data
     const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
-    let { id } = useParams();
+    
+    let {userId} = useParams()
+    
 
     useEffect(() => {
+
+        
         const fetchCatchData = async () => {
             try {
-                const response = await axios.post("http://localhost:5000/admin/get-fish-data", { userId: id });
+                const response = await axios.post("http://localhost:5000/admin/get-fish-data", { userId: userId });
                 setCatchData(response.data);
             } catch (error) {
                 console.error("Error fetching catch data:", error);
             }
         };
 
+
+
         fetchCatchData();
-    }, [id]);
+    }, [userId]);
 
     useEffect(() => {
         // Listen for Ctrl + S (save) key press
@@ -118,7 +124,7 @@ const Adminverifyfish = () => {
 
     return (
         <>
-            <MapboxVisualization catchData={catchData} />
+            {<MapboxVisualization catchData={catchData} />}
 
             <div className="text-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
                 <h1 className="text-2xl font-bold mb-4 text-center">Admin Dashboard</h1>
@@ -395,6 +401,8 @@ const Adminverifyfish = () => {
                 )}
             </div>
         </>
+
+
     );
 };
 
