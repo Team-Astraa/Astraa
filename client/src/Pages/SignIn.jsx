@@ -70,7 +70,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex h-[87vh] bg-gradient-to-r from-blue-900 to-blue-500">
+    <div className="h-screen flex h-[87vh] bg-gradient-to-r from-blue-900 to-blue-500">
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
