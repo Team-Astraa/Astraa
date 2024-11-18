@@ -5,6 +5,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 const MapboxVisualizationT = ({ catchData }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState("markers"); // 'markers', 'heatmap', 'clusters'
+  const [filters, setFilters] = useState({ species: "", depth: "" }); // For species and depth
+  const [filteredData, setFilteredData] = useState(catchData);
 
   const heatmapData = {
     type: "FeatureCollection",
@@ -107,7 +109,46 @@ const MapboxVisualizationT = ({ catchData }) => {
     },
   };
 
+   // Function to filter markers based on input
+   const applyFilters = () => {
+  console.log('Original catchData:', JSON.stringify(catchData, null, 2));
+  console.log('Filters:', filters);
 
+  const filtered = catchData.map((data) => ({
+    ...data,
+    catches: data.catches.filter((catchDetail) => {
+      // Matches species: Check if any species name matches the filter
+      const matchesSpecies =
+        !filters.species ||
+        catchDetail.species.some((s) =>
+          s.name?.toLowerCase().includes(filters.species.toLowerCase())
+        );
+        
+      // Matches depth: Check if depth matches the filter
+      const matchesDepth =
+        !filters.depth || Number(catchDetail.depth) === Number(filters.depth);
+
+      console.log(
+        'Catch Detail:',
+        catchDetail,
+        'Matches Species:',
+        matchesSpecies,
+        'Matches Depth:',
+        matchesDepth
+      );
+
+      return matchesSpecies || matchesDepth;
+    }),
+  }));
+
+  // Filter out empty catches arrays
+  const finalFiltered = filtered.filter((data) => data.catches.length > 0);
+  console.log('Filtered Data:', JSON.stringify(finalFiltered, null, 2));
+
+  setFilteredData(finalFiltered);
+};
+
+  
 
 //   addd your new features here
 
@@ -161,6 +202,52 @@ const MapboxVisualizationT = ({ catchData }) => {
           }}
         >
           Show Clusters
+        </button>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          zIndex: 1000,
+          top: 70,
+          left: 10,
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          padding: "10px",
+          borderRadius: "5px",
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ marginRight: "10px", color: "#000"}}>Species:</label>
+          <input
+            type="text"
+            value={filters.species}
+            onChange={(e) => setFilters({ ...filters, species: e.target.value })}
+            placeholder="Enter species"
+            style={{ padding: "5px", borderRadius: "4px", border: "1px solid #ccc", color: "#000" }}
+          />
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ marginRight: "10px", color: "#000" }}>Depth:</label>
+          <input
+            type="number"
+            value={filters.depth}
+            onChange={(e) => setFilters({ ...filters, depth: e.target.value })}
+            placeholder="Enter depth"
+            style={{ padding: "5px", borderRadius: "4px", border: "1px solid #ccc", color: "#000" }}
+          />
+        </div>
+        <button
+          onClick={applyFilters}
+          style={{
+            padding: "8px 15px",
+            background: "#007bff",
+            color: "#000",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Go
         </button>
       </div>
       <Map
@@ -233,6 +320,8 @@ const MapboxVisualizationT = ({ catchData }) => {
               padding: "10px",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
               maxWidth: "300px",
+              maxHeight: "400px", // Ensure the popup respects its content
+              overflow: "visible", // Allow children to overflow within the bounds
             }}
           >
             <div style={{ fontFamily: "'Roboto', sans-serif" }}>
@@ -252,8 +341,8 @@ const MapboxVisualizationT = ({ catchData }) => {
                   margin: "0",
                   listStyleType: "none",
                   color: "#555",
-                  maxHeight: "150px", // Set a maximum height for the list
-                  overflowY: "auto", // Enable vertical scrolling when content overflows
+                  maxHeight: "150px !important",
+                  overflowY: "auto !important",
                   border: "1px solid #ccc", // Optional: Add a border for clarity
                   paddingRight: "10px",
                 }}
