@@ -96,7 +96,7 @@ app.post("/admin/verifyUser", verifyUser);
 app.post("/admin/get-detail-data", getDetailsData);
 app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
-app.put("/admin/update-catch-data", updateCatchData);
+app.put("/admin/update-catch-data/:id", updateCatchData);
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);
