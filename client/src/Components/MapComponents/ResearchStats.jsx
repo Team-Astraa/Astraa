@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Map, { Marker, Popup, Source, Layer } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const MapboxVisualizationT = ({ catchData }) => {
+const ResearchStatsMap = ({ catchData }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState("markers"); // 'markers', 'heatmap', 'clusters'
 
@@ -106,10 +106,6 @@ const MapboxVisualizationT = ({ catchData }) => {
       "circle-opacity": 0.9,
     },
   };
-
-
-
-//   addd your new features here
 
   return (
     <div>
@@ -252,10 +248,6 @@ const MapboxVisualizationT = ({ catchData }) => {
                   margin: "0",
                   listStyleType: "none",
                   color: "#555",
-                  maxHeight: "150px", // Set a maximum height for the list
-                  overflowY: "auto", // Enable vertical scrolling when content overflows
-                  border: "1px solid #ccc", // Optional: Add a border for clarity
-                  paddingRight: "10px",
                 }}
               >
                 {popupInfo.species.map((s) => (
@@ -281,7 +273,7 @@ const MapboxVisualizationT = ({ catchData }) => {
   );
 };
 
-export default MapboxVisualizationT;
+export default ResearchStatsMap;
 
 
 

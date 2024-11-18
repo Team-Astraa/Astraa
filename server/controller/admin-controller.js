@@ -5,6 +5,7 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchCruise.js";
 import ResearchInstitute from "../models/ResearchInstitute.js";
+import ValidatedCatch from "../models/ValidatedCatchData.js";
 import { generateCredentials } from "../helper/helper.js";
 import mongoose from "mongoose"; // Ensure you have mongoose imported
 
@@ -367,6 +368,66 @@ export const updateCatchData = async (req, res) => {
     return res.status(500).json({
       status: "error",
       message: "Internal server error. Please try again later.",
+    });
+  }
+};
+
+export const validatedCatchData = async (req, res) => {
+  try {
+    const { catchData, verifier_id } = req.body; // Destructure data from request body
+    console.log("CATCH DATA in BACKEND", catchData);
+    console.log("verifier_id in BACKEND", verifier_id);
+    if (!catchData || catchData.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No data provided for validation." });
+    }
+
+    if (!verifier_id) {
+      return res
+        .status(400)
+        .json({ error: "Verifier ID is required for validation." });
+    }
+
+    // Optional: Verify if the verifier exists in the User collection
+    const verifier = await User.findById(verifier_id);
+    if (!verifier) {
+      return res.status(404).json({ error: "Verifier not found." });
+    }
+
+    // Transform and prepare the data for storage in ValidatedCatch
+    const validatedData = catchData.map((item) => ({
+      date: item.date,
+      latitude: item.latitude,
+      longitude: item.longitude,
+      depth: item.depth,
+      species: item.species.map((species) => ({
+        name: species.name,
+        catch_weight: species.catch_weight,
+      })),
+      total_weight: item.total_weight,
+      verified_date: new Date(), // Current date for validation
+      verifier_id: new mongoose.Types.ObjectId(verifier_id), // Ensure proper ObjectId format
+    }));
+    console.log("validatedData", validatedData);
+    // Insert the validated data into the ValidatedCatch collection
+    const result = await ValidatedCatch.insertMany(validatedData);
+
+    // Optional: If needed, update original Catch records to reflect their validation status
+    const catchIds = catchData.map((item) => item._id);
+    await Catch.updateMany(
+      { _id: { $in: catchIds } },
+      { $set: { verified: true } }
+    );
+
+    return res
+      .status(201)
+      .json({ message: "Data validated and stored successfully.", result });
+  } catch (error) {
+    console.error("Error validating and clustering catch data:", error);
+    return res.status(500).json({
+      message: "An error occurred while validating and storing the data.",
+      error: error,
     });
   }
 };
