@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true, },
+  username: { type: String },
   password: { type: String }, // Store hashed password
   role: {
     type: String,

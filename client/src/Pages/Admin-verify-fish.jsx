@@ -310,7 +310,7 @@ const Adminverifyfish = () => {
                           total_weight: catchItem.total_weight,
                         });
                         handleSaveChanges();
-                        setEditMode(!editMode); // Invoke handleSaveChanges here
+                        setEditMode(!edit); // Invoke handleSaveChanges here
                       }}
                       className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
                     >

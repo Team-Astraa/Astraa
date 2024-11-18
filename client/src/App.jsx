@@ -14,6 +14,7 @@ import Adminmap from "./Pages/Admin-map";
 import FishingMap from "./Pages/Admin-map";
 import Loader from "./Components/Loader";
 import ResearchMap from "./Pages/Researchmap";
+import Addexcel from "./Pages/Add-excel";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               element={<Adminverifyfish />}
             />
             <Route path="/map" element={<FishingMap />} />
+            <Route path="/data-upload" element={<Addexcel />} />
 
             {/* Researcher Routes */}
 
