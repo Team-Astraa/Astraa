@@ -34,7 +34,7 @@ const LoginForm = () => {
     try {
       const response = await axios.request(config);
       toast.success("Login successful!");
-    
+
       if (response.data.message) {
         // Create an object to store all data
         const userData = {
@@ -42,11 +42,15 @@ const LoginForm = () => {
           userType: response.data.userType,
           userId: response.data.userid,
         };
-    
+
         // Save the object in localStorage as a JSON string
         localStorage.setItem("aquaUser", JSON.stringify(userData));
-    
+
         toast.success(response.data.message);
+        if (response.data.userType == 'scientist') {
+          return navigate("/scientist/home");
+
+        }
         navigate("/");
       }
     } catch (error) {

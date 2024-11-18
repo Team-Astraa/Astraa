@@ -15,6 +15,7 @@ import FishingMap from "./Pages/Admin-map";
 import Loader from "./Components/Loader";
 import ResearchMap from "./Pages/Researchmap";
 import Addexcel from "./Pages/Add-excel";
+import ScientistHome from "./Pages/ScientistHome";
 
 function App() {
   return (
@@ -60,6 +61,11 @@ function App() {
 
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/map" element={<FishingMap />} /> */}
+
+
+            {/* scientist routes  */}
+            <Route path="/scientist/home" element={<ScientistHome />} />
+
           </Routes>
         </div>
       </div>
