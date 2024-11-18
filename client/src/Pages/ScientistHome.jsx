@@ -195,27 +195,7 @@ const ScientistHome = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">User ID</label>
-            <input
-              type="text"
-              name="userId"
-              value={filters.userId}
-              onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-            />
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={filters.verified}
-              onChange={handleCheckboxChange}
-              className="mr-2"
-            />
-            <label className="text-sm text-gray-700">Verified</label>
-          </div>
-        </div>
+        
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
