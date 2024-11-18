@@ -13,7 +13,7 @@ const AdminHome = () => {
       <div className='w-full flex items-center justify-center h-[10vh] shadow-md'>
         <h1 className='text-bold text-3xl text-center text-white'>ADMIN PORTAL</h1>
       </div>
-      <div className='flex w-full m-4 gap-10'>
+      <div className='flex w-full m-4 gap-10 flex-wrap'>
         <Card
           className="max-w-sm cursor-pointer hover:scale-105 duration-200"
           imgAlt="Meaningful alt text for an image that is not purely decorative"
