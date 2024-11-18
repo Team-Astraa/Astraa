@@ -7,10 +7,10 @@ import dotenv from "dotenv";
 import aws from "aws-sdk";
 import multer from "multer";
 import { nanoid } from "nanoid";
-import { login, signUp } from "./controller/authController.js";
+import { getusername, login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
 import { assert } from "console";
-import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
+import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" with { type: "json" };
 import fs from "fs";
 import path from "path";
 import {
@@ -97,6 +97,7 @@ app.post("/admin/get-detail-data", getDetailsData);
 app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
 app.put("/admin/update-catch-data", updateCatchData);
+app.get("/admin/usernames", getusername);
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);

@@ -7,11 +7,12 @@ import {
   FaPhoneAlt,
   FaSignInAlt,
   FaInfoCircle,
+  FaCloudUploadAlt 
 } from 'react-icons/fa';
 
 const Sidebar = () => {
   const navLinks = [
-    { to: '/dashboard', icon: <FaHome size={30} />, label: 'Home', key: 'home' },
+    { to: '/data-upload', icon: <FaCloudUploadAlt size={30} />, label: 'Home', key: 'home' },
     { to: '/dashboard', icon: <FaBell size={30} />, label: 'Bell', key: 'notifications' },
     { to: '/dashboard', icon: <FaTachometerAlt size={30} />, label: 'Dashboard', key: 'dashboard' },
     { to: '/dashboard', icon: <FaPhoneAlt size={30} />, label: 'Contact', key: 'contact' },

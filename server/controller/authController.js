@@ -141,10 +141,28 @@ export const login = async (req, res) => {
       token,
       username: user.username,
       userType: user.userType,
-      userid : user._id
+      userid: user._id,
     });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getusername = async (req, res) => {
+  try {
+    console.log("Fetching usernames...");
+
+    // Fetch users and project only the `username` field
+    const users = await User.find({}, { username: 1, _id: 0 });
+    console.log(users);
+
+    // Extract usernames as an array
+    const usernames = users.map(user => user.username);
+
+    res.json(usernames); // Respond with the array of usernames
+  } catch (error) {
+    console.error("Error fetching usernames:", error);
+    res.status(500).json({ message: "Failed to fetch usernames." });
   }
 };
