@@ -9,6 +9,7 @@ import multer from "multer";
 import { nanoid } from "nanoid";
 import { getusername, login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
+import { assert } from "console";
 import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 import fs from "fs";
 import path from "path";
@@ -19,6 +20,7 @@ import {
   getUnverifiedUser,
   verifyUser,
   updateCatchData,
+  validatedCatchData,
 } from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
@@ -102,8 +104,9 @@ app.post("/admin/verifyUser", verifyUser);
 app.post("/admin/get-detail-data", getDetailsData);
 app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
-app.put("/admin/update-catch-data", updateCatchData);
+app.put("/admin/update-catch-data/:id", updateCatchData);
 app.get("/admin/usernames", getusername);
+app.post("/admin/validate-catch", validatedCatchData);
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);

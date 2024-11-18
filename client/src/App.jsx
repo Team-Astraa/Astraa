@@ -14,6 +14,7 @@ import Adminmap from "./Pages/Admin-map";
 import FishingMap from "./Pages/Admin-map";
 import Loader from "./Components/Loader";
 import ResearchMap from "./Pages/Researchmap";
+import ResearchStats from "./Pages/ResearchStats";
 import Addexcel from "./Pages/Add-excel";
 import ScientistHome from "./Pages/ScientistHome";
 
@@ -52,6 +53,11 @@ function App() {
             {/* Researcher Routes */}
 
             <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
+            <Route
+              path="/Research/statistics/:id"
+              element={<ResearchStats />}
+            />
+
             {/* <Route path="/signIn" element={<LoginForm />} /> */}
             {/* admin routes  */}
             {/* <Route path="/admin/home" element={<AdminHome />} />

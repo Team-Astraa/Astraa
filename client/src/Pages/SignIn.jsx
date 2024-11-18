@@ -52,7 +52,7 @@ const LoginForm = () => {
 
         }
         navigate("/");
-      }
+      } 
     } catch (error) {
       if (error.response && error.response.data) {
         const message = error.response.data.message;

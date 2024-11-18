@@ -5,6 +5,7 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchCruise.js";
 import ResearchInstitute from "../models/ResearchInstitute.js";
+import ValidatedCatch from "../models/ValidatedCatchData.js";
 import { generateCredentials } from "../helper/helper.js";
 import mongoose from "mongoose"; // Ensure you have mongoose imported
 
@@ -235,108 +236,205 @@ export const getdataUploaduser = async (req, res) => {
 
 // correct code
 export const updateCatchData = async (req, res) => {
-  const { modifiedData } = req.body;
-  const { userId } = req.query;
-  console.log("Modified Data:", JSON.stringify(modifiedData, null, 2));
+  const { modifiedData } = req.body; // Extract modified data from the request body
+  const { id: userId } = req.params; // Extract userId from the route parameters
+
+  console.log("Received request to update catch data.");
+  console.log("USER ID:", userId);
+  console.log(
+    "Modified Data in backend:",
+    JSON.stringify(modifiedData, null, 2)
+  );
+
   try {
-    // Validate userId and modifiedData
-    if (!userId || !Array.isArray(modifiedData)) {
+    // Validate inputs
+    if (!userId || !modifiedData || !Array.isArray(modifiedData)) {
       return res.status(400).json({
         status: "error",
-        message: "Invalid input. userId and modifiedData are required.",
+        message:
+          "Invalid input. userId and an array of modifiedData are required.",
       });
     }
 
-    // Step 1: Find all catch documents for the given userId
+    // Find all catch documents for the given userId
     const catchDocuments = await Catch.find({ userId });
-
-    // Check if no catch data is present for the user
     if (catchDocuments.length === 0) {
       return res.status(404).json({
         status: "error",
-        message: "No catch data found for the given userId.",
+        message: `No catch data found for user ID: ${userId}`,
       });
     }
 
-    // Step 2: Validate if the IDs in modifiedData exist in the user's catch documents
+    // Process updates for each document in modifiedData
     const updatedDocuments = [];
-
     for (const modifiedObj of modifiedData) {
-      const documentId = modifiedObj.id || modifiedObj._id; // Handle both `_id` and `id`
+      const documentId = modifiedObj.id || modifiedObj._id; // Handle both `id` and `_id`
       const { species, ...fieldsToUpdate } = modifiedObj;
-
+      console.log("DOCUMENT ID", documentId);
       if (!documentId) {
-        return res.status(400).json({
-          status: "error",
-          message: "Each modifiedData object must include an _id or id.",
-        });
+        console.warn("Skipped modifiedData object without an ID:", modifiedObj);
+        continue; // Skip if document ID is missing
       }
 
       // Find the catch document by ID
       const catchDocument = catchDocuments.find(
         (doc) => doc._id.toString() === documentId.toString()
       );
-
+      console.log("catchDocument", catchDocument);
       if (!catchDocument) {
-        console.error(
+        console.warn(
           `Catch document with ID ${documentId} not found for user ${userId}.`
         );
-        continue; // Skip if the document doesn't exist in the user's catch data
+        continue; // Skip if the document doesn't exist in the user's data
       }
 
-      // Step 3: Prepare the updated species array if any species are provided in the modified data
-      let updatedSpecies = catchDocument.species;
+      // Update species if provided
+      // let updatedSpecies = catchDocument.species;
+      // console.log("updatedSpecies above", updatedSpecies);
+      // if (species && Array.isArray(species)) {
+      //   console.log("SPECIES", species);
+      //   updatedSpecies = updatedSpecies.map((existingSpec) => {
+      //     const modifiedSpec = species.find(
+      //       (modSpec) => modSpec.id === existingSpec._id.toString()
+      //     );
+      //     console.log("modifiedSpec", modifiedSpec);
+      //     return modifiedSpec
+      //       ? { ...existingSpec.toObject(), ...modifiedSpec }
+      //       : existingSpec;
+
+      //   });
+
+      // }
+
+      // console.log("updatedSpecies below", updatedSpecies);
+
+      // // Prepare the updated fields
+      // const updatedFields = {
+      //   ...fieldsToUpdate,
+      //   species: updatedSpecies,
+      // };
+
+      // // Update the document in the database
+      // const updatedCatch = await Catch.findOneAndUpdate(
+      //   { _id: documentId },
+      //   { $set: updatedFields },
+      //   { new: true }
+      // );
+
+      let updatedSpecies = catchDocument.species; // Initial species array from the document
+      console.log(
+        "Initial Updated Species (from catchDocument):",
+        updatedSpecies
+      );
 
       if (species && Array.isArray(species)) {
+        console.log("Input Species Array (from modifiedData):", species);
+
         updatedSpecies = updatedSpecies.map((existingSpec) => {
-          // Find the species in the modified data by matching the species `id`
+          // Match species based on `_id` field
           const modifiedSpec = species.find(
-            (modSpec) => modSpec.id === existingSpec._id.toString()
+            (modSpec) => modSpec._id === existingSpec._id.toString()
           );
 
-          if (modifiedSpec) {
-            // Merge the updated species with the new catch_weight
-            return { ...existingSpec.toObject(), ...modifiedSpec };
-          }
+          console.log("Existing Spec:", existingSpec);
+          console.log("Matching Modified Spec:", modifiedSpec);
 
-          return existingSpec; // Return the existing species if no update
+          return modifiedSpec
+            ? { ...existingSpec.toObject(), ...modifiedSpec }
+            : existingSpec; // Update or retain the existing spec
         });
+
+        console.log("Final Updated Species Array:", updatedSpecies);
       }
 
-      // Prepare the fields to update (including updated species)
-      const updatedFields = {
-        ...fieldsToUpdate,
-        species: updatedSpecies,
-      };
-
-      // Step 4: Update the catch document
+      // Update the database document with the new species array
       const updatedCatch = await Catch.findOneAndUpdate(
-        { _id: documentId }, // Match by document ID
-        { $set: updatedFields }, // Update the fields provided
+        { _id: catchDocument._id }, // Match by document ID
+        { $set: { species: updatedSpecies, ...fieldsToUpdate } }, // Include species and other fields
         { new: true } // Return the updated document
       );
 
+      console.log("Updated Catch Document:", updatedCatch);
+
       if (updatedCatch) {
-        updatedDocuments.push(updatedCatch); // Add the updated document to the result array
-        console.log(
-          `Catch document with ID ${documentId} updated successfully.`
-        );
+        console.log(`Successfully updated document ID: ${documentId}`);
+        updatedDocuments.push(updatedCatch);
       } else {
-        console.error(`Failed to update catch document with ID ${documentId}.`);
+        console.error(`Failed to update document ID: ${documentId}`);
       }
     }
 
-    // Step 5: Return the updated catch data
+    // Send the response with all updated documents
     return res.status(200).json({
       status: "success",
       message: "Catch data updated successfully.",
-      updatedDocuments,
+      data: updatedDocuments,
     });
   } catch (error) {
-    console.error("Error updating catch data:", error);
+    console.error("Error during catch data update:", error);
     return res.status(500).json({
       status: "error",
-      message: error.message,
+      message: "Internal server error. Please try again later.",
+    });
+  }
+};
+
+export const validatedCatchData = async (req, res) => {
+  try {
+    const { catchData, verifier_id } = req.body; // Destructure data from request body
+    console.log("CATCH DATA in BACKEND", catchData);
+    console.log("verifier_id in BACKEND", verifier_id);
+    if (!catchData || catchData.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No data provided for validation." });
+    }
+
+    if (!verifier_id) {
+      return res
+        .status(400)
+        .json({ error: "Verifier ID is required for validation." });
+    }
+
+    // Optional: Verify if the verifier exists in the User collection
+    const verifier = await User.findById(verifier_id);
+    if (!verifier) {
+      return res.status(404).json({ error: "Verifier not found." });
+    }
+
+    // Transform and prepare the data for storage in ValidatedCatch
+    const validatedData = catchData.map((item) => ({
+      date: item.date,
+      latitude: item.latitude,
+      longitude: item.longitude,
+      depth: item.depth,
+      species: item.species.map((species) => ({
+        name: species.name,
+        catch_weight: species.catch_weight,
+      })),
+      total_weight: item.total_weight,
+      verified_date: new Date(), // Current date for validation
+      verifier_id: new mongoose.Types.ObjectId(verifier_id), // Ensure proper ObjectId format
+    }));
+    console.log("validatedData", validatedData);
+    // Insert the validated data into the ValidatedCatch collection
+    const result = await ValidatedCatch.insertMany(validatedData);
+
+    // Optional: If needed, update original Catch records to reflect their validation status
+    const catchIds = catchData.map((item) => item._id);
+    await Catch.updateMany(
+      { _id: { $in: catchIds } },
+      { $set: { verified: true } }
+    );
+
+    return res
+      .status(201)
+      .json({ message: "Data validated and stored successfully.", result });
+  } catch (error) {
+    console.error("Error validating and clustering catch data:", error);
+    return res.status(500).json({
+      message: "An error occurred while validating and storing the data.",
+      error: error,
     });
   }
 };
