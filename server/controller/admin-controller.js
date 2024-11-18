@@ -166,7 +166,7 @@ export const getCatchDataGroupedByUser = async (req, res) => {
   try {
     const { userId } = req.body;
     console.log(userId);
-     // Assuming the userId is passed as a URL parameter
+    // Assuming the userId is passed as a URL parameter
 
     // Use new to instantiate the ObjectId
     const objectId = new mongoose.Types.ObjectId(userId);
@@ -174,26 +174,28 @@ export const getCatchDataGroupedByUser = async (req, res) => {
     // Aggregate query to filter by userId and then group the data
     const catchData = await Catch.aggregate([
       { $match: { userId: objectId } }, // Match the userId passed in the request
-      { 
+      {
         $group: {
           _id: "$userId",
-          catches: { $push: "$$ROOT" } // Group catches by userId
-        }
-      }
+          catches: { $push: "$$ROOT" }, // Group catches by userId
+        },
+      },
     ]);
 
     if (catchData.length === 0) {
-      return res.status(404).json({ message: "No catch data found for this user" });
+      return res
+        .status(404)
+        .json({ message: "No catch data found for this user" });
     }
 
     return res.status(200).json(catchData);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error fetching data", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error fetching data", error: error.message });
   }
 };
-
-
 
 export const getdataUploaduser = async (req, res) => {
   try {
@@ -223,3 +225,113 @@ export const getdataUploaduser = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+// correct code
+export const updateCatchData = async (req, res) => {
+  const { modifiedData } = req.body;
+  const { userId } = req.query;
+  console.log("Modified Data:", JSON.stringify(modifiedData, null, 2));
+  try {
+    // Validate userId and modifiedData
+    if (!userId || !Array.isArray(modifiedData)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid input. userId and modifiedData are required.",
+      });
+    }
+
+    // Step 1: Find all catch documents for the given userId
+    const catchDocuments = await Catch.find({ userId });
+
+    // Check if no catch data is present for the user
+    if (catchDocuments.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "No catch data found for the given userId.",
+      });
+    }
+
+    // Step 2: Validate if the IDs in modifiedData exist in the user's catch documents
+    const updatedDocuments = [];
+
+    for (const modifiedObj of modifiedData) {
+      const documentId = modifiedObj.id || modifiedObj._id; // Handle both `_id` and `id`
+      const { species, ...fieldsToUpdate } = modifiedObj;
+
+      if (!documentId) {
+        return res.status(400).json({
+          status: "error",
+          message: "Each modifiedData object must include an _id or id.",
+        });
+      }
+
+      // Find the catch document by ID
+      const catchDocument = catchDocuments.find(
+        (doc) => doc._id.toString() === documentId.toString()
+      );
+
+      if (!catchDocument) {
+        console.error(
+          `Catch document with ID ${documentId} not found for user ${userId}.`
+        );
+        continue; // Skip if the document doesn't exist in the user's catch data
+      }
+
+      // Step 3: Prepare the updated species array if any species are provided in the modified data
+      let updatedSpecies = catchDocument.species;
+
+      if (species && Array.isArray(species)) {
+        updatedSpecies = updatedSpecies.map((existingSpec) => {
+          // Find the species in the modified data by matching the species `id`
+          const modifiedSpec = species.find(
+            (modSpec) => modSpec.id === existingSpec._id.toString()
+          );
+
+          if (modifiedSpec) {
+            // Merge the updated species with the new catch_weight
+            return { ...existingSpec.toObject(), ...modifiedSpec };
+          }
+
+          return existingSpec; // Return the existing species if no update
+        });
+      }
+
+      // Prepare the fields to update (including updated species)
+      const updatedFields = {
+        ...fieldsToUpdate,
+        species: updatedSpecies,
+      };
+
+      // Step 4: Update the catch document
+      const updatedCatch = await Catch.findOneAndUpdate(
+        { _id: documentId }, // Match by document ID
+        { $set: updatedFields }, // Update the fields provided
+        { new: true } // Return the updated document
+      );
+
+      if (updatedCatch) {
+        updatedDocuments.push(updatedCatch); // Add the updated document to the result array
+        console.log(
+          `Catch document with ID ${documentId} updated successfully.`
+        );
+      } else {
+        console.error(`Failed to update catch document with ID ${documentId}.`);
+      }
+    }
+
+    // Step 5: Return the updated catch data
+    return res.status(200).json({
+      status: "success",
+      message: "Catch data updated successfully.",
+      updatedDocuments,
+    });
+  } catch (error) {
+    console.error("Error updating catch data:", error);
+    return res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+
+

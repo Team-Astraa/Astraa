@@ -19,7 +19,7 @@ import {
   getDetailsData,
   getUnverifiedUser,
   verifyUser,
-  // updateCatchData,
+  updateCatchData,
 } from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
@@ -30,7 +30,7 @@ app.use(cors());
 
 // MongoDB Connection
 mongoose
-  // .connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
+  //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
   .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -96,7 +96,7 @@ app.post("/admin/verifyUser", verifyUser);
 app.post("/admin/get-detail-data", getDetailsData);
 app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
-// app.put("/admin/update-catch-data", updateCatchData);
+app.put("/admin/update-catch-data", updateCatchData);
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);
