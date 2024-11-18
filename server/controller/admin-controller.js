@@ -53,6 +53,11 @@ export const getUnverifiedUser = async (req, res) => {
           userId: { $in: users.map((u) => u._id) },
         });
         break;
+      case "scientist":
+        userDetails = await ResearchInstitute.find({
+          userId: { $in: users.map((u) => u._id) },
+        });
+        break;
       default:
         return res.status(400).json({ message: "Invalid userType" });
     }
@@ -202,6 +207,8 @@ export const getdataUploaduser = async (req, res) => {
     // Fetch unique userIds from Catch collection
     const uniqueUserIds = await Catch.distinct("userId").exec();
 
+  
+
     if (uniqueUserIds.length === 0) {
       return res
         .status(404)
@@ -333,5 +340,3 @@ export const updateCatchData = async (req, res) => {
     });
   }
 };
-
-
