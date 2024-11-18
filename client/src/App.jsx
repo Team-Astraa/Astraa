@@ -14,13 +14,14 @@ import Adminmap from "./Pages/Admin-map";
 import FishingMap from "./Pages/Admin-map";
 import Loader from "./Components/Loader";
 import ResearchMap from "./Pages/Researchmap";
+import "./App.css"; // Import the CSS
 
 function App() {
   return (
     <Router>
-      <div style={styles.container}>
+      <div className="container">
         <Sidebar />
-        <div style={styles.content}>
+        <div className="content">
           <NavBar />
           <Routes>
             {/* Public Routes */}
@@ -64,18 +65,5 @@ function App() {
     </Router>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-  },
-  content: {
-    padding: "10px",
-    marginLeft: "200px",
-    width: "calc(100% - 200px)",
-    height: "100vh",
-    overflowY: "auto",
-  },
-};
 
 export default App;

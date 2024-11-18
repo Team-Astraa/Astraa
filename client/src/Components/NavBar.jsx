@@ -3,15 +3,18 @@ import logo from '../assets/navlogo.png'
 
 const NavBar = () => {
     return (
-        <div className='flex w-full items-center justify-between h-[10vh] border-b-2 border-[#436ec677] '>
-            <div>
-                <h1 className='text-3xl font-bold text-white'>Fish Catch repo</h1>
-
-            </div>
-            <div className='mx-4'>
-                <img className='w-[150px] rounded-md' src={logo} alt="logo" />
-            </div>
+    <div className="flex w-full items-center justify-between h-[10vh] border-b-2 border-[#436ec677]">
+        {/* Title Section (Centered) */}
+        <div className="flex-grow flex justify-center ml-14 lg:ml-40">
+            <h1 className="text-2xl lg:text-3xl  font-bold text-white">
+                Fish Catch repo
+            </h1>
         </div>
+        {/* Logo Section */}
+        <div className="flex-shrink-0 mx-4">
+            <img className="w-[100px] sm:w-[80px] lg:w-[150px] lg:p-5 sm:p-0" src={logo} alt="logo" />
+        </div>
+    </div>
     )
 }
 
