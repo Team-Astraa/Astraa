@@ -111,12 +111,14 @@ const MapboxVisualization = ({ catchData }) => {
     <div>
       <div
         style={{
-          position: "absolute",
           zIndex: 1000,
-          top: 10,
-          left: 10,
+          top: "50%",
+          left: "50%",
           display: "flex",
           gap: "10px",
+          justifyContent: "center",
+          alignItems:"center",
+          padding: "10px 20px"
         }}
       >
         <button
