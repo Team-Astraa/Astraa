@@ -52,7 +52,7 @@ const Addexcel = () => {
             <h1 className="text-2xl font-bold mb-4">Upload Excel or CSV File</h1>
             <div
                 {...getRootProps()}
-                className={`w-80 h-32 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer 
+                className={`w-80 p-5 text-center h-32 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer 
           ${isDragActive ? 'border-green-500 bg-green-100' : 'border-gray-400 bg-white'}`}
             >
                 <input {...getInputProps()} />
