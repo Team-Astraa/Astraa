@@ -14,14 +14,17 @@ import Adminmap from "./Pages/Admin-map";
 import FishingMap from "./Pages/Admin-map";
 import Loader from "./Components/Loader";
 import ResearchMap from "./Pages/Researchmap";
+import ResearchStats from "./Pages/ResearchStats";
 import Addexcel from "./Pages/Add-excel";
+import ScientistHome from "./Pages/ScientistHome";
+import "./App.css"; // Import the CSS
 
 function App() {
   return (
     <Router>
-      <div style={styles.container}>
+      <div className="container">
         <Sidebar />
-        <div style={styles.content}>
+        <div className="content">
           <NavBar />
           <Routes>
             {/* Public Routes */}
@@ -51,6 +54,11 @@ function App() {
             {/* Researcher Routes */}
 
             <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
+            <Route
+              path="/Research/statistics/:id"
+              element={<ResearchStats />}
+            />
+
             {/* <Route path="/signIn" element={<LoginForm />} /> */}
             {/* admin routes  */}
             {/* <Route path="/admin/home" element={<AdminHome />} />
@@ -60,24 +68,16 @@ function App() {
 
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/map" element={<FishingMap />} /> */}
+
+
+            {/* scientist routes  */}
+            <Route path="/scientist/home" element={<ScientistHome />} />
+
           </Routes>
         </div>
       </div>
     </Router>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-  },
-  content: {
-    padding: "10px",
-    marginLeft: "200px",
-    width: "calc(100% - 200px)",
-    height: "100vh",
-    overflowY: "auto",
-  },
-};
 
 export default App;

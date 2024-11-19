@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
       "industry-collaborators",
       "research_cruises",
       "research_institute",
+      "scientist"
     ],
     required: function () {
       return this.role === "user";
