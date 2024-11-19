@@ -10,7 +10,7 @@ import { nanoid } from "nanoid";
 import { getusername, login, signUp } from "./controller/authController.js";
 import admin from "firebase-admin";
 import { assert } from "console";
-import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" with { type: "json" };
+import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 import fs from "fs";
 import path from "path";
 import {
@@ -24,9 +24,10 @@ import {
 } from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
-import { getFilteredCatches, getUnique } from "./controller/scientist-controller.js";
-
-
+import {
+  getFilteredCatches,
+  getUnique,
+} from "./controller/scientist-controller.js";
 
 dotenv.config();
 const app = express();
@@ -34,7 +35,6 @@ app.use(cors());
 
 console.log(process.env.AWS_ACCESS_KEY);
 console.log(process.env.AWS_SECRETE_KEY);
-
 
 // MongoDB Connection
 mongoose
@@ -120,7 +120,6 @@ app.get("/get-upload-url", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // scientist routes
 app.get("/scientist/unique-species", getUnique);
