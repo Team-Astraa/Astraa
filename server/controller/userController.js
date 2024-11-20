@@ -83,8 +83,15 @@ const cleanData = (data, userId) => {
 
     // Normalize depth values by removing non-numeric characters
     const depth = item.DEPTH
-      ? parseFloat(item.DEPTH.replace(/[^0-9.]/g, ""))
-      : null;
+    ? parseFloat(item.DEPTH.split("-")[0].trim()) // Take the first part before the "-"
+    : null;
+
+
+    //old
+    // const depth = item.DEPTH
+    // ? parseFloat(item.DEPTH.replace(/[^0-9.]/g, ""))
+    // : null;
+
 
     // Categorize by sea and state
     const latitude = parseFloat(item.SHOOT_LAT);
