@@ -763,7 +763,8 @@ const Adminverifyfish = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full table-auto text-left border-collapse border border-gray-700 table-fixed">
+            <table className="min-w-full table-auto text-left border-collapse border border-gray-700 lg:table-fixed">
+              {/* check the table css lg:table fixed */}
               <thead>
                 <tr className="bg-gray-800">
                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
