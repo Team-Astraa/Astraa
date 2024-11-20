@@ -208,8 +208,6 @@ export const getdataUploaduser = async (req, res) => {
     // Fetch unique userIds from Catch collection
     const uniqueUserIds = await Catch.distinct("userId").exec();
 
-  
-
     if (uniqueUserIds.length === 0) {
       return res
         .status(404)
@@ -379,62 +377,96 @@ export const updateCatchData = async (req, res) => {
   }
 };
 
-export const validatedCatchData = async (req, res) => {
+// POST endpoint to validate and save catch data
+export const validateCatchData = async (req, res) => {
   try {
-    const { catchData, verifier_id } = req.body; // Destructure data from request body
-    console.log("CATCH DATA in BACKEND", catchData);
-    console.log("verifier_id in BACKEND", verifier_id);
-    if (!catchData || catchData.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "No data provided for validation." });
+    const { catchData } = req.body; // The incoming data from the frontend
+
+    // Validate if catchData is an array
+    if (!Array.isArray(catchData)) {
+      return res.status(400).json({
+        message: "Invalid data format. Expected an array of catch data.",
+      });
     }
 
-    if (!verifier_id) {
-      return res
-        .status(400)
-        .json({ error: "Verifier ID is required for validation." });
-    }
+    // Process each user catch data
+    const validatedCatchPromises = catchData.map(async (userData) => {
+      // Ensure catches exist and is an array
+      if (!userData.catches || !Array.isArray(userData.catches)) {
+        console.error("Invalid catches data for user:", userData);
+        return null; // Skip invalid entries
+      }
 
-    // Optional: Verify if the verifier exists in the User collection
-    const verifier = await User.findById(verifier_id);
-    if (!verifier) {
-      return res.status(404).json({ error: "Verifier not found." });
-    }
+      // Extract and process each fish catch data
+      const validatedCatches = userData.catches.map((fishData) => {
+        // Extract fields from fishData with default values
+        const {
+          date,
+          latitude,
+          longitude,
+          depth = null, // Default to null if depth is missing
+          species = [], // Default to empty array if species is missing
+          total_weight = 0, // Default to 0 if total weight is missing
+        } = fishData;
 
-    // Transform and prepare the data for storage in ValidatedCatch
-    const validatedData = catchData.map((item) => ({
-      date: item.date,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      depth: item.depth,
-      species: item.species.map((species) => ({
-        name: species.name,
-        catch_weight: species.catch_weight,
-      })),
-      total_weight: item.total_weight,
-      verified_date: new Date(), // Current date for validation
-      verifier_id: new mongoose.Types.ObjectId(verifier_id), // Ensure proper ObjectId format
-    }));
-    console.log("validatedData", validatedData);
-    // Insert the validated data into the ValidatedCatch collection
-    const result = await ValidatedCatch.insertMany(validatedData);
+        // Process species data safely
+        const speciesData = Array.isArray(species)
+          ? species.map((speciesItem) => ({
+              name: speciesItem?.name || "Unknown", // Default name if missing
+              catch_weight: speciesItem?.catch_weight || 0, // Default to 0 if missing
+            }))
+          : [];
 
-    // Optional: If needed, update original Catch records to reflect their validation status
-    const catchIds = catchData.map((item) => item._id);
-    await Catch.updateMany(
-      { _id: { $in: catchIds } },
-      { $set: { verified: true } }
+        return {
+          date,
+          latitude,
+          longitude,
+          depth,
+          species: speciesData,
+          total_weight,
+        };
+      });
+
+      // Create a new ValidatedCatch document to save
+      const validatedCatch = new ValidatedCatch({
+        date: validatedCatches[0]?.date || new Date(),
+        latitude: validatedCatches[0]?.latitude,
+        longitude: validatedCatches[0]?.longitude,
+        // species: validatedCatches[0]?.species,
+        total_weight: validatedCatches[0]?.total_weight,
+        verified_date: new Date(),
+        verifier_id: mongoose.Types.ObjectId(userData.verifier_id), // Assuming verifier_id is provided
+      });
+      console.log("validatedCatch", validatedCatch);
+      try {
+        // Save the validated catch data to the database
+        await validatedCatch.save();
+        console.log("Validated catch saved successfully:", validatedCatch);
+        return validatedCatch;
+      } catch (error) {
+        console.error("Error saving validated catch data:", error);
+        return null; // Skip this entry if saving fails
+      }
+    });
+
+    // Wait for all promises to resolve
+    const savedCatches = await Promise.all(validatedCatchPromises);
+    // Filter out null entries in case there were errors
+    const successfulSaves = savedCatches.filter(
+      (catchData) => catchData !== null
     );
 
-    return res
-      .status(201)
-      .json({ message: "Data validated and stored successfully.", result });
+    // Respond with success message
+    if (successfulSaves.length > 0) {
+      res.status(201).json({
+        message: "Catch data validated and saved successfully",
+        data: successfulSaves,
+      });
+    } else {
+      res.status(400).json({ message: "No valid catch data saved." });
+    }
   } catch (error) {
-    console.error("Error validating and clustering catch data:", error);
-    return res.status(500).json({
-      message: "An error occurred while validating and storing the data.",
-      error: error,
-    });
+    console.error("Error saving validated catch data:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };

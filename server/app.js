@@ -20,8 +20,7 @@ import {
   getUnverifiedUser,
   verifyUser,
   updateCatchData,
-  validatedCatchData,
-} from "./controller/admin-controller.js";
+  validateCatchData} from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
 import {
@@ -106,7 +105,7 @@ app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
 app.put("/admin/update-catch-data/:id", updateCatchData);
 app.get("/admin/usernames", getusername);
-app.post("/admin/validate-catch", validatedCatchData);
+app.post("/admin/validate-catch", validateCatchData); 
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);

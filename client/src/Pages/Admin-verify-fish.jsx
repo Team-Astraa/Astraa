@@ -343,7 +343,7 @@ const Adminverifyfish = () => {
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   let { userId } = useParams();
-  console.log("USER ID in frontend", userId);
+  // console.log("USER ID in frontend", userId);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -440,7 +440,7 @@ const Adminverifyfish = () => {
     });
   };
 
-  console.log("MODIFIED DATA", modifiedData);
+  // console.log("MODIFIED DATA", modifiedData);
 
   // Handle saving the changes to the database
   const handleSaveChanges = async () => {
@@ -477,41 +477,32 @@ const Adminverifyfish = () => {
 
   // Handle validation of catch data
   const handleValidateCatch = async () => {
+    console.log("handleValidateCatch Reaching Here");
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
       const verifierId = "673af7b569f9684ec0d4784d"; // Get the verifier ID
       console.log("Catch Data before validation:", catchData);
 
-      // const validatedData = catchData.map((userData) => ({
-      //   date: userData.catches.date,
-      //   latitude: userData.latitude,
-      //   longitude: userData.longitude,
-      //   depth: userData.depth,
-      //   species: Array.isArray(userData.species)
-      //     ? userData.species.map((species) => ({
-      //         name: species.name,
-      //         catch_weight: species.catch_weight,
-      //       }))
-      //     : [], // Default to an empty array if species is undefined or not an array
-      //   total_weight: userData.total_weight,
-      // }));
+      
+      
 
-      const validatedData = catchData.map((userData) => ({
-        date: userData.date,  // Ensure date exists, default to null if not
-        // latitude: userData.latitude || null, // Handle missing latitude
-        // longitude: userData.longitude || null, // Handle missing longitude
-        // depth: userData.depth || null, // Handle missing depth
-        // species: Array.isArray(userData.species) // Process species array safely
-        //   ? userData.species.map((speciesItem) => ({
-        //       name: speciesItem?.name || "Unknown", // Default to "Unknown" if name is missing
-        //       catch_weight: speciesItem?.catch_weight || 0, // Default to 0 if catch_weight is missing
-        //     }))
-        //   : [], // Default to an empty array if species is undefined or not an array
-        // total_weight: userData.total_weight || 0, // Default to 0 if total_weight is missing
-      }));
-s
+      const validatedData = catchData.map((userData) => 
+        userData.catches.map((fishData) => ({
+          date: fishData?.date , // Extracting date, default to null if missing
+          latitude: fishData?.latitude , // Extract latitude
+          longitude: fishData?.longitude , // Extract longitude
+          depth: fishData?.depth , // Extract depth
+          species: Array.isArray(fishData.species) // Safely map species
+            ? fishData.species.map((speciesItem) => ({
+                name: speciesItem?.name , // Default name
+                catch_weight: speciesItem?.catch_weight , // Default weight
+              }))
+            : [], // Default to empty array if species is undefined
+          total_weight: fishData.total_weight, // Extract total weight
+        }))
+      );
+      
       console.log("Valiadted data in Frontend", validatedData);
-      return;
       // Sending data for validation
       const response = await axios.post(
         "http://localhost:5000/admin/validate-catch",
@@ -632,6 +623,22 @@ s
                       <input
                         type="number"
                         value={catchItem.longitude}
+                        onChange={(e) =>
+                          handleEditCatch(catchItem._id, {
+                            longitude: parseFloat(e.target.value),
+                          })
+                        }
+                        readOnly={!editMode}
+                        className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400">
+                        sea:
+                      </label>
+                      <input
+                        type="number"
+                        value={catchItem.sea}
                         onChange={(e) =>
                           handleEditCatch(catchItem._id, {
                             longitude: parseFloat(e.target.value),
