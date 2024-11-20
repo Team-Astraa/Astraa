@@ -117,6 +117,7 @@ const MapboxVisualization = ({ catchData }) => {
           left: 10,
           display: "flex",
           gap: "10px",
+          
         }}
       >
         <button

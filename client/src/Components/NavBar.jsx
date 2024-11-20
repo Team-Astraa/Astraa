@@ -1,5 +1,5 @@
-import React from 'react'
-import logo from '../assets/navlogo.png'
+import React from "react";
+import logo from "../assets/navlogo.png";
 
 const NavBar = () => {
     return (
@@ -15,7 +15,7 @@ const NavBar = () => {
             <img className="w-[100px] sm:w-[80px] lg:w-[150px] h-auto lg:p-5 sm:p-0" src={logo} alt="logo" />
         </div>
     </div>
-    )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

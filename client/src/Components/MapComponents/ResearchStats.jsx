@@ -1,13 +1,13 @@
-import React, { useRef, useEffect } from "react";
-import { Card, CardContent, Typography, Grid, List, ListItem, ListItemText } from "@mui/material";
-import { Bar, Pie } from "react-chartjs-2";
-
-// Import necessary components from Chart.js
+import React from "react";
+import { Card, CardContent, Typography, Grid } from "@mui/material";
+import { Bar, Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   ArcElement,
   Title,
   Tooltip,
@@ -19,6 +19,8 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   ArcElement,
   Title,
   Tooltip,
@@ -26,13 +28,11 @@ ChartJS.register(
 );
 
 const ResearchStatsMap = ({ catchData }) => {
+  // Helper functions for calculations
   const calculateTotalCatchWeight = () => {
     return catchData.reduce((total, data) => {
       const catchWeight = data.catches.reduce((subTotal, singleCatch) => {
-        if (!singleCatch || !singleCatch.species) {
-          console.warn("Missing species data in catch:", singleCatch);
-          return subTotal; // Skip if species data is missing
-        }
+        if (!singleCatch || !singleCatch.species) return subTotal;
         const speciesWeight = singleCatch.species.reduce(
           (speciesTotal, species) => speciesTotal + (species.catch_weight || 0),
           0
@@ -43,25 +43,25 @@ const ResearchStatsMap = ({ catchData }) => {
     }, 0);
   };
 
-  const calculateAverageDepth = () => {
+  const calculateDepthStats = () => {
     const allDepths = catchData.flatMap((data) =>
-      data.catches.map((catchDetail) => catchDetail.depth)
+      data.catches.map((catchDetail) => catchDetail.depth || 0)
     );
-    const totalDepth = allDepths.reduce((total, depth) => total + depth, 0);
-    return (totalDepth / allDepths.length).toFixed(2);
+    const minDepth = Math.min(...allDepths);
+    const maxDepth = Math.max(...allDepths);
+    const avgDepth = (
+      allDepths.reduce((total, depth) => total + depth, 0) / allDepths.length
+    ).toFixed(2);
+
+    return { minDepth, maxDepth, avgDepth };
   };
 
-  const calculateSpeciesCounts = () => {
+  const calculateSpeciesStats = () => {
     const speciesMap = new Map();
     catchData.forEach((data) => {
-      if (!data.catches) return; // Skip if no catches data
       data.catches.forEach((catchDetail) => {
-        if (!catchDetail.species || catchDetail.species.length === 0) {
-          console.warn("Missing or empty species array in catch:", catchDetail);
-          return; // Skip if no species data
-        }
         catchDetail.species.forEach((s) => {
-          if (s.name && s.catch_weight) { // Check if required fields exist
+          if (s.name && s.catch_weight) {
             speciesMap.set(
               s.name,
               (speciesMap.get(s.name) || 0) + s.catch_weight
@@ -70,13 +70,29 @@ const ResearchStatsMap = ({ catchData }) => {
         });
       });
     });
-    return Array.from(speciesMap.entries());
+
+    const speciesCounts = Array.from(speciesMap.entries());
+
+    const mostCommonSpecies = speciesCounts.length
+      ? speciesCounts.reduce((mostCommon, current) =>
+          current[1] > mostCommon[1] ? current : mostCommon
+        )
+      : ["No species", 0];
+
+    const averageWeight =
+      speciesCounts.length > 0
+        ? speciesCounts.reduce((sum, [, weight]) => sum + weight, 0) /
+          speciesCounts.length
+        : 0;
+
+    return { speciesCounts, mostCommonSpecies, averageWeight };
   };
 
-  // Data for charts
+  // Data for stats and charts
   const totalCatchWeight = calculateTotalCatchWeight();
-  const averageDepth = calculateAverageDepth();
-  const speciesCounts = calculateSpeciesCounts();
+  const { minDepth, maxDepth, avgDepth } = calculateDepthStats();
+  const { speciesCounts, mostCommonSpecies, averageWeight } =
+    calculateSpeciesStats();
 
   const speciesNames = speciesCounts.map(([species]) => species);
   const speciesWeights = speciesCounts.map(([, weight]) => weight);
@@ -111,21 +127,19 @@ const ResearchStatsMap = ({ catchData }) => {
     ],
   };
 
-  // Refs to manage charts
-  const barChartRef = useRef(null);
-  const pieChartRef = useRef(null);
-
-  useEffect(() => {
-    // Cleanup chart instances when the component unmounts or data changes
-    return () => {
-      if (barChartRef.current && barChartRef.current.chartInstance) {
-        barChartRef.current.chartInstance.destroy();
-      }
-      if (pieChartRef.current && pieChartRef.current.chartInstance) {
-        pieChartRef.current.chartInstance.destroy();
-      }
-    };
-  }, [catchData]); // Re-run the effect if data changes
+  // Line chart data - replace Scatter with Line chart
+  const lineData = {
+    labels: speciesNames,
+    datasets: [
+      {
+        label: "Catch Weight vs Species",
+        data: speciesWeights,
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+      },
+    ],
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -133,7 +147,7 @@ const ResearchStatsMap = ({ catchData }) => {
         Research Stats
       </Typography>
       <Grid container spacing={3}>
-        {/* Total Catch Weight */}
+        {/* Stats */}
         <Grid item xs={12} sm={6} md={4}>
           <Card variant="outlined">
             <CardContent>
@@ -147,7 +161,6 @@ const ResearchStatsMap = ({ catchData }) => {
           </Card>
         </Grid>
 
-        {/* Average Depth */}
         <Grid item xs={12} sm={6} md={4}>
           <Card variant="outlined">
             <CardContent>
@@ -155,32 +168,60 @@ const ResearchStatsMap = ({ catchData }) => {
                 Average Depth
               </Typography>
               <Typography variant="h4" color="primary">
-                {averageDepth} meters
+                {avgDepth} meters
+              </Typography>
+              <Typography variant="subtitle1" color="textSecondary">
+                Min: {minDepth}m, Max: {maxDepth}m
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Bar Chart for Species Weight */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" color="textSecondary">
+                Most Common Species
+              </Typography>
+              <Typography variant="h4" color="primary">
+                {mostCommonSpecies[0]} ({mostCommonSpecies[1]} kg)
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Bar Chart */}
         <Grid item xs={12} md={6}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" color="textSecondary">
                 Species Weight Distribution
               </Typography>
-              <Bar ref={barChartRef} data={barData} />
+              <Bar data={barData} />
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Pie Chart for Species Distribution */}
+        {/* Pie Chart */}
         <Grid item xs={12} md={6}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" color="textSecondary">
                 Species Distribution
               </Typography>
-              <Pie ref={pieChartRef} data={pieData} />
+              <Pie data={pieData} />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Line Chart (Replacing Scatter Plot) */}
+        <Grid item xs={12} md={6}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" color="textSecondary">
+                Catch Weight vs Species Trend
+              </Typography>
+              <Line data={lineData} />
             </CardContent>
           </Card>
         </Grid>
