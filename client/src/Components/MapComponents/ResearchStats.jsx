@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { Card, CardContent, Typography, Grid } from "@mui/material";
-import { Bar, Pie, Scatter } from "react-chartjs-2";
+import { Bar, Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
   PointElement,
   ArcElement,
   Title,
@@ -18,6 +19,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
   PointElement,
   ArcElement,
   Title,
@@ -71,12 +73,11 @@ const ResearchStatsMap = ({ catchData }) => {
 
     const speciesCounts = Array.from(speciesMap.entries());
 
-    // Check if speciesCounts is empty before calling reduce
     const mostCommonSpecies = speciesCounts.length
       ? speciesCounts.reduce((mostCommon, current) =>
           current[1] > mostCommon[1] ? current : mostCommon
         )
-      : ["No species", 0]; // Default value if no species found
+      : ["No species", 0];
 
     const averageWeight =
       speciesCounts.length > 0
@@ -126,20 +127,16 @@ const ResearchStatsMap = ({ catchData }) => {
     ],
   };
 
-  const scatterData = {
+  // Line chart data - replace Scatter with Line chart
+  const lineData = {
+    labels: speciesNames,
     datasets: [
       {
-        label: "Weight vs Depth",
-        data: catchData.flatMap((data) =>
-          data.catches.map((catchDetail) => ({
-            x: catchDetail.depth,
-            y: catchDetail.species.reduce(
-              (total, s) => total + (s.catch_weight || 0),
-              0
-            ),
-          }))
-        ),
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
+        label: "Catch Weight vs Species",
+        data: speciesWeights,
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
       },
     ],
   };
@@ -217,14 +214,14 @@ const ResearchStatsMap = ({ catchData }) => {
           </Card>
         </Grid>
 
-        {/* Scatter Plot */}
-        <Grid item xs={12}>
+        {/* Line Chart (Replacing Scatter Plot) */}
+        <Grid item xs={12} md={6}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" color="textSecondary">
-                Weight vs Depth
+                Catch Weight vs Species Trend
               </Typography>
-              <Scatter data={scatterData} />
+              <Line data={lineData} />
             </CardContent>
           </Card>
         </Grid>
