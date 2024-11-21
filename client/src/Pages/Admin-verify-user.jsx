@@ -19,14 +19,15 @@ const Adminverifyuser = () => {
   }, [userType]);
 
   const setType = (e) => {
-    setUserType(e.target.innerText);
+    const type = e.target.innerText;
+    setUserType(type);
   };
 
   console.log("USER TYPE", userType);
 
   const getUser = (userType) => {
     let data = { userType: userType };
-
+    console.log("User Type in get user", data);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -122,7 +123,7 @@ const Adminverifyuser = () => {
   return (
     <>
       {!openModal ? (
-        <AnimationWrapper className="w-full min-h-screen">
+        <AnimationWrapper className="w-full min-h-screen mt-20">
           <div className="w-full flex items-center justify-between  p-4 ">
             <h1 className="text-bold text-3xl text-center text-white font-bold">
               Un Verified Users{" "}
@@ -142,7 +143,7 @@ const Adminverifyuser = () => {
                   research_cruises
                 </Button>
                 <Button onClick={setType} color="gray">
-                scientist
+                  scientist
                 </Button>
               </Button.Group>
             </div>

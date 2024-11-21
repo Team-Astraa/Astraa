@@ -4,7 +4,7 @@
   }
   
   .content {
-    margin-left: 200px;
+    margin-left: 190px;
     width: calc(100% - 200px);
     height: 100vh;
     overflow-y: auto;
