@@ -190,18 +190,6 @@ const ResearchStatsMap = ({ catchData }) => {
           </Card>
         </Grid>
 
-        {/* Bar Chart */}
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" color="textSecondary">
-                Species Weight Distribution
-              </Typography>
-              <Bar data={barData} />
-            </CardContent>
-          </Card>
-        </Grid>
-
         {/* Pie Chart */}
         <Grid item xs={12} md={6}>
           <Card variant="outlined">
@@ -214,7 +202,19 @@ const ResearchStatsMap = ({ catchData }) => {
           </Card>
         </Grid>
 
-        {/* Line Chart (Replacing Scatter Plot) */}
+        {/* Bar Chart */}
+        <Grid item xs={12} md={6}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" color="textSecondary">
+                Species Weight Distribution
+              </Typography>
+              <Bar data={barData} />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Line Chart*/}
         <Grid item xs={12} md={6}>
           <Card variant="outlined">
             <CardContent>
