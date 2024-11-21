@@ -43,16 +43,16 @@ const LoginForm = () => {
           userId: response.data.userid,
         };
 
+        console.log("userData", userData);
         // Save the object in localStorage as a JSON string
         localStorage.setItem("aquaUser", JSON.stringify(userData));
 
         toast.success(response.data.message);
-        if (response.data.userType == 'scientist') {
+        if (response.data.userType == "scientist") {
           return navigate("/scientist/home");
-
         }
         navigate("/");
-      } 
+      }
     } catch (error) {
       if (error.response && error.response.data) {
         const message = error.response.data.message;

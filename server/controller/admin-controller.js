@@ -208,8 +208,6 @@ export const getdataUploaduser = async (req, res) => {
     // Fetch unique userIds from Catch collection
     const uniqueUserIds = await Catch.distinct("userId").exec();
 
-  
-
     if (uniqueUserIds.length === 0) {
       return res
         .status(404)
@@ -379,62 +377,104 @@ export const updateCatchData = async (req, res) => {
   }
 };
 
-export const validatedCatchData = async (req, res) => {
+// POST endpoint to validate and save catch data
+export const validateCatchData = async (req, res) => {
   try {
-    const { catchData, verifier_id } = req.body; // Destructure data from request body
-    console.log("CATCH DATA in BACKEND", catchData);
-    console.log("verifier_id in BACKEND", verifier_id);
-    if (!catchData || catchData.length === 0) {
+    // Extracting the validated data (which is in an array of arrays)
+    const { validatedData } = req.body;
+
+    // Flatten the validated data if it's an array of arrays
+    const flattenedData = validatedData.flat(); // This flattens the array by one level
+
+    // console.log("Flattened validated data:", flattenedData);
+
+    // Validate the input: check if it's an array and not empty
+    if (!Array.isArray(flattenedData) || flattenedData.length === 0) {
       return res
         .status(400)
-        .json({ error: "No data provided for validation." });
+        .json({ message: "No validated catches provided." });
     }
 
-    if (!verifier_id) {
-      return res
-        .status(400)
-        .json({ error: "Verifier ID is required for validation." });
-    }
+    // Map through each validated catch object in the array
+    const processedValidatedCatches = flattenedData.map((catchData) => {
+      const {
+        _id, // Include the ID in the processed data
+        date,
+        latitude,
+        longitude,
+        depth,
+        species,
+        total_weight,
+        verified_date,
+        verifier_id,
+      } = catchData;
 
-    // Optional: Verify if the verifier exists in the User collection
-    const verifier = await User.findById(verifier_id);
-    if (!verifier) {
-      return res.status(404).json({ error: "Verifier not found." });
-    }
+      // Processing the species array to handle missing fields inside each species object
+      const processedSpecies =
+        species && Array.isArray(species)
+          ? species.map((specie) => ({
+              name: specie.name || null, // If species name is missing, set to null
+              catch_weight: specie.catch_weight || null, // If catch weight is missing, set to null
+            }))
+          : [];
 
-    // Transform and prepare the data for storage in ValidatedCatch
-    const validatedData = catchData.map((item) => ({
-      date: item.date,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      depth: item.depth,
-      species: item.species.map((species) => ({
-        name: species.name,
-        catch_weight: species.catch_weight,
-      })),
-      total_weight: item.total_weight,
-      verified_date: new Date(), // Current date for validation
-      verifier_id: new mongoose.Types.ObjectId(verifier_id), // Ensure proper ObjectId format
-    }));
-    console.log("validatedData", validatedData);
-    // Insert the validated data into the ValidatedCatch collection
-    const result = await ValidatedCatch.insertMany(validatedData);
+      // Returning the processed validated catch object
+      return {
+        _id, // Ensure the ID is included for uniqueness check
+        date: date || null, // If no date, set null
+        latitude: latitude || null, // If no latitude, set null
+        longitude: longitude || null, // If no longitude, set null
+        depth: depth || null, // If no depth, set null
+        species: processedSpecies, // Processed species array
+        total_weight: total_weight || 0, // If no total_weight, set to 0
+        verified_date: verified_date || null, // If no verified_date, set null
+        verifier_id: verifier_id || null, // If no verifier_id, set null
+      };
+    });
 
-    // Optional: If needed, update original Catch records to reflect their validation status
-    const catchIds = catchData.map((item) => item._id);
-    await Catch.updateMany(
-      { _id: { $in: catchIds } },
-      { $set: { verified: true } }
+    // console.log(
+    //   "Processed validated catches before DB insert:",
+    //   processedValidatedCatches
+    // );
+
+    // Check if any catch already exists in the database using the provided _id
+    const existingCatches = await ValidatedCatch.find({
+      _id: { $in: processedValidatedCatches.map((catchData) => catchData._id) },
+    });
+    // console.log("existingCatches", existingCatches);
+
+    // Filter out the already existing catches from the processed data
+    const newValidatedCatches = processedValidatedCatches.filter(
+      (catchData) =>
+        !existingCatches.some(
+          (existing) => existing._id.toString() === catchData._id.toString()
+        )
     );
 
-    return res
-      .status(201)
-      .json({ message: "Data validated and stored successfully.", result });
+    // Insert only the new validated catches
+    if (newValidatedCatches.length > 0) {
+      const createdValidatedCatches = await ValidatedCatch.insertMany(
+        newValidatedCatches
+      );
+      console.log(
+        "Successfully inserted validated catches:",
+        createdValidatedCatches
+      );
+
+      return res.status(201).json({
+        message: "Validated catches successfully created.",
+        data: createdValidatedCatches, // The array of created objects
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ message: "No new validated catches to insert." });
+    }
   } catch (error) {
-    console.error("Error validating and clustering catch data:", error);
+    console.error("Error creating validated catches:", error);
     return res.status(500).json({
-      message: "An error occurred while validating and storing the data.",
-      error: error,
+      message: "An error occurred while creating validated catches.",
+      error: error.message,
     });
   }
 };

@@ -4,12 +4,16 @@ import mongoose from "mongoose";
 const ClusteredSpeciesSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true, // Species name is mandatory
+    required: [true, "Species name is mandatory"], // Error message if missing
     trim: true,
   },
   catch_weight: {
     type: Number,
-    default: null, // Default to null if catch weight is not provided
+    default: null, // Allow null values if not provided
+    validate: {
+      validator: (v) => v === null || !isNaN(v), // Validate as a number or null
+      message: "Catch weight must be a valid number or null.",
+    },
   },
 });
 
@@ -18,40 +22,73 @@ const ValidatedCatchSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
-      required: true, // Date of the fishing activity is mandatory
+      required: false, // Make optional for now
+      validate: {
+        validator: (v) => !v || !isNaN(new Date(v).getTime()), // Validate as a valid date or allow null
+        message: "Invalid date format.",
+      },
+      default: null, // Default to null if not provided
     },
     latitude: {
       type: Number,
-      required: true, // Latitude of fishing location is mandatory
+      required: false, // Make optional for now
+      validate: {
+        validator: (v) => !v || (!isNaN(v) && v >= -90 && v <= 90), // Validate latitude or allow null
+        message: "Latitude must be a valid number between -90 and 90.",
+      },
+      default: null,
     },
     longitude: {
       type: Number,
-      required: true, // Longitude of fishing location is mandatory
+      required: false, // Make optional for now
+      validate: {
+        validator: (v) => !v || (!isNaN(v) && v >= -180 && v <= 180), // Validate longitude or allow null
+        message: "Longitude must be a valid number between -180 and 180.",
+      },
+      default: null,
     },
     depth: {
       type: Number,
-      default: null, // Depth can be null if not available
+      default: null, // Allow null if depth is not provided
+      validate: {
+        validator: (v) => v === null || !isNaN(v), // Validate depth as a number or null
+        message: "Depth must be a valid number or null.",
+      },
     },
     species: {
       type: [ClusteredSpeciesSchema], // Array of species objects
-      required: true, // At least one species entry is required
+      required: false, // Make optional for now
+      validate: {
+        validator: (v) => Array.isArray(v), // Ensure species is an array if provided
+        message: "Species must be an array.",
+      },
+      default: [], // Default to an empty array if not provided
     },
     total_weight: {
       type: Number,
-      default: 0, // Default total weight to 0
+      default: 0, // Default to 0 if not provided
+      validate: {
+        validator: (v) => !isNaN(v), // Ensure it's a valid number
+        message: "Total weight must be a valid number.",
+      },
     },
     verified_date: {
       type: Date,
-      required: true, // The date when this data was verified
+      required: false, // Make optional for now
+      validate: {
+        validator: (v) => !v || !isNaN(new Date(v).getTime()), // Validate as a valid date or allow null
+        message: "Invalid verified date format.",
+      },
+      default: null, // Default to null if not provided
     },
     verifier_id: {
-      type: mongoose.Schema.Types.ObjectId, // Reference to the verifier (admin/user) who validated the data
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      required: false, // Make optional for now
       ref: "User",
     },
   },
   {
-    timestamps: true, // Automatically include createdAt and updatedAt fields
+    timestamps: true, // Automatically add createdAt and updatedAt
   }
 );
 
