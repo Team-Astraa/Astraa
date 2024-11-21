@@ -111,13 +111,15 @@ const MapboxVisualization = ({ catchData }) => {
     <div>
       <div
         style={{
-          position: "absolute",
-          zIndex: 1000,
-          top: 10,
-          left: 10,
+          position: "sticky",
+          zIndex: 20,
+          top: "150px", 
           display: "flex",
+          justifyContent: "center",
           gap: "10px",
+          width:"100%",
         }}
+        
       >
         <button
           onClick={() => setViewMode("markers")}
@@ -165,7 +167,15 @@ const MapboxVisualization = ({ catchData }) => {
           longitude: 84.431,
           zoom: 7,
         }}
-        style={{ width: "100%", height: "100vh" }}
+        style={{
+          margin: "30px auto", // Center the map horizontally
+          top: "50px",
+          marginBottom:"50px",
+          border: "solid 5px #6096B4",
+          width: "95%", // Occupy 100% of the available width
+          height: window.innerWidth <= 768 ? "400px" : "100vh",
+          padding: window.innerWidth <= 768 ? "30px" : "0px",
+        }}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
       >
