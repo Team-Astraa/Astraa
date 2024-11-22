@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AnimationWrapper from "./Animation-page"
 
 const Admindatauploadusers = () => {
     const [users, setUsers] = useState([]);
@@ -25,7 +26,7 @@ const Admindatauploadusers = () => {
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <div className="min-h-screen  p-6 text-white">
+        <AnimationWrapper className="min-h-screen  p-6 text-white">
             <h1 className="text-3xl font-semibold text-center mb-6">User Information</h1>
             {users.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -47,7 +48,7 @@ const Admindatauploadusers = () => {
             ) : (
                 <p className="text-center text-lg">No users found.</p>
             )}
-        </div>
+        </AnimationWrapper>
     );
 };
 

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-// import Adminmap from "./Admin-map";
 import MapboxVisualization from "./Admin-map";
-// import { apiConnector } from "../ApiConnector";
 import { toast } from "react-hot-toast";
+import AnimationWrapper from "./Animation-page"
 
 const Adminverifyfish = () => {
   const [catchData, setCatchData] = useState([]);
@@ -211,7 +210,7 @@ const Adminverifyfish = () => {
     <>
       <MapboxVisualization catchData={catchData} />
 
-      <div className="text-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
+      <AnimationWrapper className="text-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
         <h1 className="text-2xl font-bold mb-4 text-center">Admin Dashboard</h1>
         <button
           onClick={() => setEditMode(!editMode)}
@@ -579,7 +578,7 @@ const Adminverifyfish = () => {
             </table>
           </div>
         )}
-      </div>
+      </AnimationWrapper>
     </>
   );
 };

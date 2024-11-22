@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import AnimationWrapper from "./Animation-page"
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const ScientistHome = () => {
   const [filters, setFilters] = useState({
@@ -76,8 +79,22 @@ const ScientistHome = () => {
       console.error("Error fetching filtered catches:", error);
     }
   };
+
+
+
+  const navigate = useNavigate()
+  useEffect(() => {
+    let user = localStorage.getItem('aquaUser')
+    let userInsession = JSON.parse(user)
+    if (userInsession && userInsession.userType != 'scientist') {
+      toast.error("You cannot access this page")
+      navigate('/signin')
+      return;
+
+    }
+  },[])
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <AnimationWrapper className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-6 text-center">Filter Catches</h2>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -229,7 +246,7 @@ const ScientistHome = () => {
           </button>
         </div>
       </form>
-    </div>
+    </AnimationWrapper>
   );
 };
 

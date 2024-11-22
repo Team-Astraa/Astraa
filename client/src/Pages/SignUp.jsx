@@ -5,6 +5,7 @@ import ResearchInstituteForm from "../Components/SignUpForms/ResearchInstitute";
 import IndustryCollaboratorForm from "../Components/SignUpForms/IndustryCollaborators";
 import { Link } from "react-router-dom";
 import ScientistForm from "../Components/SignUpForms/Scientist";
+import AnimationWrapper from "./Animation-page"
 
 
 const SignUp = () => {
@@ -20,7 +21,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row overflow-hidden">
+    <AnimationWrapper className="flex flex-col lg:flex-row overflow-hidden">
       {/* Left Section */}
       <div className="w-full lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 text-white overflow-y-auto p-8 h-screen">
         <div className="flex flex-col justify-center items-center h-full">
@@ -123,7 +124,7 @@ const SignUp = () => {
           </div>
         )}
       </div>
-    </div>
+    </AnimationWrapper>
   );
 };
 
