@@ -26,29 +26,55 @@ const Admindatauploadusers = () => {
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <AnimationWrapper className="min-h-screen  p-6 text-white">
-            <h1 className="text-3xl font-semibold text-center mb-6">User Information</h1>
+        <AnimationWrapper className="min-h-screen bg-gradient-to-br  p-8 text-white">
+            <h1 className="text-4xl font-bold text-center mb-8 text-indigo-300 drop-shadow-lg">
+                User Information
+            </h1>
             {users.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {users.map((user) => (
-                        <div key={user._id} className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition duration-300">
-                            <h2 className="text-xl font-bold text-indigo-400 mb-4">User ID: {user._id}</h2>
-                            <p className="text-lg mb-2"><strong>Username:</strong> {user.username}</p>
-                            <p className="text-lg mb-2"><strong>Email:</strong> {user.email}</p>
-                            <p className="text-lg mb-4"><strong>User Type:</strong> {user.userType}</p>
-                            <button
-                                onClick={() => navigate(`/admin/unverify-fish-data/${user._id}`)}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
-                            >
-                                See Data
-                            </button>
-                        </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {users.map((user, i) => (
+                        <AnimationWrapper
+                            key={i}
+                            transition={{ duration: 1, delay: i * 0.13 }}
+
+                            className="bg-gray-900/45 p-6 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-transform duration-300"
+                        >
+                            <h2 className="text-2xl font-bold text-indigo-400 mb-4">
+                                User ID: {user._id}
+                            </h2>
+                            <p className="text-lg mb-2">
+                                <strong>Username:</strong> {user.username}
+                            </p>
+                            <p className="text-lg mb-2">
+                                <strong>Email:</strong> {user.email}
+                            </p>
+                            <p className="text-lg mb-6">
+                                <strong>User Type:</strong> {user.userType}
+                            </p>
+                            <div className="flex space-x-4">
+                                <button
+                                    onClick={() => navigate(`/admin/unverify-fish-data/${user._id}`)}
+                                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
+                                >
+                                    See Data
+                                </button>
+                                <button
+                                    onClick={() => navigate(`/Research/statistics/${user._id}`)}
+                                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+                                >
+                                    View Research
+                                </button>
+                            </div>
+                        </AnimationWrapper>
                     ))}
                 </div>
             ) : (
-                <p className="text-center text-lg">No users found.</p>
+                <p className="text-center text-lg text-gray-300">
+                    No users found.
+                </p>
             )}
         </AnimationWrapper>
+
     );
 };
 

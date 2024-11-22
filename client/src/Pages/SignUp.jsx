@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FishermanForm from "../Components/SignUpForms/Fisherman";
 import ResearchCruiseForm from "../Components/SignUpForms/ResearchCruise";
 import ResearchInstituteForm from "../Components/SignUpForms/ResearchInstitute";
 import IndustryCollaboratorForm from "../Components/SignUpForms/IndustryCollaborators";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ScientistForm from "../Components/SignUpForms/Scientist";
 import AnimationWrapper from "./Animation-page"
 
@@ -20,8 +20,26 @@ const SignUp = () => {
     setEmail(e.target.value);
   };
 
+
+  const navigate = useNavigate()
+  useEffect(() => {
+
+    let user = localStorage.getItem("aquaUser");
+    let userInses = JSON.parse(user)
+    if (user) {
+      if (userInses.userType == "admin") {
+        return navigate("/admin/home");
+      } else if (userInses.userType == "scientist") {
+        return navigate("/scientist/home");
+      }
+      return navigate("/")
+
+    }
+
+  }, [])
+
   return (
-    <AnimationWrapper className="flex flex-col lg:flex-row overflow-hidden">
+    <AnimationWrapper className="flex flex-col lg:flex-row overflow-hidden mx-auto">
       {/* Left Section */}
       <div className="w-full lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 text-white overflow-y-auto p-8 h-screen">
         <div className="flex flex-col justify-center items-center h-full">

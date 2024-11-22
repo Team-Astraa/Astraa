@@ -10,7 +10,7 @@ const Adminverifyfish = () => {
   const [selectedCatchIds, setSelectedCatchIds] = useState([]);
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
-  const [viewMode, setViewMode] = useState("card"); // State to manage view mode (card or table)
+  const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
   let { userId } = useParams();
   // console.log("USER ID in frontend", userId);
   const [isLoading, setIsLoading] = useState(false);

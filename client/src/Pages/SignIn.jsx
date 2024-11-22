@@ -92,7 +92,7 @@ const LoginForm = () => {
   }, [])
 
   return (
-    <AnimationWrapper className="h-screen flex  bg-gradient-to-r from-blue-900 to-blue-500">
+    <AnimationWrapper className="h-screen flex bg-gradient-to-r from-blue-900 to-blue-500 mx-auto ">
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
