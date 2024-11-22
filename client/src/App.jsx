@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import PrivateRoute from "./Components/Routes/Private";
 import Sidebar from "./Components/SideBar";
 import NavBar from "./Components/NavBar";
@@ -19,63 +19,64 @@ import Addexcel from "./Pages/Add-excel";
 import ScientistHome from "./Pages/ScientistHome";
 import "./App.css"; // Import the CSS
 
+function AppLayout({ children }) {
+  const location = useLocation();
+
+  // List of routes without Sidebar and NavBar
+  const noLayoutRoutes = ["/signin", "/signup"];
+
+  const isNoLayoutRoute = noLayoutRoutes.includes(location.pathname);
+
+  return (
+    <div className="container">
+      {!isNoLayoutRoute && <Sidebar />}
+      <div className="content">
+        {!isNoLayoutRoute && <NavBar />}
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <div className="container">
-        <Sidebar />
-        <div className="content">
-          <NavBar />
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+      <AppLayout>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
 
-            {/* Protected Routes */}
-            <Route path="/" element={<PrivateRoute element={<HomePage />} />} />
-            <Route
-              path="/dashboard"
-              element={<PrivateRoute element={<Dashboard />} />}
-            />
+          {/* Protected Routes */}
+          <Route path="/" element={<PrivateRoute element={<HomePage />} />} />
+          <Route
+            path="/dashboard"
+            element={<PrivateRoute element={<Dashboard />} />}
+          />
+          <Route path="/admin/home" element={<AdminHome />} />
+          <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
+          <Route
+            path="/admin/get-data-upload-user"
+            element={<Admindatauploadusers />}
+          />
+          <Route
+            path="/admin/unverify-fish-data/:userId"
+            element={<Adminverifyfish />}
+          />
+          <Route path="/map" element={<FishingMap />} />
+          <Route path="/data-upload" element={<Addexcel />} />
 
-            <Route path="/admin/home" element={<AdminHome />} />
-            <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
-            <Route
-              path="/admin/get-data-upload-user"
-              element={<Admindatauploadusers />}
-            />
-            <Route
-              path="/admin/unverify-fish-data/:userId"
-              element={<Adminverifyfish />}
-            />
-            <Route path="/map" element={<FishingMap />} />
-            <Route path="/data-upload" element={<Addexcel />} />
+          {/* Researcher Routes */}
+          <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
+          <Route
+            path="/Research/statistics/:id"
+            element={<ResearchStats />}
+          />
 
-            {/* Researcher Routes */}
-
-            <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
-            <Route
-              path="/Research/statistics/:id"
-              element={<ResearchStats />}
-            />
-
-            {/* <Route path="/signIn" element={<LoginForm />} /> */}
-            {/* admin routes  */}
-            {/* <Route path="/admin/home" element={<AdminHome />} />
-            <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
-            <Route path="/admin/get-data-upload-user" element={<Admindatauploadusers />} />
-            <Route path="/admin/unverify-fish-data/:id" element={<Adminverifyfish />} />
-
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/map" element={<FishingMap />} /> */}
-
-
-            {/* scientist routes  */}
-            <Route path="/scientist/home" element={<ScientistHome />} />
-
-          </Routes>
-        </div>
-      </div>
+          {/* Scientist Routes */}
+          <Route path="/scientist/home" element={<ScientistHome />} />
+        </Routes>
+      </AppLayout>
     </Router>
   );
 }

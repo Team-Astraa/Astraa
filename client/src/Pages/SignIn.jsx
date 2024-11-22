@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { InputField } from "../Components/Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { Link, useNavigate } from "react-router-dom";
+import AnimationWrapper from "./Animation-page";
+
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -51,6 +53,9 @@ const LoginForm = () => {
         if (response.data.userType == "scientist") {
           return navigate("/scientist/home");
         }
+        if (response.data.userType == "admin") {
+          return navigate("/admin/home");
+        }
         navigate("/");
       }
     } catch (error) {
@@ -69,8 +74,25 @@ const LoginForm = () => {
     }
   };
 
+
+  useEffect(() => {
+
+    let user = localStorage.getItem("aquaUser");
+    let userInses = JSON.parse(user)
+    if (user) {
+      if (userInses.userType == "admin") {
+        return navigate("/admin/home");
+      } else if (userInses.userType == "scientist") {
+        return navigate("/scientist/home");
+      }
+      return navigate("/")
+
+    }
+
+  }, [])
+
   return (
-    <div className="h-screen flex h-[87vh] bg-gradient-to-r from-blue-900 to-blue-500">
+    <AnimationWrapper className="h-screen flex  bg-gradient-to-r from-blue-900 to-blue-500">
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
         <Toaster position="top-right" reverseOrder={false} />
@@ -136,7 +158,7 @@ const LoginForm = () => {
           </p>
         </div>
       </div>
-    </div>
+    </AnimationWrapper>
   );
 };
 

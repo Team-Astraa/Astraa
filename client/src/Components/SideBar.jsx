@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "flowbite-react";
+
 import {
   FaTachometerAlt,
   FaBell,
@@ -15,6 +17,8 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  const [loggedUser, setLoggedUser] = useState("")
+
   const navLinks = [
     { to: '/data-upload', icon: <FaCloudUploadAlt size={30} />, label: 'Home', key: 'home' },
     { to: '/dashboard', icon: <FaBell size={30} />, label: 'Bell', key: 'notifications' },
@@ -28,6 +32,23 @@ const Sidebar = () => {
     navigate(to);
     setIsOpen(false); // Close sidebar
   };
+
+  useEffect(() => {
+    let user = localStorage.getItem("aquaUser")
+    if (user) {
+      setLoggedUser(JSON.parse(user))
+      console.log(loggedUser);
+
+
+    }
+  }, [loggedUser])
+
+  const logout = () => {
+    localStorage.removeItem("aquaUser");
+    setLoggedUser(null); // Clear loggedUser state
+    navigate("/signin");
+  };
+  
 
   return (
     <>
@@ -43,15 +64,14 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed mt-20 lg:mt-0 top-0 left-0 h-full bg-[#0f123f] text-white flex flex-col items-center p-5 border-r-2 border-[#436ec6] transform transition-transform duration-300 z-30 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 lg:w-48 w-64`}
+        className={`fixed mt-20 lg:mt-0 top-0 left-0 h-full bg-[#0f123f] text-white flex flex-col items-center p-5 border-r-2 border-[#436ec6] transform transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 lg:w-48 w-64`}
       >
         {/* Profile Section */}
         <div className="flex flex-col items-center mt-10 mb-14">
-          <div className="w-20 h-20 bg-white rounded-full mb-4"></div>
-          <h1 className="text-lg font-bold">Farhaan</h1>
-          <h4 className="text-sm font-light">Developer</h4>
+          {/* <div className="w-20 h-20 bg-white rounded-full mb-4"></div> */}
+          <h1 className="text-lg font-bold">{loggedUser && loggedUser.userType}</h1>
+
         </div>
 
         {/* Navigation Links */}
@@ -69,15 +89,21 @@ const Sidebar = () => {
                 </span>
               </Link>
             </li>
+
           ))}
+          <li>
+            {
+              loggedUser && <button className="border-none py-3 px-5 rounded-md bg-green-600 font-bold text-lg hover:bg-green-700" onClick={logout}>Sign Out</button> 
+
+            }
+          </li>
         </ul>
       </div>
 
       {/* Content Wrapper */}
       <div
-        className={`transition-all duration-300 ${
-          isOpen ? "lg:ml-0 fixed overflow-hidden" : "relative"
-        } lg:relative`}
+        className={`transition-all duration-300 ${isOpen ? "lg:ml-0 fixed overflow-hidden" : "relative"
+          } lg:relative`}
       >
       </div>
     </>
