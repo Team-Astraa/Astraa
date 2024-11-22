@@ -12,6 +12,7 @@ import mongoose from "mongoose"; // Ensure you have mongoose imported
 import bcrypt from "bcrypt";
 import sendmail from "../Config/services.js";
 import Catch from "../models/FishCatchData.js";
+import Log from "../models/logSchema.js";
 
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
@@ -476,5 +477,103 @@ export const validateCatchData = async (req, res) => {
       message: "An error occurred while creating validated catches.",
       error: error.message,
     });
+  }
+};
+
+
+
+export const getUniqueSpeciesCount =  async(req, res) =>{
+  try {
+    // Function to fetch unique species count
+    const fetchUniqueSpeciesCount = async () => {
+      const result = await ValidatedCatch.aggregate([
+        {
+          $unwind: "$species", // Flatten the species array
+        },
+        {
+          $group: {
+            _id: "$species.name", // Group by species name
+          },
+        },
+        {
+          $count: "uniqueSpeciesCount", // Count unique species names
+        },
+      ]);
+
+      // Return the count if found; otherwise, return 0
+      return result.length > 0 ? result[0].uniqueSpeciesCount : 0;
+    };
+
+    const uniqueSpeciesCount = await fetchUniqueSpeciesCount();
+    res.status(200).json({
+      success: true,
+      uniqueSpeciesCount, // Return the unique species count
+    });
+  } catch (error) {
+    console.error("Error fetching unique species count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch unique species count",
+      error: error.message,
+    });
+  }
+}
+
+export const getUserTypeAndCount = async (req, res) => {
+  try {
+    // Aggregate users by userType and count the number of users for each type
+    const userCounts = await User.aggregate([
+      {
+        $group: {
+          _id: "$userType",         // Group by userType
+          totalUsers: { $sum: 1 },  // Count the number of users in each group
+        },
+      },
+      {
+        $project: {
+          _id: 0,                  // Hide the _id field
+          userType: "$_id",        // Rename _id to userType
+          totalUsers: 1,           // Include totalUsers field
+        },
+      },
+    ]);
+
+    // Send the response
+    res.json(userCounts);
+  } catch (error) {
+    console.error("Error fetching userType counts:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+   
+
+
+export const getLatestLogs = async (req, res) => {
+  try {
+    // Fetch the latest logs (adjust the number of logs you need, here it's set to 10)
+    const logs = await Log.find()
+      .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
+      .limit(10) // Limit to the latest 10 logs
+      .populate({
+        path: 'userId', // Populate the userId field with user data
+        select: 'username', // Only select the username field from the User model
+      });
+
+    if (!logs || logs.length === 0) {
+      return res.status(404).json({ message: 'No logs found.' });
+    }
+
+    // Prepare response data with userId, username, fileType, and uploadTimestamp
+    const logsWithUserData = logs.map(log => ({
+      userId: log.userId._id,
+      username: log.userId.username,
+      fileType: log.fileType,
+      uploadTimestamp: log.uploadTimestamp,
+    }));
+
+    return res.status(200).json(logsWithUserData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error fetching logs', error: error.message });
   }
 };

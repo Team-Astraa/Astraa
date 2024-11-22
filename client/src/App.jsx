@@ -28,7 +28,7 @@ function AppLayout({ children }) {
   const isNoLayoutRoute = noLayoutRoutes.includes(location.pathname);
 
   return (
-    <div className="container">
+    <div className="container2">
       {!isNoLayoutRoute && <Sidebar />}
       <div className="content">
         {!isNoLayoutRoute && <NavBar />}

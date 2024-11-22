@@ -4,6 +4,7 @@ import csv from "csv-parser";
 import { getDistance } from "geolib";
 
 import Catch from "../models/FishCatchData.js";
+import Log from "../models/logSchema.js";
 
 const stateBoundaries = {
   Gujarat: { latitude: 22.2587, longitude: 71.1924 },
@@ -127,9 +128,15 @@ export const uploadCSV = async (req, res) => {
     const { userId } = req.body;
     const file = req.file;
     const filePath = file.path;
+    const fileType = file.mimetype; // Capture the file type (mimetype)
+
 
     let data = [];
 
+    const logData = {
+      userId,
+      fileType, // Include fileType here
+    };
     // Check file type
     if (
       file.mimetype ===
@@ -162,6 +169,7 @@ export const uploadCSV = async (req, res) => {
           // Comment out database insertion for debugging or re-enable as needed
           try {
             await Catch.insertMany(data);
+            await Log.create(logData);
             return res.status(200).json({
               message:
                 "File uploaded successfully. Data logged for verification.",
@@ -183,6 +191,7 @@ export const uploadCSV = async (req, res) => {
     // Comment out database insertion for debugging or re-enable as needed
     try {
       await Catch.insertMany(data);
+      await Log.create(logData);
       res.status(200).json({
         message: "File uploaded successfully. Data logged for verification.",
       });
