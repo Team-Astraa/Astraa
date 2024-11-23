@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import astraaLogo from '../assets/astraa_logo.jpg'
 
 
 import {
@@ -37,7 +38,7 @@ const Sidebar = () => {
     let user = localStorage.getItem("aquaUser")
     if (user) {
       setLoggedUser(JSON.parse(user))
-   
+
 
 
     }
@@ -48,7 +49,7 @@ const Sidebar = () => {
     setLoggedUser(null); // Clear loggedUser state
     navigate("/signin");
   };
-  
+
 
   return (
     <>
@@ -67,8 +68,11 @@ const Sidebar = () => {
         className={`fixed mt-20 lg:mt-0 top-0 left-0 h-full bg-[#0f123f] text-white flex flex-col items-center p-5 border-r-2 border-[#436ec6] transform transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 lg:w-48 w-64`}
       >
+        <div className="w-32 ">
+          <img src={astraaLogo} className="w-full rounded-full" alt="astraa_logo" />
+        </div>
         {/* Profile Section */}
-        <div className="flex flex-col items-center mt-10 mb-14">
+        <div className="flex flex-col items-center mt-4 mb-14">
           {/* <div className="w-20 h-20 bg-white rounded-full mb-4"></div> */}
           <h1 className="text-lg font-bold">{loggedUser && loggedUser.userType}</h1>
 
@@ -93,7 +97,7 @@ const Sidebar = () => {
           ))}
           <li>
             {
-              loggedUser && <button className="border-none py-3 px-5 rounded-md bg-green-600 font-bold text-lg hover:bg-green-700" onClick={logout}>Sign Out</button> 
+              loggedUser && <button className="border-none py-3 px-5 rounded-md bg-green-600 font-bold text-lg hover:bg-green-700" onClick={logout}>Sign Out</button>
 
             }
           </li>
