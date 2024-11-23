@@ -37,11 +37,11 @@ const Sidebar = () => {
     let user = localStorage.getItem("aquaUser")
     if (user) {
       setLoggedUser(JSON.parse(user))
-      console.log(loggedUser);
+   
 
 
     }
-  }, [loggedUser])
+  }, [])
 
   const logout = () => {
     localStorage.removeItem("aquaUser");
