@@ -19,7 +19,7 @@ const FishermanForm = ({ email }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-    <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Hello Fishermen</h1>
+    {/* <h1 className="text-2xl font-medium mb-8 text-gray-800 text-left">Hello Fishermen</h1> */}
       <div className="grid gap-6 mb-6 md:grid-cols-2">
         <InputField
           label="Name"
@@ -88,7 +88,7 @@ const FishermanForm = ({ email }) => {
 
       <button
         type="submit"
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-3xl text-lg w-[30%] py-3 mx-auto"
       >
        Sign Up
       </button>

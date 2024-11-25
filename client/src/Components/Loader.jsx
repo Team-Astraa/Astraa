@@ -11,7 +11,6 @@ const Loader = () => {
     <div className="flex items-center justify-center h-full relative">
     <div className="loader"></div>
     <img className="w-[250px] rounded-md absolute fade-in-out" src={logo} alt="Logo" />
-  
   </div>
   
   );

@@ -26,11 +26,12 @@ function AppLayout({ children }) {
   const noLayoutRoutes = ["/signin", "/signup"];
 
   const isNoLayoutRoute = noLayoutRoutes.includes(location.pathname);
+  console.log(isNoLayoutRoute);
 
   return (
     <div className="container2">
       {!isNoLayoutRoute && <Sidebar />}
-      <div className="content">
+      <div className={`${isNoLayoutRoute ? "" : "content"}`} style={{borderRadius: "2rem 0 0 2rem"}}>
         {!isNoLayoutRoute && <NavBar />}
         {children}
       </div>

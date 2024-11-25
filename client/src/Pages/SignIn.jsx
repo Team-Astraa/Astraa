@@ -6,6 +6,7 @@ import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import AnimationWrapper from "./Animation-page";
+import { Checkbox } from "@mui/material";
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -92,19 +93,26 @@ const LoginForm = () => {
   }, [])
 
   return (
-    <AnimationWrapper className="h-screen flex bg-gradient-to-r from-blue-900 to-blue-500 mx-auto ">
+    <AnimationWrapper className="h-[100vh] flex bg-gradient-to-r from-blue-900 to-blue-500 mx-auto ">
       {/* Left Section */}
-      <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-white p-12">
+      <div className="flex flex-col justify-center items-center w-full lg:w-[60vw] bg-white">
         <Toaster position="top-right" reverseOrder={false} />
-        {isLoading && <Loader />}
+        {/* {isLoading && <Loader />} */}
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl"
-        >
-          <h2 className="text-3xl font-semibold text-gray-800 text-center mb-8">
-            Welcome Back
+          className="w-[70%] bg-white rounded-2xl">
+
+          <h2 style={{fontFamily: "sans-serif"}} className="text-6xl text-gray-800 text-center mb-2  font-bold" >
+            Welcome Back!
           </h2>
+
+          <p className="text-center text-lg text-gray-600 mb-12">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-blue-500 font-semibold">
+              Sign Up
+            </Link>
+          </p>
 
           <div className="grid gap-6 mb-6">
             <InputField
@@ -132,30 +140,39 @@ const LoginForm = () => {
             />
           </div>
 
+          <div className="extra flex items-center justify-between" >
+            <div className="flex items-center">
+              <Checkbox />
+              <p>Remember me</p>
+            </div>
+            <p className="font-semibold text-blue-500">Forgot Password?</p>
+          </div>
+
+          <div className="w-full flex mt-10">
           <button
             type="submit"
-            className="text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg w-full py-3"
+            className="text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-3xl text-lg w-[50%] py-3 mx-auto"
             disabled={isLoading}
           >
             {isLoading ? "Logging in..." : "Sign In"}
           </button>
-
-          <p className="text-center text-gray-600 mt-4">
-            Don't have an account?{" "}
-            <a href="/SignUp" className="text-blue-500 font-semibold">
-              Sign Up
-            </a>
-          </p>
+          </div>
+          
         </form>
+        
       </div>
 
       {/* Right Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white">
-        <div className="text-center px-8">
-          <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
-          <p className="text-xl">
-            Unlock your potential and start your journey with us today.
-          </p>
+      <div className="bg-white">
+        <div className="hidden lg:flex lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white h-full"
+        style={{backgroundImage: "url(../../sea_bg.jpg)", backgroundRepeat: "no-repeat", backgroundSize: "cover", borderRadius: "4rem 0 0 4rem"}}>
+          {/* <div className="text-center22 px-8">
+            <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
+            <p className="text-xl">
+              Unlock your potential and start your journey with us today.
+            </p>
+          </div> */}
+
         </div>
       </div>
     </AnimationWrapper>

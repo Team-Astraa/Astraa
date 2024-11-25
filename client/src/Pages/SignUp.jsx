@@ -10,7 +10,7 @@ import AnimationWrapper from "./Animation-page"
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
-  const [selectedUserType, setSelectedUserType] = useState(null);
+  const [selectedUserType, setSelectedUserType] = useState('fishermen');
 
   const handleUserTypeClick = (userType) => {
     setSelectedUserType(userType);
@@ -41,11 +41,14 @@ const SignUp = () => {
   return (
     <AnimationWrapper className="flex flex-col lg:flex-row overflow-hidden mx-auto">
       {/* Left Section */}
-      <div className="w-full lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-900 text-white overflow-y-auto p-8 h-screen">
-        <div className="flex flex-col justify-center items-center h-full">
-          <h1 className="text-5xl font-bold mb-6">Sign Up</h1>
-          <p className="text-lg text-center mb-10">
-            Enter your personal details to start your journey with us!
+      <div className="bg-white">
+      <div className="w-full lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 text-white overflow-y-auto h-screen"
+      style={{backgroundImage: "url(../../public/sea_bg.jpg)", backgroundRepeat: "no-repeat", backgroundSize: "cover", borderRadius: "0 4rem 4rem 0"}}>
+        <div className="flex flex-col justify-center h-full p-16">
+          <h1 className="text-7xl text-left font-bold">Welcome to</h1>
+          <h1 className="text-8xl text-left font-bold mb-6">AquaDB</h1>
+          <p className="text-xl font-medium mb-10">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum at, eaque sint odio cum cupiditate?
           </p>
 
           {/* Email Input */}
@@ -75,44 +78,12 @@ const SignUp = () => {
               />
             </div>
           </div>
-
-        {/* User Type Buttons */}
-        <div className="mt-8 w-full lg:w-3/4">
-          <h4 className="text-lg font-medium mb-4">Select User Type</h4>
-          <div className="grid grid-cols-2 gap-4">
-            {["Fishermen", "Collaborators", "Cruisers", "Institutes", "Scientist"].map(
-              (type, index) => (
-                <button
-                  key={index}
-                  className={`w-fit-content py-3 px-4 text-center rounded-lg text-white font-semibold transition-all duration-300 ${selectedUserType === type.toLowerCase()
-                      ? "bg-blue-600 shadow-lg"
-                      : "bg-transparent border border-white hover:bg-blue-700 hover:shadow-lg"
-                    }`}
-                  onClick={() => handleUserTypeClick(type.toLowerCase())}
-                >
-                  {type}
-                </button>
-              )
-            )}
-          </div>
         </div>
-          {/* Sign In Link */}
-          <div className="mt-6 text-center">
-            <p className="text-sm">
-              Already have an account?{" "}
-              <a
-                href="/SignIn"
-                className="text-blue-300 hover:text-blue-500 underline"
-              >
-                Sign In
-              </a>
-            </p>
-          </div>
-        </div>
+      </div>
       </div>
 
       {/* Right Section */}
-      <div
+      {/* <div
         className={`${
           selectedUserType === null ? "hidden sm:hidden lg:flex" : "flex"
         } w-full lg:w-1/2 bg-white justify-center items-center p-6`}
@@ -124,6 +95,65 @@ const SignUp = () => {
           </div>
         ) : (
           <div className="text-center">
+            {selectedUserType === "fishermen" && (
+              <FishermanForm email={email} />
+            )}
+            {selectedUserType === "collaborators" && (
+              <IndustryCollaboratorForm email={email} />
+            )}
+            {selectedUserType === "cruisers" && (
+              <ResearchCruiseForm email={email} />
+            )}
+            {selectedUserType === "institutes" && (
+              <ResearchInstituteForm email={email} />
+            )}
+            {selectedUserType === "scientist" && (
+              <ScientistForm email={email} />
+            )}
+          </div>
+        )}
+      </div> */}
+
+      <div className="bg-white h-[100vh] lg:w-[60vw] p-20">
+        {/* User Type Buttons */}
+        <div className=" w-full">
+          <h1 className="text-5xl font-bold mb-4 text-black">Select User Type</h1>
+          {/* Sign In Link */}
+          <div className="mt-2 text-left mb-4">
+            <p className="text-lg">
+              Already have an account?{" "}
+              <Link
+                to="/signin"
+                className="text-blue-500 hover:text-blue-700"
+              >
+                Sign In
+              </Link>
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-5 gap-4">
+            {["Fishermen", "Collaborators", "Cruisers", "Institutes", "Scientist"].map(
+              (type, index) => (
+                <button
+                  key={index}
+                  className={`w-fit-content py-2 px-3 text-center rounded-3xl font-semibold border border-blue-600 transition-all duration-300 ${selectedUserType === type.toLowerCase()
+                      ? "bg-blue-600 shadow-lg border-black text-[#ffffff]"
+                      : "bg-transparent hover:bg-blue-600 text-blue-600 hover:shadow-lg hover:text-[#ffffff]"
+                    }`}
+                  onClick={() => handleUserTypeClick(type.toLowerCase())}
+                >
+                  {type}
+                </button>
+              )
+            )}
+          </div>
+        </div>
+
+        {selectedUserType === null ? (
+          <div>
+          </div>
+        ) : (
+          <div className="text-center mt-10">
             {selectedUserType === "fishermen" && (
               <FishermanForm email={email} />
             )}

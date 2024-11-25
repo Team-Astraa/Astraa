@@ -64,7 +64,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed mt-20 lg:mt-0 top-0 left-0 h-full bg-[#0f123f] text-white flex flex-col items-center p-5 border-r-2 border-[#436ec6] transform transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed mt-20 lg:mt-0 top-0 left-0 h-full bg-[#0f123f] text-white flex flex-col items-center p-5 border-[#436ec6] transform transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 lg:w-48 w-64`}
       >
         {/* Profile Section */}
