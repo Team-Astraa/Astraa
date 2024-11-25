@@ -4,7 +4,7 @@
     width: calc(100% - 200px);
     /* width: 100%; */
     height: 100vh;
-    overflow-y: hidden !important;
+    /* overflow-y: hidden !important; */
     transition: all 0.3s ease;
     /* border: 2px solid red; */
   }

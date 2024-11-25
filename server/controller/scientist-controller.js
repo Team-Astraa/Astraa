@@ -69,6 +69,7 @@ export const getFilteredCatches = async (req, res) => {
       query.state = { $regex: new RegExp(state, "i") }; // Case-insensitive match
     }
 
+    // Total weight filter
     if (total_weight) {
       if (typeof total_weight === "object") {
         query.total_weight = {};
@@ -81,8 +82,8 @@ export const getFilteredCatches = async (req, res) => {
       }
     }
 
-    // Fetch catches matching the query
-    const catches = await Catch.find(query);
+    // Fetch and sort catches matching the query
+    const catches = await Catch.find(query).sort({ createdAt: -1 }); // Sort by createdAt in descending order
 
     // Apply additional filters in-memory if required
     const filteredCatches = catches.filter((catchItem) => {
@@ -130,3 +131,4 @@ export const getFilteredCatches = async (req, res) => {
       .json({ message: "An error occurred while filtering the catches." });
   }
 };
+
