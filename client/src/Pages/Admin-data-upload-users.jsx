@@ -26,8 +26,12 @@ const Admindatauploadusers = () => {
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <AnimationWrapper className="min-h-screen bg-gradient-to-br  p-8 text-white">
-            <h1 className="text-4xl font-bold text-center mb-8 text-indigo-300 drop-shadow-lg">
+        <div className="lg:rounded-l-2xl" style={{
+            backgroundImage:"url(/sea_bg.jpg)", 
+            backgroundSize: "cover",
+            }}>
+        <AnimationWrapper className="rounded-l-2xl min-h-screen p-8 text-white" >
+            <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 drop-shadow-lg">
                 User Information
             </h1>
             {users.length > 0 ? (
@@ -37,9 +41,9 @@ const Admindatauploadusers = () => {
                             key={i}
                             transition={{ duration: 1, delay: i * 0.13 }}
 
-                            className="bg-gray-900/45 p-6 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-transform duration-300"
+                            className="bg-white p-6 text-black rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-transform duration-300"
                         >
-                            <h2 className="text-2xl font-bold text-indigo-400 mb-4">
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">
                                 User ID: {user._id}
                             </h2>
                             <p className="text-lg mb-2">
@@ -74,7 +78,7 @@ const Admindatauploadusers = () => {
                 </p>
             )}
         </AnimationWrapper>
-
+        </div>
     );
 };
 
