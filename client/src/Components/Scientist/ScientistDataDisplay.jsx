@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 
 const DataDisplay = ({ data }) => {
+  const [showResult, setShowResult] = useState(3);
+  const limitData = data.slice(0, showResult);
+  // console.log(limitData);
   return (
-    <div className="p-4 bg-white rounded shadow">
+    <div className="px-4 bg-white">
       {/* Header */}
-      <div className="grid grid-cols-7 font-bold bg-gray-100 border-b border-gray-300 p-2">
+      <div className="grid grid-cols-7 font-bold bg-white border-b border-gray-300 p-2">
         <div>Date</div>
         <div>Latitude</div>
         <div>Longitude</div>
@@ -14,10 +17,10 @@ const DataDisplay = ({ data }) => {
         <div>Species</div>
       </div>
       {/* Data Rows */}
-      {data.map((item) => (
+      {limitData.map((item) => (
         <div
           key={item._id}
-          className="grid grid-cols-7 border-b border-gray-300 p-2 hover:bg-gray-50"
+          className="grid grid-cols-7 border-b border-gray-200 p-2 hover:bg-gray-50"
         >
           <div>{new Date(item.date).toLocaleDateString()}</div>
           <div>{item.latitude}</div>
