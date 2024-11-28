@@ -1,70 +1,66 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Card } from "flowbite-react";
-import userImg from '../assets/users.png'
-import fishImg from '../assets/fishes.png'
-import { useNavigate } from 'react-router-dom';
-import AnimationWrapper from "./Animation-page"
-import toast from 'react-hot-toast';
-import AdminUpperStrip from '../Components/AdminUpperStrip';
-import UserTypeCount from '../Components/UserTypeCount';
-import Logs from '../Components/Admin-user-logs';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import AnimationWrapper from "./Animation-page";
+import AdminUpperStrip from "../Components/AdminUpperStrip";
+import UserTypeCount from "../Components/UserTypeCount";
+import Logs from "../Components/Admin-user-logs";
 
 const AdminHome = () => {
+  const navigate = useNavigate();
 
-
-  const navigate = useNavigate()
   useEffect(() => {
-    let user = localStorage.getItem('aquaUser')
-    let userInsession = JSON.parse(user)
-    if (userInsession && userInsession.userType !== 'admin') {
-      toast.error("You cannot access this page")
-      navigate('/signin')
+    let user = localStorage.getItem("aquaUser");
+    let userInsession = JSON.parse(user);
+    if (userInsession && userInsession.userType !== "admin") {
+      toast.error("You cannot access this page");
+      navigate("/signin");
       return;
-
     }
-
-  }, [])
-
-
-
-
+  }, [navigate]);
 
   return (
-    <AnimationWrapper className='h-auto p-4'>
+    <AnimationWrapper className="min-h-screen bg-gradient-to-b from-blue-100 to-white p-8">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-extrabold text-blue-800">
+          Admin Dashboard
+        </h1>
+        <p className="text-gray-500 mt-2">Manage users and monitor activity</p>
+      </div>
 
-      {/* <div className='flex items-center justify-center h-[10vh] shadow-md'>
-        <h1 className='text-bold text-3xl text-center text-white'>ADMIN PORTAL</h1>
-      </div> */}
+      {/* Admin Upper Strip */}
+      <div className="mb-8">
+        <AdminUpperStrip />
+      </div>
 
-
-      <AdminUpperStrip />
-
-      <div className='w-full flex gap-4'>
-        <div className="flex flex-col space-y-4 w-[70%] p-4">
-
-
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row gap-10">
+        {/* Logs Section */}
+        <div className="flex-grow lg:w-2/3">
           <Logs />
 
+          {/* Verify Users Button */}
+          <div className="mt-6 flex justify-center">
+            <button
+              className="py-4 px-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-950 hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+    onClick={() => navigate("/admin/unverify-user")}
+            >
+              <span className="text-xl">Verify Users</span>
+            </button>
+          </div>
         </div>
 
-
-        <div className='w-[30%]'>
-          <UserTypeCount />
-
+        {/* Sidebar Section */}
+        <div className="lg:w-1/3 space-y-6">
+          {/* User Type Count */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-blue-100">
+            <UserTypeCount />
+          </div>
         </div>
       </div>
-      <button
-        className="max-w-sm relative py-4 px-6 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition duration-200 flex items-center justify-center"
-        style={{ backgroundImage: `url(${userImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-        onClick={() => navigate('/admin/unverify-user')}
-      >
-        <div className="absolute inset-0 bg-black opacity-30 rounded-lg"></div>
-        <span className="relative z-10 text-2xl font-bold text-center">
-          Verify Users
-        </span>
-      </button>
     </AnimationWrapper>
-  )
-}
+  );
+};
 
-export default AdminHome
+export default AdminHome;
