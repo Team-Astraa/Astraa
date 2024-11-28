@@ -25,7 +25,7 @@ function AppLayout({ children }) {
   // List of routes without Sidebar and NavBar
   const noLayoutRoutes = ["/signin", "/signup"];
 
-  const isNoLayoutRoute = noLayoutRoutes.includes(location.pathname);
+  const isNoLayoutRoute = noLayoutRoutes.includes(location.pathname.toLowerCase());
   console.log(isNoLayoutRoute);
 
   return (
