@@ -246,7 +246,7 @@ const ScientistHome = () => {
   };
 
   return (
-    <AnimationWrapper className="md:flex-row h-screen rounded-[3xl]">
+    <AnimationWrapper className="md:flex-row min-h-screen rounded-[3xl]">
       <div style={{borderRadius: "2rem 0 0 2rem"}} className='bg-[#f4f7fc] p-6 h-screen'>
       {/* Toggle Button */}
         <div className="flex justify-between items-center mb-8">
