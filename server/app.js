@@ -31,9 +31,7 @@ import {
   getUnique,
 } from "./controller/scientist-controller.js";
 
-//new
-import gridfsStream from "gridfs-stream";
-import { GridFsStorage } from "multer-gridfs-storage";
+
 
 dotenv.config();
 const app = express();
