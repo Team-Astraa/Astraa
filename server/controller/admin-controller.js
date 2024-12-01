@@ -5,6 +5,7 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchCruise.js";
 import ResearchInstitute from "../models/ResearchInstitute.js";
+// import Log from "../models/logSchema.js";
 import ValidatedCatch from "../models/ValidatedCatchData.js";
 import { generateCredentials } from "../helper/helper.js";
 import mongoose from "mongoose"; // Ensure you have mongoose imported
@@ -208,6 +209,8 @@ export const getdataUploaduser = async (req, res) => {
   try {
     // Fetch unique userIds from Catch collection
     const uniqueUserIds = await Catch.distinct("userId").exec();
+    // const uniqueUserIds = await Catch.find().exec();
+    console.log("USER ID", uniqueUserIds);
 
     if (uniqueUserIds.length === 0) {
       return res
@@ -480,9 +483,7 @@ export const validateCatchData = async (req, res) => {
   }
 };
 
-
-
-export const getUniqueSpeciesCount =  async(req, res) =>{
+export const getUniqueSpeciesCount = async (req, res) => {
   try {
     // Function to fetch unique species count
     const fetchUniqueSpeciesCount = async () => {
@@ -517,7 +518,7 @@ export const getUniqueSpeciesCount =  async(req, res) =>{
       error: error.message,
     });
   }
-}
+};
 
 export const getUserTypeAndCount = async (req, res) => {
   try {
@@ -525,15 +526,15 @@ export const getUserTypeAndCount = async (req, res) => {
     const userCounts = await User.aggregate([
       {
         $group: {
-          _id: "$userType",         // Group by userType
-          totalUsers: { $sum: 1 },  // Count the number of users in each group
+          _id: "$userType", // Group by userType
+          totalUsers: { $sum: 1 }, // Count the number of users in each group
         },
       },
       {
         $project: {
-          _id: 0,                  // Hide the _id field
-          userType: "$_id",        // Rename _id to userType
-          totalUsers: 1,           // Include totalUsers field
+          _id: 0, // Hide the _id field
+          userType: "$_id", // Rename _id to userType
+          totalUsers: 1, // Include totalUsers field
         },
       },
     ]);
@@ -544,9 +545,7 @@ export const getUserTypeAndCount = async (req, res) => {
     console.error("Error fetching userType counts:", error);
     res.status(500).json({ message: "Server error" });
   }
-}
-   
-
+};
 
 export const getLatestLogs = async (req, res) => {
   try {
@@ -555,16 +554,16 @@ export const getLatestLogs = async (req, res) => {
       .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
       .limit(10) // Limit to the latest 10 logs
       .populate({
-        path: 'userId', // Populate the userId field with user data
-        select: 'username', // Only select the username field from the User model
+        path: "userId", // Populate the userId field with user data
+        select: "username", // Only select the username field from the User model
       });
 
     if (!logs || logs.length === 0) {
-      return res.status(404).json({ message: 'No logs found.' });
+      return res.status(404).json({ message: "No logs found." });
     }
 
     // Prepare response data with userId, username, fileType, and uploadTimestamp
-    const logsWithUserData = logs.map(log => ({
+    const logsWithUserData = logs.map((log) => ({
       userId: log.userId._id,
       username: log.userId.username,
       fileType: log.fileType,
@@ -574,6 +573,8 @@ export const getLatestLogs = async (req, res) => {
     return res.status(200).json(logsWithUserData);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Error fetching logs', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error fetching logs", error: error.message });
   }
 };

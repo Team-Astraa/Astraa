@@ -16,6 +16,7 @@ const Admindatauploadusers = () => {
         const response = await axios.get(
           "http://localhost:5000/admin/get-data-upload-users"
         );
+        console.log("response data", response.data);
         setUsers(response.data);
       } catch (error) {
         setError("Error fetching user data.");
