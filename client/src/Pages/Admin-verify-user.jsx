@@ -123,7 +123,7 @@ const Adminverifyuser = () => {
   return (
     <>
       {!openModal ? (
-        <AnimationWrapper className="w-full min-h-screen mt-20">
+        <AnimationWrapper className="w-full min-h-screen mt-20 ">
           <div className="w-full flex items-center justify-between  p-4 ">
             <h1 className="text-bold text-3xl text-center text-white font-bold">
               Un Verified Users{" "}
