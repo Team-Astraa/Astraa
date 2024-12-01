@@ -159,12 +159,32 @@ const ScientistHome = () => {
         .setLngLat([point.longitude, point.latitude])
         .setPopup(
           new mapboxgl.Popup({ offset: 25 }).setHTML(`
-            <h3>${point.species.map((s) => s.name).join(', ')}</h3>
-            <p><strong>Sea:</strong> ${point.sea}</p>
-            <p><strong>State:</strong> ${point.state}</p>
-            <p><strong>Date:</strong> ${new Date(point.date).toLocaleDateString()}</p>
-            <p><strong>Total Weight:</strong> ${point.total_weight} kg</p>
+            <div style="
+              font-family: Arial, sans-serif;
+              font-size: 14px;
+              color: #333;
+              background-color: #fff;
+              border-radius: 8px;
+              padding: 10px;
+              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+              max-width: 250px;
+              line-height: 1.5;
+            ">
+              <h3 style="
+                margin: 0 0 10px;
+                font-size: 16px;
+                color: #007bff;
+                text-align: center;
+              ">
+                ${point.species.map((s) => s.name).join(', ')}
+              </h3>
+              <p style="margin: 5px 0;"><strong>Sea:</strong> ${point.sea}</p>
+              <p style="margin: 5px 0;"><strong>State:</strong> ${point.state}</p>
+              <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(point.date).toLocaleDateString()}</p>
+              <p style="margin: 5px 0;"><strong>Total Weight:</strong> ${point.total_weight} kg</p>
+            </div>
           `)
+          
         )
         .addTo(map.current);
 
@@ -246,7 +266,7 @@ const ScientistHome = () => {
   };
 
   return (
-    <AnimationWrapper className="md:flex-row h-screen rounded-[3xl]">
+    <AnimationWrapper className="md:flex-row min-h-screen rounded-[3xl]">
       <div style={{borderRadius: "2rem 0 0 2rem"}} className='bg-[#f4f7fc] p-6 h-screen'>
       {/* Toggle Button */}
         <div className="flex justify-between items-center mb-8">
