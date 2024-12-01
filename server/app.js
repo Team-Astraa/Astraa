@@ -23,7 +23,8 @@ import {
   validateCatchData,
   getUniqueSpeciesCount,
   getUserTypeAndCount,
-  getLatestLogs} from "./controller/admin-controller.js";
+  getLatestLogs,
+} from "./controller/admin-controller.js";
 import { uploadCSV } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
 import {
@@ -41,7 +42,9 @@ console.log(process.env.AWS_SECRETE_KEY);
 // MongoDB Connection
 mongoose
   //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
-  .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  //.connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  .connect("mongodb+srv://deshmusn:Sneha123@cluster0.x960yiu.mongodb.net/AquaDB")
+  
   
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -80,7 +83,7 @@ if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
 }
 
-const storage = multer.diskStorage({
+const localStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory); // Save files in the 'uploads' folder
   },
@@ -90,7 +93,7 @@ const storage = multer.diskStorage({
 });
 
 // Create multer instance with the storage configuration
-const upload = multer({ storage: storage });
+const upload = multer({ storage: localStorage });
 
 // All users api
 app.post("/upload", upload.single("file"), uploadCSV);
@@ -109,10 +112,10 @@ app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
 app.put("/admin/update-catch-data/:id", updateCatchData);
 app.get("/admin/usernames", getusername);
-app.post("/admin/validate-catch", validateCatchData); 
-app.get("/admin/get-unique-fish-count", getUniqueSpeciesCount); 
-app.get("/admin/get-userType-Count", getUserTypeAndCount); 
-app.get("/admin/get-latest-logs", getLatestLogs); 
+app.post("/admin/validate-catch", validateCatchData);
+app.get("/admin/get-unique-fish-count", getUniqueSpeciesCount);
+app.get("/admin/get-userType-Count", getUserTypeAndCount);
+app.get("/admin/get-latest-logs", getLatestLogs);
 
 //user update-details routes
 app.put("/user-update/:userType/:userId", updateUser);

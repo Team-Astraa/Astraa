@@ -49,7 +49,7 @@ const ResearchInstituteForm = ({ email }) => {
       console.log("Response:", response.data);
       if (response.data.message) {
         toast.success(response.data.message);
-        navigate("/sigin");
+        navigate("/signin");
         console.log("Signup successful:", response);
       }
     } catch (error) {
