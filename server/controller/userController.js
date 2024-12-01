@@ -201,6 +201,9 @@ import { getDistance } from "geolib";
 
 import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
+import cloudinary from '../cloudinaryConfig.js'; // Import Cloudinary config
+
+
 
 const stateBoundaries = {
   Gujarat: { latitude: 22.2587, longitude: 71.1924 },
@@ -319,88 +322,98 @@ const cleanData = (data, userId) => {
 
 
 
+
+// Upload CSV/Excel File and Save to Cloudinary
 export const uploadCSV = async (req, res) => {
+
+  console.log("controller reaching")
+  
   try {
-    const { userId } = req.body;
-    const file = req.file;
-    const filePath = file.path;
-    const fileType = file.mimetype; // Capture the file type (mimetype)
+
+    console.log("going in try")
+
+    const { userId } = req.body; // Get user ID from request body
+    const file = req.file; // Get file from request
+
+    if (!file) {
+      return res.status(400).json({ message: "No file provided." });
+    }
+
+    const cloudinaryResult = await cloudinary.v2.uploader.upload(file.path, {
+      resource_type: 'raw',
+      folder: 'SIH',
+    }).catch(error => {
+      console.error("Error uploading to Cloudinary:", error.message);
+      return res.status(500).json({ message: "Error uploading to Cloudinary", error: error.message });
+    });
+    
+    console.log("HI", cloudinaryResult)
+    
+
+    const fileUrl = cloudinaryResult.secure_url; // Get URL of uploaded file
+    let data = []; // Array to hold file data
 
 
-    let data = [];
+    const fs = require("fs");
+    // Delete the file from local storage after upload
+    fs.unlink(file.path, (err) => {
+      if (err) {
+        console.error("Error deleting local file:", err);
+      }
+    });
 
-    const logData = {
-      userId,
-      fileType, // Include fileType here
-    };
-    // Check file type
-    if (
-      file.mimetype ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    ) {
+
+    // Parse Excel or CSV
+    if (file.mimetype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
       // Parse Excel file
-      const workbook = xlsx.readFile(filePath);
-      const sheetName = workbook.SheetNames[0]; // Assuming first sheet
+      const workbook = xlsx.readFile(file.path);
+      const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const rawData = xlsx.utils.sheet_to_json(sheet);
-
-      // Clean and normalize data
-      data = cleanData(rawData, userId);
-   
-
+      data = xlsx.utils.sheet_to_json(sheet); // Convert sheet to JSON
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
-      fs.createReadStream(filePath)
+      fs.createReadStream(file.path)
         .pipe(csv())
         .on("data", (row) => {
           results.push(row);
         })
         .on("end", async () => {
-          data = cleanData(results, userId);
-
-          // Log data to console
-          console.log("Parsed Data:", data);
-
-          // Comment out database insertion for debugging or re-enable as needed
-          try {
-            await Catch.insertMany(data);
-            await Log.create(logData);
-            return res.status(200).json({
-              message:
-                "File uploaded successfully. Data logged for verification.",
-            });
-          } catch (dbError) {
-            return res.status(500).json({
-              message: "Error inserting data into database",
-              error: dbError.message,
-            });
-          }
+          data = results;
+          await insertDataToDB(data, fileUrl, userId, res);
         });
-      return; // Ensure response is sent inside the CSV processing callback
+      return; // Exit function to process CSV asynchronously
     } else {
       return res.status(400).json({
         message: "Invalid file type. Please upload an Excel or CSV file.",
       });
     }
 
-    // Comment out database insertion for debugging or re-enable as needed
-    try {
-      await Catch.insertMany(data);
-      await Log.create(logData);
-      res.status(200).json({
-        message: "File uploaded successfully. Data logged for verification.",
-      });
-    } catch (dbError) {
-      res.status(500).json({
-        message: "Error inserting data into database",
-        error: dbError.message,
-      });
-    }
+    // Insert data into the database for Excel
+    await insertDataToDB(data, fileUrl, userId, res);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error uploading file", error: error.message });
+    res.status(500).json({ message: "Error uploading file", error: error.message });
+  }
+};
+
+// Insert Data into Database
+const insertDataToDB = async (data, fileUrl, userId, res) => {
+  try {
+    const catchData = data.map((item) => ({
+      userId,
+      data: item,
+      fileUrl,
+    }));
+
+    await Catch.insertMany(catchData); // Save data to MongoDB
+    res.status(200).json({
+      message: "File uploaded successfully and data saved.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error inserting data into database",
+      error: error.message,
+    });
   }
 };
