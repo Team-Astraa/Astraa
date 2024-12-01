@@ -41,8 +41,8 @@ console.log(process.env.AWS_SECRETE_KEY);
 // MongoDB Connection
 mongoose
   //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
-  // .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
-  .connect("mongodb+srv://PrathmeshDB:PrathmeshDB@cluster0.scrkvtg.mongodb.net/aquaDB")
+  .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  // .connect("mongodb+srv://PrathmeshDB:PrathmeshDB@cluster0.scrkvtg.mongodb.net/aquaDB")
   
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
