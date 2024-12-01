@@ -31,6 +31,10 @@ import {
   getUnique,
 } from "./controller/scientist-controller.js";
 
+//new
+import gridfsStream from "gridfs-stream";
+import { GridFsStorage } from "multer-gridfs-storage";
+
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -42,12 +46,22 @@ console.log(process.env.AWS_SECRETE_KEY);
 mongoose
   //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
   .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  //.connect("mongodb+srv://deshmusn:Sneha123@cluster0.x960yiu.mongodb.net/")
+  
   
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
 // Middleware
 app.use(bodyParser.json());
+
+
+
+
+
+
+
+
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
@@ -80,7 +94,7 @@ if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
 }
 
-const storage = multer.diskStorage({
+const localStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory); // Save files in the 'uploads' folder
   },
@@ -90,7 +104,17 @@ const storage = multer.diskStorage({
 });
 
 // Create multer instance with the storage configuration
-const upload = multer({ storage: storage });
+const upload = multer({ storage: localStorage });
+
+
+
+
+
+
+
+
+
+
 
 // All users api
 app.post("/upload", upload.single("file"), uploadCSV);
