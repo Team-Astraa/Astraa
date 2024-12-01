@@ -7,7 +7,12 @@ import dotenv from "dotenv";
 import aws from "aws-sdk";
 import multer from "multer";
 import { nanoid } from "nanoid";
-import { getusername, login, signUp } from "./controller/authController.js";
+import {
+  getusername,
+  login,
+  signUp,
+  changePassword,
+} from "./controller/authController.js";
 import admin from "firebase-admin";
 import { assert } from "console";
 import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
@@ -44,8 +49,7 @@ mongoose
   //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
   .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
   // .connect("mongodb+srv://deshmusn:Sneha123@cluster0.x960yiu.mongodb.net/AquaDB")
-  
-  
+
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
@@ -133,6 +137,9 @@ app.get("/get-upload-url", async (req, res) => {
 // scientist routes
 app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
+
+//update password
+app.put("/user/Password-update", changePassword);
 
 // Start the Server
 const PORT = process.env.PORT || 5000;
