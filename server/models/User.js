@@ -24,12 +24,13 @@ const userSchema = new mongoose.Schema({
       "industry-collaborators",
       "research_cruises",
       "research_institute",
-      "scientist"
+      "scientist",
     ],
     required: function () {
       return this.role === "user";
     }, // Only required if role is 'user'
   },
+  passwordChanged: { type: Boolean, default: false }, // New field
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date },
 });

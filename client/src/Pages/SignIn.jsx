@@ -6,20 +6,22 @@ import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AnimationWrapper from "./Animation-page";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Modal, Box } from "@mui/material";
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [userId, setUserId] = useState(null); // Store the logged-in user ID
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const Location = useLocation();
   const { userType } = Location.state || {};
-  // const [userType, setUserType] = useState("");
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -42,26 +44,22 @@ const LoginForm = () => {
       const response = await axios.request(config);
       toast.success("Login successful!");
 
+      console.log("response in Login", response);
       if (response.data.message) {
-        // Create an object to store all data
         const userData = {
           token: response.data.token,
           userType: response.data.userType,
           userId: response.data.userid,
         };
 
-        console.log("userData", userData);
-        // Save the object in localStorage as a JSON string
         localStorage.setItem("aquaUser", JSON.stringify(userData));
+        setUserId(response.data.userid);
 
-        toast.success(response.data.message);
-        if (response.data.userType == "scientist") {
-          return navigate("/scientist/home");
+        if (!response.data.passwordChanged) {
+          setShowPasswordModal(true); // Trigger modal if password not changed
+        } else {
+          navigateBasedOnUserType(response.data.userType);
         }
-        if (response.data.userType == "admin") {
-          return navigate("/admin/home");
-        }
-        navigate("/");
       }
     } catch (error) {
       if (error.response && error.response.data) {
@@ -79,13 +77,75 @@ const LoginForm = () => {
     }
   };
 
+  const navigateBasedOnUserType = (userType) => {
+    if (userType === "scientist") {
+      navigate("/scientist/home");
+    } else if (userType === "admin") {
+      navigate("/admin/home");
+    } else {
+      navigate("/");
+    }
+  };
+
+  // const handlePasswordChange = async (data) => {
+  //   try {
+  //     const response = await axios.put(
+  //       "http://localhost:5000/Password-update",
+  //       {
+  //         userId,
+  //         newPassword: data.newPassword,
+  //       }
+  //     );
+
+  //     if (response.data.success) {
+  //       toast.success("Password updated successfully!");
+  //       setShowPasswordModal(false);
+  //       navigateBasedOnUserType(localStorage.getItem("aquaUser").userType);
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to update password. Please try again.");
+  //   }
+  // };
+
+  const handlePasswordChange = async (data) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("aquaUser"));
+      const userId = user?.userId;
+
+      if (!userId) {
+        toast.error("User not found. Please log in again.");
+        return;
+      }
+
+      const response = await axios.put(
+        "http://localhost:5000/user/Password-update",
+        {
+          userId,
+          newPassword: data.newPassword,
+        }
+      );
+
+      if (response.data.message === "Password updated successfully") {
+        toast.success("Password updated successfully!");
+        setShowPasswordModal(false);
+        navigateBasedOnUserType(user.userType);
+      }
+    } catch (error) {
+      console.error("Failed to update password:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update password. Please try again."
+      );
+    }
+  };
+
   useEffect(() => {
-    let user = localStorage.getItem("aquaUser");
-    let userInses = JSON.parse(user);
+    const user = localStorage.getItem("aquaUser");
+    const userInses = JSON.parse(user);
     if (user) {
-      if (userInses.userType == "admin") {
+      if (userInses.userType === "admin") {
         return navigate("/admin/home");
-      } else if (userInses.userType == "scientist") {
+      } else if (userInses.userType === "scientist") {
         return navigate("/scientist/home");
       }
       return navigate("/");
@@ -93,27 +153,25 @@ const LoginForm = () => {
   }, []);
 
   return (
-    <AnimationWrapper className="h-[100vh] flex bg-gradient-to-r from-blue-900 to-blue-500 mx-auto ">
-      {/* Left Section */}
+    <AnimationWrapper className="h-[100vh] flex bg-gradient-to-r from-blue-900 to-blue-500 mx-auto">
       <div className="flex flex-col justify-center items-center w-full lg:w-[60vw] bg-white">
         <Toaster position="top-right" reverseOrder={false} />
-        {/* {isLoading && <Loader />} */}
 
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-[70%] bg-white rounded-2xl"
         >
-          {userType == "Admin" ? (
+          {userType === "Admin" ? (
             <h2
               style={{ fontFamily: "sans-serif" }}
-              className="text-6xl text-gray-800 text-center mb-2  font-bold"
+              className="text-6xl text-gray-800 text-center mb-2 font-bold"
             >
               Hellooo Admin!
             </h2>
           ) : (
             <h2
               style={{ fontFamily: "sans-serif" }}
-              className="text-6xl text-gray-800 text-center mb-2  font-bold"
+              className="text-6xl text-gray-800 text-center mb-2 font-bold"
             >
               Welcome Back!
             </h2>
@@ -174,25 +232,38 @@ const LoginForm = () => {
         </form>
       </div>
 
-      {/* Right Section */}
-      <div className="bg-white">
-        <div
-          className="hidden lg:flex lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white h-full"
-          style={{
-            backgroundImage: "url(../../sea_bg.jpg)",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            borderRadius: "4rem 0 0 4rem",
-          }}
-        >
-          {/* <div className="text-center22 px-8">
-            <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
-            <p className="text-xl">
-              Unlock your potential and start your journey with us today.
-            </p>
-          </div> */}
-        </div>
-      </div>
+      {/* Password Change Modal */}
+      <Modal
+        open={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+      >
+        <Box className="bg-white p-5 rounded-lg w-[400px] mx-auto mt-10 shadow-lg">
+          <h2 className="text-xl font-bold mb-4">Update Your Password</h2>
+          <form onSubmit={handleSubmit(handlePasswordChange)}>
+            <InputField
+              label="New Password"
+              name="newPassword"
+              placeholder="Enter new password"
+              register={register}
+              type="password"
+              validation={{
+                required: "New password is required",
+                minLength: {
+                  value: 5,
+                  message: "Password must be at least 5 characters",
+                },
+              }}
+              error={errors.newPassword}
+            />
+            <button
+              type="submit"
+              className="mt-4 text-white bg-blue-500 px-4 py-2 rounded-lg w-full"
+            >
+              Update Password
+            </button>
+          </form>
+        </Box>
+      </Modal>
     </AnimationWrapper>
   );
 };
