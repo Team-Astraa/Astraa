@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { InputField } from "../Components/Fields/InputField";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Components/Loader";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AnimationWrapper from "./Animation-page";
 import { Checkbox } from "@mui/material";
 
@@ -16,6 +16,10 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const Location = useLocation();
+  const { userType } = Location.state || {};
+  // const [userType, setUserType] = useState("");
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -75,22 +79,18 @@ const LoginForm = () => {
     }
   };
 
-
   useEffect(() => {
-
     let user = localStorage.getItem("aquaUser");
-    let userInses = JSON.parse(user)
+    let userInses = JSON.parse(user);
     if (user) {
       if (userInses.userType == "admin") {
         return navigate("/admin/home");
       } else if (userInses.userType == "scientist") {
         return navigate("/scientist/home");
       }
-      return navigate("/")
-
+      return navigate("/");
     }
-
-  }, [])
+  }, []);
 
   return (
     <AnimationWrapper className="h-[100vh] flex bg-gradient-to-r from-blue-900 to-blue-500 mx-auto ">
@@ -101,18 +101,32 @@ const LoginForm = () => {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-[70%] bg-white rounded-2xl">
+          className="w-[70%] bg-white rounded-2xl"
+        >
+          {userType == "Admin" ? (
+            <h2
+              style={{ fontFamily: "sans-serif" }}
+              className="text-6xl text-gray-800 text-center mb-2  font-bold"
+            >
+              Hellooo Admin!
+            </h2>
+          ) : (
+            <h2
+              style={{ fontFamily: "sans-serif" }}
+              className="text-6xl text-gray-800 text-center mb-2  font-bold"
+            >
+              Welcome Back!
+            </h2>
+          )}
 
-          <h2 style={{fontFamily: "sans-serif"}} className="text-6xl text-gray-800 text-center mb-2  font-bold" >
-            Welcome Back!
-          </h2>
-
-          <p className="text-center text-lg text-gray-600 mb-12">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-500 font-semibold">
-              Sign Up
-            </Link>
-          </p>
+          {userType !== "Admin" && (
+            <p className="text-center text-lg text-gray-600 mb-12">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-blue-500 font-semibold">
+                Sign Up
+              </Link>
+            </p>
+          )}
 
           <div className="grid gap-6 mb-6">
             <InputField
@@ -140,7 +154,7 @@ const LoginForm = () => {
             />
           </div>
 
-          <div className="extra flex items-center justify-between" >
+          <div className="extra flex items-center justify-between">
             <div className="flex items-center">
               <Checkbox />
               <p>Remember me</p>
@@ -149,30 +163,34 @@ const LoginForm = () => {
           </div>
 
           <div className="w-full flex mt-10">
-          <button
-            type="submit"
-            className="text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-3xl text-lg w-[50%] py-3 mx-auto"
-            disabled={isLoading}
-          >
-            {isLoading ? "Logging in..." : "Sign In"}
-          </button>
+            <button
+              type="submit"
+              className="text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-3xl text-lg w-[50%] py-3 mx-auto"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Sign In"}
+            </button>
           </div>
-          
         </form>
-        
       </div>
 
       {/* Right Section */}
       <div className="bg-white">
-        <div className="hidden lg:flex lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white h-full"
-        style={{backgroundImage: "url(../../sea_bg.jpg)", backgroundRepeat: "no-repeat", backgroundSize: "cover", borderRadius: "4rem 0 0 4rem"}}>
+        <div
+          className="hidden lg:flex lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white h-full"
+          style={{
+            backgroundImage: "url(../../sea_bg.jpg)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            borderRadius: "4rem 0 0 4rem",
+          }}
+        >
           {/* <div className="text-center22 px-8">
             <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
             <p className="text-xl">
               Unlock your potential and start your journey with us today.
             </p>
           </div> */}
-
         </div>
       </div>
     </AnimationWrapper>

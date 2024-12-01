@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import PrivateRoute from "./Components/Routes/Private";
 import Sidebar from "./Components/SideBar";
 import NavBar from "./Components/NavBar";
@@ -25,13 +30,18 @@ function AppLayout({ children }) {
   // List of routes without Sidebar and NavBar
   const noLayoutRoutes = ["/signin", "/signup"];
 
-  const isNoLayoutRoute = noLayoutRoutes.includes(location.pathname.toLowerCase());
+  const isNoLayoutRoute = noLayoutRoutes.includes(
+    location.pathname.toLowerCase()
+  );
   console.log(isNoLayoutRoute);
 
   return (
     <div className="container2">
       {!isNoLayoutRoute && <Sidebar />}
-      <div className={`${isNoLayoutRoute ? "" : "content"}`} style={{borderRadius: "2rem 0 0 2rem"}}>
+      <div
+        className={`${isNoLayoutRoute ? "" : "content"}`}
+        style={{ borderRadius: "2rem 0 0 2rem" }}
+      >
         {!isNoLayoutRoute && <NavBar />}
         {children}
       </div>
@@ -45,11 +55,12 @@ function App() {
       <AppLayout>
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* Protected Routes */}
-          <Route path="/" element={<PrivateRoute element={<HomePage />} />} />
+          {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
           <Route
             path="/dashboard"
             element={<PrivateRoute element={<Dashboard />} />}
@@ -69,10 +80,7 @@ function App() {
 
           {/* Researcher Routes */}
           <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
-          <Route
-            path="/Research/statistics/:id"
-            element={<ResearchStats />}
-          />
+          <Route path="/Research/statistics/:id" element={<ResearchStats />} />
 
           {/* Scientist Routes */}
           <Route path="/scientist/home" element={<ScientistHome />} />
