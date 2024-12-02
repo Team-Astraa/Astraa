@@ -13,7 +13,8 @@ const Adminverifyfish = () => {
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
   const [showRows, setshowRows] = useState(17)
-  let { userId } = useParams();
+  
+  let { userId, dataId } = useParams();
   // console.log("USER ID in frontend", userId);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -69,7 +70,7 @@ const Adminverifyfish = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/admin/get-fish-data",
-        { userId: userId }
+        { userId: userId, dataId: dataId }
       );
       console.log("CATCH DATA", response.data.data)
       // return;
@@ -226,9 +227,9 @@ const Adminverifyfish = () => {
           depth: fishData?.depth, // Extract depth
           species: Array.isArray(fishData.species) // Safely map species
             ? fishData.species.map((speciesItem) => ({
-                name: speciesItem?.name, // Default name
-                catch_weight: speciesItem?.catch_weight, // Default weight
-              }))
+              name: speciesItem?.name, // Default name
+              catch_weight: speciesItem?.catch_weight, // Default weight
+            }))
             : [], // Default to empty array if species is undefined
           total_weight: fishData.total_weight, // Extract total weight
         }))
@@ -283,6 +284,47 @@ const Adminverifyfish = () => {
     setshowRows(17);
   }
 
+
+
+  const rejectdata = async () => {
+
+
+    const reason = prompt("Please provide a reason for rejecting the data:");
+    if (!reason) {
+      toast.error("Reason is required to reject the data.");
+      return; // If no reason is provided, do nothing
+    }
+
+    try {
+      let loading = toast.loading("Loading...");
+      const res = await axios.post('http://localhost:5000/admin/reject-log-data', {
+        dataId: dataId,
+        status: "rejected",
+        reason: reason,  // Send the reason with the request
+      });
+
+      toast.dismiss(loading);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+
+  const acceptData = async () => {
+    try {
+      let loading = toast.loading("Loading...");
+      const res = await axios.post('http://localhost:5000/admin/accept-log-data', {
+        dataId: dataId,
+        status: "accepted"
+      });
+      toast.dismiss(loading);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
   return (
     
     <div className="bg-white p-6">

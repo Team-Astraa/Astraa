@@ -121,30 +121,28 @@ const Adminverifyuser = () => {
   };
 
   return (
-    <>
+    <div style={{
+      backgroundImage: "url(/sea3_bg.jpg)",
+      backgroundSize: "cover",
+    }}>
       {!openModal ? (
-        <AnimationWrapper className="w-full min-h-screen mt-20 ">
-          <div className="w-full flex items-center justify-between  p-4 ">
+        <AnimationWrapper className="w-full min-h-screen">
+          <div className="flex flex-col items-center justify-between  p-4 ">
             <h1 className="text-bold text-3xl text-center text-white font-bold">
               Un Verified Users{" "}
             </h1>
-            <div className="">
+            <div className="flex justify-center items-center gap-20">
               <Button.Group>
-                <Button onClick={setType} color="gray">
-                  fisherman
+                {["Fisherman", "Industry Collaborators", "Research Institute", "Research Cruises", "Scientist"].map((type, index) => (
+                <Button
+                  key={index}
+                  onClick={() => setType(type)}
+                  color="gray"
+                  className="rounded-full border-2 border-gray-400 bg-white hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-300 m-4"
+                >
+                    {type}
                 </Button>
-                <Button onClick={setType} color="gray">
-                  industry-collaborators
-                </Button>
-                <Button onClick={setType} color="gray">
-                  research_institute
-                </Button>
-                <Button onClick={setType} color="gray">
-                  research_cruises
-                </Button>
-                <Button onClick={setType} color="gray">
-                  scientist
-                </Button>
+                ))}
               </Button.Group>
             </div>
           </div>
@@ -216,7 +214,7 @@ const Adminverifyuser = () => {
                   </div>
                 </>
               ) : (
-                <h1 className=" text-2xl text-center  mt-12 font-bold text-white">
+                <h1 className="text-center mt-12 text-red-900 text-sm">
                   Please Select The Categories{" "}
                 </h1>
               )}
@@ -464,7 +462,7 @@ const Adminverifyuser = () => {
           </Modal.Footer>
         </Modal>
       )}
-    </>
+    </div>
   );
 };
 

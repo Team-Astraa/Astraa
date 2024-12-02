@@ -204,7 +204,7 @@ const Sidebar = () => {
       key: "home",
     },
     {
-      to: "/dashboard",
+      to: "/data-logs",
       icon: <FaBell size={30} />,
       label: "Bell",
       key: "notifications",
