@@ -1,4 +1,4 @@
-import cloudinary from 'cloudinary';
+import cloudinary from "cloudinary";
 
 // Configure Cloudinary using environment variables or hardcoded credentials
 cloudinary.config({
