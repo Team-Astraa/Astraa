@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
@@ -27,7 +27,6 @@ const Addexcel = () => {
     formData.append("userId", userId);
 
     setIsLoading(true);
-    // Start showing the loading toast with a unique id
     const uploadToastId = toast.loading("Uploading...");
     try {
       const response = await axios.post(
@@ -41,18 +40,10 @@ const Addexcel = () => {
       );
 
       console.log("File uploaded successfully:", response.data);
-
-      // Update the loading toast to success and dismiss it
       toast.success("File uploaded successfully", { id: uploadToastId });
-
-      //   alert("File uploaded successfully");
     } catch (error) {
       console.error("Error uploading file:", error);
-
-      // Update the loading toast to error and dismiss it
       toast.error("Failed to upload file", { id: uploadToastId });
-
-      alert("Failed to upload file");
     } finally {
       setIsLoading(false);
     }
@@ -64,11 +55,14 @@ const Addexcel = () => {
   });
 
   return (
-    <AnimationWrapper className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-[500px] flex flex-col items-center justify-center border-2 border-gray-300 mt-12">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Upload Your File
-        </h1>
+    <AnimationWrapper className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      {/* Title moved outside the card */}
+      <h1 className="text-4xl font-bold text-gray-800 mb-12">
+        Upload Your File
+      </h1>
+
+      {/* Card Container */}
+      <div className="bg-white shadow-xl rounded-xl p-8 w-[500px] flex flex-col items-center justify-center border-2">
         <p className="text-gray-500 text-md text-center mb-8">
           Drag and drop an Excel or CSV file here, or click to select one.
         </p>
@@ -77,17 +71,17 @@ const Addexcel = () => {
           className={`w-full h-48 flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all 
             ${
               isDragActive
-                ? "border-blue-400 bg-blue-50"
-                : "border-gray-300 bg-gray-50 hover:shadow-md"
+                ? "border-blue-500 bg-blue-100"
+                : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-blue-500"
             }`}
         >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <p className="text-blue-500 font-medium">Drop the file here...</p>
+            <p className="text-blue-600 font-medium">Drop the file here...</p>
           ) : (
-            <p className="text-gray-500 font-medium">
+            <p className="text-gray-600 font-medium">
               Drag & drop your file, or{" "}
-              <span className="text-blue-500 underline cursor-pointer">
+              <span className="text-blue-600 underline cursor-pointer">
                 browse files
               </span>
             </p>
@@ -102,7 +96,7 @@ const Addexcel = () => {
         )}
         <button
           onClick={handleUpload}
-          className={`mt-6 px-5 py-2 text-white font-semibold rounded-lg shadow-md transition-all 
+          className={`mt-6 px-6 py-3 text-white font-semibold rounded-lg shadow-md transition-all 
             ${
               isLoading
                 ? "bg-blue-300 cursor-not-allowed"
