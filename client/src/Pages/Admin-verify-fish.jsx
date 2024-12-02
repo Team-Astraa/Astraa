@@ -821,7 +821,9 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId }
       );
-      setCatchData(response.data);
+      console.log("CATCH DATA",response.data.data)
+      // return;
+      setCatchData(response.data.data);
     } catch (error) {
       console.error("Error fetching catch data:", error);
     }
@@ -1039,6 +1041,185 @@ const Adminverifyfish = () => {
         </button>
 
         {viewMode === "card" ? (
+          // <div className="space-y-4">
+          //   {catchData.map((data) => (
+          //     <div key={data._id} className="border-b border-gray-700 py-4">
+          //       <h2 className="text-lg font-semibold text-indigo-400 mb-2">
+          //         User ID: {data._id}
+          //       </h2>
+
+          //       {data.catches.map((catchItem) => (
+          //         <div
+          //           key={catchItem._id}
+          //           className="border bg-gray-900 border-gray-700 p-4 rounded-lg mb-4"
+          //         >
+          //           <div className="flex justify-between items-center mb-2">
+          //             <h3 className="text-sm font-semibold text-gray-400">
+          //               Catch ID: {catchItem._id}
+          //             </h3>
+          //             {editMode && (
+          //               <button
+          //                 className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
+          //                 onClick={() => handleDeleteRow(catchItem._id)}
+          //               >
+          //                 Delete
+          //               </button>
+          //             )}
+          //           </div>
+
+          //           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          //             <div>
+          //               <label className="text-xs text-gray-400">Date:</label>
+          //               <input
+          //                 type="date"
+          //                 value={
+          //                   new Date(catchItem.date).toISOString().split("T")[0]
+          //                 }
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     date: e.target.value,
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </div>
+
+          //             <div>
+          //               <label className="text-xs text-gray-400">
+          //                 Latitude:(Float)
+          //               </label>
+          //               <input
+          //                 type="number"
+          //                 value={catchItem.latitude}
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     latitude: parseFloat(e.target.value),
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </div>
+
+          //             <div>
+          //               <label className="text-xs text-gray-400">
+          //                 Longitude:(Float)
+          //               </label>
+          //               <input
+          //                 type="number"
+          //                 value={catchItem.longitude}
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     longitude: parseFloat(e.target.value),
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </div>
+          //             <div>
+          //               <label className="text-xs text-gray-400">sea:</label>
+          //               <input
+          //                 type="number"
+          //                 value={catchItem.sea}
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     longitude: parseFloat(e.target.value),
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </div>
+
+          //             <div>
+          //               <label className="text-xs text-gray-400">Depth:</label>
+          //               <input
+          //                 type="number"
+          //                 value={catchItem.depth || ""}
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     depth: parseInt(e.target.value),
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </div>
+          //           </div>
+
+          //           <div className="space-y-2 mt-4">
+          //             <label className="text-xs text-gray-400">Species:</label>
+          //             <div className="flex gap-8 flex-wrap">
+          //               {catchItem.species.map((species) => (
+          //                 <div
+          //                   key={species._id}
+          //                   className="flex justify-between items-center text-sm gap-2"
+          //                 >
+          //                   <span>{species.name}</span>
+          //                   <input
+          //                     type="number"
+          //                     value={species.catch_weight}
+          //                     onChange={(e) =>
+          //                       handleEditCatch(catchItem._id, {
+          //                         species: catchItem.species.map((s) =>
+          //                           s._id === species._id
+          //                             ? {
+          //                                 ...s,
+          //                                 catch_weight: parseInt(
+          //                                   e.target.value
+          //                                 ),
+          //                               }
+          //                             : s
+          //                         ),
+          //                       })
+          //                     }
+          //                     readOnly={!editMode}
+          //                     className="bg-gray-700 text-white p-2 rounded-md w-16 text-xs"
+          //                   />
+          //                 </div>
+          //               ))}
+          //             </div>
+          //           </div>
+
+          //           <div className="mt-4">
+          //             <label className="text-xs text-gray-400">
+          //               Total Weight:
+          //             </label>
+          //             <input
+          //               type="number"
+          //               value={catchItem.total_weight}
+          //               onChange={(e) =>
+          //                 handleEditCatch(catchItem._id, {
+          //                   total_weight: parseInt(e.target.value),
+          //                 })
+          //               }
+          //               readOnly={!editMode}
+          //               className="bg-gray-700 text-white p-2 rounded-md w-full text-xs"
+          //             />
+          //           </div>
+
+          //           {editMode && (
+          //             <button
+          //               onClick={() => {
+          //                 handleEditCatch(catchItem._id, {
+          //                   species: catchItem.species,
+          //                   total_weight: catchItem.total_weight,
+          //                 });
+          //                 handleSaveChanges();
+          //                 setEditMode(!editMode); // Invoke handleSaveChanges here
+          //               }}
+          //               className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
+          //             >
+          //               Save Changes
+          //             </button>
+          //           )}
+          //         </div>
+          //       ))}
+          //     </div>
+          //   ))}
+          // </div>
           <div className="space-y-4">
             {catchData.map((data) => (
               <div key={data._id} className="border-b border-gray-700 py-4">
@@ -1116,14 +1297,15 @@ const Adminverifyfish = () => {
                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
                         />
                       </div>
+
                       <div>
-                        <label className="text-xs text-gray-400">sea:</label>
+                        <label className="text-xs text-gray-400">Sea:</label>
                         <input
                           type="number"
-                          value={catchItem.sea}
+                          value={catchItem.sea || ""}
                           onChange={(e) =>
                             handleEditCatch(catchItem._id, {
-                              longitude: parseFloat(e.target.value),
+                              sea: parseFloat(e.target.value),
                             })
                           }
                           readOnly={!editMode}
@@ -1201,12 +1383,8 @@ const Adminverifyfish = () => {
                     {editMode && (
                       <button
                         onClick={() => {
-                          handleEditCatch(catchItem._id, {
-                            species: catchItem.species,
-                            total_weight: catchItem.total_weight,
-                          });
                           handleSaveChanges();
-                          setEditMode(!editMode); // Invoke handleSaveChanges here
+                          setEditMode(false);
                         }}
                         className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
                       >
@@ -1231,10 +1409,17 @@ const Adminverifyfish = () => {
                     Date
                   </th>
                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
+<<<<<<< HEAD
                     Latitude
                   </th>
                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
                     Longitude
+=======
+                    Latitude: (Float)
+                  </th>
+                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
+                    Longitude: (Float)
+>>>>>>> 36fbaabbe807e6bc186568a566f28edb8ce6d7ef
                   </th>
                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
                     Depth
@@ -1376,6 +1561,190 @@ const Adminverifyfish = () => {
               </tbody>
             </table>
           </div>
+
+          // <div className="overflow-x-auto">
+          //   <table className="min-w-full table-auto text-left border-collapse border border-gray-700 lg:table-fixed">
+          //     <thead>
+          //       <tr className="bg-gray-800">
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Catch ID
+          //         </th>
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Date
+          //         </th>
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Latitude (Float)
+          //         </th>
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Longitude (Float)
+          //         </th>
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Depth (Integer)
+          //         </th>
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Species
+          //         </th>
+          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //           Total Weight
+          //         </th>
+          //         {editMode && (
+          //           <th className="p-2 text-xs text-gray-400 border border-gray-500">
+          //             Actions
+          //           </th>
+          //         )}
+          //       </tr>
+          //     </thead>
+          //     <tbody>
+          //       {catchData.map((data) =>
+          //         data.catches.map((catchItem) => (
+          //           <tr
+          //             key={catchItem._id}
+          //             className="border-b border-gray-700"
+          //           >
+          //             <td className="p-2 text-xs text-gray-400 border border-gray-500">
+          //               {catchItem._id}
+          //             </td>
+          //             <td className="p-2 text-xs text-gray-400 border border-gray-500">
+          //               <input
+          //                 type="date"
+          //                 value={
+          //                   new Date(catchItem.date).toISOString().split("T")[0]
+          //                 }
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     date: e.target.value,
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </td>
+          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
+          //               <input
+          //                 type="number"
+          //                 step="any"
+          //                 value={catchItem.latitude}
+          //                 onChange={(e) => {
+          //                   const value = parseFloat(e.target.value);
+          //                   if (!isNaN(value)) {
+          //                     handleEditCatch(catchItem._id, {
+          //                       latitude: value,
+          //                     });
+          //                   }
+          //                 }}
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //               {/* Warning for invalid float */}
+          //               {isNaN(catchItem.latitude) && editMode && (
+          //                 <span className="text-red-500 text-xs">
+          //                   Please enter a valid float value
+          //                 </span>
+          //               )}
+          //             </td>
+          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
+          //               <input
+          //                 type="number"
+          //                 step="any"
+          //                 value={catchItem.longitude}
+          //                 onChange={(e) => {
+          //                   const value = parseFloat(e.target.value);
+          //                   if (!isNaN(value)) {
+          //                     handleEditCatch(catchItem._id, {
+          //                       longitude: value,
+          //                     });
+          //                   }
+          //                 }}
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //               {/* Warning for invalid float */}
+          //               {isNaN(catchItem.longitude) && editMode && (
+          //                 <span className="text-red-500 text-xs">
+          //                   Please enter a valid float value
+          //                 </span>
+          //               )}
+          //             </td>
+          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
+          //               <input
+          //                 type="number"
+          //                 value={catchItem.depth || ""}
+          //                 onChange={(e) => {
+          //                   const value = parseInt(e.target.value);
+          //                   if (!isNaN(value)) {
+          //                     handleEditCatch(catchItem._id, { depth: value });
+          //                   }
+          //                 }}
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //               {/* Warning for invalid integer */}
+          //               {isNaN(catchItem.depth) && editMode && (
+          //                 <span className="text-red-500 text-xs">
+          //                   Please enter a valid integer
+          //                 </span>
+          //               )}
+          //             </td>
+          //             <td className="px-4 py-2 text-sm text-gray-300 border-b border border-gray-500">
+          //               <select
+          //                 value={
+          //                   catchItem.species.find((s) => s.selected)?._id || ""
+          //                 }
+          //                 onChange={(e) => {
+          //                   const selectedSpeciesId = e.target.value;
+          //                   const updatedSpecies = catchItem.species.map(
+          //                     (species) =>
+          //                       species._id === selectedSpeciesId
+          //                         ? { ...species, selected: true }
+          //                         : { ...species, selected: false }
+          //                   );
+          //                   handleEditCatch(catchItem._id, {
+          //                     species: updatedSpecies,
+          //                   });
+          //                 }}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               >
+          //                 <option value="" disabled>
+          //                   Name
+          //                 </option>
+          //                 {catchItem.species.map((species) => (
+          //                   <option key={species._id} value={species._id}>
+          //                     {species.name} ({species.catch_weight})
+          //                   </option>
+          //                 ))}
+          //               </select>
+          //             </td>
+
+          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
+          //               <input
+          //                 type="number"
+          //                 value={catchItem.total_weight}
+          //                 onChange={(e) =>
+          //                   handleEditCatch(catchItem._id, {
+          //                     total_weight: parseInt(e.target.value),
+          //                   })
+          //                 }
+          //                 readOnly={!editMode}
+          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+          //               />
+          //             </td>
+
+          //             {editMode && (
+          //               <td className="px-4 py-2 text-sm text-gray-300 border border-gray-500">
+          //                 <button
+          //                   className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
+          //                   onClick={() => handleDeleteRow(catchItem._id)}
+          //                 >
+          //                   Delete
+          //                 </button>
+          //               </td>
+          //             )}
+          //           </tr>
+          //         ))
+          //       )}
+          //     </tbody>
+          //   </table>
+          // </div>
         )}
       </AnimationWrapper>
     </>

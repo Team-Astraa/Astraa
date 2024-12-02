@@ -1,23 +1,21 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import aws from "aws-sdk";
 import multer from "multer";
 import { nanoid } from "nanoid";
+import fs from "fs";
+import path from "path";
+
+// Controllers
 import {
   getusername,
   login,
   signUp,
   changePassword,
 } from "./controller/authController.js";
-import admin from "firebase-admin";
-import { assert } from "console";
-import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" with { type: "json" };
-import fs from "fs";
-import path from "path";
 import {
   getCatchDataGroupedByUser,
   getdataUploaduser,
@@ -37,43 +35,38 @@ import {
   getUnique,
 } from "./controller/scientist-controller.js";
 
+// Configurations
+import { cloudinaryConnect, cloudinaryStorage } from "./Config/Cloudinary.js";
+import localUpload from "./Config/Multerconfig.js";
+
 dotenv.config();
 const app = express();
-app.use(cors());
 
-console.log(process.env.AWS_ACCESS_KEY);
-console.log(process.env.AWS_SECRETE_KEY);
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
-  //.connect(process.env.MONGODB_URI) // Use environment variable for MongoDB URI
-  .connect("mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
-  // .connect("mongodb+srv://deshmusn:Sneha123@cluster0.x960yiu.mongodb.net/AquaDB")
-
+  .connect(process.env.MONGODB_URI || "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
-// Middleware
-app.use(bodyParser.json());
-
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountKey),
-});
+// Cloudinary Configuration
+cloudinaryConnect();
+const cloudinaryUpload = multer({ storage: cloudinaryStorage });
 
 // AWS S3 Configuration
 const s3 = new aws.S3({
   region: "ap-south-1",
   accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRETE_KEY,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
 });
 
-// Route Handlers
-
+// Utilities
 const generateUploadUrl = async () => {
   const date = new Date();
   const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
-
   return s3.getSignedUrlPromise("putObject", {
     Bucket: "medium-blog-clone",
     Key: imageName,
@@ -82,33 +75,19 @@ const generateUploadUrl = async () => {
   });
 };
 
+// Local Upload Directory Configuration
 const uploadDirectory = "./uploads";
 if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
 }
 
-const localStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDirectory); // Save files in the 'uploads' folder
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
-  },
-});
+// Routes
 
-// Create multer instance with the storage configuration
-const upload = multer({ storage: localStorage });
-
-// All users api
-app.post("/upload", upload.single("file"), uploadCSV);
-
-// auth api methods
-
+// User Authentication Routes
 app.post("/signup", signUp);
 app.post("/login", login);
 
-// admin api methods
-
+// Admin Routes
 app.post("/admin/getUnverifiesUsers", getUnverifiedUser);
 app.post("/admin/verifyUser", verifyUser);
 app.post("/admin/get-detail-data", getDetailsData);
@@ -121,8 +100,36 @@ app.get("/admin/get-unique-fish-count", getUniqueSpeciesCount);
 app.get("/admin/get-userType-Count", getUserTypeAndCount);
 app.get("/admin/get-latest-logs", getLatestLogs);
 
-//user update-details routes
+// User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
+
+// Password Update Route
+app.put("/user/Password-update", changePassword);
+
+// Scientist Routes
+app.get("/scientist/unique-species", getUnique);
+app.post("/scientist/filter-data", getFilteredCatches);
+
+// Upload Routes
+app.post("/upload/local", localUpload.single("file"), (req, res) => {
+  try {
+    console.log("Uploaded File (Local):", req.file);
+    res.status(200).send("File uploaded successfully to local storage!");
+  } catch (error) {
+    console.error("Error during local upload:", error.message);
+    res.status(400).send(error.message);
+  }
+});
+
+app.post("/upload/cloudinary", cloudinaryUpload.single("file"), (req, res) => {
+  try {
+    console.log("Uploaded File (Cloudinary):", req.file);
+    res.status(200).send("File uploaded successfully to Cloudinary!");
+  } catch (error) {
+    console.error("Error during Cloudinary upload:", error.message);
+    res.status(400).send(error.message);
+  }
+});
 
 app.get("/get-upload-url", async (req, res) => {
   try {
@@ -134,14 +141,10 @@ app.get("/get-upload-url", async (req, res) => {
   }
 });
 
-// scientist routes
-app.get("/scientist/unique-species", getUnique);
-app.post("/scientist/filter-data", getFilteredCatches);
+// CSV Upload Route
+app.post("/upload", localUpload.single("file"), uploadCSV);
 
-//update password
-app.put("/user/Password-update", changePassword);
-
-// Start the Server
+// Server Setup
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
