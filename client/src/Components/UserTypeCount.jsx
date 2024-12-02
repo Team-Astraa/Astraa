@@ -27,7 +27,7 @@ const UserTypeCount = () => {
   return (
     <div>
       <h2 className="text-xl font-bold text-blue-800 mb-4 text-center">
-        User Type Count
+        User Type Count 
       </h2>
 
       {loading ? (
