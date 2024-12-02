@@ -22,8 +22,8 @@ const Logs = () => {
       });
   }, []);
 
-  const handleNavigate = (id) => {
-    navigate(`/admin/unverify-fish-data/${id}`);
+  const handleNavigate = (id , dataId) => {
+    navigate(`/admin/unverify-fish-data/${id}/${dataId}`);
   };
 
   const getFileType = (fileType) => {
@@ -77,7 +77,7 @@ const Logs = () => {
                   <td className="px-6 py-4 text-sm text-center border-b">
                     <button
                       className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
-                      onClick={() => handleNavigate(log.userId)}
+                      onClick={() => handleNavigate(log.userId , log.dataId)}
                     >
                       <i className="fa-solid fa-eye"></i>
                     </button>
