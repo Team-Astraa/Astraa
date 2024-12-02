@@ -232,6 +232,27 @@ const LoginForm = () => {
         </form>
       </div>
 
+
+      {/* Right Section */}
+      <div className="bg-white">
+        <div
+          className="hidden lg:flex lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 justify-center items-center text-white h-full"
+          style={{
+            backgroundImage: "url(../../sea_bg.jpg)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            borderRadius: "4rem 0 0 4rem",
+          }}
+        >
+          {/* <div className="text-center22 px-8">
+            <h1 className="text-5xl font-bold mb-4">Welcome to AquaDB!</h1>
+            <p className="text-xl">
+              Unlock your potential and start your journey with us today.
+            </p>
+          </div> */}
+        </div>
+      </div>
+
       {/* Password Change Modal */}
       <Modal
         open={showPasswordModal}
