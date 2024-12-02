@@ -87,9 +87,13 @@ const ScientistForm = ({ email }) => {
                 } else {
                     toast.error("Image upload failed!");
                 }
+            }).catch(error => {
+                console.error("Error uploading image:", error);
+                toast.error("Image upload failed!");
             });
         }
     };
+    
 
     return (
         <div>

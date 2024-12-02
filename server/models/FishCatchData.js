@@ -53,6 +53,10 @@ const CatchSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    fileUrl: {
+      type: String, // URL to the file stored on Cloudinary
+      required: true,
+    },
   },
   {
     timestamps: true, // Automatically include createdAt and updatedAt fields

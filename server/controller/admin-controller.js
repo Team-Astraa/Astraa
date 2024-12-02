@@ -5,6 +5,7 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchCruise.js";
 import ResearchInstitute from "../models/ResearchInstitute.js";
+// import Log from "../models/logSchema.js";
 import ValidatedCatch from "../models/ValidatedCatchData.js";
 import { generateCredentials } from "../helper/helper.js";
 import mongoose from "mongoose"; // Ensure you have mongoose imported
@@ -172,35 +173,47 @@ export const getDetailsData = async (req, res) => {
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
     const { userId } = req.body;
-    console.log(userId);
-    // Assuming the userId is passed as a URL parameter
 
-    // Use new to instantiate the ObjectId
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required." });
+    }
+
+    // Validate if userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid User ID format." });
+    }
+
+    // Use ObjectId to query the database
     const objectId = new mongoose.Types.ObjectId(userId);
 
-    // Aggregate query to filter by userId and then group the data
+    // Aggregate query to filter by userId and group the data by userId
     const catchData = await Catch.aggregate([
       { $match: { userId: objectId } }, // Match the userId passed in the request
       {
         $group: {
-          _id: "$userId",
-          catches: { $push: "$$ROOT" }, // Group catches by userId
+          _id: "$userId", // Group by userId
+          catches: { $push: "$$ROOT" }, // Push all catch data for the user
         },
       },
     ]);
 
+    // Check if any data was found
     if (catchData.length === 0) {
       return res
         .status(404)
         .json({ message: "No catch data found for this user" });
     }
 
-    return res.status(200).json(catchData);
+    // Return the grouped data
+    return res.status(200).json({
+      message: "Catch data fetched successfully",
+      data: catchData,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching catch data: ", error);
     return res
       .status(500)
-      .json({ message: "Error fetching data", error: error.message });
+      .json({ message: "Error fetching catch data", error: error.message });
   }
 };
 
@@ -208,6 +221,8 @@ export const getdataUploaduser = async (req, res) => {
   try {
     // Fetch unique userIds from Catch collection
     const uniqueUserIds = await Catch.distinct("userId").exec();
+    // const uniqueUserIds = await Catch.find().exec();
+    console.log("USER ID", uniqueUserIds);
 
     if (uniqueUserIds.length === 0) {
       return res
@@ -480,9 +495,7 @@ export const validateCatchData = async (req, res) => {
   }
 };
 
-
-
-export const getUniqueSpeciesCount =  async(req, res) =>{
+export const getUniqueSpeciesCount = async (req, res) => {
   try {
     // Function to fetch unique species count
     const fetchUniqueSpeciesCount = async () => {
@@ -517,7 +530,7 @@ export const getUniqueSpeciesCount =  async(req, res) =>{
       error: error.message,
     });
   }
-}
+};
 
 export const getUserTypeAndCount = async (req, res) => {
   try {
@@ -525,15 +538,15 @@ export const getUserTypeAndCount = async (req, res) => {
     const userCounts = await User.aggregate([
       {
         $group: {
-          _id: "$userType",         // Group by userType
-          totalUsers: { $sum: 1 },  // Count the number of users in each group
+          _id: "$userType", // Group by userType
+          totalUsers: { $sum: 1 }, // Count the number of users in each group
         },
       },
       {
         $project: {
-          _id: 0,                  // Hide the _id field
-          userType: "$_id",        // Rename _id to userType
-          totalUsers: 1,           // Include totalUsers field
+          _id: 0, // Hide the _id field
+          userType: "$_id", // Rename _id to userType
+          totalUsers: 1, // Include totalUsers field
         },
       },
     ]);
@@ -544,9 +557,7 @@ export const getUserTypeAndCount = async (req, res) => {
     console.error("Error fetching userType counts:", error);
     res.status(500).json({ message: "Server error" });
   }
-}
-   
-
+};
 
 export const getLatestLogs = async (req, res) => {
   try {
@@ -555,16 +566,16 @@ export const getLatestLogs = async (req, res) => {
       .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
       .limit(10) // Limit to the latest 10 logs
       .populate({
-        path: 'userId', // Populate the userId field with user data
-        select: 'username', // Only select the username field from the User model
+        path: "userId", // Populate the userId field with user data
+        select: "username", // Only select the username field from the User model
       });
 
     if (!logs || logs.length === 0) {
-      return res.status(404).json({ message: 'No logs found.' });
+      return res.status(404).json({ message: "No logs found." });
     }
 
     // Prepare response data with userId, username, fileType, and uploadTimestamp
-    const logsWithUserData = logs.map(log => ({
+    const logsWithUserData = logs.map((log) => ({
       userId: log.userId._id,
       username: log.userId.username,
       fileType: log.fileType,
@@ -574,6 +585,8 @@ export const getLatestLogs = async (req, res) => {
     return res.status(200).json(logsWithUserData);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Error fetching logs', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error fetching logs", error: error.message });
   }
 };
