@@ -1,808 +1,10 @@
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// import { useParams } from "react-router-dom";
-// import MapboxVisualization from "./Admin-map";
-// import { toast } from "react-hot-toast";
-// import AnimationWrapper from "./Animation-page";
-
-// const Adminverifyfish = () => {
-//   const [catchData, setCatchData] = useState([]);
-//   const [displayLimit, setDisplayLimit] = useState(3);
-//   const [selectedCatchIds, setSelectedCatchIds] = useState([]);
-//   const [editMode, setEditMode] = useState(false); // State to manage edit mode
-//   const [modifiedData, setModifiedData] = useState([]); // Track modified data
-//   const [viewMode, setViewMode] = useState("card"); // State to manage view mode (card or table)
-//   let { userId } = useParams();
-//   // console.log("USER ID in frontend", userId);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState(null);
-
-//   const fetchCatchData = async () => {
-//     try {
-//       const response = await axios.post(
-//         "http://localhost:5000/admin/get-fish-data",
-//         { userId: userId }
-//       );
-//       setCatchData(response.data);
-//       console.log(catchData)
-//       // console.log(response.data)
-      
-//     } catch (error) {
-//       console.error("Error fetching catch data:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchCatchData();
-//   }, []);
-
-//   useEffect(() => {
-//     // Listen for Ctrl + S (save) key press
-//     const handleKeyPress = (e) => {
-//       if (e.ctrlKey && e.key === "s") {
-//         e.preventDefault(); // Prevent default browser save
-//         handleSaveChanges(); // Trigger save action
-//       }
-//     };
-//     window.addEventListener("keydown", handleKeyPress);
-//     return () => {
-//       window.removeEventListener("keydown", handleKeyPress);
-//     };
-//   }, []);
-
-//   // Handle selecting and deselecting catch items
-//   const handleSelectCatch = (catchId) => {
-//     setSelectedCatchIds((prevSelectedIds) =>
-//       prevSelectedIds.includes(catchId)
-//         ? prevSelectedIds.filter((id) => id !== catchId)
-//         : [...prevSelectedIds, catchId]
-//     );
-//   };
-
-//   // Handle deleting a particular row
-//   const handleDeleteRow = async (catchId) => {
-//     try {
-//       await axios.delete("http://localhost:5000/admin/delete-catch", {
-//         data: { catchId },
-//       });
-//       setCatchData((prevData) =>
-//         prevData.map((userData) => ({
-//           ...userData,
-//           catches: userData.catches.filter(
-//             (catchItem) => catchItem._id !== catchId
-//           ),
-//         }))
-//       );
-//       alert("Row deleted successfully!");
-//     } catch (error) {
-//       console.error("Error deleting catch data:", error);
-//     }
-//   };
-
-//   // Handle editing the catch data
-//   const handleEditCatch = (catchId, editedCatchData) => {
-//     setCatchData((prevData) =>
-//       prevData.map((userData) => ({
-//         ...userData,
-//         catches: userData.catches.map((catchItem) =>
-//           catchItem._id === catchId
-//             ? { ...catchItem, ...editedCatchData }
-//             : catchItem
-//         ),
-//       }))
-//     );
-
-//     // Track modified data
-//     setModifiedData((prevModifiedData) => {
-//       const dataIndex = prevModifiedData.findIndex(
-//         (item) => item._id === catchId
-//       );
-//       if (dataIndex >= 0) {
-//         const updatedData = [...prevModifiedData];
-//         updatedData[dataIndex] = {
-//           ...updatedData[dataIndex],
-//           ...editedCatchData,
-//         };
-//         return updatedData;
-//       } else {
-//         return [
-//           ...prevModifiedData,
-//           { _id: catchId, ...editedCatchData }, // New modified item
-//         ];
-//       }
-//     });
-//   };
-
-//   // console.log("MODIFIED DATA", modifiedData);
-
-//   // Handle saving the changes to the database
-//   const handleSaveChanges = async () => {
-//     console.log("Calling handle save changes");
-
-//     try {
-//       setIsLoading(true); // Start loading
-
-//       const response = await axios.put(
-//         `http://localhost:5000/admin/update-catch-data/${userId}`, // Ensure userId is passed correctly
-//         { modifiedData } // Data payload
-//       );
-
-//       console.log("Response from server:", response.data);
-
-//       if (response.status === 200) {
-//         toast.success("Catch data updated successfully!"); // Notify success
-//         fetchCatchData();
-//         // Update the state with the new data
-//         setModifiedData([]); // Clear modified data after saving
-//       } else {
-//         toast.error("Failed to update catch data. Please try again.");
-//       }
-//     } catch (error) {
-//       console.error("Error updating catch data:", error);
-//       setError("Failed to update catch data.");
-//       toast.error(
-//         "Error saving catch data. Please check the console for details."
-//       );
-//     } finally {
-//       setIsLoading(false); // Stop loading
-//     }
-//   };
-
-//   // Handle validation of catch data
-//   const handleValidateCatch = async () => {
-//     console.log("handleValidateCatch Reaching Here");
-//     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
-//     try {
-//       const verifierId = "673af7b569f9684ec0d4784d"; // Get the verifier ID
-//       console.log("Catch Data before validation:", catchData);
-
-//       const validatedData = catchData.map((userData) =>
-//         userData.catches.map((fishData) => ({
-//           _id: fishData?._id,
-//           date: fishData?.date, // Extracting date, default to null if missing
-//           latitude: fishData?.latitude, // Extract latitude
-//           longitude: fishData?.longitude, // Extract longitude
-//           depth: fishData?.depth, // Extract depth
-//           species: Array.isArray(fishData.species) // Safely map species
-//             ? fishData.species.map((speciesItem) => ({
-//                 name: speciesItem?.name, // Default name
-//                 catch_weight: speciesItem?.catch_weight, // Default weight
-//               }))
-//             : [], // Default to empty array if species is undefined
-//           total_weight: fishData.total_weight, // Extract total weight
-//         }))
-//       );
-
-//       console.log("Valiadted data in Frontend", validatedData);
-//       // Sending data for validation
-//       const response = await axios.post(
-//         "http://localhost:5000/admin/validate-catch",
-//         {
-//           validatedData: validatedData,
-//           verifierId: verifierId,
-//         }
-//       );
-
-//       // Dismiss loading toast once request is complete
-//       toast.dismiss(loadingToast);
-
-//       if (response.status === 201) {
-//         toast.success("Catch data validated successfully!"); // Success toast
-//       } else if (response.status === 200) {
-//         toast.success("Data Already Validated");
-//       } else {
-//         toast.error("Validation failed. Please try again."); // Error toast for non-200 responses
-//       }
-
-//       console.log("Validation Response:", response.data);
-//     } catch (error) {
-//       // Dismiss loading toast in case of error
-
-//       console.error("Error validating catch data:", error);
-//       toast.error(
-//         "Error validating catch data. Please check the console for details."
-//       ); // Error toast
-//       toast.dismiss(loadingToast);
-//     }
-//   };
-
-//   const toggleViewMode = () => {
-//     setViewMode((preMode) => (preMode === "card" ? "table" : "card"));
-//   };
-
-//   const handleLoadMore = () => {
-//     setDisplayLimit((prevLimit) => prevLimit + 3);
-//   };
-
-//   return (
-//     <>
-//     <div className="bg-white">
-//       <div className="w-[100%] fixed" style={{overflowY: "hidden"}}>
-//         <MapboxVisualization catchData={catchData} />
-//       </div>
-
-//       <AnimationWrapper className="text-white rounded-lg max-w-screen-lg mx-auto w-[30vw] absolute top-0 right-0 p-[2rem]" >
-        
-//         <div className="grid grid-cols-2 gap-y-2 gap-2">
-//           <button
-//             onClick={() => setEditMode(!editMode)}
-//             className="bg-blue-600 text-white px-2 py-2 rounded-md"
-//           >
-//             {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
-//           </button>
-//           <button
-//             onClick={handleSaveChanges}
-//             className="bg-green-600 text-white px-2 py-2 rounded-md">
-//             Save Changes
-//           </button>
-//           <button
-//             onClick={handleValidateCatch} // Validate button
-//             className="bg-orange-600 text-white px-2 py-2 rounded-md">
-//             Validate Catch Data
-//           </button>
-//           <button
-//             onClick={toggleViewMode}
-//             className="bg-red-600 text-white px-2 py-2 rounded-md">
-//             {viewMode === "table"
-//               ? "Switch to Card View"
-//               : "Switch to Table View"}
-//           </button>
-//         </div>
-
-//         {viewMode === "card" ? (
-//           <div className="space-y-4">
-//             {catchData.map((data) => (
-//               <div key={data._id} className="border-b border-gray-700 py-4">
-//                 {/* <h2 className="text-lg font-semibold text-indigo-400 mb-2">
-//                   User ID: {data._id}
-//                 </h2> */}
-
-//                 {data.map((catchItem) => (
-//                   <div
-//                     key={catchItem._id}
-//                     className="border bg-gray-900 border-gray-700 p-4 rounded-lg mb-4"
-//                   >
-//                     <div className="flex justify-between items-center mb-2">
-//                       <h3 className="text-sm font-semibold text-gray-400">
-//                         Catch ID: {catchItem._id}
-//                       </h3>
-//                       {editMode && (
-//                         <button
-//                           className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-//                           onClick={() => handleDeleteRow(catchItem._id)}
-//                         >
-//                           Delete
-//                         </button>
-//                       )}
-//                     </div>
-
-//                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-//                       <div>
-//                         <label className="text-xs text-gray-400">Date:</label>
-//                         <input
-//                           type="date"
-//                           value={
-//                             new Date(catchItem.date).toISOString().split("T")[0]
-//                           }
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               date: e.target.value,
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </div>
-
-//                       <div>
-//                         <label className="text-xs text-gray-400">
-//                           Latitude:(Float)
-//                         </label>
-//                         <input
-//                           type="number"
-//                           value={catchItem.latitude}
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               latitude: parseFloat(e.target.value),
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </div>
-
-//                       <div>
-//                         <label className="text-xs text-gray-400">
-//                           Longitude:(Float)
-//                         </label>
-//                         <input
-//                           type="number"
-//                           value={catchItem.longitude}
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               longitude: parseFloat(e.target.value),
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </div>
-//                       <div>
-//                         <label className="text-xs text-gray-400">sea:</label>
-//                         <input
-//                           type="number"
-//                           value={catchItem.sea}
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               longitude: parseFloat(e.target.value),
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </div>
-
-//                       <div>
-//                         <label className="text-xs text-gray-400">Depth:</label>
-//                         <input
-//                           type="number"
-//                           value={catchItem.depth || ""}
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               depth: parseInt(e.target.value),
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </div>
-//                     </div>
-
-//                     <div className="space-y-2 mt-4">
-//                       <label className="text-xs text-gray-400">Species:</label>
-//                       <div className="grid grid-cols-2 gap-8">
-//                         {catchItem.species.map((species) => (
-//                           <div
-//                             key={species._id}
-//                             className="flex justify-between items-center text-sm gap-2"
-//                           >
-//                             <span>{species.name}</span>
-//                             <input
-//                               type="number"
-//                               value={species.catch_weight}
-//                               onChange={(e) =>
-//                                 handleEditCatch(catchItem._id, {
-//                                   species: catchItem.species.map((s) =>
-//                                     s._id === species._id
-//                                       ? {
-//                                           ...s,
-//                                           catch_weight: parseInt(
-//                                             e.target.value
-//                                           ),
-//                                         }
-//                                       : s
-//                                   ),
-//                                 })
-//                               }
-//                               readOnly={!editMode}
-//                               className="bg-gray-700 text-white p-2 rounded-md w-16 text-xs"
-//                             />
-//                           </div>
-//                         ))}
-//                       </div>
-//                     </div>
-
-//                     <div className="mt-4">
-//                       <label className="text-xs text-gray-400">
-//                         Total Weight:
-//                       </label>
-//                       <input
-//                         type="number"
-//                         value={catchItem.total_weight}
-//                         onChange={(e) =>
-//                           handleEditCatch(catchItem._id, {
-//                             total_weight: parseInt(e.target.value),
-//                           })
-//                         }
-//                         readOnly={!editMode}
-//                         className="bg-gray-700 text-white p-2 rounded-md w-full text-xs"
-//                       />
-//                     </div>
-
-//                     {editMode && (
-//                       <button
-//                         onClick={() => {
-//                           handleEditCatch(catchItem._id, {
-//                             species: catchItem.species,
-//                             total_weight: catchItem.total_weight,
-//                           });
-//                           handleSaveChanges();
-//                           setEditMode(!editMode); // Invoke handleSaveChanges here
-//                         }}
-//                         className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
-//                       >
-//                         Save Changes
-//                       </button>
-//                     )}
-//                   </div>
-//                 ))}
-//               </div>
-//             ))}
-//           </div>
-//         ) : (
-//           // <div className="overflow-x-auto">
-//           //   <table className="min-w-full table-auto text-left border-collapse border border-gray-700 lg:table-fixed">
-//           //     {/* check the table css lg:table fixed */}
-//           //     <thead>
-//           //       <tr className="bg-gray-800">
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Catch ID
-//           //         </th>
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Date
-//           //         </th>
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Latitude: (Float)
-//           //         </th>
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Longitude: (Float)
-//           //         </th>
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Depth (Integer)
-//           //         </th>
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Species
-//           //         </th>
-//           //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //           Total Weight
-//           //         </th>
-//           //         {editMode && (
-//           //           <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //             Actions
-//           //           </th>
-//           //         )}
-//           //       </tr>
-//           //     </thead>
-//           //     <tbody>
-//           //       {catchData.map((data) =>
-//           //         data.catches.map((catchItem) => (
-//           //           <tr
-//           //             key={catchItem._id}
-//           //             className="border-b border-gray-700"
-//           //           >
-//           //             <td className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //               {catchItem._id}
-//           //             </td>
-//           //             <td className="p-2 text-xs text-gray-400 border border-gray-500">
-//           //               <input
-//           //                 type="date"
-//           //                 value={
-//           //                   new Date(catchItem.date).toISOString().split("T")[0]
-//           //                 }
-//           //                 onChange={(e) =>
-//           //                   handleEditCatch(catchItem._id, {
-//           //                     date: e.target.value,
-//           //                   })
-//           //                 }
-//           //                 readOnly={!editMode}
-//           //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//           //               />
-//           //             </td>
-//           //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//           //               <input
-//           //                 type="number"
-//           //                 value={catchItem.latitude}
-//           //                 onChange={(e) =>
-//           //                   handleEditCatch(catchItem._id, {
-//           //                     latitude: parseFloat(e.target.value),
-//           //                   })
-//           //                 }
-//           //                 readOnly={!editMode}
-//           //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//           //               />
-//           //             </td>
-//           //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//           //               <input
-//           //                 type="number"
-//           //                 value={catchItem.longitude}
-//           //                 onChange={(e) =>
-//           //                   handleEditCatch(catchItem._id, {
-//           //                     longitude: parseFloat(e.target.value),
-//           //                   })
-//           //                 }
-//           //                 readOnly={!editMode}
-//           //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//           //               />
-//           //             </td>
-//           //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//           //               <input
-//           //                 type="number"
-//           //                 value={catchItem.depth || ""}
-//           //                 onChange={(e) =>
-//           //                   handleEditCatch(catchItem._id, {
-//           //                     depth: parseInt(e.target.value),
-//           //                   })
-//           //                 }
-//           //                 readOnly={!editMode}
-//           //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//           //               />
-//           //             </td>
-//           //             <td className="px-4 py-2 text-sm text-gray-300 border-b border border-gray-500">
-//           //               <select
-//           //                 value={
-//           //                   catchItem.species.find((s) => s.selected)?._id || ""
-//           //                 }
-//           //                 onChange={(e) => {
-//           //                   const selectedSpeciesId = e.target.value;
-//           //                   const updatedSpecies = catchItem.species.map(
-//           //                     (species) =>
-//           //                       species._id === selectedSpeciesId
-//           //                         ? { ...species, selected: true }
-//           //                         : { ...species, selected: false }
-//           //                   );
-//           //                   handleEditCatch(catchItem._id, {
-//           //                     species: updatedSpecies,
-//           //                   });
-//           //                 }}
-//           //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//           //               >
-//           //                 <option value="" disabled>
-//           //                   Name
-//           //                 </option>
-//           //                 {catchItem.species.map((species) => (
-//           //                   <option key={species._id} value={species._id}>
-//           //                     {species.name} ({species.catch_weight})
-//           //                   </option>
-//           //                 ))}
-//           //               </select>
-//           //             </td>
-
-//           //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//           //               <input
-//           //                 type="number"
-//           //                 value={catchItem.total_weight}
-//           //                 onChange={(e) =>
-//           //                   handleEditCatch(catchItem._id, {
-//           //                     total_weight: parseInt(e.target.value),
-//           //                   })
-//           //                 }
-//           //                 readOnly={!editMode}
-//           //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//           //               />
-//           //             </td>
-//           //             {/* Actions column with border (Delete button) */}
-//           //             {editMode && (
-//           //               <td className="px-4 py-2 text-sm text-gray-300 border border-gray-500">
-//           //                 <button
-//           //                   className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-//           //                   onClick={() => handleDeleteRow(catchItem._id)}
-//           //                 >
-//           //                   Delete
-//           //                 </button>
-//           //               </td>
-//           //             )}
-//           //           </tr>
-//           //         ))
-//           //       )}
-//           //     </tbody>
-//           //   </table>
-//           // </div>
-
-//           <div className="overflow-x-auto">
-//             <table className="min-w-full table-auto text-left border-collapse border border-gray-700 lg:table-fixed">
-//               <thead>
-//                 <tr className="bg-gray-800">
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Catch ID
-//                   </th>
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Date
-//                   </th>
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Latitude (Float)
-//                   </th>
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Longitude (Float)
-//                   </th>
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Depth (Integer)
-//                   </th>
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Species
-//                   </th>
-//                   <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                     Total Weight
-//                   </th>
-//                   {editMode && (
-//                     <th className="p-2 text-xs text-gray-400 border border-gray-500">
-//                       Actions
-//                     </th>
-//                   )}
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {catchData.map((data) =>
-//                   data.map((catchItem) => (
-//                     <tr
-//                       key={catchItem._id}
-//                       className="border-b border-gray-700"
-//                     >
-//                       <td className="p-2 text-xs text-gray-400 border border-gray-500">
-//                         {catchItem._id}
-//                       </td>
-//                       <td className="p-2 text-xs text-gray-400 border border-gray-500">
-//                         <input
-//                           type="date"
-//                           value={
-//                             new Date(catchItem.date).toISOString().split("T")[0]
-//                           }
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               date: e.target.value,
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </td>
-//                       <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//                         <input
-//                           type="number"
-//                           step="any"
-//                           value={catchItem.latitude}
-//                           onChange={(e) => {
-//                             const value = parseFloat(e.target.value);
-//                             if (!isNaN(value)) {
-//                               handleEditCatch(catchItem._id, {
-//                                 latitude: value,
-//                               });
-//                             }
-//                           }}
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                         {/* Warning for invalid float */}
-//                         {isNaN(catchItem.latitude) && editMode && (
-//                           <span className="text-red-500 text-xs">
-//                             Please enter a valid float value
-//                           </span>
-//                         )}
-//                       </td>
-//                       <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//                         <input
-//                           type="number"
-//                           step="any"
-//                           value={catchItem.longitude}
-//                           onChange={(e) => {
-//                             const value = parseFloat(e.target.value);
-//                             if (!isNaN(value)) {
-//                               handleEditCatch(catchItem._id, {
-//                                 longitude: value,
-//                               });
-//                             }
-//                           }}
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                         {/* Warning for invalid float */}
-//                         {isNaN(catchItem.longitude) && editMode && (
-//                           <span className="text-red-500 text-xs">
-//                             Please enter a valid float value
-//                           </span>
-//                         )}
-//                       </td>
-//                       <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//                         <input
-//                           type="number"
-//                           value={catchItem.depth || ""}
-//                           onChange={(e) => {
-//                             const value = parseInt(e.target.value);
-//                             if (!isNaN(value)) {
-//                               handleEditCatch(catchItem._id, { depth: value });
-//                             }
-//                           }}
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                         {/* Warning for invalid integer */}
-//                         {isNaN(catchItem.depth) && editMode && (
-//                           <span className="text-red-500 text-xs">
-//                             Please enter a valid integer
-//                           </span>
-//                         )}
-//                       </td>
-//                       <td className="px-4 py-2 text-sm text-gray-300 border-b border border-gray-500">
-//                         <select
-//                           value={
-//                             catchItem.species.find((s) => s.selected)?._id || ""
-//                           }
-//                           onChange={(e) => {
-//                             const selectedSpeciesId = e.target.value;
-//                             const updatedSpecies = catchItem.species.map(
-//                               (species) =>
-//                                 species._id === selectedSpeciesId
-//                                   ? { ...species, selected: true }
-//                                   : { ...species, selected: false }
-//                             );
-//                             handleEditCatch(catchItem._id, {
-//                               species: updatedSpecies,
-//                             });
-//                           }}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         >
-//                           <option value="" disabled>
-//                             Name
-//                           </option>
-//                           {catchItem.species.map((species) => (
-//                             <option key={species._id} value={species._id}>
-//                               {species.name} ({species.catch_weight})
-//                             </option>
-//                           ))}
-//                         </select>
-//                       </td>
-
-//                       <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-//                         <input
-//                           type="number"
-//                           value={catchItem.total_weight}
-//                           onChange={(e) =>
-//                             handleEditCatch(catchItem._id, {
-//                               total_weight: parseInt(e.target.value),
-//                             })
-//                           }
-//                           readOnly={!editMode}
-//                           className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-//                         />
-//                       </td>
-
-//                       {editMode && (
-//                         <td className="px-4 py-2 text-sm text-gray-300 border border-gray-500">
-//                           <button
-//                             className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-//                             onClick={() => handleDeleteRow(catchItem._id)}
-//                           >
-//                             Delete
-//                           </button>
-//                         </td>
-//                       )}
-//                     </tr>
-//                   ))
-//                 )}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-
-//             <button
-//               onClick={() => handleLoadMore()}
-//               style={{
-//                 padding: "10px 15px",
-//                 background: "#007bff",
-//                 color: "#fff",
-//                 border: "none",
-//                 borderRadius: "5px",
-//                 cursor: "pointer",
-//                 width: "100%"
-//               }}
-//             >
-//               Load More
-//             </button>
-//       </AnimationWrapper>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Adminverifyfish;
-
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import MapboxVisualization from "./Admin-map";
 import { toast } from "react-hot-toast";
-import AnimationWrapper from "./Animation-page"
+import AnimationWrapper from "./Animation-page";
+import { Typography } from "@mui/material";
 
 const Adminverifyfish = () => {
   const [catchData, setCatchData] = useState([]);
@@ -810,10 +12,58 @@ const Adminverifyfish = () => {
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
+  const [showRows, setshowRows] = useState(17)
   let { userId } = useParams();
   // console.log("USER ID in frontend", userId);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [totalRows, setTotalRows] = useState(0);
+  const [uniqueSpecies, setUniqueSpecies] = useState(0);
+  const [avgDepth, setAvgDepth] = useState(0);
+  const [mostCommonSpecies, setMostCommonSpecies] = useState("");
+
+  const [viewedRow, setviewedRow] = useState({ lat: 0.0, long: 0.0 });
+
+  // Function to calculate Total Rows
+  const getTotalRows = (data) => data.length;
+
+  // Function to calculate Total Unique Species
+  const getTotalUniqueSpecies = (data) => {
+    const speciesSet = new Set();
+    data.forEach((entry) => {
+      entry.species.forEach((s) => speciesSet.add(s.name));
+    });
+    return speciesSet.size;
+  };
+
+  // Function to calculate Average Depth
+  const getAverageDepth = (data) => {
+    const totalDepth = data.reduce((sum, entry) => sum + entry.depth, 0);
+    return data.length > 0 ? (totalDepth / data.length).toFixed(2) : 0;
+  };
+
+  // Function to find the Most Common Species
+  const getMostCommonSpecies = (data) => {
+    const speciesCount = {};
+    data.forEach((entry) => {
+      entry.species.forEach((s) => {
+        speciesCount[s.name] = (speciesCount[s.name] || 0) + 1;
+      });
+    });
+
+    let mostCommon = null;
+    let maxCount = 0;
+
+    for (const [species, count] of Object.entries(speciesCount)) {
+      if (count > maxCount) {
+        mostCommon = species;
+        maxCount = count;
+      }
+    }
+
+    return mostCommon;
+  };
 
   const fetchCatchData = async () => {
     try {
@@ -821,9 +71,23 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId }
       );
-      console.log("CATCH DATA",response.data.data)
+      console.log("CATCH DATA", response.data.data)
       // return;
       setCatchData(response.data.data);
+      setviewedRow({
+        lat: response.data.data[0].catches[0].latitude.toFixed(3), 
+        long: response.data.data[0].catches[0].longitude.toFixed(3)
+      })
+      console.log(response.data.data[0].catches[0])
+
+      if (response.data) {
+        setTotalRows(getTotalRows(response.data.data[0].catches));
+        setUniqueSpecies(getTotalUniqueSpecies(response.data.data[0].catches));
+        setAvgDepth(getAverageDepth(response.data.data[0].catches));
+        setMostCommonSpecies(getMostCommonSpecies(response.data.data[0].catches));
+      } else console.log("gadbad hai");
+      
+      
     } catch (error) {
       console.error("Error fetching catch data:", error);
     }
@@ -920,7 +184,7 @@ const Adminverifyfish = () => {
       setIsLoading(true); // Start loading
 
       const response = await axios.put(
-        `http://localhost:5000/admin/update-catch-data/${userId}`,
+        `http://localhost:5000/admin/update-catch-data/${userId}`, // Ensure userId is passed correctly
         { modifiedData } // Data payload
       );
 
@@ -1007,748 +271,495 @@ const Adminverifyfish = () => {
     setViewMode((preMode) => (preMode === "card" ? "table" : "card"));
   };
 
+  const handleViewRow = (data) => {
+    setviewedRow({ lat: data.lat, long: data.long });
+  }
+
+  const handleLoadMore = () => {
+    setshowRows(showRows + 20);
+  }
+
+  const handleShowLess = () => {
+    setshowRows(17);
+  }
+
   return (
-    <>
-      <MapboxVisualization catchData={catchData} />
+    
+    <div className="bg-white p-6">
+        <Typography variant="h4" color="black">
+          Admin Dashboard
+        </Typography>
 
-      <AnimationWrapper className="text-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-4 text-center">Admin Dashboard</h1>
-        <button
-          onClick={() => setEditMode(!editMode)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md mb-6"
-        >
-          {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
-        </button>
-        <button
-          onClick={handleSaveChanges}
-          className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-4"
-        >
-          Save Changes
-        </button>
-        <button
-          onClick={handleValidateCatch} // Validate button
-          className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-4"
-        >
-          Validate Catch Data
-        </button>
-        <button
-          onClick={toggleViewMode}
-          className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-4"
-        >
-          {viewMode === "table"
-            ? "Switch to Card View"
-            : "Switch to Table View"}
-        </button>
+      <div className="flex justify-between gap-5 mt-3 h-[88vh]" style={{overflowY: 'hidden'}}>
+          <div className="w-[45%]">
+            <div className="rounded-xl">
+              
+              <div className="grid grid-cols-4 gap-2 mb-3" >
+                <div className="rounded-xl border border-lg border-purple-200">
+                    <div className="flex-1 p-3 bg-white rounded-xl text-center text-lg text-blue-900">
+                          Total Rows: <br /> <strong>{totalRows}</strong>
+                      </div>
+                </div>
+                <div className="rounded-xl border border-lg border-purple-200">
+                    <div className="flex-1 p-3 bg-white rounded-xl text-center text-lg text-blue-900">
+                          Unique Species: <br /> <strong>{uniqueSpecies}</strong>
+                      </div>
+                </div>
+                <div className="rounded-xl border border-lg border-purple-200">
+                    <div className="flex-1 p-3 bg-white rounded-xl text-center text-lg text-blue-900">
+                          Avg Depth: <br /> <strong>{avgDepth} m</strong>
+                      </div>
+                </div>
+                <div className="rounded-xl border border-lg border-purple-200">
+                    <div className="flex-1 p-3 bg-white rounded-xl text-center text-lg text-blue-900">
+                          Most Common Species: <strong>{mostCommonSpecies}</strong>
+                      </div>
+                </div>
+              </div>
 
-        {viewMode === "card" ? (
-          // <div className="space-y-4">
-          //   {catchData.map((data) => (
-          //     <div key={data._id} className="border-b border-gray-700 py-4">
-          //       <h2 className="text-lg font-semibold text-indigo-400 mb-2">
-          //         User ID: {data._id}
-          //       </h2>
+              <MapboxVisualization catchData={catchData} props={{ type: "markers", showButton: true}}/>
 
-          //       {data.catches.map((catchItem) => (
-          //         <div
-          //           key={catchItem._id}
-          //           className="border bg-gray-900 border-gray-700 p-4 rounded-lg mb-4"
-          //         >
-          //           <div className="flex justify-between items-center mb-2">
-          //             <h3 className="text-sm font-semibold text-gray-400">
-          //               Catch ID: {catchItem._id}
-          //             </h3>
-          //             {editMode && (
-          //               <button
-          //                 className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-          //                 onClick={() => handleDeleteRow(catchItem._id)}
-          //               >
-          //                 Delete
-          //               </button>
-          //             )}
-          //           </div>
 
-          //           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          //             <div>
-          //               <label className="text-xs text-gray-400">Date:</label>
-          //               <input
-          //                 type="date"
-          //                 value={
-          //                   new Date(catchItem.date).toISOString().split("T")[0]
-          //                 }
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     date: e.target.value,
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </div>
+              <h4 className="text-xl font-medium mt-7">View Single Point <span className="font-light">lat: {viewedRow.lat} long: {viewedRow.long}</span> </h4>
+              
+              <div className="mt-3">
+                <div>
+                  <MapboxVisualization catchData={catchData} props={{ type: "markers", showButton: false,
+                    oneLat: viewedRow.lat, oneLong: viewedRow.long}} />
+                </div>
+                {/* <div className="rounded-xl border border-lg border-purple-200">
+                  <MapboxVisualization catchData={catchData} props={{ type: "heatmap", showButton: false,
+                    oneLat: viewedRow.lat, oneLong: viewedRow.long
+                  }} />
+                </div>
+                <div className="rounded-xl border border-lg border-purple-200">
+                  <MapboxVisualization catchData={catchData} props={{ type: "clusters", showButton: false,
+                    oneLat: viewedRow.lat, oneLong: viewedRow.long
+                  }}/>
+                </div> */}
+              </div>
 
-          //             <div>
-          //               <label className="text-xs text-gray-400">
-          //                 Latitude:(Float)
-          //               </label>
-          //               <input
-          //                 type="number"
-          //                 value={catchItem.latitude}
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     latitude: parseFloat(e.target.value),
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </div>
+            </div>
 
-          //             <div>
-          //               <label className="text-xs text-gray-400">
-          //                 Longitude:(Float)
-          //               </label>
-          //               <input
-          //                 type="number"
-          //                 value={catchItem.longitude}
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     longitude: parseFloat(e.target.value),
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </div>
-          //             <div>
-          //               <label className="text-xs text-gray-400">sea:</label>
-          //               <input
-          //                 type="number"
-          //                 value={catchItem.sea}
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     longitude: parseFloat(e.target.value),
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </div>
+            
+          </div>
 
-          //             <div>
-          //               <label className="text-xs text-gray-400">Depth:</label>
-          //               <input
-          //                 type="number"
-          //                 value={catchItem.depth || ""}
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     depth: parseInt(e.target.value),
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </div>
-          //           </div>
+          <div className="w-[55%]  overflow-y-auto">
+            <AnimationWrapper className="text-white rounded-lg  max-w-screen-lg mx-auto">
+              {/* <h1 className="text-2xl font-bold mb-4 text-black">Admin Dashboard</h1> */}
+              
 
-          //           <div className="space-y-2 mt-4">
-          //             <label className="text-xs text-gray-400">Species:</label>
-          //             <div className="flex gap-8 flex-wrap">
-          //               {catchItem.species.map((species) => (
-          //                 <div
-          //                   key={species._id}
-          //                   className="flex justify-between items-center text-sm gap-2"
-          //                 >
-          //                   <span>{species.name}</span>
-          //                   <input
-          //                     type="number"
-          //                     value={species.catch_weight}
-          //                     onChange={(e) =>
-          //                       handleEditCatch(catchItem._id, {
-          //                         species: catchItem.species.map((s) =>
-          //                           s._id === species._id
-          //                             ? {
-          //                                 ...s,
-          //                                 catch_weight: parseInt(
-          //                                   e.target.value
-          //                                 ),
-          //                               }
-          //                             : s
-          //                         ),
-          //                       })
-          //                     }
-          //                     readOnly={!editMode}
-          //                     className="bg-gray-700 text-white p-2 rounded-md w-16 text-xs"
-          //                   />
-          //                 </div>
-          //               ))}
-          //             </div>
-          //           </div>
+              {viewMode === "card" ? (
+                
+                <div className="space-y-4">
+                  {catchData.map((data) => (
+                    <div key={data._id} className="border-b border-gray-700 py-4">
+                      <h2 className="text-lg font-semibold text-indigo-400 mb-2">
+                        User ID: {data._id}
+                      </h2>
 
-          //           <div className="mt-4">
-          //             <label className="text-xs text-gray-400">
-          //               Total Weight:
-          //             </label>
-          //             <input
-          //               type="number"
-          //               value={catchItem.total_weight}
-          //               onChange={(e) =>
-          //                 handleEditCatch(catchItem._id, {
-          //                   total_weight: parseInt(e.target.value),
-          //                 })
-          //               }
-          //               readOnly={!editMode}
-          //               className="bg-gray-700 text-white p-2 rounded-md w-full text-xs"
-          //             />
-          //           </div>
-
-          //           {editMode && (
-          //             <button
-          //               onClick={() => {
-          //                 handleEditCatch(catchItem._id, {
-          //                   species: catchItem.species,
-          //                   total_weight: catchItem.total_weight,
-          //                 });
-          //                 handleSaveChanges();
-          //                 setEditMode(!editMode); // Invoke handleSaveChanges here
-          //               }}
-          //               className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
-          //             >
-          //               Save Changes
-          //             </button>
-          //           )}
-          //         </div>
-          //       ))}
-          //     </div>
-          //   ))}
-          // </div>
-          <div className="space-y-4">
-            {catchData.map((data) => (
-              <div key={data._id} className="border-b border-gray-700 py-4">
-                <h2 className="text-lg font-semibold text-indigo-400 mb-2">
-                  User ID: {data._id}
-                </h2>
-
-                {data.catches.map((catchItem) => (
-                  <div
-                    key={catchItem._id}
-                    className="border bg-gray-900 border-gray-700 p-4 rounded-lg mb-4"
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="text-sm font-semibold text-gray-400">
-                        Catch ID: {catchItem._id}
-                      </h3>
-                      {editMode && (
-                        <button
-                          className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-                          onClick={() => handleDeleteRow(catchItem._id)}
+                      {data.catches.map((catchItem) => (
+                        <div
+                          key={catchItem._id}
+                          className="border bg-gray-900 border-gray-700 p-4 rounded-lg mb-4"
                         >
-                          Delete
-                        </button>
-                      )}
-                    </div>
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-sm font-semibold text-gray-400">
+                              Catch ID: {catchItem._id}
+                            </h3>
+                            {editMode && (
+                              <button
+                                className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
+                                onClick={() => handleDeleteRow(catchItem._id)}
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <label className="text-xs text-gray-400">Date:</label>
-                        <input
-                          type="date"
-                          value={
-                            new Date(catchItem.date).toISOString().split("T")[0]
-                          }
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              date: e.target.value,
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                              <label className="text-xs text-gray-400">Date:</label>
+                              <input
+                                type="date"
+                                value={
+                                  new Date(catchItem.date).toISOString().split("T")[0]
+                                }
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    date: e.target.value,
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+                              />
+                            </div>
 
-                      <div>
-                        <label className="text-xs text-gray-400">
-                          Latitude:
-                        </label>
-                        <input
-                          type="number"
-                          value={catchItem.latitude}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              latitude: parseFloat(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </div>
+                            <div>
+                              <label className="text-xs text-gray-400">
+                                Latitude:(Float)
+                              </label>
+                              <input
+                                type="number"
+                                value={catchItem.latitude}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    latitude: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+                              />
+                            </div>
 
-                      <div>
-                        <label className="text-xs text-gray-400">
-                          Longitude:
-                        </label>
-                        <input
-                          type="number"
-                          value={catchItem.longitude}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              longitude: parseFloat(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </div>
+                            <div>
+                              <label className="text-xs text-gray-400">
+                                Longitude:(Float)
+                              </label>
+                              <input
+                                type="number"
+                                value={catchItem.longitude}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    longitude: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+                              />
+                            </div>
 
-                      <div>
-                        <label className="text-xs text-gray-400">Sea:</label>
-                        <input
-                          type="number"
-                          value={catchItem.sea || ""}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              sea: parseFloat(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </div>
+                            <div>
+                              <label className="text-xs text-gray-400">Sea:</label>
+                              <input
+                                type="number"
+                                value={catchItem.sea || ""}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    sea: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+                              />
+                            </div>
 
-                      <div>
-                        <label className="text-xs text-gray-400">Depth:</label>
-                        <input
-                          type="number"
-                          value={catchItem.depth || ""}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              depth: parseInt(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </div>
-                    </div>
+                            <div>
+                              <label className="text-xs text-gray-400">Depth:</label>
+                              <input
+                                type="number"
+                                value={catchItem.depth || ""}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    depth: parseInt(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
+                              />
+                            </div>
+                          </div>
 
-                    <div className="space-y-2 mt-4">
-                      <label className="text-xs text-gray-400">Species:</label>
-                      <div className="flex gap-8 flex-wrap">
-                        {catchItem.species.map((species) => (
-                          <div
-                            key={species._id}
-                            className="flex justify-between items-center text-sm gap-2"
-                          >
-                            <span>{species.name}</span>
+                          <div className="space-y-2 mt-4">
+                            <label className="text-xs text-gray-400">Species:</label>
+                            <div className="flex gap-8 flex-wrap">
+                              {catchItem.species.map((species) => (
+                                <div
+                                  key={species._id}
+                                  className="flex justify-between items-center text-sm gap-2"
+                                >
+                                  <span>{species.name}</span>
+                                  <input
+                                    type="number"
+                                    value={species.catch_weight}
+                                    onChange={(e) =>
+                                      handleEditCatch(catchItem._id, {
+                                        species: catchItem.species.map((s) =>
+                                          s._id === species._id
+                                            ? {
+                                                ...s,
+                                                catch_weight: parseInt(
+                                                  e.target.value
+                                                ),
+                                              }
+                                            : s
+                                        ),
+                                      })
+                                    }
+                                    readOnly={!editMode}
+                                    className="bg-gray-700 text-white p-2 rounded-md w-16 text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="mt-4">
+                            <label className="text-xs text-gray-400">
+                              Total Weight:
+                            </label>
                             <input
                               type="number"
-                              value={species.catch_weight}
+                              value={catchItem.total_weight}
                               onChange={(e) =>
                                 handleEditCatch(catchItem._id, {
-                                  species: catchItem.species.map((s) =>
-                                    s._id === species._id
-                                      ? {
-                                          ...s,
-                                          catch_weight: parseInt(
-                                            e.target.value
-                                          ),
-                                        }
-                                      : s
-                                  ),
+                                  total_weight: parseInt(e.target.value),
                                 })
                               }
                               readOnly={!editMode}
-                              className="bg-gray-700 text-white p-2 rounded-md w-16 text-xs"
+                              className="bg-gray-700 text-white p-2 rounded-md w-full text-xs"
                             />
                           </div>
-                        ))}
+
+                          {editMode && (
+                            <button
+                              onClick={() => {
+                                handleSaveChanges();
+                                setEditMode(false);
+                              }}
+                              className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
+                            >
+                              Save Changes
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="overflow-x-auto p-3 rounded-lg border border-lg border-purple-200  overflow-y-auto">
+                    <div className="flex justify-between">
+                      <h2 className="text-black text-xl font-bold mb-3">Fish Catch Distribution</h2>
+                      <div>
+                        <button
+                          onClick={() => setEditMode(!editMode)}
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md mb-6 text-xs"
+                        >
+                          {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
+                        </button>
+                        <button
+                          onClick={handleSaveChanges}
+                          className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleValidateCatch} // Validate button
+                          className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                        >
+                          Validate
+                        </button>
+                        <button
+                          onClick={toggleViewMode}
+                          className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                        >
+                          {viewMode === "table"
+                            ? "Card View"
+                            : "Table View"}
+                        </button>
                       </div>
                     </div>
-
-                    <div className="mt-4">
-                      <label className="text-xs text-gray-400">
-                        Total Weight:
-                      </label>
-                      <input
-                        type="number"
-                        value={catchItem.total_weight}
-                        onChange={(e) =>
-                          handleEditCatch(catchItem._id, {
-                            total_weight: parseInt(e.target.value),
-                          })
-                        }
-                        readOnly={!editMode}
-                        className="bg-gray-700 text-white p-2 rounded-md w-full text-xs"
-                      />
-                    </div>
-
-                    {editMode && (
-                      <button
-                        onClick={() => {
-                          handleSaveChanges();
-                          setEditMode(false);
-                        }}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-md mt-4 text-xs"
-                      >
-                        Save Changes
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto text-left border-collapse border border-gray-700 lg:table-fixed">
-              {/* check the table css lg:table fixed */}
-              <thead>
-                <tr className="bg-gray-800">
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Catch ID
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Date
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-<<<<<<< HEAD
-                    Latitude
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Longitude
-=======
-                    Latitude: (Float)
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Longitude: (Float)
->>>>>>> 36fbaabbe807e6bc186568a566f28edb8ce6d7ef
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Depth
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Species
-                  </th>
-                  <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                    Total Weight
-                  </th>
-                  {editMode && (
-                    <th className="p-2 text-xs text-gray-400 border border-gray-500">
-                      Actions
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {catchData.map((data) =>
-                  data.catches.map((catchItem) => (
-                    <tr
-                      key={catchItem._id}
-                      className="border-b border-gray-700"
-                    >
-                      <td className="p-2 text-xs text-gray-400 border border-gray-500">
-                        {catchItem._id}
-                      </td>
-                      <td className="p-2 text-xs text-gray-400 border border-gray-500">
-                        <input
-                          type="date"
-                          value={
-                            new Date(catchItem.date).toISOString().split("T")[0]
-                          }
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              date: e.target.value,
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </td>
-                      <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-                        <input
-                          type="number"
-                          value={catchItem.latitude}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              latitude: parseFloat(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </td>
-                      <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-                        <input
-                          type="number"
-                          value={catchItem.longitude}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              longitude: parseFloat(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </td>
-                      <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-                        <input
-                          type="number"
-                          value={catchItem.depth || ""}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              depth: parseInt(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-300 border-b border border-gray-500">
-                        <select
-                          value={
-                            catchItem.species.find((s) => s.selected)?._id || ""
-                          }
-                          onChange={(e) => {
-                            const selectedSpeciesId = e.target.value;
-                            const updatedSpecies = catchItem.species.map(
-                              (species) =>
-                                species._id === selectedSpeciesId
-                                  ? { ...species, selected: true }
-                                  : { ...species, selected: false }
-                            );
-                            handleEditCatch(catchItem._id, {
-                              species: updatedSpecies,
-                            });
-                          }}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        >
-                          <option value="" disabled>
-                            Name
-                          </option>
-                          {catchItem.species.map((species) => (
-                            <option key={species._id} value={species._id}>
-                              {species.name} ({species.catch_weight})
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-
-                      <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-                        <input
-                          type="number"
-                          value={catchItem.total_weight}
-                          onChange={(e) =>
-                            handleEditCatch(catchItem._id, {
-                              total_weight: parseInt(e.target.value),
-                            })
-                          }
-                          readOnly={!editMode}
-                          className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-                        />
-                      </td>
-                      {/* Actions column with border (Delete button) */}
-                      {editMode && (
-                        <td className="px-4 py-2 text-sm text-gray-300 border border-gray-500">
-                          <button
-                            className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-                            onClick={() => handleDeleteRow(catchItem._id)}
+                  <table className="min-w-full table-auto text-left lg:table-fixed">
+                    {/* check the table css lg:table fixed */}
+                    <thead className="sticky top-0">
+                      <tr className="bg-gray-300">
+                        {/* <th className="text-xs text-gray-400 border border-gray-200">
+                          Catch ID
+                        </th> */}
+                        <th className="p-2 text-xs text-black">
+                          Date
+                        </th>
+                        <th className="p-2 text-xs text-black">
+                          Latitude: (Float)
+                        </th>
+                        <th className="p-2 text-xs text-black">
+                          Longitude: (Float)
+                        </th>
+                        <th className="p-2 text-xs text-black">
+                          Depth (Integer)
+                        </th>
+                        <th className="p-2 text-xs text-black">
+                          Species
+                        </th>
+                        <th className="p-2 text-xs text-black">
+                          Total Weight
+                        </th>
+                        
+                          <th className="p-2 text-xs text-black">
+                            Actions
+                          </th>
+                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {catchData.map((data) =>
+                        data.catches.slice(0, showRows).map((catchItem) => (
+                          <tr
+                            key={catchItem._id}
+                            className="border-b border-gray-200 even:bg-gray-100"
                           >
-                            Delete
-                          </button>
-                        </td>
+                            {/* <td className="p-2 text-xs text-gray-400 border border-gray-200">
+                              {catchItem._id}
+                            </td> */}
+                            <td className="text-xs text-gray-400 p-0">
+                              <input
+                                type="date"
+                                value={
+                                  new Date(catchItem.date).toISOString().split("T")[0]
+                                }
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    date: e.target.value,
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                                style={{border: 'none', margin: 0, background: "transparent"}}
+                              />
+                            </td>
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                              style={{border: 'none', background: "transparent"}}
+                                type="number"
+                                value={catchItem.latitude.toFixed(3)}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    latitude: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                              style={{border: 'none', background: "transparent"}}
+                                type="number"
+                                value={catchItem.longitude.toFixed(3)}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    longitude: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                              style={{border: 'none', background: "transparent"}}
+                                type="number"
+                                value={catchItem.depth || ""}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    depth: parseInt(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            <td className=" text-xs text-gray-400 border-b border-gray-200" >
+                              <select
+                              style={{border: 'none', background: "transparent"}}
+                                value={
+                                  catchItem.species.find((s) => s.selected)?._id || ""
+                                }
+                                onChange={(e) => {
+                                  const selectedSpeciesId = e.target.value;
+                                  const updatedSpecies = catchItem.species.map(
+                                    (species) =>
+                                      species._id === selectedSpeciesId
+                                        ? { ...species, selected: true }
+                                        : { ...species, selected: false }
+                                  );
+                                  handleEditCatch(catchItem._id, {
+                                    species: updatedSpecies,
+                                  });
+                                }}
+                                className="text-black w-full text-xs"
+                              >
+                                <option value="" disabled>
+                                  Name
+                                </option>
+                                {catchItem.species.map((species) => (
+                                  <option key={species._id} value={species._id}>
+                                    {species.name} ({species.catch_weight})
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                              style={{border: 'none', background: "transparent"}}
+                                type="number"
+                                value={catchItem.total_weight}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    total_weight: parseInt(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            {/* Actions column with border (Delete button) */}
+                            
+                              <td className="text-xs text-gray-300 border-gray-200">
+
+                                {editMode ===  true ? (<button
+                                  className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
+                                  onClick={() => handleDeleteRow(catchItem._id)}>
+                                  "Delete"                                
+                                </button> ) : (
+                                  <button style={{width: "20px", height: "20px", color: "blue"}} 
+                                  onClick={() => handleViewRow({ lat: catchItem.latitude.toFixed(3), long: catchItem.longitude.toFixed(3) })}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor">
+                                      <path d="M572.52 241.4C518.78 135.6 404.78 64 288 64S57.22 135.6 3.48 241.4a48.16 48.16 0 0 0 0 29.2C57.22 376.4 171.22 448 288 448s230.78-71.6 284.52-177.4a48.16 48.16 0 0 0 0-29.2zM288 400c-70.58 0-128-57.42-128-128s57.42-128 128-128 128 57.42 128 128-57.42 128-128 128zm0-208a80 80 0 1 0 80 80 80.09 80.09 0 0 0-80-80z"/>
+                                    </svg>
+                                  </button>  
+                                )}
+                                
+                              </td>
+                          </tr>
+                        ))
                       )}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                    </tbody>
+                  </table>
+
+                    <button
+                      onClick={() => handleLoadMore()}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md mt-6 text-xs">
+                      Load more
+                    </button>
+
+                    <button
+                      onClick={() => handleShowLess()}
+                      className="bg-red-600 text-white px-4 py-2 rounded-md ml-3 text-xs">
+                      Show less
+                    </button>
+                </div>
+
+              
+              )}
+            </AnimationWrapper>
+
           </div>
 
-          // <div className="overflow-x-auto">
-          //   <table className="min-w-full table-auto text-left border-collapse border border-gray-700 lg:table-fixed">
-          //     <thead>
-          //       <tr className="bg-gray-800">
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Catch ID
-          //         </th>
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Date
-          //         </th>
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Latitude (Float)
-          //         </th>
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Longitude (Float)
-          //         </th>
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Depth (Integer)
-          //         </th>
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Species
-          //         </th>
-          //         <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //           Total Weight
-          //         </th>
-          //         {editMode && (
-          //           <th className="p-2 text-xs text-gray-400 border border-gray-500">
-          //             Actions
-          //           </th>
-          //         )}
-          //       </tr>
-          //     </thead>
-          //     <tbody>
-          //       {catchData.map((data) =>
-          //         data.catches.map((catchItem) => (
-          //           <tr
-          //             key={catchItem._id}
-          //             className="border-b border-gray-700"
-          //           >
-          //             <td className="p-2 text-xs text-gray-400 border border-gray-500">
-          //               {catchItem._id}
-          //             </td>
-          //             <td className="p-2 text-xs text-gray-400 border border-gray-500">
-          //               <input
-          //                 type="date"
-          //                 value={
-          //                   new Date(catchItem.date).toISOString().split("T")[0]
-          //                 }
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     date: e.target.value,
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </td>
-          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-          //               <input
-          //                 type="number"
-          //                 step="any"
-          //                 value={catchItem.latitude}
-          //                 onChange={(e) => {
-          //                   const value = parseFloat(e.target.value);
-          //                   if (!isNaN(value)) {
-          //                     handleEditCatch(catchItem._id, {
-          //                       latitude: value,
-          //                     });
-          //                   }
-          //                 }}
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //               {/* Warning for invalid float */}
-          //               {isNaN(catchItem.latitude) && editMode && (
-          //                 <span className="text-red-500 text-xs">
-          //                   Please enter a valid float value
-          //                 </span>
-          //               )}
-          //             </td>
-          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-          //               <input
-          //                 type="number"
-          //                 step="any"
-          //                 value={catchItem.longitude}
-          //                 onChange={(e) => {
-          //                   const value = parseFloat(e.target.value);
-          //                   if (!isNaN(value)) {
-          //                     handleEditCatch(catchItem._id, {
-          //                       longitude: value,
-          //                     });
-          //                   }
-          //                 }}
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //               {/* Warning for invalid float */}
-          //               {isNaN(catchItem.longitude) && editMode && (
-          //                 <span className="text-red-500 text-xs">
-          //                   Please enter a valid float value
-          //                 </span>
-          //               )}
-          //             </td>
-          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-          //               <input
-          //                 type="number"
-          //                 value={catchItem.depth || ""}
-          //                 onChange={(e) => {
-          //                   const value = parseInt(e.target.value);
-          //                   if (!isNaN(value)) {
-          //                     handleEditCatch(catchItem._id, { depth: value });
-          //                   }
-          //                 }}
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //               {/* Warning for invalid integer */}
-          //               {isNaN(catchItem.depth) && editMode && (
-          //                 <span className="text-red-500 text-xs">
-          //                   Please enter a valid integer
-          //                 </span>
-          //               )}
-          //             </td>
-          //             <td className="px-4 py-2 text-sm text-gray-300 border-b border border-gray-500">
-          //               <select
-          //                 value={
-          //                   catchItem.species.find((s) => s.selected)?._id || ""
-          //                 }
-          //                 onChange={(e) => {
-          //                   const selectedSpeciesId = e.target.value;
-          //                   const updatedSpecies = catchItem.species.map(
-          //                     (species) =>
-          //                       species._id === selectedSpeciesId
-          //                         ? { ...species, selected: true }
-          //                         : { ...species, selected: false }
-          //                   );
-          //                   handleEditCatch(catchItem._id, {
-          //                     species: updatedSpecies,
-          //                   });
-          //                 }}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               >
-          //                 <option value="" disabled>
-          //                   Name
-          //                 </option>
-          //                 {catchItem.species.map((species) => (
-          //                   <option key={species._id} value={species._id}>
-          //                     {species.name} ({species.catch_weight})
-          //                   </option>
-          //                 ))}
-          //               </select>
-          //             </td>
+          
+        </div>
 
-          //             <td className="p-2 text-xs text-gray-400 border-b border border-gray-500">
-          //               <input
-          //                 type="number"
-          //                 value={catchItem.total_weight}
-          //                 onChange={(e) =>
-          //                   handleEditCatch(catchItem._id, {
-          //                     total_weight: parseInt(e.target.value),
-          //                   })
-          //                 }
-          //                 readOnly={!editMode}
-          //                 className="bg-gray-800 text-white p-2 rounded-md w-full text-xs"
-          //               />
-          //             </td>
 
-          //             {editMode && (
-          //               <td className="px-4 py-2 text-sm text-gray-300 border border-gray-500">
-          //                 <button
-          //                   className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-          //                   onClick={() => handleDeleteRow(catchItem._id)}
-          //                 >
-          //                   Delete
-          //                 </button>
-          //               </td>
-          //             )}
-          //           </tr>
-          //         ))
-          //       )}
-          //     </tbody>
-          //   </table>
-          // </div>
-        )}
-      </AnimationWrapper>
-    </>
+        
+      
+
+    
+
+      </div>
+  
   );
 };
 
-export default Adminverifyfish
+export default Adminverifyfish;
