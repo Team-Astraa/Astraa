@@ -8,36 +8,49 @@ const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Handle file drop
   const onDrop = (acceptedFiles) => {
     setSelectedFile(acceptedFiles[0]);
   };
 
+  // Handle rejected file types
+  const onDropRejected = (rejectedFiles) => {
+    toast.error('Invalid file type. Only .xlsx and .csv files are allowed.');
+  };
+
+  // Upload file to backend, which handles Cloudinary and MongoDB
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.error("Please select a file to upload");
+      toast.error('Please select a file to upload');
       return;
     }
 
-    const user = localStorage.getItem("aquaUser");
-    let { userId } = JSON.parse(user);
+    const user = localStorage.getItem('aquaUser');
+    if (!user) {
+      toast.error('User data not found');
+      return;
+    }
+    
+    const { userId } = JSON.parse(user);
+    if (!userId) {
+      toast.error('User ID is missing');
+      return;
+    }
     console.log(userId);
 
     const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("userId", userId);
+    formData.append('file', selectedFile);
+    formData.append('userId', userId); // Pass the user ID along with the file
 
     setIsLoading(true);
     const uploadToastId = toast.loading("Uploading...");
     try {
-      const response = await axios.post(
-        "http://localhost:5000/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // Send the file to the backend
+      const response = await axios.post('http://localhost:5000/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       console.log("File uploaded successfully:", response.data);
       toast.success("File uploaded successfully", { id: uploadToastId });
@@ -51,7 +64,8 @@ const Addexcel = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: ".xlsx,.csv",
+    onDropRejected,
+    accept: '.xlsx,.csv',
   });
 
   return (
@@ -75,7 +89,7 @@ const Addexcel = () => {
                 : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-blue-500"
             }`}
         >
-          <input {...getInputProps()} />
+          <input {...getInputProps()} disabled={isLoading} />
           {isDragActive ? (
             <p className="text-blue-600 font-medium">Drop the file here...</p>
           ) : (
@@ -104,7 +118,7 @@ const Addexcel = () => {
             }`}
           disabled={isLoading}
         >
-          {isLoading ? "Uploading..." : "Upload File"}
+          {isLoading ? 'Uploading...' : 'Upload File'}
         </button>
       </div>
     </AnimationWrapper>
@@ -112,3 +126,4 @@ const Addexcel = () => {
 };
 
 export default Addexcel;
+

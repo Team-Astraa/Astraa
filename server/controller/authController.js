@@ -142,10 +142,44 @@ export const login = async (req, res) => {
       username: user.username,
       userType: user.userType,
       userid: user._id,
+      passwordChanged: user.passwordChanged,
     });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+//change password
+export const changePassword = async (req, res) => {
+  try {
+    const { newPassword, userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    if (!newPassword) {
+      return res.status(400).json({ message: "New password is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //todo
+    // const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.findByIdAndUpdate(userId, {
+      password: newPassword,
+      passwordChanged: true,
+    });
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -158,7 +192,7 @@ export const getusername = async (req, res) => {
     console.log(users);
 
     // Extract usernames as an array
-    const usernames = users.map(user => user.username);
+    const usernames = users.map((user) => user.username);
 
     res.json(usernames); // Respond with the array of usernames
   } catch (error) {
