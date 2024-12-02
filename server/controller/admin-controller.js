@@ -170,12 +170,63 @@ export const getDetailsData = async (req, res) => {
   }
 };
 
+// export const getCatchDataGroupedByUser = async (req, res) => {
+
+//   try {
+//     const { userId } = req.body;
+
+//     if (!userId) {
+//       return res.status(400).json({ message: "User ID is required." });
+//     }
+
+//     // Validate if userId is a valid ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).json({ message: "Invalid User ID format." });
+//     }
+
+//     // Use ObjectId to query the database
+//     const objectId = new mongoose.Types.ObjectId(userId);
+
+//     // Aggregate query to filter by userId and group the data by userId
+//     const catchData = await Catch.aggregate([
+//       { $match: { userId: objectId } }, // Match the userId passed in the request
+//       {
+//         $group: {
+//           _id: "$userId", // Group by userId
+//           catches: { $push: "$$ROOT" }, // Push all catch data for the user
+//         },
+//       },
+//     ]);
+
+//     // Check if any data was found
+//     if (catchData.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: "No catch data found for this user" });
+//     }
+
+//     // Return the grouped data
+//     return res.status(200).json({
+//       message: "Catch data fetched successfully",
+//       data: catchData,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching catch data: ", error);
+//     return res
+//       .status(500)
+//       .json({ message: "Error fetching catch data", error: error.message });
+//   }
+// };
+
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, dataId } = req.body;
 
-    if (!userId) {
-      return res.status(400).json({ message: "User ID is required." });
+    // Validate required fields
+    if (!userId || !dataId) {
+      return res
+        .status(400)
+        .json({ message: "User ID and Data ID are required." });
     }
 
     // Validate if userId is a valid ObjectId
@@ -186,9 +237,9 @@ export const getCatchDataGroupedByUser = async (req, res) => {
     // Use ObjectId to query the database
     const objectId = new mongoose.Types.ObjectId(userId);
 
-    // Aggregate query to filter by userId and group the data by userId
+    // Aggregate query to filter by userId and dataId, and group the data by userId
     const catchData = await Catch.aggregate([
-      { $match: { userId: objectId } }, // Match the userId passed in the request
+      { $match: { userId: objectId, dataId } }, // Match both userId and dataId
       {
         $group: {
           _id: "$userId", // Group by userId
@@ -201,7 +252,7 @@ export const getCatchDataGroupedByUser = async (req, res) => {
     if (catchData.length === 0) {
       return res
         .status(404)
-        .json({ message: "No catch data found for this user" });
+        .json({ message: "No catch data found for this user and dataId" });
     }
 
     // Return the grouped data
@@ -579,6 +630,7 @@ export const getLatestLogs = async (req, res) => {
       userId: log.userId._id,
       username: log.userId.username,
       fileType: log.fileType,
+      dataId: log.dataId,
       uploadTimestamp: log.uploadTimestamp,
     }));
 
@@ -590,3 +642,47 @@ export const getLatestLogs = async (req, res) => {
       .json({ message: "Error fetching logs", error: error.message });
   }
 };
+
+export const acceptDataLog = async (req, res) => {
+  try {
+    let { dataId, status } = req.body;
+
+    // Find the log by dataId
+    const log = await Log.findOne({ dataId: dataId });
+    if (!log) {
+      return res.status(404).json({ message: "Log not found" });
+    }
+    // Update the log status
+    log.dataStatus = status;
+    await log.save();
+    return res.status(200).json({ message: "Log status updated" });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const rejectDataLog = async (req, res) => {
+  try {
+    let { dataId, status, reason } = req.body;
+    
+    // Find the log by dataId (use findOne if you're expecting a single document)
+    const log = await Log.findOne({ dataId: dataId });
+    
+    if (!log) {
+      return res.status(404).json({ message: "Log not found" });
+    }
+    
+    // Update the log status and reason
+    log.dataStatus = status;
+    log.reason = reason;
+    
+    // Save the updated log
+    await log.save();
+    
+    return res.status(200).json({ message: "Log status and reason updated" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+

@@ -3,6 +3,11 @@ import React, { useState } from "react";
 const DataDisplay = ({ data }) => {
   const [showResult, setShowResult] = useState(3);
   const limitData = data.slice(0, showResult);
+
+  const handleLoadMore = (type) => {
+    if(type === "less") setShowResult(showResult - showResult + 3);
+    else setShowResult(showResult + 4);
+  }
   // console.log(limitData);
   return (
     <div className="px-4 bg-white">
@@ -40,6 +45,18 @@ const DataDisplay = ({ data }) => {
           </div>
         </div>
       ))}
+
+          <button
+            onClick={() => handleLoadMore("more")}
+            className="mt-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+            Load More
+          </button>
+
+          <button
+            onClick={() => handleLoadMore("less")}
+            className="mt-4 mx-4 p-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
+            Show Less
+          </button>
     </div>
   );
 };

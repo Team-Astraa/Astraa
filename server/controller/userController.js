@@ -1,10 +1,7 @@
-
-
 import xlsx from "xlsx";
 import fs from "fs";
 import csv from "csv-parser";
 import { getDistance } from "geolib";
-import cloudinary from "../cloudinaryConfig.js"; // Import Cloudinary config
 
 import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
@@ -64,7 +61,7 @@ const parseExcelDate = (excelDate) => {
   );
 };
 
-const cleanData = (data, userId) => {
+const cleanData = (data, userId , id) => {
   return data.map((item) => {
     const species = [];
 
@@ -118,73 +115,103 @@ const cleanData = (data, userId) => {
       sea,
       state,
       userId,
+      dataId: id,
       verified: false,
       total_weight: parseFloat(item.TOTAL_CATCH),
     };
   });
 };
 
+function generateRandomId() {
+  const date = new Date();
+  const timestamp = date.getTime(); // Get the current timestamp in milliseconds
+  const randomNumber = Math.floor(Math.random() * 100000); // Generate a random number
+  const randomId = `ID-${timestamp}-${randomNumber}`; // Combine the timestamp and random number
+  return randomId;
+}
+
+// Example usage
 
 export const uploadCSV = async (req, res) => {
-  console.log("Controller reaching");
-
   try {
-    const { userId } = req.body; // Get user ID from request body
-    const file = req.file; // Get the file from the request
+    const { userId } = req.body;
+    const file = req.file;
 
-    if (!file) {
-      return res.status(400).json({ message: "No file provided." });
-    }
+    const filePath = file.path;
+    const fileType = file.mimetype; // Capture the file type (mimetype)
+    console.log(filePath);
 
-    // Upload the file to Cloudinary
-    const cloudinaryResult = await cloudinary.v2.uploader.upload(file.path, {
-      resource_type: "raw",
-      folder: "SIH", // Customize the folder as needed
-    });
+    let data = [];
+    let finalData = [];
+    let id = generateRandomId();
 
-    console.log("File uploaded to Cloudinary:", cloudinaryResult);
-
-    const fileUrl = cloudinaryResult.secure_url; // Get the file URL from Cloudinary
-    let data = []; // Array to hold file data
-
-    // Delete the file from local storage after upload
-    fs.unlink(file.path, (err) => {
-      if (err) {
-        console.error("Error deleting local file:", err);
-      }
-    });
-
-    // Parse the file (CSV or XLSX)
+    const logData = {
+      userId,
+      fileType, 
+      dataId :id// Include fileType here
+    };
+    // Check file type
     if (
       file.mimetype ===
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
-      // Parse XLSX file
-      const workbook = xlsx.readFile(file.path);
-      const sheetName = workbook.SheetNames[0];
+      // Parse Excel file
+      const workbook = xlsx.readFile(filePath);
+      const sheetName = workbook.SheetNames[0]; // Assuming first sheet
       const sheet = workbook.Sheets[sheetName];
-      data = xlsx.utils.sheet_to_json(sheet); // Convert sheet to JSON
+      const rawData = xlsx.utils.sheet_to_json(sheet);
+    
+      // Clean and normalize data
+      data = cleanData(rawData, userId , id);
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
-      fs.createReadStream(file.path)
+      fs.createReadStream(filePath)
         .pipe(csv())
         .on("data", (row) => {
           results.push(row);
         })
         .on("end", async () => {
-          data = results;
-          await insertDataToDB(data, fileUrl, userId, res); // Insert data into the DB
+          data = cleanData(results, userId);
+
+          // Log data to console
+          console.log("Parsed Data:", data);
+
+          // Comment out database insertion for debugging or re-enable as needed
+          try {
+            await Catch.insertMany(finalData);
+            await Log.create(logData);
+            return res.status(200).json({
+              message:
+                "File uploaded successfully. Data logged for verification.",
+            });
+          } catch (dbError) {
+            return res.status(500).json({
+              message: "Error inserting data into database",
+              error: dbError.message,
+            });
+          }
         });
-      return; // Exit function to process CSV asynchronously
+      return; // Ensure response is sent inside the CSV processing callback
     } else {
       return res.status(400).json({
         message: "Invalid file type. Please upload an Excel or CSV file.",
       });
     }
 
-    // Insert data into the database (for Excel files)
-    await insertDataToDB(data, fileUrl, userId, res);
+    // Comment out database insertion for debugging or re-enable as needed
+    try {
+      await Catch.insertMany(data);
+      await Log.create(logData);
+      res.status(200).json({
+        message: "File uploaded successfully. Data logged for verification.",
+      });
+    } catch (dbError) {
+      res.status(500).json({
+        message: "Error inserting data into database",
+        error: dbError.message,
+      });
+    }
   } catch (error) {
     console.error(error);
     res
@@ -193,119 +220,17 @@ export const uploadCSV = async (req, res) => {
   }
 };
 
-// db.js
-export const insertDataToDB = async (data, fileUrl, userId, res) => {
+export const getLogsByUserIdWithUser = async (req, res) => {
   try {
-    // Assuming you have a MongoDB model to insert data
-    const DocumentModel = require("./models/DocumentModel");
+    const { userid } = req.body;
+    console.log(userid);
 
-    // Insert data and file URL into your database
-    await DocumentModel.create({
-      userId,
-      fileUrl,
-      data, // Parsed data
-    });
+    // Fetch logs sorted by `createdAt` in ascending order
+    const logs = await Log.find({ userId: userid }).sort({ createdAt: 1 });
 
-    res
-      .status(200)
-      .json({ message: "File uploaded and data inserted successfully!" });
+    res.status(200).json({ data: logs });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Error inserting data into the database",
-      error: error.message,
-    });
+    console.error("Error fetching logs with user data:", error);
+    res.status(500).json({ message: "Failed to fetch logs", error });
   }
 };
-
-// Upload CSV/Excel File and Save to Cloudinary
-// export const uploadCSV = async (req, res) => {
-
-//   console.log("controller reaching")
-
-//   try {
-
-//     console.log("going in try")
-
-//     const { userId } = req.body; // Get user ID from request body
-//     const file = req.file; // Get file from request
-
-//     if (!file) {
-//       return res.status(400).json({ message: "No file provided." });
-//     }
-
-//     const cloudinaryResult = await cloudinary.v2.uploader.upload(file.path, {
-//       resource_type: 'raw',
-//       folder: 'SIH',
-//     }).catch(error => {
-//       console.error("Error uploading to Cloudinary:", error.message);
-//       return res.status(500).json({ message: "Error uploading to Cloudinary", error: error.message });
-//     });
-
-//     console.log("HI", cloudinaryResult)
-
-//     const fileUrl = cloudinaryResult.secure_url; // Get URL of uploaded file
-//     let data = []; // Array to hold file data
-
-//     const fs = require("fs");
-//     // Delete the file from local storage after upload
-//     fs.unlink(file.path, (err) => {
-//       if (err) {
-//         console.error("Error deleting local file:", err);
-//       }
-//     });
-
-//     // Parse Excel or CSV
-//     if (file.mimetype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-//       // Parse Excel file
-//       const workbook = xlsx.readFile(file.path);
-//       const sheetName = workbook.SheetNames[0];
-//       const sheet = workbook.Sheets[sheetName];
-//       data = xlsx.utils.sheet_to_json(sheet); // Convert sheet to JSON
-//     } else if (file.mimetype === "text/csv") {
-//       // Parse CSV file
-//       const results = [];
-//       fs.createReadStream(file.path)
-//         .pipe(csv())
-//         .on("data", (row) => {
-//           results.push(row);
-//         })
-//         .on("end", async () => {
-//           data = results;
-//           await insertDataToDB(data, fileUrl, userId, res);
-//         });
-//       return; // Exit function to process CSV asynchronously
-//     } else {
-//       return res.status(400).json({
-//         message: "Invalid file type. Please upload an Excel or CSV file.",
-//       });
-//     }
-
-//     // Insert data into the database for Excel
-//     await insertDataToDB(data, fileUrl, userId, res);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Error uploading file", error: error.message });
-//   }
-// };
-
-// Insert Data into Database
-// const insertDataToDB = async (data, fileUrl, userId, res) => {
-//   try {
-//     const catchData = data.map((item) => ({
-//       userId,
-//       data: item,
-//       fileUrl,
-//     }));
-
-//     await Catch.insertMany(catchData); // Save data to MongoDB
-//     res.status(200).json({
-//       message: "File uploaded successfully and data saved.",
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Error inserting data into database",
-//       error: error.message,
-//     });
-//   }
-// };
