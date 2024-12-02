@@ -16,6 +16,8 @@ import {
   signUp,
   changePassword,
 } from "./controller/authController.js";
+
+import { downloadFile } from "./controller/fileController.js";
 import {
   getCatchDataGroupedByUser,
   getdataUploaduser,
@@ -48,7 +50,10 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH")
+  .connect(
+    process.env.MONGODB_URI ||
+      "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+  )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
@@ -102,6 +107,7 @@ app.get("/admin/get-latest-logs", getLatestLogs);
 
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
+app.get("/download/:type", downloadFile);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);
