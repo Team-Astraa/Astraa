@@ -143,7 +143,7 @@ const ScientistHome = () => {
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/light-v11',
         center: [78.9629, 20.5937], // Centered over India
         zoom: 4,
       });
@@ -266,8 +266,8 @@ const ScientistHome = () => {
   };
 
   return (
-    <AnimationWrapper className="md:flex-row min-h-screen rounded-[3xl]">
-      <div style={{borderRadius: "2rem 0 0 2rem"}} className='bg-[#f4f7fc] p-6 h-screen'>
+    <AnimationWrapper className="md:flex-row h-screen rounded-[3xl]">
+      <div style={{borderRadius: "2rem 0 0 2rem"}} className='bg-[#f4f7fc] p-6'>
       {/* Toggle Button */}
         <div className="flex justify-between items-center mb-8">
 
@@ -480,7 +480,7 @@ const ScientistHome = () => {
               {/* <div className='flex justify-between mb-2'>
               </div> */}
               <div ref={mapContainer} className="w-full h-full bg-gray-700 rounded-2xl p-3 py-6">
-                <span className='relative p-3 rounded-xl text-xl text-white font-medium bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300' style={{zIndex: 999}}>Data Distribution </span>
+                <span className='relative p-3 rounded-xl text-xl font-medium bg-white text-black' style={{zIndex: 9}}>Data Distribution </span>
               </div>
             </div>
 
