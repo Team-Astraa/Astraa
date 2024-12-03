@@ -63,7 +63,7 @@ const Logs = () => {
               </tr>
             </thead>
             <tbody>
-              {logs.map((log) => (
+              {logs.slice(0,3).map((log) => (
                 <tr key={log.userId} className="transition-all">
                   <td className="px-6 py-4 text-sm text-gray-800 border-b">
                     {log.username}
