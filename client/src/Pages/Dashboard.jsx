@@ -147,9 +147,9 @@ const Dashboard = () => {
                 {/* Left Section */}
                 <div className="w-[70%]">
                     {/* Some Visuals */}
-                    <div className="grid grid-cols-2 gap-5">
-                        <div className="rounded-xl p-3 border border-lg h-[18rem] border-purple-200">
-                        <Typography variant="h6" color="textSecondary">
+                    <div className="grid grid-cols-[40%_60%] gap-5">
+                        <div className="rounded-xl p-3 border border-lg border-purple-200">
+                                    <Typography variant="h6" color="textSecondary">
                                         Species Weight Distribution
                                     </Typography>
                                     <Line data={lineData} />
@@ -162,20 +162,47 @@ const Dashboard = () => {
                                 <Typography variant="h6" color="textSecondary">
                                     Species Weight Distribution
                                 </Typography>
-                                    <Pie data={pieData} />
+                                <div style={{ height: '450px' }}>
+                                    <Pie data={pieData} 
+                                    options={ {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                              labels: {
+                                                font: {
+                                                  size: 10, // Reduce font size
+                                                },
+                                              },
+                                              position: 'right'
+                                            },
+                                            tooltip: {
+                                              bodyFont: {
+                                                size: 1, // Adjust tooltip font size
+                                              },
+                                            },
+                                          },
+                                        }}
+                                       />
+                                        </div>
                             </div>
                         </div>
 
                         <div className="rounded-xl p-3 border border-lg border-purple-500" >
-                            <div className='h-[16rem]'>
+                            
                             
                                 <Typography variant="h6" color="textSecondary">
                                     Species Weight Distribution
                                 </Typography>
                                 <Bar data={barData} />
-                            </div>
+                        
                         </div>
                     </div>
+
+                    <section className="my-5">
+                        <h3 className="font-semibold ml-6">Today's Tasks</h3>
+                        <Table />
+                    </section>
 
                     {/* Some Details */}
                     <div className="grid grid-cols-5 gap-5 my-4">
@@ -194,24 +221,27 @@ const Dashboard = () => {
                     
                 </div>
                 {/* Right Section */}
-                <div className="w-[30%] flex flex-col gap-5">
+                <div className="w-[30%] flex flex-col gap-5 ml-3">
                     
-
-                    <div className="rounded-xl p-3 border border-lg h-[15rem] border-purple-200">
+                    {/* <div><CustomCalendar /></div> */}
+                    <div className="rounded-xl p-3 border border-lg border-purple-200">
                             <Typography variant="h6" color="textPrimary">
                                 Revenue Reports
                             </Typography>
 
-                            <div className="grid grid-cols-2 gap-5 mt-6">    
-                                <div className="rounded-xl bg-[#F3F6FD] h-[10rem] p-4">
-                                    <h1 className='font-bold text-black text-xl'>10000</h1>
+                            <div className="grid grid-rows-2 gap-5 mt-6">    
+                                <div className="rounded-xl bg-[#F3F6FD] h-[10rem] p-4 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <h1 className='font-bold text-black text-xl'>10000</h1>
+                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, quia.</p>
+                                    </div>
 
-                                    <div class="relative w-20 h-20 mx-auto mt-3">
+                                    <div class="relative w-[7rem] h-[7rem] mt-3">
                                     
-                                        <div class="absolute inset-0 rounded-full border-4 border-gray-300"></div>
+                                        <div class="absolute inset-0 rounded-full border-8 border-gray-300"></div>
                                         
                                         <div
-                                            class="absolute inset-0 rounded-full border-4 border-purple-500"
+                                            class="absolute inset-0 rounded-full border-8 border-purple-500"
                                             style={{clipPath: "inset(0 calc(50% - 2px) 0 0)", transform: "rotate(-160deg)"}}
                                         ></div>
                                         
@@ -220,15 +250,18 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="rounded-xl bg-[#F3F6FD] h-[10rem] p-4">
-                                    <h1 className='font-bold text-black text-xl'>10000</h1>
+                                <div className="rounded-xl bg-[#F3F6FD] h-[10rem] p-4 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <h1 className='font-bold text-black text-xl'>10000</h1>
+                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, quia.</p>
+                                    </div>
 
-                                    <div class="relative w-20 h-20 mx-auto mt-3">
+                                    <div class="relative w-[7rem] h-[7rem] mt-3">
                                     
-                                        <div class="absolute inset-0 rounded-full border-4 border-gray-300"></div>
+                                        <div class="absolute inset-0 rounded-full border-8 border-gray-300"></div>
                                         
                                         <div
-                                            class="absolute inset-0 rounded-full border-4 border-purple-500"
+                                            class="absolute inset-0 rounded-full border-8 border-purple-500"
                                             style={{clipPath: "inset(0 calc(50% - 2px) 0 0)", transform: "rotate(-160deg)"}}
                                         ></div>
                                         
@@ -238,7 +271,7 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                    </div>
 
                     <div className="rounded-xl p-3 border border-lg border-purple-200">
                         <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900">
@@ -311,10 +344,10 @@ export default Dashboard;
 //                     </section>
 
 //                     {/* Today's Tasks Section */}
-//                     <section className="mb-5">
-//                         <h3 className="font-semibold ml-6">Today's Tasks</h3>
-//                         <Table />
-//                     </section>
+                    // <section className="mb-5">
+                    //     <h3 className="font-semibold ml-6">Today's Tasks</h3>
+                    //     <Table />
+                    // </section>
 //                 </div>
 
 //                 {/* Right Section */}

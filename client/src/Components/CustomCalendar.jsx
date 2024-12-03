@@ -24,8 +24,8 @@ const CustomCalendar = () => {
 const styles = {
   calendarContainer: {
     backgroundColor: 'white',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
-    borderRadius: '1.3rem',
+    border: "0.5px solid #8b5cf6",
+    borderRadius: '1rem',
     textAlign: 'center',
     padding: '2rem',
   },
