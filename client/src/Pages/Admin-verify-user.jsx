@@ -134,12 +134,22 @@ const Adminverifyuser = () => {
     >
       {!openModal ? (
         <AnimationWrapper className="w-full min-h-screen">
-          <div className="flex flex-col items-center justify-between  p-4 ">
-            <h1 className="text-bold text-3xl text-center text-white font-bold">
+           <h1 className="text-bold text-3xl text-center text-white font-bold p-5">
               Un Verified Users{" "}
             </h1>
+<<<<<<< HEAD
             <div className="flex justify-center items-center gap-20">
               {/* <Button.Group>
+=======
+            <div
+            className="flex justify-end items-center mr-10">
+            <strong className="mr-2">Category: </strong>
+            <select
+              onChange={(e) => setType(e.target.value)}
+              className="border-2 border-gray-400 bg-gray-300 text-lg text-gray-700 rounded-full focus:outline-none hover:bg-white hover:text-blue-900 hover:shadow-md transition-all duration-300"
+            >
+                <option value="All">All</option>
+>>>>>>> a9d1d0d94c6c463bd6fae05e2a17a852efec1cf4
                 {[
                   "Fisherman",
                   "Industry Collaborators",
@@ -147,6 +157,7 @@ const Adminverifyuser = () => {
                   "Research Cruises",
                   "Scientist",
                 ].map((type, index) => (
+<<<<<<< HEAD
                   <Button
                     key={index}
                     onClick={() => setType(type)}
@@ -180,6 +191,13 @@ const Adminverifyuser = () => {
               </Button.Group>
               s
             </div>
+=======
+                <option key={index} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+>>>>>>> a9d1d0d94c6c463bd6fae05e2a17a852efec1cf4
           </div>
 
           <div>
