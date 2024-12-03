@@ -47,17 +47,6 @@ import {
   getUnique,
 } from "./controller/scientist-controller.js";
 
-//new upload csv routesss need to checkk...old routes are kept as it is
-import {
-  getUsersByTag,
-  getDataByUserAndTag,
-  getAllUsers,
-} from "./controller/admin-get-dataNew.js";
-
-import { uploadCSV2 } from "./controller/userControllerNew.js";
-// above new upload gget data imports 
-
-
 dotenv.config();
 const app = express();
 
@@ -70,7 +59,10 @@ mongoose
   // .connect(
   //     "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
   // )
-  .connect("mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH")
+  .connect(
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+  )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
