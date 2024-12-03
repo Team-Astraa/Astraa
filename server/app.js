@@ -45,8 +45,6 @@ import {
   getUnique,
 } from "./controller/scientist-controller.js";
 
-
-
 dotenv.config();
 const app = express();
 
@@ -56,14 +54,14 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
+  // .connect(
+  //     "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+  // )
   .connect(
-      "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
-
-
-
 
 // AWS S3 Configuration
 const s3 = new aws.S3({
@@ -83,7 +81,6 @@ const generateUploadUrl = async () => {
     ContentType: "image/jpeg",
   });
 };
-
 
 const uploadDirectory = "./uploads";
 if (!fs.existsSync(uploadDirectory)) {

@@ -235,3 +235,259 @@ export const getLogsByUserIdWithUser = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch logs", error });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+// second codee commented above code working
+
+// import xlsx from "xlsx";
+// import fs from "fs";
+// import csv from "csv-parser";
+// import { getDistance } from "geolib";
+
+// import Catch from "../models/FishCatchData.js";
+// import Log from "../models/logSchema.js";
+
+// const stateBoundaries = {
+//   Gujarat: { latitude: 22.2587, longitude: 71.1924 },
+//   Maharashtra: { latitude: 19.7515, longitude: 75.7139 },
+//   Goa: { latitude: 15.2993, longitude: 74.124 },
+//   Karnataka: { latitude: 15.3173, longitude: 75.7139 },
+//   Kerala: { latitude: 10.8505, longitude: 76.2711 },
+//   TamilNadu: { latitude: 11.1271, longitude: 78.6569 },
+//   AndhraPradesh: { latitude: 15.9129, longitude: 79.74 },
+//   Odisha: { latitude: 20.9517, longitude: 85.0985 },
+//   WestBengal: { latitude: 22.9868, longitude: 87.855 },
+//   Lakshadweep: { latitude: 10.5667, longitude: 72.6417 },
+// };
+
+// // Helper function to categorize by sea and state
+// const categorizeLocation = (latitude, longitude) => {
+//   let sea = "Unknown Region";
+
+//   // Determine the sea region
+//   if (latitude >= 8 && latitude <= 23 && longitude >= 68 && longitude <= 75) {
+//     sea = "Arabian Sea";
+//   } else if (
+//     latitude >= 10 &&
+//     latitude <= 23 &&
+//     longitude >= 80 &&
+//     longitude <= 90
+//   ) {
+//     sea = "Bay of Bengal";
+//   } else if (latitude < 8) {
+//     sea = "Indian Ocean";
+//   }
+
+//   // Determine the closest state
+//   let closestState = "Unknown State";
+//   let shortestDistance = Infinity;
+
+//   for (const [state, coordinates] of Object.entries(stateBoundaries)) {
+//     const distance = getDistance({ latitude, longitude }, coordinates);
+//     if (distance < shortestDistance) {
+//       shortestDistance = distance;
+//       closestState = state;
+//     }
+//   }
+
+//   return { sea, state: closestState };
+// };
+
+// // Function to handle Excel date serial numbers
+// const parseExcelDate = (excelDate) => {
+//   const excelStartDate = new Date(1900, 0, 1); // January 1, 1900
+//   const dateOffset = excelDate - 1; // Excel starts from 1, JS starts from 0
+//   return new Date(
+//     excelStartDate.setDate(excelStartDate.getDate() + dateOffset)
+//   );
+// };
+
+// // Function to parse a date string in various formats
+// const parseDate = (dateString) => {
+//   if (!dateString) return null; // Handle undefined or null dates
+
+//   // Try parsing using the built-in Date object
+//   const parsedDate = new Date(dateString);
+
+//   // Check if the parsed date is valid
+//   if (!isNaN(parsedDate)) {
+//     return parsedDate;
+//   }
+
+//   // Add additional parsing logic for other formats, if needed
+//   // Example: Handle dates in DD/MM/YYYY format
+//   const parts = dateString.split("/");
+//   if (parts.length === 3) {
+//     const day = parseInt(parts[0], 10);
+//     const month = parseInt(parts[1], 10) - 1; // Month is zero-indexed
+//     const year = parseInt(parts[2], 10);
+//     return new Date(year, month, day);
+//   }
+
+//   // Return null if parsing fails
+//   return null;
+// };
+
+// // Clean and normalize data
+// const cleanData = (data, userId, id) => {
+//   return data.map((item) => {
+//     const species = [];
+
+//     // Process MAJOR_SPECIES
+//     if (item.MAJOR_SPECIES) {
+//       const speciesData = item.MAJOR_SPECIES.split(","); // Split by commas
+//       speciesData.forEach((s) => {
+//         const match = s.match(/([A-Za-z\s]+)\((\d+)\)/); // Regex to extract name and weight
+//         if (match) {
+//           species.push({
+//             name: match[1].trim().toLowerCase(),
+//             catch_weight: parseInt(match[2].trim()),
+//           });
+//         } else {
+//           species.push({
+//             name: s.trim().toLowerCase(),
+//             catch_weight: null,
+//           });
+//         }
+//       });
+//     }
+
+//     const depth = item.DEPTH
+//       ? parseFloat(item.DEPTH.split("-")[0].trim()) // Take the first part before the "-"
+//       : null;
+
+//     const latitude = parseFloat(item.SHOOT_LAT);
+//     const longitude = parseFloat(item.SHOOT_LONG);
+//     const { sea, state } = categorizeLocation(latitude, longitude);
+
+//     const dateValue = item["FISHING Date"];
+//     const date =
+//       typeof dateValue === "number"
+//         ? parseExcelDate(dateValue) // Excel serial number
+//         : parseDate(dateValue); // Regular date string
+
+//     return {
+//       date,
+//       latitude,
+//       longitude,
+//       depth,
+//       species,
+//       sea,
+//       state,
+//       userId,
+//       dataId: id,
+//       verified: false,
+//       total_weight: parseFloat(item.TOTAL_CATCH),
+//     };
+//   });
+// };
+
+// // Generate a unique random ID
+// function generateRandomId() {
+//   const date = new Date();
+//   const timestamp = date.getTime();
+//   const randomNumber = Math.floor(Math.random() * 100000);
+//   return `ID-${timestamp}-${randomNumber}`;
+// }
+
+// // Upload CSV or Excel
+// export const uploadCSV = async (req, res) => {
+//   try {
+//     const { userId } = req.body;
+//     const file = req.file;
+
+//     const filePath = file.path;
+//     const fileType = file.mimetype;
+//     console.log(filePath);
+
+//     let data = [];
+//     let id = generateRandomId();
+
+//     const logData = {
+//       userId,
+//       fileType,
+//       dataId: id,
+//     };
+
+//     if (
+//       file.mimetype ===
+//       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+//     ) {
+//       const workbook = xlsx.readFile(filePath);
+//       const sheetName = workbook.SheetNames[0];
+//       const sheet = workbook.Sheets[sheetName];
+//       const rawData = xlsx.utils.sheet_to_json(sheet);
+//       data = cleanData(rawData, userId, id);
+//     } else if (file.mimetype === "text/csv") {
+//       const results = [];
+//       fs.createReadStream(filePath)
+//         .pipe(csv())
+//         .on("data", (row) => {
+//           results.push(row);
+//         })
+//         .on("end", async () => {
+//           data = cleanData(results, userId);
+//           try {
+//             await Catch.insertMany(data);
+//             await Log.create(logData);
+//             return res.status(200).json({
+//               message: "File uploaded successfully. Data logged for verification.",
+//             });
+//           } catch (dbError) {
+//             return res.status(500).json({
+//               message: "Error inserting data into database",
+//               error: dbError.message,
+//             });
+//           }
+//         });
+//       return;
+//     } else {
+//       return res.status(400).json({
+//         message: "Invalid file type. Please upload an Excel or CSV file.",
+//       });
+//     }
+
+//     try {
+//       await Catch.insertMany(data);
+//       await Log.create(logData);
+//       res.status(200).json({
+//         message: "File uploaded successfully. Data logged for verification.",
+//       });
+//     } catch (dbError) {
+//       res.status(500).json({
+//         message: "Error inserting data into database",
+//         error: dbError.message,
+//       });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .json({ message: "Error uploading file", error: error.message });
+//   }
+// };
+
+// // Get logs by user ID
+// export const getLogsByUserIdWithUser = async (req, res) => {
+//   try {
+//     const { userid } = req.body;
+//     console.log(userid);
+
+//     const logs = await Log.find({ userId: userid }).sort({ createdAt: 1 });
+
+//     res.status(200).json({ data: logs });
+//   } catch (error) {
+//     console.error("Error fetching logs with user data:", error);
+//     res.status(500).json({ message: "Failed to fetch logs", error });
+//   }
+// };

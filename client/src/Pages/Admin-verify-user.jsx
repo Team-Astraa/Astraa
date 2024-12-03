@@ -14,13 +14,18 @@ const Adminverifyuser = () => {
   useEffect(() => {
     // Run this effect whenever userType changes
     if (userType) {
+      console.log("USER TYPE", userType);
       getUser(userType);
     }
   }, [userType]);
 
-  const setType = (e) => {
-    const type = e.target.innerText;
-    setUserType(type);
+  // const setType = (e) => {
+  //   const type = e.target.innerText;
+  //   setUserType(type);
+  // };
+
+  const setType = (type) => {
+    setUserType(type); // Set the internal format directly
   };
 
   console.log("USER TYPE", userType);
@@ -121,10 +126,12 @@ const Adminverifyuser = () => {
   };
 
   return (
-    <div style={{
-      backgroundImage: "url(/sea3_bg.jpg)",
-      backgroundSize: "cover",
-    }}>
+    <div
+      style={{
+        backgroundImage: "url(/sea3_bg.jpg)",
+        backgroundSize: "cover",
+      }}
+    >
       {!openModal ? (
         <AnimationWrapper className="w-full min-h-screen">
           <div className="flex flex-col items-center justify-between  p-4 ">
@@ -132,18 +139,46 @@ const Adminverifyuser = () => {
               Un Verified Users{" "}
             </h1>
             <div className="flex justify-center items-center gap-20">
-              <Button.Group>
-                {["Fisherman", "Industry Collaborators", "Research Institute", "Research Cruises", "Scientist"].map((type, index) => (
-                <Button
-                  key={index}
-                  onClick={() => setType(type)}
-                  color="gray"
-                  className="rounded-full border-2 border-gray-400 bg-white hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-300 m-4"
-                >
+              {/* <Button.Group>
+                {[
+                  "Fisherman",
+                  "Industry Collaborators",
+                  "Research Institute",
+                  "Research Cruises",
+                  "Scientist",
+                ].map((type, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => setType(type)}
+                    color="gray"
+                    className="rounded-full border-2 border-gray-400 bg-white hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-300 m-4"
+                  >
                     {type}
-                </Button>
+                  </Button>
+                ))}
+              </Button.Group> */}
+              <Button.Group>
+                {[
+                  { label: "Fisherman", value: "fisherman" },
+                  {
+                    label: "Industry Collaborators",
+                    value: "industry-collaborators",
+                  },
+                  { label: "Research Institute", value: "research_institute" },
+                  { label: "Research Cruises", value: "research_cruises" },
+                  { label: "Scientist", value: "scientist" },
+                ].map((type, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => setType(type.value)} // Pass the correct internal value
+                    color="gray"
+                    className="rounded-full border-2 border-gray-400 bg-white hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-300 m-4"
+                  >
+                    {type.label}
+                  </Button>
                 ))}
               </Button.Group>
+              s
             </div>
           </div>
 
