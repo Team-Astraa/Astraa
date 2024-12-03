@@ -11,7 +11,7 @@ const Adminverifyfish = () => {
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
-  let { userId } = useParams();
+  let { userId, dataId } = useParams();
   // console.log("USER ID in frontend", userId);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,9 +20,9 @@ const Adminverifyfish = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/admin/get-fish-data",
-        { userId: userId }
+        { userId: userId, dataId: dataId }
       );
-      console.log("CATCH DATA",response.data.data)
+      console.log("CATCH DATA", response.data.data)
       // return;
       setCatchData(response.data.data);
     } catch (error) {
@@ -163,9 +163,9 @@ const Adminverifyfish = () => {
           depth: fishData?.depth, // Extract depth
           species: Array.isArray(fishData.species) // Safely map species
             ? fishData.species.map((speciesItem) => ({
-                name: speciesItem?.name, // Default name
-                catch_weight: speciesItem?.catch_weight, // Default weight
-              }))
+              name: speciesItem?.name, // Default name
+              catch_weight: speciesItem?.catch_weight, // Default weight
+            }))
             : [], // Default to empty array if species is undefined
           total_weight: fishData.total_weight, // Extract total weight
         }))
@@ -208,6 +208,47 @@ const Adminverifyfish = () => {
     setViewMode((preMode) => (preMode === "card" ? "table" : "card"));
   };
 
+
+
+  const rejectdata = async () => {
+
+
+    const reason = prompt("Please provide a reason for rejecting the data:");
+    if (!reason) {
+      toast.error("Reason is required to reject the data.");
+      return; // If no reason is provided, do nothing
+    }
+
+    try {
+      let loading = toast.loading("Loading...");
+      const res = await axios.post('http://localhost:5000/admin/reject-log-data', {
+        dataId: dataId,
+        status: "rejected",
+        reason: reason,  // Send the reason with the request
+      });
+
+      toast.dismiss(loading);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+
+  const acceptData = async () => {
+    try {
+      let loading = toast.loading("Loading...");
+      const res = await axios.post('http://localhost:5000/admin/accept-log-data', {
+        dataId: dataId,
+        status: "accepted"
+      });
+      toast.dismiss(loading);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
   return (
     <>
       <MapboxVisualization catchData={catchData} />
@@ -240,9 +281,21 @@ const Adminverifyfish = () => {
             ? "Switch to Card View"
             : "Switch to Table View"}
         </button>
+        <button
+          onClick={acceptData}
+          className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-4"
+        >
+          accept all data
+        </button>
+        <button
+          onClick={rejectdata}
+          className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-4"
+        >
+          reject data
+        </button>
 
         {viewMode === "card" ? (
-          
+
           <div className="space-y-4">
             {catchData.map((data) => (
               <div key={data._id} className="border-b border-gray-700 py-4">
@@ -369,11 +422,11 @@ const Adminverifyfish = () => {
                                   species: catchItem.species.map((s) =>
                                     s._id === species._id
                                       ? {
-                                          ...s,
-                                          catch_weight: parseInt(
-                                            e.target.value
-                                          ),
-                                        }
+                                        ...s,
+                                        catch_weight: parseInt(
+                                          e.target.value
+                                        ),
+                                      }
                                       : s
                                   ),
                                 })
@@ -578,7 +631,7 @@ const Adminverifyfish = () => {
             </table>
           </div>
 
-         
+
         )}
       </AnimationWrapper>
     </>

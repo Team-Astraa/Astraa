@@ -24,6 +24,7 @@ import ResearchStats from "./Pages/ResearchStats";
 import Addexcel from "./Pages/Add-excel";
 import ScientistHome from "./Pages/ScientistHome";
 import "./App.css"; // Import the CSS
+import DataTable from "./Pages/User-DataLogs";
 
 // function AppLayout({ children }) {
 //   const location = useLocation();
@@ -114,7 +115,7 @@ function App() {
             element={<Admindatauploadusers />}
           />
           <Route
-            path="/admin/unverify-fish-data/:userId"
+            path="/admin/unverify-fish-data/:userId/:dataId"
             element={<Adminverifyfish />}
           />
           <Route path="/map" element={<FishingMap />} />
@@ -123,6 +124,7 @@ function App() {
           {/* Researcher Routes */}
           <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
           <Route path="/Research/statistics/:id" element={<ResearchStats />} />
+          <Route path="/data-logs" element={<DataTable />} />
 
           {/* Scientist Routes */}
           <Route path="/scientist/home" element={<ScientistHome />} />

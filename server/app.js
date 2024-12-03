@@ -16,6 +16,9 @@ import {
   signUp,
   changePassword,
 } from "./controller/authController.js";
+// import admin from "firebase-admin";
+// import { assert } from "console";
+// import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 
 import { downloadFile } from "./controller/fileController.js";
 import {
@@ -29,17 +32,20 @@ import {
   getUniqueSpeciesCount,
   getUserTypeAndCount,
   getLatestLogs,
+  acceptDataLog,
+  rejectDataLog,
 } from "./controller/admin-controller.js";
-import { uploadCSV } from "./controller/userController.js";
+import {
+  getLogsByUserIdWithUser,
+  uploadCSV,
+} from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
 import {
   getFilteredCatches,
   getUnique,
 } from "./controller/scientist-controller.js";
 
-// Configurations
-import { cloudinaryConnect, cloudinaryStorage } from "./Config/Cloudinary.js";
-import localUpload from "./Config/Multerconfig.js";
+
 
 dotenv.config();
 const app = express();
@@ -51,15 +57,13 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-    process.env.MONGODB_URI ||
       "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
 
-// Cloudinary Configuration
-cloudinaryConnect();
-const cloudinaryUpload = multer({ storage: cloudinaryStorage });
+
+
 
 // AWS S3 Configuration
 const s3 = new aws.S3({
@@ -80,12 +84,23 @@ const generateUploadUrl = async () => {
   });
 };
 
-// Local Upload Directory Configuration
+
 const uploadDirectory = "./uploads";
 if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
 }
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDirectory); // Save files in the 'uploads' folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
+  },
+});
+
+// Create multer instance with the storage configuration
+const upload = multer({ storage: storage });
 // Routes
 
 // User Authentication Routes
@@ -104,10 +119,13 @@ app.post("/admin/validate-catch", validateCatchData);
 app.get("/admin/get-unique-fish-count", getUniqueSpeciesCount);
 app.get("/admin/get-userType-Count", getUserTypeAndCount);
 app.get("/admin/get-latest-logs", getLatestLogs);
+app.post("/admin/reject-log-data", rejectDataLog);
+app.post("/admin/accept-log-data", acceptDataLog);
 
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
+app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);
@@ -117,25 +135,6 @@ app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
 
 // Upload Routes
-app.post("/upload/local", localUpload.single("file"), (req, res) => {
-  try {
-    console.log("Uploaded File (Local):", req.file);
-    res.status(200).send("File uploaded successfully to local storage!");
-  } catch (error) {
-    console.error("Error during local upload:", error.message);
-    res.status(400).send(error.message);
-  }
-});
-
-app.post("/upload/cloudinary", cloudinaryUpload.single("file"), (req, res) => {
-  try {
-    console.log("Uploaded File (Cloudinary):", req.file);
-    res.status(200).send("File uploaded successfully to Cloudinary!");
-  } catch (error) {
-    console.error("Error during Cloudinary upload:", error.message);
-    res.status(400).send(error.message);
-  }
-});
 
 app.get("/get-upload-url", async (req, res) => {
   try {
@@ -148,7 +147,7 @@ app.get("/get-upload-url", async (req, res) => {
 });
 
 // CSV Upload Route
-app.post("/upload", localUpload.single("file"), uploadCSV);
+app.post("/upload", upload.single("file"), uploadCSV);
 
 // Server Setup
 const PORT = process.env.PORT || 5000;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Map, { Marker, Popup, Source, Layer } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { Typography } from "@mui/material";
 
 const MapboxVisualization = ({ catchData }) => {
   const [popupInfo, setPopupInfo] = useState(null);
@@ -109,58 +110,54 @@ const MapboxVisualization = ({ catchData }) => {
 
   return (
     <div>
-      <div
-        style={{
-          position: "sticky",
+      <div style={{
+          position: "absolute",
           zIndex: 20,
-          top: "150px", 
-          display: "flex",
-          justifyContent: "center",
-          gap: "10px",
-          
-          width:"100%",
-        }}
-        
-      >
-        <button
-          onClick={() => setViewMode("markers")}
-          style={{
-            padding: "10px 15px",
-            background: viewMode === "markers" ? "#007bff" : "#ccc",
-            color: viewMode === "markers" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Show Markers
-        </button>
-        <button
-          onClick={() => setViewMode("heatmap")}
-          style={{
-            padding: "10px 15px",
-            background: viewMode === "heatmap" ? "#007bff" : "#ccc",
-            color: viewMode === "heatmap" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Show Heatmap
-        </button>
-        <button
-          onClick={() => setViewMode("clusters")}
-          style={{
-            padding: "10px 15px",
-            background: viewMode === "clusters" ? "#007bff" : "#ccc",
-            color: viewMode === "clusters" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Show Clusters
-        </button>
+          padding: "2rem"}} > 
+              <Typography variant="h4" color="white">
+                Admin Dashboard
+              </Typography>
+          <div className="flex flex-col gap-4 mt-8">
+            <button
+              onClick={() => setViewMode("markers")}
+              style={{
+                padding: "10px 15px",
+                background: viewMode === "markers" ? "#007bff" : "#ccc",
+                color: viewMode === "markers" ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Show Markers
+            </button>
+            <button
+              onClick={() => setViewMode("heatmap")}
+              style={{
+                padding: "10px 15px",
+                background: viewMode === "heatmap" ? "#007bff" : "#ccc",
+                color: viewMode === "heatmap" ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Show Heatmap
+            </button>
+            <button
+              onClick={() => setViewMode("clusters")}
+              style={{
+                padding: "10px 15px",
+                background: viewMode === "clusters" ? "#007bff" : "#ccc",
+                color: viewMode === "clusters" ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Show Clusters
+            </button>
+          </div>
       </div>
       <Map
         initialViewState={{
@@ -169,15 +166,15 @@ const MapboxVisualization = ({ catchData }) => {
           zoom: 7,
         }}
         style={{
-          margin: "30px auto", // Center the map horizontally
-          top: "50px",
-          marginBottom:"50px",
-          border: "solid 5px #6096B4",
-          width: "95%", // Occupy 100% of the available width
+          // margin: "30px auto", // Center the map horizontally
+        
+          // marginBottom:"50px",
+          // border: "solid 5px #6096B4",
+          width: "100%", // Occupy 100% of the available width
           height: window.innerWidth <= 768 ? "400px" : "100vh",
           padding: window.innerWidth <= 768 ? "30px" : "0px",
         }}
-        mapStyle="mapbox://styles/mapbox/streets-v11"
+        mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
       >
         {viewMode === "markers" &&
