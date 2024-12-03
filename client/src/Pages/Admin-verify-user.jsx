@@ -137,14 +137,14 @@ const Adminverifyuser = () => {
               onChange={(e) => setType(e.target.value)}
               className="border-2 border-gray-400 bg-gray-300 text-lg text-gray-700 rounded-full focus:outline-none hover:bg-white hover:text-blue-900 hover:shadow-md transition-all duration-300"
             >
-              <option value="All">All</option>
-              {[
-                "Fisherman",
-                "Industry Collaborators",
-                "Research Institute",
-                "Research Cruises",
-                "Scientist",
-              ].map((type, index) => (
+                <option value="All">All</option>
+                {[
+                  "Fisherman",
+                  "Industry Collaborators",
+                  "Research Institute",
+                  "Research Cruises",
+                  "Scientist",
+                ].map((type, index) => (
                 <option key={index} value={type}>
                   {type}
                 </option>
