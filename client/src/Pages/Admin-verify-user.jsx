@@ -137,19 +137,8 @@ const Adminverifyuser = () => {
            <h1 className="text-bold text-3xl text-center text-white font-bold p-5">
               Un Verified Users{" "}
             </h1>
-<<<<<<< HEAD
             <div className="flex justify-center items-center gap-20">
               {/* <Button.Group>
-=======
-            <div
-            className="flex justify-end items-center mr-10">
-            <strong className="mr-2">Category: </strong>
-            <select
-              onChange={(e) => setType(e.target.value)}
-              className="border-2 border-gray-400 bg-gray-300 text-lg text-gray-700 rounded-full focus:outline-none hover:bg-white hover:text-blue-900 hover:shadow-md transition-all duration-300"
-            >
-                <option value="All">All</option>
->>>>>>> a9d1d0d94c6c463bd6fae05e2a17a852efec1cf4
                 {[
                   "Fisherman",
                   "Industry Collaborators",
@@ -157,47 +146,11 @@ const Adminverifyuser = () => {
                   "Research Cruises",
                   "Scientist",
                 ].map((type, index) => (
-<<<<<<< HEAD
-                  <Button
-                    key={index}
-                    onClick={() => setType(type)}
-                    color="gray"
-                    className="rounded-full border-2 border-gray-400 bg-white hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-300 m-4"
-                  >
-                    {type}
-                  </Button>
-                ))}
-              </Button.Group> */}
-              <Button.Group>
-                {[
-                  { label: "Fisherman", value: "fisherman" },
-                  {
-                    label: "Industry Collaborators",
-                    value: "industry-collaborators",
-                  },
-                  { label: "Research Institute", value: "research_institute" },
-                  { label: "Research Cruises", value: "research_cruises" },
-                  { label: "Scientist", value: "scientist" },
-                ].map((type, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => setType(type.value)} // Pass the correct internal value
-                    color="gray"
-                    className="rounded-full border-2 border-gray-400 bg-white hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-300 m-4"
-                  >
-                    {type.label}
-                  </Button>
-                ))}
-              </Button.Group>
-              s
-            </div>
-=======
                 <option key={index} value={type}>
                   {type}
                 </option>
               ))}
             </select>
->>>>>>> a9d1d0d94c6c463bd6fae05e2a17a852efec1cf4
           </div>
 
           <div>
