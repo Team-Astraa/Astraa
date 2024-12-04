@@ -16,6 +16,11 @@ import {
   signUp,
   changePassword,
 } from "./controller/authController.js";
+// import admin from "firebase-admin";
+// import { assert } from "console";
+// import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
+
+import { downloadFile } from "./controller/fileController.js";
 import {
   getCatchDataGroupedByUser,
   getdataUploaduser,
@@ -30,10 +35,20 @@ import {
   acceptDataLog,
   rejectDataLog,
 } from "./controller/admin-controller.js";
+
+import { autoCheckData } from "./controller/DataValidationData.js";
 import {
   getLogsByUserIdWithUser,
   uploadCSV,
 } from "./controller/userController.js";
+
+import { uploadCSV2 } from "./controller/userControllerNew.js";
+import {
+  getAllUsers,
+  getDataByUserAndTag,
+  getUsersByTag,
+} from "./controller/admin-get-dataNew.js";
+
 import { updateUser } from "./controller/userUpdate.js";
 import {
   acceptInvitation,
@@ -47,8 +62,6 @@ import {
   getUnique,
   sendInvitation,
 } from "./controller/scientist-controller.js";
-
-
 
 dotenv.config();
 const app = express();
@@ -64,9 +77,6 @@ mongoose
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
-
-
-
 
 // AWS S3 Configuration
 const s3 = new aws.S3({
@@ -86,7 +96,6 @@ const generateUploadUrl = async () => {
     ContentType: "image/jpeg",
   });
 };
-
 
 const uploadDirectory = "./uploads";
 if (!fs.existsSync(uploadDirectory)) {
@@ -124,9 +133,11 @@ app.get("/admin/get-userType-Count", getUserTypeAndCount);
 app.get("/admin/get-latest-logs", getLatestLogs);
 app.post("/admin/reject-log-data", rejectDataLog);
 app.post("/admin/accept-log-data", acceptDataLog);
+app.post("/admin/autoCheck-fishing-data", autoCheckData);
 
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
+app.get("/download/:type", downloadFile);
 app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
 
 // Password Update Route
@@ -145,7 +156,6 @@ app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 
 // Upload Routes
-
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();
@@ -157,7 +167,20 @@ app.get("/get-upload-url", async (req, res) => {
 });
 
 // CSV Upload Route
-app.post("/upload", upload.single("file"), uploadCSV);
+// app.post("/upload", upload.single("file"), uploadCSV);
+
+///new code aaded from here wjil other codes are preserved
+//new upload csv routes
+app.post("/upload", upload.single("file"), uploadCSV2);
+
+// Route to fetch users by tag
+app.get("/admin/users-by-tag/:tag", getUsersByTag);
+
+// Route to fetch data by userId and tag
+app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
+
+// Optional: Route to fetch all users who uploaded any data
+app.get("/admin/all-users", getAllUsers);
 
 // Server Setup
 const PORT = process.env.PORT || 5000;

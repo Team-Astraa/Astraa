@@ -256,10 +256,11 @@ const Sidebar = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:w-48 w-64`}
         style={{
-          backgroundImage: "url(../../public/nav_bg.jpg)",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right",
+          backgroundColor: "#141720"
+          // backgroundImage: "url(../../public/nav_bg.jpg)",
+          // backgroundSize: "cover",
+          // backgroundRepeat: "no-repeat",
+          // backgroundPosition: "right",
         }}
       >
         <div className="w-24">

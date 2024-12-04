@@ -16,6 +16,7 @@ import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
 import Scientist from "../models/Scientist.js";
 
+import CatchData from "../models/FishcatchDataNew.js"
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
   const { userType } = req.body; // Get userType from query parameters
@@ -226,7 +227,7 @@ export const getDetailsData = async (req, res) => {
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
     const { userId, dataId } = req.body;
-
+    console.log(userId, dataId);
     // Validate required fields
     if (!userId || !dataId) {
       return res
@@ -241,9 +242,11 @@ export const getCatchDataGroupedByUser = async (req, res) => {
 
     // Use ObjectId to query the database
     const objectId = new mongoose.Types.ObjectId(userId);
+    console.log("objectId", objectId);
+   
 
     // Aggregate query to filter by userId and dataId, and group the data by userId
-    const catchData = await Catch.aggregate([
+    const catchData = await CatchData.aggregate([
       { $match: { userId: objectId, dataId } }, // Match both userId and dataId
       {
         $group: {
@@ -669,25 +672,26 @@ export const acceptDataLog = async (req, res) => {
 export const rejectDataLog = async (req, res) => {
   try {
     let { dataId, status, reason } = req.body;
-    
+
     // Find the log by dataId (use findOne if you're expecting a single document)
     const log = await Log.findOne({ dataId: dataId });
-    
+
     if (!log) {
       return res.status(404).json({ message: "Log not found" });
     }
-    
+
     // Update the log status and reason
     log.dataStatus = status;
     log.reason = reason;
-    
+
     // Save the updated log
     await log.save();
-    
+
     return res.status(200).json({ message: "Log status and reason updated" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "An error occurred", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "An error occurred", error: error.message });
   }
 };
-
