@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import AnimationWrapper from "./Animation-page";
 import { Button, Modal, Box, Typography, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalText, setModalText] = useState("");
@@ -47,9 +50,11 @@ const Addexcel = () => {
     formData.append("file", selectedFile);
     formData.append("userId", userId); // Pass the user ID along with the file
 
-    setIsLoading(true);
+    
     const uploadToastId = toast.loading("Uploading...");
     try {
+      setIsLoading(true);
+      setUploadProgress(0);
       // Send the file to the backend
       const response = await axios.post(
         "http://localhost:5000/upload",
@@ -58,14 +63,23 @@ const Addexcel = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          onUploadProgress: (progressEvent) => {
+            const progress = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(progress);
+          },
         }
       );
 
       console.log("File uploaded successfully:", response.data);
       toast.success("File uploaded successfully", { id: uploadToastId });
+      setSelectedFile(null);
+      setUploadProgress(0);
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Failed to upload file", { id: uploadToastId });
+      setUploadProgress(0);
     } finally {
       setIsLoading(false);
     }
@@ -118,36 +132,85 @@ const Addexcel = () => {
 
       {/* Card Container */}
       <div className="bg-white shadow-xl rounded-xl p-8 w-[500px] flex flex-col items-center justify-center border-2">
+        {/* Dropdown for Data Type Selection */}
+        <div className=" w-full mb-6">
+                <label htmlFor="dataType" className="block text-gray-600 font-medium mb-2">
+                  Select Data Type:
+                </label>
+                <select
+                  id="dataType"
+                  className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+                  onChange={(e) => setDownloadType(e.target.value)}                 
+                  value={downloadType}
+                >
+                  <option value="" disabled>
+                    -- Choose an option --
+                  </option>
+                  <option value="abundance">Data Abundance</option>
+                  <option value="occurrence">Data Occurrence</option>
+                </select>
+              </div>
         <p className="text-gray-500 text-md text-center mb-8">
           Drag and drop an Excel or CSV file here, or click to select one.
         </p>
+        {/* Drag-and-Drop File Zone */}
         <div
-          {...getRootProps()}
-          className={`w-full h-48 flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all 
-            ${
-              isDragActive
-                ? "border-blue-500 bg-blue-100"
-                : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-blue-500"
-            }`}
-        >
-          <input {...getInputProps()} disabled={isLoading} />
-          {isDragActive ? (
-            <p className="text-blue-600 font-medium">Drop the file here...</p>
+        {...getRootProps()}
+        className={`w-full max-w-md h-48 flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all 
+          ${
+            isDragActive
+              ? "border-purple-500 bg-purple-100"
+              : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-purple-500"
+          }`}
+      >
+        <input {...getInputProps()} disabled={isLoading} />
+        <div className="text-center">
+          {uploadProgress > 0 ? (
+            <div className="w-20 h-20 mx-auto mb-2">
+              <CircularProgressbar
+                value={uploadProgress}
+                text={`${uploadProgress}%`}
+                styles={buildStyles({
+                  textSize: "16px",
+                  textColor: "#6B46C1",
+                  pathColor: "#6B46C1",
+                  trailColor: "#E2E8F0",
+                })}
+              />
+            </div>
           ) : (
             <p className="text-gray-600 font-medium">
               Drag & drop your file, or{" "}
-              <span className="text-blue-600 underline cursor-pointer">
+              <span className="text-purple-600 underline cursor-pointer">
                 browse files
               </span>
             </p>
           )}
         </div>
-        {selectedFile && (
-          <div className="mt-4 text-gray-700 text-center">
-            <p>
-              Selected File: <strong>{selectedFile.name}</strong>
+      </div>
+
+      {selectedFile && (
+        <div className="mt-4 w-full max-w-md">
+          <div className="flex justify-between items-center p-2 border rounded-lg bg-white shadow-sm">
+            <div>
+              <p className="text-sm font-medium text-gray-800">
+                {selectedFile.name}
+              </p>
+              <p className="text-xs text-gray-500">
+                {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+              </p>
+            </div>
+            <div className="w-1/2">
+              <div
+                className="bg-purple-500 h-2 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+            <p className="text-sm font-medium text-gray-600 ml-2">
+              {uploadProgress}%
             </p>
           </div>
+        </div>
         )}
         <button
           onClick={handleUpload}
