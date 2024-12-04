@@ -101,6 +101,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/scientist/home" element={<ScientistHome />} /> */}
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
