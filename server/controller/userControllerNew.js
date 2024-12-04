@@ -62,6 +62,11 @@ const parseExcelDate = (excelDate) => {
 };
 
 const cleanData = (data, userId, id, tag) => {
+  console.log("data", data);
+  console.log("userId", userId);
+  console.log("id", id);
+  console.log("tag", tag);
+
   return data.map((item) => {
     const species = [];
 
@@ -132,10 +137,10 @@ export const uploadCSV2 = async (req, res) => {
   try {
     const { userId, fileType } = req.body; // Extract fileType from body
     const file = req.file;
+    console.log(file);
 
     const filePath = file.path;
     console.log(filePath);
-
     let data = [];
     let finalData = [];
     let id = generateRandomId();

@@ -161,7 +161,8 @@ export const uploadCSV = async (req, res) => {
       const sheetName = workbook.SheetNames[0]; // Assuming first sheet
       const sheet = workbook.Sheets[sheetName];
       const rawData = xlsx.utils.sheet_to_json(sheet);
-
+      console.log(rawData);
+   
       // Clean and normalize data
       data = cleanData(rawData, userId, id);
     } else if (file.mimetype === "text/csv") {
@@ -235,15 +236,3 @@ export const getLogsByUserIdWithUser = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch logs", error });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-

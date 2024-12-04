@@ -1,6 +1,5 @@
-
 //validation code for both abundance and occurence
-
+import CatchData from "../models/FishcatchDataNew.js"
 const validateFishingData = (data, dataType = "abundance") => {
   let errors = [];
 
@@ -222,7 +221,7 @@ export const autoCheckData = async (req, res) => {
     if (errors.length > 0) {
       return res.status(400).json({ errors }); // Return errors if validation fails
     }
-
+    
     return res
       .status(200)
       .json({ message: "Data is valid. Ready for storage." }); // Success

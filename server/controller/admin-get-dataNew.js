@@ -1,13 +1,49 @@
 // controllers/dataController.js
-import CatchData from "../models/FishcatchDataNew.js"
+import CatchData from "../models/FishcatchDataNew.js";
 
 // Fetch distinct users grouped by tag
 export const getUsersByTag = async (req, res) => {
   const { tag } = req.params;
+  console.log("tag in getUsersByTag", tag);
   try {
-    const users = await CatchData.find({ tag })
-      .distinct("userId")
-      .populate("userId", "name email"); // Assuming User schema has name/email
+    const users = await CatchData.aggregate([
+      { $match: { tag: tag } }, // Filter by tag
+      {
+        $group: {
+          _id: "$userId", // Group by userId
+          earliestTimestamp: { $min: "$timestamp" }, // Get the earliest timestamp for each user
+        },
+      },
+      {
+        $lookup: {
+          from: "users", // Collection name for User
+          localField: "_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: "$userDetails", // Flatten the userDetails array
+      },
+      {
+        $project: {
+          userId: "$_id",
+          userDetails: 1, // Include all fields in userDetails
+          uploadTime: "$earliestTimestamp", // Include the earliest timestamp
+        },
+      },
+      {
+        $project: {
+          "userDetails.password": 0, // Exclude the password field
+          "userDetails.passwordChanged": 0, // Exclude the passwordChanged field
+        },
+      },
+    ]);
+
+    console.log("Populated Users:", users);
+
+    // console.log("Users:", users);
+
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
