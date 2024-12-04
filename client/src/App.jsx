@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,7 +25,7 @@ import Addexcel from "./Pages/Add-excel";
 import ScientistHome from "./Pages/ScientistHome";
 import "./App.css"; // Import the CSS
 import DataTable from "./Pages/User-DataLogs";
-
+import Infographics from "./Pages/Infographics";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -101,6 +101,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/infographics" element={<Infographics />} />
+          <Route path="/scientist/home" element={<ScientistHome />} />
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
@@ -127,7 +129,7 @@ function App() {
           <Route path="/data-logs" element={<DataTable />} />
 
           {/* Scientist Routes */}
-          <Route path="/scientist/home" element={<ScientistHome />} />
+          {/* <Route path="/scientist/home" element={<ScientistHome />} /> */}
         </Routes>
       </AppLayout>
     </Router>

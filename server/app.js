@@ -35,10 +35,25 @@ import {
   acceptDataLog,
   rejectDataLog,
 } from "./controller/admin-controller.js";
+
 import {
   getLogsByUserIdWithUser,
   uploadCSV,
 } from "./controller/userController.js";
+
+import { uploadCSV2 } from "./controller/userControllerNew.js";
+
+import {
+  autoCheckData,
+  saveValidatedData,
+} from "./controller/DataValidationData.js";
+
+import {
+  getAllUsers,
+  getDataByUserAndTag,
+  getUsersByTag,
+} from "./controller/admin-get-dataNew.js";
+
 import { updateUser } from "./controller/userUpdate.js";
 import {
   getFilteredCatches,
@@ -54,10 +69,8 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
-  // .connect(
-  //     "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-  // )
   .connect(
+    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
     "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
@@ -67,7 +80,7 @@ mongoose
 const s3 = new aws.S3({
   region: "ap-south-1",
   accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+  secretAccessKey: process.env.AWS_SECRETE_KEY,
 });
 
 // Utilities
@@ -118,6 +131,8 @@ app.get("/admin/get-userType-Count", getUserTypeAndCount);
 app.get("/admin/get-latest-logs", getLatestLogs);
 app.post("/admin/reject-log-data", rejectDataLog);
 app.post("/admin/accept-log-data", acceptDataLog);
+app.post("/admin/autoCheck-fishing-data", autoCheckData);
+app.post("/admin/saveValidatedData", saveValidatedData);
 
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
@@ -132,7 +147,6 @@ app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
 
 // Upload Routes
-
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();
@@ -144,7 +158,20 @@ app.get("/get-upload-url", async (req, res) => {
 });
 
 // CSV Upload Route
-app.post("/upload", upload.single("file"), uploadCSV);
+// app.post("/upload", upload.single("file"), uploadCSV);
+
+///new code aaded from here wjil other codes are preserved
+//new upload csv routes
+app.post("/upload", upload.single("file"), uploadCSV2);
+
+// Route to fetch users by tag
+app.get("/admin/users-by-tag/:tag", getUsersByTag);
+
+// Route to fetch data by userId and tag
+app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
+
+// Optional: Route to fetch all users who uploaded any data
+app.get("/admin/all-users", getAllUsers);
 
 // Server Setup
 const PORT = process.env.PORT || 5000;
