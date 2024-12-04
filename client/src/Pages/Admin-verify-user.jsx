@@ -18,8 +18,8 @@ const Adminverifyuser = () => {
     }
   }, [userType]);
 
-  const setType = (e) => {
-    const type = e.target.innerText;
+  const setType = (type) => {
+    //const type = e.target.innerText;
     setUserType(type);
   };
 
