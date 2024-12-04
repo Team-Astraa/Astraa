@@ -61,7 +61,7 @@ const parseExcelDate = (excelDate) => {
   );
 };
 
-const cleanData = (data, userId , id) => {
+const cleanData = (data, userId, id) => {
   return data.map((item) => {
     const species = [];
 
@@ -101,6 +101,7 @@ const cleanData = (data, userId , id) => {
 
     // Convert Excel date or handle as string date
     const dateValue = item["FISHING Date"];
+    console.log("dateValue", typeof dateValue);
     const date =
       typeof dateValue === "number"
         ? parseExcelDate(dateValue) // Excel serial number
@@ -147,8 +148,8 @@ export const uploadCSV = async (req, res) => {
 
     const logData = {
       userId,
-      fileType, 
-      dataId :id// Include fileType here
+      fileType,
+      dataId: id, // Include fileType here
     };
     // Check file type
     if (
@@ -160,9 +161,10 @@ export const uploadCSV = async (req, res) => {
       const sheetName = workbook.SheetNames[0]; // Assuming first sheet
       const sheet = workbook.Sheets[sheetName];
       const rawData = xlsx.utils.sheet_to_json(sheet);
-    
+      console.log(rawData);
+   
       // Clean and normalize data
-      data = cleanData(rawData, userId , id);
+      data = cleanData(rawData, userId, id);
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
