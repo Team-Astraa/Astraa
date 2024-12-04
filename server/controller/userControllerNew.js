@@ -3,7 +3,7 @@ import fs from "fs";
 import csv from "csv-parser";
 import { getDistance } from "geolib";
 
-import Catch from "../models/FishCatchData.js";
+import CatchData from "../models/FishcatchDataNew.js";
 import Log from "../models/logSchema.js";
 
 const stateBoundaries = {
@@ -18,6 +18,7 @@ const stateBoundaries = {
   WestBengal: { latitude: 22.9868, longitude: 87.855 },
   Lakshadweep: { latitude: 10.5667, longitude: 72.6417 },
 };
+
 // Helper function to clean and normalize data
 const categorizeLocation = (latitude, longitude) => {
   let sea = "Unknown Region";
@@ -51,7 +52,6 @@ const categorizeLocation = (latitude, longitude) => {
   return { sea, state: closestState };
 };
 
-// Main cleanData function
 // Function to handle Excel date serial numbers
 const parseExcelDate = (excelDate) => {
   const excelStartDate = new Date(1900, 0, 1); // January 1, 1900
@@ -61,7 +61,12 @@ const parseExcelDate = (excelDate) => {
   );
 };
 
-const cleanData = (data, userId, id) => {
+const cleanData = (data, userId, id, tag) => {
+  console.log("data", data);
+  console.log("userId", userId);
+  console.log("id", id);
+  console.log("tag", tag);
+
   return data.map((item) => {
     const species = [];
 
@@ -89,11 +94,6 @@ const cleanData = (data, userId, id) => {
       ? parseFloat(item.DEPTH.split("-")[0].trim()) // Take the first part before the "-"
       : null;
 
-    //old
-    // const depth = item.DEPTH
-    // ? parseFloat(item.DEPTH.replace(/[^0-9.]/g, ""))
-    // : null;
-
     // Categorize by sea and state
     const latitude = parseFloat(item.SHOOT_LAT);
     const longitude = parseFloat(item.SHOOT_LONG);
@@ -101,11 +101,10 @@ const cleanData = (data, userId, id) => {
 
     // Convert Excel date or handle as string date
     const dateValue = item["FISHING Date"];
-    console.log("dateValue", typeof dateValue);
     const date =
       typeof dateValue === "number"
         ? parseExcelDate(dateValue) // Excel serial number
-        : parseDate(dateValue); // Regular date string
+        : new Date(dateValue); // Regular date string
 
     return {
       date, // Use the parsed date
@@ -117,8 +116,10 @@ const cleanData = (data, userId, id) => {
       state,
       userId,
       dataId: id,
-      verified: false,
-      total_weight: parseFloat(item.TOTAL_CATCH),
+      verified: false, // Default verified to false
+      total_weight: parseFloat(item.TOTAL_CATCH), // Total catch weight
+      tag, // Set the tag field here
+      location: `${latitude}, ${longitude}`, // Set the location as a string (latitude, longitude)
     };
   });
 };
@@ -131,17 +132,15 @@ function generateRandomId() {
   return randomId;
 }
 
-// Example usage
-
-export const uploadCSV = async (req, res) => {
+//upload csv
+export const uploadCSV2 = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, fileType } = req.body; // Extract fileType from body
     const file = req.file;
+    console.log(file);
 
     const filePath = file.path;
-    const fileType = file.mimetype; // Capture the file type (mimetype)
     console.log(filePath);
-
     let data = [];
     let finalData = [];
     let id = generateRandomId();
@@ -151,6 +150,17 @@ export const uploadCSV = async (req, res) => {
       fileType,
       dataId: id, // Include fileType here
     };
+
+    // Determine the tag based on the file type
+    let tag;
+    if (fileType === "abundance" || fileType === "occurrence") {
+      tag = fileType; // Use the fileType as the tag
+    } else {
+      return res.status(400).json({
+        message: "Invalid file type. Must be 'abundance' or 'occurrence'.",
+      });
+    }
+
     // Check file type
     if (
       file.mimetype ===
@@ -161,10 +171,9 @@ export const uploadCSV = async (req, res) => {
       const sheetName = workbook.SheetNames[0]; // Assuming first sheet
       const sheet = workbook.Sheets[sheetName];
       const rawData = xlsx.utils.sheet_to_json(sheet);
-      console.log(rawData);
-   
+
       // Clean and normalize data
-      data = cleanData(rawData, userId, id);
+      data = cleanData(rawData, userId, id, tag); // Pass tag here
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
@@ -174,15 +183,15 @@ export const uploadCSV = async (req, res) => {
           results.push(row);
         })
         .on("end", async () => {
-          data = cleanData(results, userId);
+          data = cleanData(results, userId, id, tag); // Pass tag here
 
           // Log data to console
           console.log("Parsed Data:", data);
 
           // Comment out database insertion for debugging or re-enable as needed
           try {
-            await Catch.insertMany(finalData);
-            await Log.create(logData);
+            await CatchData.insertMany(data); // Insert cleaned data
+            await Log.create(logData); // Log the file upload
             return res.status(200).json({
               message:
                 "File uploaded successfully. Data logged for verification.",
@@ -203,8 +212,8 @@ export const uploadCSV = async (req, res) => {
 
     // Comment out database insertion for debugging or re-enable as needed
     try {
-      await Catch.insertMany(data);
-      await Log.create(logData);
+      await CatchData.insertMany(data); // Insert cleaned data
+      await Log.create(logData); // Log the file upload
       res.status(200).json({
         message: "File uploaded successfully. Data logged for verification.",
       });

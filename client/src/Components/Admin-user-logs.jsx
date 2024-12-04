@@ -13,6 +13,8 @@ const Logs = () => {
     axios
       .get("http://localhost:5000/admin/get-latest-logs")
       .then((response) => {
+        console.log("get-latest-logs", response);
+
         setLogs(response.data);
         setLoading(false);
       })
@@ -22,7 +24,7 @@ const Logs = () => {
       });
   }, []);
 
-  const handleNavigate = (id , dataId) => {
+  const handleNavigate = (id, dataId) => {
     navigate(`/admin/unverify-fish-data/${id}/${dataId}`);
   };
 
@@ -63,7 +65,7 @@ const Logs = () => {
               </tr>
             </thead>
             <tbody>
-              {logs.slice(0,3).map((log) => (
+              {logs.slice(0, 3).map((log) => (
                 <tr key={log.userId} className="transition-all">
                   <td className="px-6 py-4 text-sm text-gray-800 border-b">
                     {log.username}
@@ -77,7 +79,7 @@ const Logs = () => {
                   <td className="px-6 py-4 text-sm text-center border-b">
                     <button
                       className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
-                      onClick={() => handleNavigate(log.userId , log.dataId)}
+                      onClick={() => handleNavigate(log.userId, log.dataId)}
                     >
                       <i className="fa-solid fa-eye"></i>
                     </button>
@@ -90,8 +92,8 @@ const Logs = () => {
       )}
 
       <Button
-          className="mt-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-md shadow-lg hover:from-blue-700 hover:to-blue-950 hover:shadow-xl transition-all"
-          onClick={() => navigate("/admin/get-data-upload-user")}
+        className="mt-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-md shadow-lg hover:from-blue-700 hover:to-blue-950 hover:shadow-xl transition-all"
+        onClick={() => navigate("/admin/get-data-upload-user")}
       >
         See All Users
       </Button>

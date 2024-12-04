@@ -19,6 +19,11 @@ const Adminverifyuser = () => {
     }
   }, [userType]);
 
+<<<<<<< HEAD
+  const setType = (type) => {
+    //const type = e.target.innerText;
+    setUserType(type);
+=======
   // const setType = (e) => {
   //   const type = e.target.innerText;
   //   setUserType(type);
@@ -26,6 +31,7 @@ const Adminverifyuser = () => {
 
   const setType = (type) => {
     setUserType(type); // Set the internal format directly
+>>>>>>> db775133a06464d77ec14a811c7cc0cfa6ab8f06
   };
 
   console.log("USER TYPE", userType);
