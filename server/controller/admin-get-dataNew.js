@@ -72,3 +72,50 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const saveValidatedData = async (req, res) => {
+  try {
+    const { data, dataType } = req.body; // Data sent from frontend
+
+    // Step 1: Store data in appropriate clusters
+    const abundanceCluster = [];
+    const occurrenceCluster = [];
+    const insertedIds = []; // Track IDs of newly inserted data
+
+    data.forEach((entry) => {
+      if (dataType === "abundance") {
+        abundanceCluster.push(entry);
+        occurrenceCluster.push(entry); // Store in both clusters for "abundance"
+      } else if (dataType === "occurrence") {
+        occurrenceCluster.push(entry); // Store only in "occurrence" for "occurrence"
+      }
+    });
+
+    // Insert data into respective clusters
+    if (dataType === "abundance") {
+      const abundanceResult = await AbundanceCluster.insertMany(abundanceCluster);
+      insertedIds.push(...abundanceResult.map((doc) => doc._id)); // Collect inserted IDs
+    }
+
+    const occurrenceResult = await OccurrenceCluster.insertMany(occurrenceCluster);
+    insertedIds.push(...occurrenceResult.map((doc) => doc._id)); // Collect inserted IDs
+
+    // Step 2: Update CatchData `verified` field to `true` for matching IDs only
+    await CatchData.updateMany(
+      { _id: { $in: insertedIds } },
+      { $set: { verified: true } }
+    );
+
+    // Respond with success
+    return res.status(200).json({
+      message: "Data validated, stored, and verified successfully.",
+      validatedData: data,
+    });
+  } catch (error) {
+    // Handle any errors
+    return res.status(500).json({
+      message: "Error saving data.",
+      error: error.message,
+    });
+  }
+};

@@ -75,7 +75,7 @@ const Adminverifyfish = () => {
         { userId: userId, dataId: dataId }
       );
       console.log("CATCH DATA", response.data.data);
-      return;
+
       setCatchData(response.data.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
@@ -217,16 +217,32 @@ const Adminverifyfish = () => {
     console.log("handleValidateCatch Reaching Here");
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
-      const verifierId = "673af7b569f9684ec0d4784d"; // Get the verifier ID
       console.log("Catch Data before validation:", catchData);
+
+      // const validatedData = catchData.map((userData) =>
+      //   userData.catches.map((fishData) => ({
+      //     _id: fishData?._id,
+      //     date: fishData?.date.split("T")[0], // Extracting date, default to null if missing
+      //     latitude: fishData?.latitude, // Extract latitude
+      //     longitude: fishData?.longitude, // Extract longitude
+      //     depth: fishData?.depth, // Extract depth
+      //     species: Array.isArray(fishData.species) // Safely map species
+      //       ? fishData.species.map((speciesItem) => ({
+      //           name: speciesItem?.name, // Default name
+      //           catch_weight: speciesItem?.catch_weight, // Default weight
+      //         }))
+      //       : [], // Default to empty array if species is undefined
+      //     total_weight: fishData.total_weight, // Extract total weight
+      //   }))
+      // );
 
       const validatedData = catchData.map((userData) =>
         userData.catches.map((fishData) => ({
-          _id: fishData?._id,
-          date: fishData?.date, // Extracting date, default to null if missing
+          // Improved date handling: ensure a valid date, otherwise default to null or a fallback date
+          date: fishData?.date.split("T")[0], // Extracting date, default to null if missing or invalid
           latitude: fishData?.latitude, // Extract latitude
           longitude: fishData?.longitude, // Extract longitude
-          depth: fishData?.depth, // Extract depth
+          depth: String(fishData?.depth), // Extract depth
           species: Array.isArray(fishData.species) // Safely map species
             ? fishData.species.map((speciesItem) => ({
                 name: speciesItem?.name, // Default name
@@ -238,12 +254,12 @@ const Adminverifyfish = () => {
       );
 
       console.log("Valiadted data in Frontend", validatedData);
+
       // Sending data for validation
       const response = await axios.post(
-        "http://localhost:5000/admin/validate-catch",
+        "http://localhost:5000/admin/autoCheck-fishing-data",
         {
-          validatedData: validatedData,
-          verifierId: verifierId,
+          data: validatedData,
         }
       );
 
@@ -269,6 +285,47 @@ const Adminverifyfish = () => {
       toast.dismiss(loadingToast);
     }
   };
+
+  // const handleValidateData = async () => {
+  //   // Transform the data to the required structure
+  //   const transformedData = {
+  //     dataType: "occurrence",
+  //     data: catchData.map((item) => ({
+  //       date: item.date,
+  //       latitude: item.latitude,
+  //       longitude: item.longitude,
+  //       species: item.species.map((speciesItem) => ({
+  //         name: `${speciesItem.name}(${speciesItem.catch_weight})`,
+  //         catch_weight: speciesItem.catch_weight,
+  //       })),
+  //       total_weight: item.total_weight,
+  //       depth: item.depth,
+  //     })),
+  //   };
+
+  //   console.log("Data to be sent:", JSON.stringify(transformedData, null, 2));
+
+  //   try {
+  //     // Send transformed data to the backend
+  //     const response = await fetch("/admin/autoCheck-fishing-data", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(transformedData),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (response.ok) {
+  //       console.log("Validation successful:", result);
+  //     } else {
+  //       console.error("Validation failed:", result);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error sending data:", error);
+  //   }
+  // };
 
   const toggleViewMode = () => {
     setViewMode((preMode) => (preMode === "card" ? "table" : "card"));
