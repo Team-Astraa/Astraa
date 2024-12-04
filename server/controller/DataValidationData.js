@@ -1,5 +1,6 @@
 //validation code for both abundance and occurence
 import CatchData from "../models/FishcatchDataNew.js"
+
 const validateFishingData = (data, dataType = "abundance") => {
   let errors = [];
 
@@ -7,10 +8,15 @@ const validateFishingData = (data, dataType = "abundance") => {
     // General validation for all fields: handle missing, undefined, and null values.
 
     // 1. Date Validation (Not future, not older than 6 months)
+    console.log("entries: " + entry);
+    
+
     const fishingDate = entry.date;
     const currentDate = new Date();
     const thresholdDate = new Date();
     thresholdDate.setMonth(currentDate.getMonth() - 6); // 6 months ago
+
+    console.log("Values: " + fishingDate)
 
     if (
       dataType === "abundance" &&
@@ -219,7 +225,7 @@ export const autoCheckData = async (req, res) => {
     const errors = validateFishingData(data, dataType);
 
     if (errors.length > 0) {
-      return res.status(400).json({ errors }); // Return errors if validation fails
+      return res.status(201).json({ errors }); // Return errors if validation fails
     }
     
     return res

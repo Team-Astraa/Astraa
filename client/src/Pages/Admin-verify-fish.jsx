@@ -74,14 +74,25 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId, dataId: dataId }
       );
-      console.log("CATCH DATA", response.data.data);
-      return;
+
+      // console.log("CATCH DATA", response.data.data.map((dataSet) => {
+      //   dataSet.catches.map((dataItem) => dataItem._id)
+      // }));
+      // response.data.data.map((dataSet) => {
+      //   dataSet.catches.map((dataItem) => console.log(dataItem.total_weight));
+      // })
+      
       setCatchData(response.data.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
         long: response.data.data[0].catches[0].longitude.toFixed(3),
       });
-      console.log(response.data.data[0].catches[0]);
+      // console.log(response.data.data[0].catches.map((data) => {
+      //   console.log("")
+      // }));
+      // response.data.data[0].catches.map((dataItem) => {
+      //   console.log(dataItem._id)
+      // })
 
       if (response.data) {
         setTotalRows(getTotalRows(response.data.data[0].catches));
@@ -327,6 +338,45 @@ const Adminverifyfish = () => {
       console.error("Error:", error);
     }
   };
+
+  const handleValidate = async () => {
+    console.log( typeof (catchData[0].catches));
+
+    const validatedData = catchData.map((userData) =>
+      userData.catches.map((fishData) => ({
+        _id: fishData._id,
+        date: fishData.date, // Extracting date, default to null if missing
+        latitude: fishData.latitude, // Extract latitude
+        longitude: fishData.longitude, // Extract longitude
+        depth: fishData.depth + "m", // Extract depth
+        species: Array.isArray(fishData.species) // Safely map species
+          ? fishData.species.map((speciesItem) => ({
+              name: speciesItem?.name, // Default name
+              catch_weight: speciesItem?.catch_weight, // Default weight
+            }))
+          : [], // Default to empty array if species is undefined
+        total_weight: fishData.total_weight, // Extract total weight
+      }))
+    );
+    console.log(validatedData);
+  
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/admin/autoCheck-fishing-data",
+        {
+          dataType: "abundance",
+          data: validatedData,
+        }
+      );
+  
+      const data = await res.data;
+      console.log(data);
+
+    } catch (err) {
+      console.log(err);
+    }
+    
+  }
 
   return (
     <div className="bg-white p-6">
@@ -612,7 +662,8 @@ const Adminverifyfish = () => {
                       Save
                     </button>
                     <button
-                      onClick={handleValidateCatch} // Validate button
+                      //onClick={handleValidateCatch} // Validate button
+                      onClick={handleValidate}
                       className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
                     >
                       Validate
