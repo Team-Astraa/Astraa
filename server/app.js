@@ -36,8 +36,16 @@ import {
 } from "./controller/userController.js";
 import { updateUser } from "./controller/userUpdate.js";
 import {
+  acceptInvitation,
+  addCommunityData,
+  createCommunity,
+  fetchAllScientists,
+  fetchCommunityWithData,
+  fetchInvitation,
+  getCommunitiesByCreator,
   getFilteredCatches,
   getUnique,
+  sendInvitation,
 } from "./controller/scientist-controller.js";
 
 
@@ -52,7 +60,7 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-      "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+      "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -64,7 +72,7 @@ mongoose
 const s3 = new aws.S3({
   region: "ap-south-1",
   accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+  secretAccessKey: process.env.AWS_SECRETE_KEY,
 });
 
 // Utilities
@@ -127,6 +135,14 @@ app.put("/user/Password-update", changePassword);
 // Scientist Routes
 app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
+app.post("/scientist/create-community", createCommunity);
+app.post("/scientist/fetch-communities", getCommunitiesByCreator);
+app.post("/scientist/fetch-scientists", fetchAllScientists);
+app.post("/scientist/send-invitation", sendInvitation);
+app.post("/scientist/accept-or-reject-invitation", acceptInvitation);
+app.post("/scientist/fetch-invitations", fetchInvitation);
+app.post("/scientist/insert-community-data", addCommunityData);
+app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 
 // Upload Routes
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const DataDisplay = ({ data }) => {
   const [showResult, setShowResult] = useState(3);
-  const limitData = data.slice(0, showResult);
+  const limitData = data && data.slice(0, showResult);
 
   const handleLoadMore = (type) => {
     if(type === "less") setShowResult(showResult - showResult + 3);

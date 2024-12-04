@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState,useEffect,createContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,41 +25,18 @@ import Addexcel from "./Pages/Add-excel";
 import ScientistHome from "./Pages/ScientistHome";
 import "./App.css"; // Import the CSS
 import DataTable from "./Pages/User-DataLogs";
+import Community from "./Pages/Community";
+import Communitydetail from "./Pages/Community-detail";
 
-// function AppLayout({ children }) {
-//   const location = useLocation();
-//   const [login, setlogin] = useState(false);
-//   const user = localStorage.getItem("aquaUser");
-//   if (user) {
-//     setlogin(true);
-//   }
-//   // List of routes without Sidebar and NavBar
-//   const noLayoutRoutes = ["/signin", "/signup"];
 
-//   const isNoLayoutRoute = noLayoutRoutes.includes(
-//     location.pathname.toLowerCase()
-//   );
-//   console.log(isNoLayoutRoute);
+export const AppContext = createContext();
 
-//   return (
-//     <div className="container2">
-//       {/* if path is sigin or signup && if logedin then only show sidebar */}
-//       {!isNoLayoutRoute && <Sidebar />}&&{login && <Sidebar />}
-//       <div
-//         className={`${isNoLayoutRoute ? "" : "content"}`}
-//         style={{ borderRadius: "2rem 0 0 2rem" }}
-//       >
-//         {!isNoLayoutRoute && <NavBar />}
-//         {children}
-//       </div>
-//     </div>
-//   );
-// }
 
 function AppLayout({ children }) {
   const location = useLocation();
   const [login, setLogin] = useState(false);
   const user = localStorage.getItem("aquaUser");
+
 
   useEffect(() => {
     if (user) {
@@ -93,8 +70,11 @@ function AppLayout({ children }) {
 }
 
 function App() {
+  let [fistData, setFishData] = useState([]);
   return (
-    <Router>
+    <AppContext.Provider value={{fistData , setFishData}}>
+
+<Router>
       <AppLayout>
         <Routes>
           {/* Public Routes */}
@@ -128,10 +108,12 @@ function App() {
 
           {/* Scientist Routes */}
           <Route path="/scientist/home" element={<ScientistHome />} />
+          <Route path="/scientist/community" element={<Community />} />
+          <Route path="/scientist/community/:communityId" element={<Communitydetail />} />
         </Routes>
       </AppLayout>
     </Router>
+    </AppContext.Provider>
   );
 }
-
 export default App;
