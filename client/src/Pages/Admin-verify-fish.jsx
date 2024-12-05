@@ -76,9 +76,9 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId, dataId: dataId }
       );
-      console.log("CATCH DATA", response.data.data);
+      console.log("CATCH DATA", response.data);
 
-      setCatchData(response.data.data);
+      setCatchData(response.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
         long: response.data.data[0].catches[0].longitude.toFixed(3),

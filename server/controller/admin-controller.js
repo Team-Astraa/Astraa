@@ -224,6 +224,20 @@ export const getDetailsData = async (req, res) => {
 //   }
 // };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
     const { userId, dataId } = req.body;
