@@ -36,13 +36,21 @@ import {
   rejectDataLog,
 } from "./controller/admin-controller.js";
 
-import { autoCheckData } from "./controller/DataValidationData.js";
 import {
+  getDataByDataId,
+  getLogsByDataType,
   getLogsByUserIdWithUser,
+  otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
 
 import { uploadCSV2 } from "./controller/userControllerNew.js";
+
+import {
+  autoCheckData,
+  saveValidatedData,
+} from "./controller/DataValidationData.js";
+
 import {
   getAllUsers,
   getDataByUserAndTag,
@@ -51,9 +59,20 @@ import {
 
 import { updateUser } from "./controller/userUpdate.js";
 import {
+  acceptInvitation,
+  addCommunityData,
+  createCommunity,
+  fetchAllScientists,
+  fetchCommunityShareData,
+  fetchCommunityWithData,
+  fetchInvitation,
+  getCommunitiesByCreator,
   getFilteredCatches,
   getUnique,
+  graphdata,
+  sendInvitation,
 } from "./controller/scientist-controller.js";
+import {  getCatchDataForBubbleChart, getCatchWeightVsDepth, getLocationDataForBubbleChart, totalCatchWeightByDataType, totalCatchWeightByDate, totalCatchWeightByDepth, totalCatchWeightBySea, totalCatchWeightBySpecies, totalCatchWeightByState } from "./controller/graphs.controller.js";
 
 dotenv.config();
 const app = express();
@@ -65,8 +84,8 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
+      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -127,7 +146,9 @@ app.get("/admin/get-latest-logs", getLatestLogs);
 app.post("/admin/reject-log-data", rejectDataLog);
 app.post("/admin/accept-log-data", acceptDataLog);
 app.post("/admin/autoCheck-fishing-data", autoCheckData);
-
+app.post("/admin/saveValidatedData", saveValidatedData);
+app.post("/admin/get-other-log", getLogsByDataType);
+app.post("/admin/get-manual-data-by-id", getDataByDataId);
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
@@ -135,12 +156,23 @@ app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);
+app.post("/user/other-data-upload", otherDataUpload);
+
 
 // Scientist Routes
 app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
+app.post("/scientist/create-community", createCommunity);
+app.post("/scientist/fetch-communities", getCommunitiesByCreator);
+app.post("/scientist/fetch-scientists", fetchAllScientists);
+app.post("/scientist/send-invitation", sendInvitation);
+app.post("/scientist/accept-or-reject-invitation", acceptInvitation);
+app.post("/scientist/fetch-invitations", fetchInvitation);
+app.post("/scientist/insert-community-data", addCommunityData);
+app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
+app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
+app.post("/graph", graphdata);
 
-// Upload Routes
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();
@@ -152,11 +184,11 @@ app.get("/get-upload-url", async (req, res) => {
 });
 
 // CSV Upload Route
-// app.post("/upload", upload.single("file"), uploadCSV);
+app.post("/upload", upload.single("file"), uploadCSV);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes
-app.post("/upload", upload.single("file"), uploadCSV2);
+// app.post("/upload", upload.single("file"), uploadCSV2);
 
 // Route to fetch users by tag
 app.get("/admin/users-by-tag/:tag", getUsersByTag);
@@ -166,6 +198,25 @@ app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
 
 // Optional: Route to fetch all users who uploaded any data
 app.get("/admin/all-users", getAllUsers);
+
+
+
+//bar chart
+
+app.post('/total-catch-weight-by-date' , totalCatchWeightByDate);
+app.post('/total-catch-weight-by-species' , totalCatchWeightBySpecies);
+app.post('/total-catch-weight-by-sea' , totalCatchWeightBySea);
+app.post('/total-catch-weight-by-state' , totalCatchWeightByState);
+app.post('/total-catch-weight-by-depth' , totalCatchWeightByDepth);
+app.post('/total-catch-weight-by-data-type' , totalCatchWeightByDataType);
+
+
+// bubble chart 
+app.post('/getCatchDataForBubbleChart' , getCatchDataForBubbleChart );
+app.post('/getCatchWeightVsDepth' , getCatchWeightVsDepth );
+app.post('/getLocationDataForBubbleChart' , getLocationDataForBubbleChart );
+
+
 
 // Server Setup
 const PORT = process.env.PORT || 5000;

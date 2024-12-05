@@ -49,6 +49,10 @@ const CatchSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // Default to unverified
     },
+    dataType: {
+      type: String,
+      required: true,
+    },
     total_weight: {
       type: Number,
       default: 0,

@@ -29,6 +29,7 @@ const Logs = () => {
   };
 
   const getFileType = (fileType) => {
+    console.log(fileType);
     if (fileType.includes("spreadsheetml.sheet")) {
       return "Excel";
     } else if (fileType.includes("csv")) {
@@ -40,7 +41,7 @@ const Logs = () => {
   return (
     <div className="container mx-auto my-1 p-6 rounded-lg shadow-lg bg-white">
       <h2 className="text-xl font-bold text-blue-900 mb-6 text-center">
-        Recent Uploads
+        Recent abundance/occurrence Uploads
       </h2>
 
       {loading ? (

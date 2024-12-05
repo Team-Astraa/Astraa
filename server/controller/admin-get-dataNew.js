@@ -1,6 +1,6 @@
 // controllers/dataController.js
 import CatchData from "../models/FishcatchDataNew.js";
-
+import ValidatedCatchData from "../models/ValidatedCatchData.js";
 // Fetch distinct users grouped by tag
 export const getUsersByTag = async (req, res) => {
   const { tag } = req.params;
@@ -73,49 +73,30 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const saveValidatedData = async (req, res) => {
-  try {
-    const { data, dataType } = req.body; // Data sent from frontend
+// export const saveValidatedData = async (req, res) => {
+//   try {
+//     const validatedData = req.body; // Data sent from frontend
+//     console.log(validatedData);
+//     // First, save all the incoming data to the database
+//     const savedData = await ValidatedCatchData.insertMany(validatedData);
 
-    // Step 1: Store data in appropriate clusters
-    const abundanceCluster = [];
-    const occurrenceCluster = [];
-    const insertedIds = []; // Track IDs of newly inserted data
+//     // Now update the 'verified' field to true for each of the saved records
+//     const updatePromises = savedData.map(async (fishData) => {
+//       await CatchData.updateOne(
+//         { _id: fishData._id }, // Find the record by its unique ID
+//         { $set: { verified: true } } // Set the 'verified' field to true
+//       );
+//     });
 
-    data.forEach((entry) => {
-      if (dataType === "abundance") {
-        abundanceCluster.push(entry);
-        occurrenceCluster.push(entry); // Store in both clusters for "abundance"
-      } else if (dataType === "occurrence") {
-        occurrenceCluster.push(entry); // Store only in "occurrence" for "occurrence"
-      }
-    });
+//     // Wait for all the updates to finish
+//     await Promise.all(updatePromises);
 
-    // Insert data into respective clusters
-    if (dataType === "abundance") {
-      const abundanceResult = await AbundanceCluster.insertMany(abundanceCluster);
-      insertedIds.push(...abundanceResult.map((doc) => doc._id)); // Collect inserted IDs
-    }
-
-    const occurrenceResult = await OccurrenceCluster.insertMany(occurrenceCluster);
-    insertedIds.push(...occurrenceResult.map((doc) => doc._id)); // Collect inserted IDs
-
-    // Step 2: Update CatchData `verified` field to `true` for matching IDs only
-    await CatchData.updateMany(
-      { _id: { $in: insertedIds } },
-      { $set: { verified: true } }
-    );
-
-    // Respond with success
-    return res.status(200).json({
-      message: "Data validated, stored, and verified successfully.",
-      validatedData: data,
-    });
-  } catch (error) {
-    // Handle any errors
-    return res.status(500).json({
-      message: "Error saving data.",
-      error: error.message,
-    });
-  }
-};
+//     // Respond with success
+//     res
+//       .status(200)
+//       .json({ success: true, message: "Data saved and marked as verified" });
+//   } catch (error) {
+//     console.error("Error saving data:", error);
+//     res.status(500).json({ success: false, error: "Internal server error" });
+//   }
+// };

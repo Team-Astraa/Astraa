@@ -1,5 +1,7 @@
 //validation code for both abundance and occurence
 import CatchData from "../models/FishcatchDataNew.js";
+import ValidatedCatchData from "../models/ValidatedCatchData.js";
+
 const validateFishingData = (data, dataType = "abundance") => {
   let errors = [];
 
@@ -7,13 +9,17 @@ const validateFishingData = (data, dataType = "abundance") => {
     // General validation for all fields: handle missing, undefined, and null values.
 
     // 1. Date Validation (Not future, not older than 6 months)
+    console.log("entries: " + entry);
+    
+
     const fishingDate = entry.date;
     const currentDate = new Date();
     const thresholdDate = new Date();
     thresholdDate.setMonth(currentDate.getMonth() - 6); // 6 months age
 
     console.log("entry", entry);
-    return;
+
+    console.log("Values: " + fishingDate)
 
     if (
       dataType === "abundance" &&
@@ -222,7 +228,7 @@ export const autoCheckData = async (req, res) => {
     const errors = validateFishingData(data, dataType);
 
     if (errors.length > 0) {
-      return res.status(400).json({ errors }); // Return errors if validation fails
+      return res.status(202).json({ errors }); // Return errors if validation fails
     }
 
     return res
@@ -232,5 +238,83 @@ export const autoCheckData = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Internal server error.", error: error.message });
+  }
+};
+
+// export const saveValidatedData = async (req, res) => {
+//   try {
+//     const { data } = req.body; // Data sent from frontend
+
+//     console.log("data in save ", data);
+//     // First, save all the incoming data to the database
+//     const savedData = await ValidatedCatchData.insertMany(data);
+
+//     // Now update the 'verified' field to true for each of the saved records
+//     const updatePromises = savedData.map(async (fishData) => {
+//       await CatchData.updateOne(
+//         { _id: fishData._id }, // Find the record by its unique ID
+//         { $set: { verified: true } } // Set the 'verified' field to true
+//       );
+//     });
+
+//     // Wait for all the updates to finish
+//     await Promise.all(updatePromises);
+
+//     // Respond with success
+//     res
+//       .status(200)
+//       .json({ success: true, message: "Data saved and marked as verified" });
+//   } catch (error) {
+//     console.error("Error saving data:", error);
+//     res.status(500).json({ success: false, error: "Internal server error" });
+//   }
+// };
+
+export const saveValidatedData = async (req, res) => {
+  try {
+    const { data } = req.body; // Data sent from frontend
+
+    console.log("Data in save:", data);
+
+    // First, check if each dataId already exists in the database
+    const existingDataIds = await CatchData.find({
+      _id: { $in: data.map((item) => item.dataId) }, // Find all dataId present in the database
+    }).select("_id"); // Only retrieve the _id of existing records
+
+    const existingDataIdsSet = new Set(
+      existingDataIds.map((item) => item._id.toString())
+    ); // Create a Set for fast lookup
+
+    // Filter out the data that already exists in the database
+    const newData = data.filter((item) => !existingDataIdsSet.has(item.dataId));
+
+    if (newData.length === 0) {
+      return res.status(202).json({
+        success: false,
+        message: "All data is already saved in the database.",
+      });
+    }
+
+    // Now, save only the new data to the database
+    const savedData = await ValidatedCatchData.insertMany(newData);
+
+    // Now update the 'verified' field to true for each of the saved records
+    const updatePromises = savedData.map(async (fishData) => {
+      await CatchData.updateOne(
+        { _id: fishData._id }, // Find the record by its unique ID
+        { $set: { verified: true } } // Set the 'verified' field to true
+      );
+    });
+
+    // Wait for all the updates to finish
+    await Promise.all(updatePromises);
+
+    // Respond with success
+    res
+      .status(200)
+      .json({ success: true, message: "Data saved and marked as verified" });
+  } catch (error) {
+    console.error("Error saving data:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
