@@ -5,18 +5,20 @@ import MapboxVisualization from "./Admin-map";
 import { toast } from "react-hot-toast";
 import AnimationWrapper from "./Animation-page";
 import { Typography } from "@mui/material";
-
+// import Modal from "../Components/Modal";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 const Adminverifyfish = () => {
   const [catchData, setCatchData] = useState([]);
   const [selectedCatchIds, setSelectedCatchIds] = useState([]);
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showRows, setshowRows] = useState(17);
 
   let { userId, dataId } = useParams();
   // console.log("USER ID in frontend", userId);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [totalRows, setTotalRows] = useState(0);
@@ -74,14 +76,8 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId, dataId: dataId }
       );
-
-      // console.log("CATCH DATA", response.data.data.map((dataSet) => {
-      //   dataSet.catches.map((dataItem) => dataItem._id)
-      // }));
-      // response.data.data.map((dataSet) => {
-      //   dataSet.catches.map((dataItem) => console.log(dataItem.total_weight));
-      // })
-      
+      console.log("CATCH DATA", response.data.data);
+      return;
       setCatchData(response.data.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
@@ -190,72 +186,43 @@ const Adminverifyfish = () => {
 
   // console.log("MODIFIED DATA", modifiedData);
 
-  // Handle saving the changes to the database
-  const handleSaveChanges = async () => {
-    console.log("Calling handle save changes");
-
-    try {
-      setIsLoading(true); // Start loading
-
-      const response = await axios.put(
-        `http://localhost:5000/admin/update-catch-data/${userId}`, // Ensure userId is passed correctly
-        { modifiedData } // Data payload
-      );
-
-      console.log("Response from server:", response.data);
-
-      if (response.status === 200) {
-        toast.success("Catch data updated successfully!"); // Notify success
-        fetchCatchData();
-        // Update the state with the new data
-        setModifiedData([]); // Clear modified data after saving
-      } else {
-        toast.error("Failed to update catch data. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error updating catch data:", error);
-      setError("Failed to update catch data.");
-      toast.error(
-        "Error saving catch data. Please check the console for details."
-      );
-    } finally {
-      setIsLoading(false); // Stop loading
-    }
-  };
-
   // Handle validation of catch data
+
   const handleValidateCatch = async () => {
     console.log("handleValidateCatch Reaching Here");
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
-      const verifierId = "673af7b569f9684ec0d4784d"; // Get the verifier ID
       console.log("Catch Data before validation:", catchData);
 
-      const validatedData = catchData.map((userData) =>
+      // Transforming catch data to match the required format
+      const transformedData = catchData.flatMap((userData) =>
         userData.catches.map((fishData) => ({
           _id: fishData?._id,
-          date: fishData?.date, // Extracting date, default to null if missing
+          date: fishData?.date.split("T")[0] || null, // Ensure valid date or default to null
           latitude: fishData?.latitude, // Extract latitude
           longitude: fishData?.longitude, // Extract longitude
-          depth: fishData?.depth, // Extract depth
-          species: Array.isArray(fishData.species) // Safely map species
+          depth: fishData?.depth?.toString(), // Convert depth to string, default to "null"
+          species: Array.isArray(fishData.species)
             ? fishData.species.map((speciesItem) => ({
-                name: speciesItem?.name, // Default name
-                catch_weight: speciesItem?.catch_weight, // Default weight
+                name: speciesItem?.name, // Default to "Unknown" if name is missing
+                catch_weight: speciesItem?.catch_weight, // Default weight to 0
               }))
             : [], // Default to empty array if species is undefined
-          total_weight: fishData.total_weight, // Extract total weight
+          total_weight: fishData?.total_weight, // Default to 0 if total_weight is missing
         }))
       );
 
-      console.log("Valiadted data in Frontend", validatedData);
-      // Sending data for validation
+      const payload = {
+        dataType: "occurrence",
+        data: transformedData,
+      };
+
+      console.log("Transformed Payload:", payload);
+
+      // Sending transformed data for validation
       const response = await axios.post(
-        "http://localhost:5000/admin/validate-catch",
-        {
-          validatedData: validatedData,
-          verifierId: verifierId,
-        }
+        "http://localhost:5000/admin/autoCheck-fishing-data",
+        payload
       );
 
       // Dismiss loading toast once request is complete
@@ -265,14 +232,14 @@ const Adminverifyfish = () => {
         toast.success("Catch data validated successfully!"); // Success toast
       } else if (response.status === 200) {
         toast.success("Data Already Validated");
+      } else if (response.status === 202) {
+        toast.success("Errors Arre hain jaise chaye hain vaise");
       } else {
         toast.error("Validation failed. Please try again."); // Error toast for non-200 responses
       }
 
       console.log("Validation Response:", response.data);
     } catch (error) {
-      // Dismiss loading toast in case of error
-
       console.error("Error validating catch data:", error);
       toast.error(
         "Error validating catch data. Please check the console for details."
@@ -339,45 +306,6 @@ const Adminverifyfish = () => {
     }
   };
 
-  const handleValidate = async () => {
-    console.log( typeof (catchData[0].catches));
-
-    const validatedData = catchData.map((userData) =>
-      userData.catches.map((fishData) => ({
-        _id: fishData._id,
-        date: fishData.date, // Extracting date, default to null if missing
-        latitude: fishData.latitude, // Extract latitude
-        longitude: fishData.longitude, // Extract longitude
-        depth: fishData.depth + "m", // Extract depth
-        species: Array.isArray(fishData.species) // Safely map species
-          ? fishData.species.map((speciesItem) => ({
-              name: speciesItem?.name, // Default name
-              catch_weight: speciesItem?.catch_weight, // Default weight
-            }))
-          : [], // Default to empty array if species is undefined
-        total_weight: fishData.total_weight, // Extract total weight
-      }))
-    );
-    console.log(validatedData);
-  
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/admin/autoCheck-fishing-data",
-        {
-          dataType: "abundance",
-          data: validatedData,
-        }
-      );
-  
-      const data = await res.data;
-      console.log(data);
-
-    } catch (err) {
-      console.log(err);
-    }
-    
-  }
-
   return (
     <div className="bg-white p-6">
       <Typography variant="h4" color="black">
@@ -437,16 +365,6 @@ const Adminverifyfish = () => {
                   }}
                 />
               </div>
-              {/* <div className="rounded-xl border border-lg border-purple-200">
-                  <MapboxVisualization catchData={catchData} props={{ type: "heatmap", showButton: false,
-                    oneLat: viewedRow.lat, oneLong: viewedRow.long
-                  }} />
-                </div>
-                <div className="rounded-xl border border-lg border-purple-200">
-                  <MapboxVisualization catchData={catchData} props={{ type: "clusters", showButton: false,
-                    oneLat: viewedRow.lat, oneLong: viewedRow.long
-                  }}/>
-                </div> */}
             </div>
           </div>
         </div>
@@ -656,7 +574,7 @@ const Adminverifyfish = () => {
                       {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
                     </button>
                     <button
-                      onClick={handleSaveChanges}
+                      onClick={handleSaveClick}
                       className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
                     >
                       Save
@@ -892,6 +810,37 @@ const Adminverifyfish = () => {
           </AnimationWrapper>
         </div>
       </div>
+      {/* Modal for confirmation */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={handleCancel}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold">
+              Are you sure you want to save the data?
+            </h3>
+            <div className="mt-4">
+              <button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="mr-2 px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                {isLoading ? "Saving..." : "Submit"}
+              </button>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

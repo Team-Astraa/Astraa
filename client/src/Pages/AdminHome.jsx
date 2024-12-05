@@ -44,7 +44,7 @@ const AdminHome = () => {
           <div className="mt-6 flex justify-center">
             <button
               className="py-4 px-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-950 hover:shadow-xl transition-all duration-200 flex items-center justify-center"
-    onClick={() => navigate("/admin/unverify-user")}
+              onClick={() => navigate("/admin/unverify-user")}
             >
               <span className="text-xl">Verify Users</span>
             </button>
