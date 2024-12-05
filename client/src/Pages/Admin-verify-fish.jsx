@@ -77,7 +77,7 @@ const Adminverifyfish = () => {
         { userId: userId, dataId: dataId }
       );
       console.log("CATCH DATA", response.data.data);
-      return;
+
       setCatchData(response.data.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
@@ -304,6 +304,122 @@ const Adminverifyfish = () => {
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const handleSaveClick = () => {
+    setIsModalOpen(true); // Open the modal to confirm save
+  };
+
+  // const handleSubmit = async () => {
+  //   setIsLoading(true); // Show loading state
+
+  //   // Transform the data to the format expected by the backend
+  //   const transformedData = catchData.flatMap((userData) =>
+  //     userData.catches.map((fishData) => ({
+  //       dataId: fishData?._id, // Ensure dataId is never null, fallback to empty string if missing
+  //       date: fishData?.date?.split("T")[0], // Format date, fallback to empty string if missing
+  //       latitude: fishData?.latitude, // Ensure latitude is never null, fallback to 0 if missing
+  //       longitude: fishData?.longitude, // Ensure longitude is never null, fallback to 0 if missing
+  //       depth: fishData?.depth || "", // Fallback to empty string if depth is missing
+  //       species: Array.isArray(fishData?.species)
+  //         ? fishData.species.map((speciesItem) => ({
+  //             name: speciesItem?.name || "", // Fallback to empty string if name is missing
+  //             catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
+  //           }))
+  //         : [],
+  //       total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+  //       tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
+  //       userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
+  //     }))
+  //   );
+
+  //   console.log("transformedData", transformedData);
+  //   try {
+  //     // Send transformed data to the backend to save
+  //     const response = await axios.post(
+  //       "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
+  //       { data: transformedData } // Send data as "data", not "validatedData"
+  //     );
+  //     console.log("response afetr saving data", response);
+  //     if (response.status === 200) {
+  //       console.log("Data saved and verified successfully");
+
+  //       // You can handle success feedback here
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving data", error);
+  //   }
+
+  //   setIsLoading(false); // Stop loading state
+  //   setIsModalOpen(false); // Close the modal
+  // };
+
+  // When the user clicks 'Cancel' in the modal, close it without doing anything
+  const handleSubmit = async () => {
+    // Transform the data to the format expected by the backend
+    const transformedData = catchData.flatMap((userData) =>
+      userData.catches.map((fishData) => ({
+        dataId: fishData?._id || "", // Ensure dataId is never null, fallback to empty string if missing
+        date: fishData?.date?.split("T")[0] || "", // Format date, fallback to empty string if missing
+        latitude: fishData?.latitude || 0, // Ensure latitude is never null, fallback to 0 if missing
+        longitude: fishData?.longitude || 0, // Ensure longitude is never null, fallback to 0 if missing
+        depth: fishData?.depth || "", // Fallback to empty string if depth is missing
+        species: Array.isArray(fishData?.species)
+          ? fishData.species.map((speciesItem) => ({
+              name: speciesItem?.name || "", // Fallback to empty string if name is missing
+              catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
+            }))
+          : [],
+        total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+        tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
+        userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
+      }))
+    );
+
+    console.log("transformedData", transformedData);
+
+    try {
+      setIsLoading(true); // Show loading state
+      const loadingToastId = toast.loading("Saving data..."); // Show a "saving..." toast notification and store the toast ID
+    
+      // Send transformed data to the backend to save
+      const response = await axios.post(
+        "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
+        { data: transformedData } // Send data as "data", not "validatedData"
+      );
+    
+      console.log("response after saving data", response);
+    
+      // Dismiss the loading toast
+      toast.dismiss(loadingToastId);
+    
+      if (response.status === 200) {
+        console.log("Data saved and verified successfully");
+    
+        // Show success toast
+        toast.success("Data saved successfully!", { autoClose: 3000 });
+      } else if (response.status === 202) {
+        toast.success("Data already saved! No need to save again", {
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving data", error);
+    
+      // Dismiss the loading toast in case of error
+      toast.dismiss(loadingToastId);
+    
+      // Show error toast
+      toast.error("Error saving data. Please try again.", { autoClose: 3000 });
+    }
+    
+
+    setIsLoading(false); // Stop loading state
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false); // Simply close the modal without submitting
   };
 
   return (
@@ -580,8 +696,8 @@ const Adminverifyfish = () => {
                       Save
                     </button>
                     <button
-                      //onClick={handleValidateCatch} // Validate button
-                      onClick={handleValidate}
+                      onClick={handleValidateCatch} // Validate button
+                      // onClick={handleValidate}
                       className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
                     >
                       Validate
