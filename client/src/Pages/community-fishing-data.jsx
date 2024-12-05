@@ -85,7 +85,7 @@ const FishingData = () => {
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-            <h1 className="text-2xl font-bold text-center text-green-700 mb-6">
+            <h1 className="text-2xl font-bold text-center text-black-700 mb-6">
                 Fishing Data
             </h1>
             {!data ? (

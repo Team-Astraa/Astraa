@@ -15,6 +15,7 @@ const Community = () => {
     const [currentCommunityId, setCurrentCommunityId] = useState(null);
     const [showInvitationModal, setShowInvitationModal] = useState(false); // Invitation modal state
     const [currentInvitation, setCurrentInvitation] = useState(null); // Current invitation being viewed
+    const [animateTable, setAnimateTable] = useState(false);
     let [userId, setUserId] = useState("")
     const navigate = useNavigate();
 
@@ -34,6 +35,7 @@ const Community = () => {
             } catch (error) {
                 setError("Error fetching communities");
             }
+            setAnimateTable(true);
         };
         fetchCommunities();
     }, []);
@@ -142,199 +144,226 @@ const Community = () => {
     };
 
     return (
-        <div className="bg-gray-900 min-h-screen text-white p-6">
-        <div className="max-w-4xl mx-auto bg-gray-800 p-8 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-semibold text-green-500 mb-6">Communities</h2>
+        <div className="bg-purple-100 min-h-screen text-gray-900 p-6">
+            <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                {/* Top Section */}
+                <div className="flex justify-between items-center mb-6">
+                    {/* Top Buttons */}
+                    <h2 className="text-3xl font-semibold text-black-700">Communities</h2>
+                    <div className="flex space-x-4">
+                        <button
+                            onClick={() => handleShowInvitationModal(invitations[0])}
+                            className="bg-blue-500 text-white py-2 px-6 rounded-md font-medium shadow-md hover:bg-blue-700 transition duration-300"
+                        >
+                            View Invitations
+                        </button>
+                        <button
+                            onClick={handleCreateCommunityClick}
+                            className="bg-green-500 text-white py-2 px-6 rounded-md font-semibold shadow-md hover:bg-green-700 transition duration-300"
+                        >
+                            Create New Community
+                        </button>
+                    </div>
+
+                </div>
     
-            {/* Error Message */}
-            {error && (
-                <div className="bg-red-500 text-white p-4 rounded-md mb-6">
-                    <span>{error}</span>
+                {/* Community Table */}
+                <div
+                    className={`overflow-x-auto transition-all duration-500 ${
+                        animateTable ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"
+                    }`}
+                >
+                    <table className="w-full table-auto text-sm text-gray-800 border-collapse">
+                        <thead>
+                            <tr className="bg-purple-200">
+                                <th className="px-4 py-2 text-left">Community Name</th>
+                                <th className="px-4 py-2 text-left">Purpose</th>
+                                <th className="px-4 py-2 text-left">Role</th>
+                                <th className="px-4 py-2 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {communities.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" className="text-center py-6 text-gray-500">
+                                        No communities available.
+                                    </td>
+                                </tr>
+                            ) : (
+                                communities.map((community) => (
+                                    <tr
+                                        key={community._id}
+                                        className="border-b border-gray-200"
+                                    >
+                                        <td className="px-4 py-2">{community.name}</td>
+                                        <td className="px-4 py-2">{community.purpose}</td>
+                                        <td className="px-4 py-2">{community.role}</td>
+                                        <td className="px-4 py-2 flex justify-center space-x-4">
+                                            {community.role === "owner" && (
+                                                <button
+                                                    onClick={() => handleShowAddMemberModal(community._id)}
+                                                    className="bg-red-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-red-700 transition duration-300"
+                                                >
+                                                    +Add Member
+                                                </button>
+                                            )}
+                                            <button
+    onClick={() => navigate(`/scientist/community/${community._id}`)}
+    className="text-white py-2 px-4 transition duration-300 flex items-center justify-center"
+>
+    <img 
+        src="https://media.istockphoto.com/id/845329690/vector/eye-icon-vector-illustration.jpg?s=612x612&w=0&k=20&c=1SnGiyGCXd83V7m2hX0EsghFSqtmApJ6Qyy2b8Y3L1k=" 
+        alt="Eye Icon" 
+        className="h-7 w-7"
+    />
+</button>
+
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
+            {/* Modals */}
+            {/* Create Community Modal */}
+            {showCreateCommunityModal && (
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
+                    <div className="bg-white p-8 rounded-xl max-w-lg w-full">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Create New Community</h3>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Community Name"
+                                className="w-full p-4 bg-purple-100 text-gray-800 border border-gray-300 rounded-md"
+                                required
+                            />
+                            <textarea
+                                value={purpose}
+                                onChange={(e) => setPurpose(e.target.value)}
+                                placeholder="Community Purpose"
+                                className="w-full p-4 bg-purple-100 text-gray-800 border border-gray-300 rounded-md"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                className="w-full bg-green-500 text-white py-3 px-6 rounded-md font-semibold hover:bg-green-700 transition duration-300"
+                            >
+                                Create Community
+                            </button>
+                        </form>
+                        <button
+                            onClick={() => setShowCreateCommunityModal(false)}
+                            className="mt-6 w-full text-center bg-gray-200 text-gray-600 py-3 px-6 rounded-md hover:bg-gray-300 transition duration-300"
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
             )}
     
-            {/* View Invitations Button */}
-            <button
-                onClick={() => handleShowInvitationModal(invitations[0])}
-                className="w-full md:w-auto bg-green-500 text-white py-2 px-6 rounded-md font-medium shadow-md hover:bg-green-600 transition duration-300 ease-in-out mb-6"
-            >
-                View Invitations
-            </button>
-    
-            {/* All Communities Section */}
-            <div className="mb-8">
-                <h3 className="text-2xl font-semibold text-gray-300">All Communities</h3>
-                <ul className="space-y-4 mt-4">
-                    {communities.length === 0 ? (
-                        <li className="text-gray-400">No communities available.</li>
-                    ) : (
-                        communities.map((community) => (
-                            <li key={community._id} className="bg-gray-700 p-6 rounded-xl shadow-md flex justify-between items-center">
-                                <div>
-                                    <h4 className="text-xl font-semibold text-gray-200">{community.name}</h4>
-                                    <p className="text-gray-400 mt-2">{community.purpose}</p>
-                                </div>
-                                <div className="flex space-x-4">
-                                    {community.role === 'owner' && (
+            {/* Add Member Modal */}
+            {showAddMemberModal && currentCommunityId && (
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
+                    <div className="bg-white p-8 rounded-xl max-w-lg w-full">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Add Member</h3>
+                        {scientists.length === 0 ? (
+                            <p className="text-gray-500">No scientists available.</p>
+                        ) : (
+                            scientists.map((scientist) => (
+                                userId !== scientist._id && (
+                                    <div
+                                        key={scientist._id}
+                                        className="flex justify-between items-center bg-purple-100 p-4 mb-4 rounded-md hover:bg-purple-200"
+                                    >
+                                        <div>
+                                            <span className="text-lg font-semibold text-gray-800">{scientist.username}</span>
+                                            <span className="text-sm text-gray-500">{scientist.userType}</span>
+                                        </div>
                                         <button
-                                            onClick={() => handleShowAddMemberModal(community._id)}
-                                            className="bg-blue-500 text-white py-2 px-6 rounded-md shadow-md hover:bg-blue-600 transition duration-300"
+                                            onClick={() => handleAddMember(scientist._id)}
+                                            className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-300"
                                         >
-                                            Add Member
+                                            Add
                                         </button>
-                                    )}
-                                    <button
-                                        onClick={() => navigate(`/scientist/community/${community._id}`)}
-                                        className="bg-blue-500 text-white py-2 px-6 rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-                                    >
-                                        View Data
-                                    </button>
-                                </div>
-                            </li>
-                        ))
-                    )}
-                </ul>
-            </div>
-    
-            {/* Create New Community Button */}
-            <button
-                onClick={handleCreateCommunityClick}
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-md font-semibold shadow-md hover:bg-blue-700 transition duration-300 ease-in-out"
-            >
-                Create New Community
-            </button>
-        </div>
-    
-        {/* Create Community Modal */}
-        {showCreateCommunityModal && (
-            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
-                <div className="bg-gray-800 p-8 rounded-xl max-w-lg w-full">
-                    <h3 className="text-2xl font-semibold text-gray-200 mb-6">Create New Community</h3>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Community Name"
-                            className="w-full p-4 bg-gray-700 text-gray-300 border border-gray-600 rounded-md"
-                            required
-                        />
-                        <textarea
-                            value={purpose}
-                            onChange={(e) => setPurpose(e.target.value)}
-                            placeholder="Community Purpose"
-                            className="w-full p-4 bg-gray-700 text-gray-300 border border-gray-600 rounded-md"
-                            required
-                        />
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-600 text-white py-3 px-6 rounded-md font-semibold hover:bg-blue-700 transition duration-300"
-                        >
-                            Create Community
-                        </button>
-                    </form>
-                    <button
-                        onClick={() => setShowCreateCommunityModal(false)}
-                        className="mt-6 w-full text-center bg-gray-600 text-gray-300 py-3 px-6 rounded-md hover:bg-gray-700 transition duration-300"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        )}
-    
-        {/* Add Member Modal */}
-        {showAddMemberModal && currentCommunityId && (
-            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
-                <div className="bg-gray-800 p-8 rounded-xl max-w-lg w-full">
-                    <h3 className="text-2xl font-semibold text-gray-200 mb-6">Add Member</h3>
-                    {scientists.length === 0 ? (
-                        <p className="text-gray-400">No scientists available.</p>
-                    ) : (
-                        scientists.map((scientist) => (
-                            userId !== scientist._id && (
-                                <div key={scientist._id} className="flex justify-between items-center bg-gray-700 p-4 mb-4 rounded-md hover:bg-gray-600">
-                                    <div>
-                                        <span className="text-lg font-semibold text-gray-200">{scientist.username}</span>
-                                        <span className="text-sm text-gray-400">{scientist.userType}</span>
                                     </div>
-                                    <button
-                                        onClick={() => handleAddMember(scientist._id)}
-                                        className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-                                    >
-                                        Add
-                                    </button>
-                                </div>
-                            )
-                        ))
-                    )}
-                    <button
-                        onClick={() => setShowAddMemberModal(false)}
-                        className="mt-6 w-full text-center bg-gray-600 text-gray-300 py-3 px-6 rounded-md hover:bg-gray-700 transition duration-300"
-                    >
-                        Close
-                    </button>
+                                )
+                            ))
+                        )}
+                        <button
+                            onClick={() => setShowAddMemberModal(false)}
+                            className="mt-6 w-full text-center bg-gray-200 text-gray-600 py-3 px-6 rounded-md hover:bg-gray-300 transition duration-300"
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
     
-        {/* Invitation Modal */}
-        {showInvitationModal && (
-            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
-                <div className="bg-gray-800 p-8 rounded-xl max-w-2xl w-full">
-                    <h3 className="text-2xl font-semibold text-gray-200 mb-6">Invitations</h3>
-                    {invitations.length === 0 ? (
-                        <p className="text-gray-400">No invitations available.</p>
-                    ) : (
-                        <table className="w-full table-auto border-collapse text-sm text-gray-300">
-                            <thead>
-                                <tr className="bg-gray-700">
-                                    <th className="px-4 py-2 text-left">Sender</th>
-                                    <th className="px-4 py-2 text-left">Community Name</th>
-                                    <th className="px-4 py-2 text-left">Purpose</th>
-                                    <th className="px-4 py-2 text-left">Status</th>
-                                    <th className="px-4 py-2">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {invitations.map((invitation) => (
-                                    <tr key={invitation._id} className="border-b border-gray-700 hover:bg-gray-700">
-                                        <td className="px-4 py-2">{invitation.sender.email}</td>
-                                        <td className="px-4 py-2">{invitation.community.name}</td>
-                                        <td className="px-4 py-2">{invitation.community.purpose}</td>
-                                        <td className="px-4 py-2">{invitation.status}</td>
-                                        <td className="px-4 py-2">
-                                            <button
-                                                onClick={() => handleInvitationAction(invitation._id, "accepted")}
-                                                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-300 mb-2"
-                                            >
-                                                Accept
-                                            </button>
-                                            <button
-                                                onClick={() => handleInvitationAction(invitation._id, "rejected")}
-                                                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-300"
-                                            >
-                                                Reject
-                                            </button>
-                                        </td>
+            {/* Invitation Modal */}
+            {showInvitationModal && (
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
+                    <div className="bg-white p-8 rounded-xl max-w-2xl w-full">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Invitations</h3>
+                        {invitations.length === 0 ? (
+                            <p className="text-gray-500">No invitations available.</p>
+                        ) : (
+                            <table className="w-full table-auto border-collapse text-sm text-gray-800">
+                                <thead>
+                                    <tr className="bg-purple-200">
+                                        <th className="px-4 py-2 text-left">Sender</th>
+                                        <th className="px-4 py-2 text-left">Community Name</th>
+                                        <th className="px-4 py-2 text-left">Purpose</th>
+                                        <th className="px-4 py-2 text-left">Status</th>
+                                        <th className="px-4 py-2 text-center">Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                    <button
-                        onClick={() => setShowInvitationModal(false)}
-                        className="mt-6 w-full text-center bg-gray-600 text-gray-300 py-3 px-6 rounded-md hover:bg-gray-700 transition duration-300"
-                    >
-                        Close
-                    </button>
+                                </thead>
+                                <tbody>
+                                    {invitations.map((invitation) => (
+                                        <tr
+                                            key={invitation._id}
+                                            className="border-b border-gray-200 hover:bg-purple-100"
+                                        >
+                                            <td className="px-4 py-2">{invitation.sender.email}</td>
+                                            <td className="px-4 py-2">{invitation.community.name}</td>
+                                            <td className="px-4 py-2">{invitation.community.purpose}</td>
+                                            <td className="px-4 py-2">{invitation.status}</td>
+                                            <td className="px-4 py-2 text-center">
+                                                <button
+                                                    onClick={() => handleInvitationAction(invitation._id, "accepted")}
+                                                    className="bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-300 mb-2"
+                                                >
+                                                    Accept
+                                                </button>
+                                                <button
+                                                    onClick={() => handleInvitationAction(invitation._id, "rejected")}
+                                                    className="bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-300"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                        <button
+                            onClick={() => setShowInvitationModal(false)}
+                            className="mt-6 w-full text-center bg-gray-200 text-gray-600 py-3 px-6 rounded-md hover:bg-gray-300 transition duration-300"
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
-            </div>
-        )}
-    </div>
-    
-    
+            )}
+        </div>
     );
+    
+        
 };
 
 export default Community;
