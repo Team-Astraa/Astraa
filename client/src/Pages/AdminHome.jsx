@@ -6,6 +6,7 @@ import AdminUpperStrip from "../Components/AdminUpperStrip";
 import UserTypeCount from "../Components/UserTypeCount";
 import Logs from "../Components/Admin-user-logs";
 
+
 const AdminHome = () => {
   const navigate = useNavigate();
 
@@ -59,6 +60,8 @@ const AdminHome = () => {
           </div>
         </div>
       </div>
+
+     
     </AnimationWrapper>
   );
 };

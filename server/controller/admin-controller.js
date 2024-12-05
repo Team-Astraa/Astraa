@@ -14,6 +14,8 @@ import bcrypt from "bcrypt";
 import sendmail from "../Config/services.js";
 import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
+import Scientist from "../models/Scientist.js";
+
 import CatchData from "../models/FishcatchDataNew.js"
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
@@ -154,6 +156,10 @@ export const getDetailsData = async (req, res) => {
       });
     } else if (userType === "research_institute") {
       detaildata = await ResearchInstitute.find({
+        userId: new mongoose.Types.ObjectId(userId),
+      });
+    } else if (userType === "scientist") {
+      detaildata = await Scientist.find({
         userId: new mongoose.Types.ObjectId(userId),
       });
     } else {

@@ -218,9 +218,9 @@ const Sidebar = () => {
       key: "dashboard",
     },
     {
-      to: "/dashboard",
+      to: "/scientist/community",
       icon: <FaPhoneAlt size={30} />,
-      label: "Contact",
+      label: "community",
       key: "contact",
     },
     {

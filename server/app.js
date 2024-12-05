@@ -56,8 +56,17 @@ import {
 
 import { updateUser } from "./controller/userUpdate.js";
 import {
+  acceptInvitation,
+  addCommunityData,
+  createCommunity,
+  fetchAllScientists,
+  fetchCommunityShareData,
+  fetchCommunityWithData,
+  fetchInvitation,
+  getCommunitiesByCreator,
   getFilteredCatches,
   getUnique,
+  sendInvitation,
 } from "./controller/scientist-controller.js";
 
 dotenv.config();
@@ -70,8 +79,8 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
+      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -145,8 +154,16 @@ app.put("/user/Password-update", changePassword);
 // Scientist Routes
 app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
+app.post("/scientist/create-community", createCommunity);
+app.post("/scientist/fetch-communities", getCommunitiesByCreator);
+app.post("/scientist/fetch-scientists", fetchAllScientists);
+app.post("/scientist/send-invitation", sendInvitation);
+app.post("/scientist/accept-or-reject-invitation", acceptInvitation);
+app.post("/scientist/fetch-invitations", fetchInvitation);
+app.post("/scientist/insert-community-data", addCommunityData);
+app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
+app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 
-// Upload Routes
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();
