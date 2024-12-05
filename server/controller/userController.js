@@ -61,7 +61,7 @@ const parseExcelDate = (excelDate) => {
   );
 };
 
-const cleanData = (data, userId, id) => {
+const cleanData = (data, userId, id, dataType) => {
   return data.map((item) => {
     const species = [];
 
@@ -117,6 +117,7 @@ const cleanData = (data, userId, id) => {
       state,
       userId,
       dataId: id,
+      dataType,
       verified: false,
       total_weight: parseFloat(item.TOTAL_CATCH),
     };
@@ -135,19 +136,23 @@ function generateRandomId() {
 
 export const uploadCSV = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, dataType } = req.body;
     const file = req.file;
 
     const filePath = file.path;
     const fileType = file.mimetype; // Capture the file type (mimetype)
     console.log(filePath);
 
+    if (!dataType) {
+      return res.status(400).json({ message: "data type is required" });
+    }
     let data = [];
     let finalData = [];
     let id = generateRandomId();
 
     const logData = {
       userId,
+      dataType,
       fileType,
       dataId: id, // Include fileType here
     };
@@ -162,9 +167,9 @@ export const uploadCSV = async (req, res) => {
       const sheet = workbook.Sheets[sheetName];
       const rawData = xlsx.utils.sheet_to_json(sheet);
       console.log(rawData);
-   
+
       // Clean and normalize data
-      data = cleanData(rawData, userId, id);
+      data = cleanData(rawData, userId, id, dataType);
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
@@ -174,7 +179,7 @@ export const uploadCSV = async (req, res) => {
           results.push(row);
         })
         .on("end", async () => {
-          data = cleanData(results, userId);
+          data = cleanData(results, userId, id, dataType);
 
           // Log data to console
           console.log("Parsed Data:", data);

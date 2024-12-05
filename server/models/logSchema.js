@@ -7,6 +7,11 @@ const logSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    dataType:{
+      type: String,
+      required: true, // Corrected to include "type"
+      
+    },
     dataId: { type: String },
     fileType: { type: String, required: true }, // Store the file type (e.g., CSV, Excel)
     uploadTimestamp: { type: Date, default: Date.now }, // Store the timestamp of upload

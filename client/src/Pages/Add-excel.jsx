@@ -32,6 +32,10 @@ const Addexcel = () => {
       toast.error("Please select a file to upload");
       return;
     }
+    if(!downloadType){
+      toast.error("Please select data type");
+      return;
+    }
 
     const user = localStorage.getItem("aquaUser");
     if (!user) {
@@ -49,7 +53,7 @@ const Addexcel = () => {
     const formData = new FormData();
     formData.append("file", selectedFile);
     formData.append("userId", userId); // Pass the user ID along with the file
-
+    formData.append("dataType", downloadType); 
     
     const uploadToastId = toast.loading("Uploading...");
     try {
@@ -122,225 +126,6 @@ const Addexcel = () => {
       toast.error("Failed to download file");
     }
   };
-
-//   return (
-//     <AnimationWrapper className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-//       {/* Title moved outside the card */}
-
-//       {/* Card Container */}
-//       <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] flex flex-col items-center justify-center border-2">
-//       <h1 className="text-4xl font-bold text-gray-800 mb-10 text-left">
-//         Upload Your File
-//       </h1>
-
-//       {/* {Download buttons} */}
-//       <div className="flex space-x-14">
-//   <button
-//     className="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
-//     onClick={() => handleDownload("abundance")}
-//   >
-//     Download Abundance
-//   </button>
-//   <button
-//     className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
-//     onClick={() => handleDownload("occurrence")}
-//   >
-//     Download Occurrence
-//   </button>
-// </div>
-
-//         {/* Dropdown for Data Type Selection */}
-//         <div className=" w-full mb-6">
-//                 <label htmlFor="dataType" className="block text-gray-600 font-medium mt-5">
-//                   Select Data Type:
-//                 </label>
-//                 <select
-//                   id="dataType"
-//                   className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
-//                   onChange={(e) => setDownloadType(e.target.value)}                 
-//                   value={downloadType}
-//                 >
-//                   <option value="" disabled>
-//                     -- Choose an option --
-//                   </option>
-//                   <option value="abundance">Data Abundance</option>
-//                   <option value="occurrence">Data Occurrence</option>
-//                 </select>
-//               </div>
-//         <p className="text-gray-500 text-md text-center mb-8">
-//           Drag and drop an Excel or CSV file here, or click to select one.
-//         </p>
-
-
-
-//         {/* Drag-and-Drop File Zone */}
-// <div
-//   {...getRootProps()}
-//   className={`w-full max-w-xl h-64 flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all 
-//     ${
-//       isDragActive
-//         ? "border-purple-500 bg-purple-100"
-//         : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-purple-500"
-//     }`}
-// >
-//   <input {...getInputProps()} disabled={isLoading} />
-//   <div className="relative w-20 h-20 mx-auto mb-2">
-//     {uploadProgress > 0 ? (
-//       // Circular Progress Bar
-//       <CircularProgressbar
-//         value={uploadProgress}
-//         text={`${uploadProgress}%`}
-//         styles={buildStyles({
-//           textSize: "16px",
-//           textColor: "#6B46C1",
-//           pathColor: "#6B46C1",
-//           trailColor: "#E2E8F0",
-//         })}
-//       />
-//     ) : (
-//       // Centered Image Overlapping Progress Bar Area
-//       <img
-//         src="https://cdn-icons-png.flaticon.com/512/9811/9811676.png"
-//         alt="Upload Illustration"
-//         className="absolute top-0 left-0 w-full h-full object-cover rounded-full"
-//       />
-//     )}
-//   </div>
-//   {uploadProgress === 0 && (
-//     <p className="text-gray-600 font-medium mt-4">
-//       Drag & drop your file, or{" "}
-//       <span className="text-purple-600 underline cursor-pointer">
-//         browse files
-//       </span>
-//     </p>
-//   )}
-// </div>
-
-// {selectedFile && (
-//   <div className="mt-4 w-full max-w-md">
-//     <div className="flex justify-between items-center p-2 border rounded-lg bg-white shadow-sm">
-//       <div>
-//         <p className="text-sm font-medium text-gray-800">
-//           {selectedFile.name}
-//         </p>
-//         <p className="text-xs text-gray-500">
-//           {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-//         </p>
-//       </div>
-//       <div className="w-1/2">
-//         <div
-//           className="bg-purple-500 h-2 rounded-full"
-//           style={{ width: `${uploadProgress}%` }}
-//         ></div>
-//       </div>
-//       <p className="text-sm font-medium text-gray-600 ml-2">
-//         {uploadProgress}%
-//       </p>
-//     </div>
-//   </div>
-// )}
-
-//         <button
-//           onClick={handleUpload}
-//           className={`mt-6 px-6 py-3 mb-5 text-white font-semibold rounded-lg shadow-md transition-all 
-//             ${
-//               isLoading
-//                 ? "bg-blue-300 cursor-not-allowed"
-//                 : "bg-blue-500 hover:bg-blue-600"
-//             }`}
-//           disabled={isLoading}
-//         >
-//           {isLoading ? "Uploading..." : "Upload File"}
-//         </button>
-  
-
-//       </div>
-
-//       {/* Modal for Download Instructions */}
-//       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-//         <Box
-//           className="p-6 bg-white rounded-md shadow-lg"
-//           style={{
-//             width: "400px",
-//             margin: "100px auto",
-//             textAlign: "center",
-//             position: "relative",
-//           }}
-//         >
-//           <IconButton
-//             onClick={() => setOpenModal(false)}
-//             style={{
-//               position: "absolute",
-//               top: "10px",
-//               right: "10px",
-//             }}
-//           >
-//             <Close />
-//           </IconButton>
-//            <Typography variant="h6">Instructions for {downloadType}</Typography>
-//           <Typography variant="body1" className=" mt-4 text-gray-700">
-           
-//             {downloadType === "abundance" ? (
-//               <div>
-//                 <p className="text-lg font-semibold">1. Abundance Data</p>
-//                 <p className="mt-2">
-//                   The Abundance file contains data regarding abundance
-//                   measurements. This file is essential for ecological analysis.
-//                 </p>
-//                 <p className="mt-2">
-//                   <strong>Tip:</strong> Ensure that you have the correct
-//                   software to open this file (e.g., Excel).
-//                 </p>
-//                 <p className="mt-2">
-//                   This file includes various species data and their abundances,
-//                   which are crucial for biodiversity studies.
-//                 </p>
-//                 <p className="mt-2">
-//                   <strong>Note:</strong> You can use this data to generate
-//                   reports or graphs for ecological studies.
-//                 </p>
-//                 <p className="mt-4 text-center font-semibold text-blue-600">
-//                   Click the download button below to retrieve the file.
-//                 </p>
-//               </div>
-//             ) : (
-//               <div>
-//                 <p className="text-lg font-semibold">1. Occurrence Data</p>
-//                 <p className="mt-2">
-//                   The Occurrence file contains data regarding species occurrence
-//                   records, valuable for biodiversity monitoring.
-//                 </p>
-//                 <p className="mt-2">
-//                   <strong>Tip:</strong> Ensure that the occurrence data is ready
-//                   for analysis before downloading.
-//                 </p>
-//                 <p className="mt-2">
-//                   This file is formatted for easy import into analysis tools,
-//                   ensuring smooth integration with your existing systems.
-//                 </p>
-//                 <p className="mt-4 text-center font-semibold text-blue-600">
-//                   Click the download button below to retrieve the file.
-//                 </p>
-//               </div>
-//             )}
-//           </Typography> 
-
-//           <Button
-//             variant="contained"
-//             color="primary"
-//             onClick={initiateDownload}
-//             className="mt-6"
-//           >
-//             Download{" "}
-//             {downloadType.charAt(0).toUpperCase() + downloadType.slice(1)}
-//           </Button>
-//         </Box>
-//       </Modal>
-//     </AnimationWrapper>
-//   );
-// };
-
-// export default Addexcel;
 
 
 return (

@@ -175,11 +175,11 @@ app.get("/get-upload-url", async (req, res) => {
 });
 
 // CSV Upload Route
-// app.post("/upload", upload.single("file"), uploadCSV);
+app.post("/upload", upload.single("file"), uploadCSV);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes
-app.post("/upload", upload.single("file"), uploadCSV2);
+// app.post("/upload", upload.single("file"), uploadCSV2);
 
 // Route to fetch users by tag
 app.get("/admin/users-by-tag/:tag", getUsersByTag);
