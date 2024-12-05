@@ -44,18 +44,18 @@ const dataSchema = new mongoose.Schema(
     ],
     sea: {
       type: String,
-      required: true, // Sea name is mandatory
+      required: null, // Sea name is mandatory
     },
     state: {
       type: String,
-      required: true, // State name is mandatory
+      required: null, // State name is mandatory
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true, // Reference to the user who uploaded the data
     },
-    
+
     dataId: {
       type: String,
       required: true, // Unique identifier for this data batch
@@ -76,10 +76,6 @@ const dataSchema = new mongoose.Schema(
     timestamp: {
       type: Date,
       default: Date.now, // Automatically set the timestamp to current date
-    },
-    location: {
-      type: String,
-      required: true, // Location of the fishing activity
     },
   },
   {

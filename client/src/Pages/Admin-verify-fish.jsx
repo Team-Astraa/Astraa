@@ -5,18 +5,20 @@ import MapboxVisualization from "./Admin-map";
 import { toast } from "react-hot-toast";
 import AnimationWrapper from "./Animation-page";
 import { Typography } from "@mui/material";
-
+// import Modal from "../Components/Modal";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 const Adminverifyfish = () => {
   const [catchData, setCatchData] = useState([]);
   const [selectedCatchIds, setSelectedCatchIds] = useState([]);
   const [editMode, setEditMode] = useState(false); // State to manage edit mode
   const [modifiedData, setModifiedData] = useState([]); // Track modified data
   const [viewMode, setViewMode] = useState("table"); // State to manage view mode (card or table)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showRows, setshowRows] = useState(17);
 
   let { userId, dataId } = useParams();
   // console.log("USER ID in frontend", userId);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [totalRows, setTotalRows] = useState(0);
@@ -179,88 +181,43 @@ const Adminverifyfish = () => {
 
   // console.log("MODIFIED DATA", modifiedData);
 
-  // Handle saving the changes to the database
-  const handleSaveChanges = async () => {
-    console.log("Calling handle save changes");
-
-    try {
-      setIsLoading(true); // Start loading
-
-      const response = await axios.put(
-        `http://localhost:5000/admin/update-catch-data/${userId}`, // Ensure userId is passed correctly
-        { modifiedData } // Data payload
-      );
-
-      console.log("Response from server:", response.data);
-
-      if (response.status === 200) {
-        toast.success("Catch data updated successfully!"); // Notify success
-        fetchCatchData();
-        // Update the state with the new data
-        setModifiedData([]); // Clear modified data after saving
-      } else {
-        toast.error("Failed to update catch data. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error updating catch data:", error);
-      setError("Failed to update catch data.");
-      toast.error(
-        "Error saving catch data. Please check the console for details."
-      );
-    } finally {
-      setIsLoading(false); // Stop loading
-    }
-  };
-
   // Handle validation of catch data
+
   const handleValidateCatch = async () => {
     console.log("handleValidateCatch Reaching Here");
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
       console.log("Catch Data before validation:", catchData);
 
-      // const validatedData = catchData.map((userData) =>
-      //   userData.catches.map((fishData) => ({
-      //     _id: fishData?._id,
-      //     date: fishData?.date.split("T")[0], // Extracting date, default to null if missing
-      //     latitude: fishData?.latitude, // Extract latitude
-      //     longitude: fishData?.longitude, // Extract longitude
-      //     depth: fishData?.depth, // Extract depth
-      //     species: Array.isArray(fishData.species) // Safely map species
-      //       ? fishData.species.map((speciesItem) => ({
-      //           name: speciesItem?.name, // Default name
-      //           catch_weight: speciesItem?.catch_weight, // Default weight
-      //         }))
-      //       : [], // Default to empty array if species is undefined
-      //     total_weight: fishData.total_weight, // Extract total weight
-      //   }))
-      // );
-
-      const validatedData = catchData.map((userData) =>
+      // Transforming catch data to match the required format
+      const transformedData = catchData.flatMap((userData) =>
         userData.catches.map((fishData) => ({
-          // Improved date handling: ensure a valid date, otherwise default to null or a fallback date
-          date: fishData?.date.split("T")[0], // Extracting date, default to null if missing or invalid
+          _id: fishData?._id,
+          date: fishData?.date.split("T")[0] || null, // Ensure valid date or default to null
           latitude: fishData?.latitude, // Extract latitude
           longitude: fishData?.longitude, // Extract longitude
-          depth: String(fishData?.depth), // Extract depth
-          species: Array.isArray(fishData.species) // Safely map species
+          depth: fishData?.depth?.toString(), // Convert depth to string, default to "null"
+          species: Array.isArray(fishData.species)
             ? fishData.species.map((speciesItem) => ({
-                name: speciesItem?.name, // Default name
-                catch_weight: speciesItem?.catch_weight, // Default weight
+                name: speciesItem?.name, // Default to "Unknown" if name is missing
+                catch_weight: speciesItem?.catch_weight, // Default weight to 0
               }))
             : [], // Default to empty array if species is undefined
-          total_weight: fishData.total_weight, // Extract total weight
+          total_weight: fishData?.total_weight, // Default to 0 if total_weight is missing
         }))
       );
 
-      console.log("Valiadted data in Frontend", validatedData);
+      const payload = {
+        dataType: "occurrence",
+        data: transformedData,
+      };
 
-      // Sending data for validation
+      console.log("Transformed Payload:", payload);
+
+      // Sending transformed data for validation
       const response = await axios.post(
         "http://localhost:5000/admin/autoCheck-fishing-data",
-        {
-          data: validatedData,
-        }
+        payload
       );
 
       // Dismiss loading toast once request is complete
@@ -270,14 +227,14 @@ const Adminverifyfish = () => {
         toast.success("Catch data validated successfully!"); // Success toast
       } else if (response.status === 200) {
         toast.success("Data Already Validated");
+      } else if (response.status === 202) {
+        toast.success("Errors Arre hain jaise chaye hain vaise");
       } else {
         toast.error("Validation failed. Please try again."); // Error toast for non-200 responses
       }
 
       console.log("Validation Response:", response.data);
     } catch (error) {
-      // Dismiss loading toast in case of error
-
       console.error("Error validating catch data:", error);
       toast.error(
         "Error validating catch data. Please check the console for details."
@@ -285,47 +242,6 @@ const Adminverifyfish = () => {
       toast.dismiss(loadingToast);
     }
   };
-
-  // const handleValidateData = async () => {
-  //   // Transform the data to the required structure
-  //   const transformedData = {
-  //     dataType: "occurrence",
-  //     data: catchData.map((item) => ({
-  //       date: item.date,
-  //       latitude: item.latitude,
-  //       longitude: item.longitude,
-  //       species: item.species.map((speciesItem) => ({
-  //         name: `${speciesItem.name}(${speciesItem.catch_weight})`,
-  //         catch_weight: speciesItem.catch_weight,
-  //       })),
-  //       total_weight: item.total_weight,
-  //       depth: item.depth,
-  //     })),
-  //   };
-
-  //   console.log("Data to be sent:", JSON.stringify(transformedData, null, 2));
-
-  //   try {
-  //     // Send transformed data to the backend
-  //     const response = await fetch("/admin/autoCheck-fishing-data", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(transformedData),
-  //     });
-
-  //     const result = await response.json();
-
-  //     if (response.ok) {
-  //       console.log("Validation successful:", result);
-  //     } else {
-  //       console.error("Validation failed:", result);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error sending data:", error);
-  //   }
-  // };
 
   const toggleViewMode = () => {
     setViewMode((preMode) => (preMode === "card" ? "table" : "card"));
@@ -383,6 +299,122 @@ const Adminverifyfish = () => {
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const handleSaveClick = () => {
+    setIsModalOpen(true); // Open the modal to confirm save
+  };
+
+  // const handleSubmit = async () => {
+  //   setIsLoading(true); // Show loading state
+
+  //   // Transform the data to the format expected by the backend
+  //   const transformedData = catchData.flatMap((userData) =>
+  //     userData.catches.map((fishData) => ({
+  //       dataId: fishData?._id, // Ensure dataId is never null, fallback to empty string if missing
+  //       date: fishData?.date?.split("T")[0], // Format date, fallback to empty string if missing
+  //       latitude: fishData?.latitude, // Ensure latitude is never null, fallback to 0 if missing
+  //       longitude: fishData?.longitude, // Ensure longitude is never null, fallback to 0 if missing
+  //       depth: fishData?.depth || "", // Fallback to empty string if depth is missing
+  //       species: Array.isArray(fishData?.species)
+  //         ? fishData.species.map((speciesItem) => ({
+  //             name: speciesItem?.name || "", // Fallback to empty string if name is missing
+  //             catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
+  //           }))
+  //         : [],
+  //       total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+  //       tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
+  //       userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
+  //     }))
+  //   );
+
+  //   console.log("transformedData", transformedData);
+  //   try {
+  //     // Send transformed data to the backend to save
+  //     const response = await axios.post(
+  //       "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
+  //       { data: transformedData } // Send data as "data", not "validatedData"
+  //     );
+  //     console.log("response afetr saving data", response);
+  //     if (response.status === 200) {
+  //       console.log("Data saved and verified successfully");
+
+  //       // You can handle success feedback here
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving data", error);
+  //   }
+
+  //   setIsLoading(false); // Stop loading state
+  //   setIsModalOpen(false); // Close the modal
+  // };
+
+  // When the user clicks 'Cancel' in the modal, close it without doing anything
+  const handleSubmit = async () => {
+    // Transform the data to the format expected by the backend
+    const transformedData = catchData.flatMap((userData) =>
+      userData.catches.map((fishData) => ({
+        dataId: fishData?._id || "", // Ensure dataId is never null, fallback to empty string if missing
+        date: fishData?.date?.split("T")[0] || "", // Format date, fallback to empty string if missing
+        latitude: fishData?.latitude || 0, // Ensure latitude is never null, fallback to 0 if missing
+        longitude: fishData?.longitude || 0, // Ensure longitude is never null, fallback to 0 if missing
+        depth: fishData?.depth || "", // Fallback to empty string if depth is missing
+        species: Array.isArray(fishData?.species)
+          ? fishData.species.map((speciesItem) => ({
+              name: speciesItem?.name || "", // Fallback to empty string if name is missing
+              catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
+            }))
+          : [],
+        total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+        tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
+        userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
+      }))
+    );
+
+    console.log("transformedData", transformedData);
+
+    try {
+      setIsLoading(true); // Show loading state
+      const loadingToastId = toast.loading("Saving data..."); // Show a "saving..." toast notification and store the toast ID
+    
+      // Send transformed data to the backend to save
+      const response = await axios.post(
+        "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
+        { data: transformedData } // Send data as "data", not "validatedData"
+      );
+    
+      console.log("response after saving data", response);
+    
+      // Dismiss the loading toast
+      toast.dismiss(loadingToastId);
+    
+      if (response.status === 200) {
+        console.log("Data saved and verified successfully");
+    
+        // Show success toast
+        toast.success("Data saved successfully!", { autoClose: 3000 });
+      } else if (response.status === 202) {
+        toast.success("Data already saved! No need to save again", {
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving data", error);
+    
+      // Dismiss the loading toast in case of error
+      toast.dismiss(loadingToastId);
+    
+      // Show error toast
+      toast.error("Error saving data. Please try again.", { autoClose: 3000 });
+    }
+    
+
+    setIsLoading(false); // Stop loading state
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false); // Simply close the modal without submitting
   };
 
   return (
@@ -444,16 +476,6 @@ const Adminverifyfish = () => {
                   }}
                 />
               </div>
-              {/* <div className="rounded-xl border border-lg border-purple-200">
-                  <MapboxVisualization catchData={catchData} props={{ type: "heatmap", showButton: false,
-                    oneLat: viewedRow.lat, oneLong: viewedRow.long
-                  }} />
-                </div>
-                <div className="rounded-xl border border-lg border-purple-200">
-                  <MapboxVisualization catchData={catchData} props={{ type: "clusters", showButton: false,
-                    oneLat: viewedRow.lat, oneLong: viewedRow.long
-                  }}/>
-                </div> */}
             </div>
           </div>
         </div>
@@ -663,7 +685,7 @@ const Adminverifyfish = () => {
                       {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
                     </button>
                     <button
-                      onClick={handleSaveChanges}
+                      onClick={handleSaveClick}
                       className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
                     >
                       Save
@@ -898,6 +920,37 @@ const Adminverifyfish = () => {
           </AnimationWrapper>
         </div>
       </div>
+      {/* Modal for confirmation */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={handleCancel}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold">
+              Are you sure you want to save the data?
+            </h3>
+            <div className="mt-4">
+              <button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="mr-2 px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                {isLoading ? "Saving..." : "Submit"}
+              </button>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

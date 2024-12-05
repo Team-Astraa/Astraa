@@ -36,13 +36,18 @@ import {
   rejectDataLog,
 } from "./controller/admin-controller.js";
 
-import { autoCheckData } from "./controller/DataValidationData.js";
 import {
   getLogsByUserIdWithUser,
   uploadCSV,
 } from "./controller/userController.js";
 
 import { uploadCSV2 } from "./controller/userControllerNew.js";
+
+import {
+  autoCheckData,
+  saveValidatedData,
+} from "./controller/DataValidationData.js";
+
 import {
   getAllUsers,
   getDataByUserAndTag,
@@ -136,6 +141,7 @@ app.get("/admin/get-latest-logs", getLatestLogs);
 app.post("/admin/reject-log-data", rejectDataLog);
 app.post("/admin/accept-log-data", acceptDataLog);
 app.post("/admin/autoCheck-fishing-data", autoCheckData);
+app.post("/admin/saveValidatedData", saveValidatedData);
 
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
