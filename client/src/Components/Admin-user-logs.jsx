@@ -29,6 +29,7 @@ const Logs = () => {
   };
 
   const getFileType = (fileType) => {
+    console.log(fileType);
     if (fileType.includes("spreadsheetml.sheet")) {
       return "Excel";
     } else if (fileType.includes("csv")) {

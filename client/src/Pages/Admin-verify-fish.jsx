@@ -83,7 +83,12 @@ const Adminverifyfish = () => {
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
         long: response.data.data[0].catches[0].longitude.toFixed(3),
       });
-      console.log(response.data.data[0].catches[0]);
+      // console.log(response.data.data[0].catches.map((data) => {
+      //   console.log("")
+      // }));
+      // response.data.data[0].catches.map((dataItem) => {
+      //   console.log(dataItem._id)
+      // })
 
       if (response.data) {
         setTotalRows(getTotalRows(response.data.data[0].catches));
@@ -692,6 +697,7 @@ const Adminverifyfish = () => {
                     </button>
                     <button
                       onClick={handleValidateCatch} // Validate button
+                      // onClick={handleValidate}
                       className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
                     >
                       Validate

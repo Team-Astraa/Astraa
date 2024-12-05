@@ -9,12 +9,17 @@ const validateFishingData = (data, dataType = "abundance") => {
     // General validation for all fields: handle missing, undefined, and null values.
 
     // 1. Date Validation (Not future, not older than 6 months)
+    console.log("entries: " + entry);
+    
+
     const fishingDate = entry.date;
     const currentDate = new Date();
     const thresholdDate = new Date();
     thresholdDate.setMonth(currentDate.getMonth() - 6); // 6 months age
 
     console.log("entry", entry);
+
+    console.log("Values: " + fishingDate)
 
     if (
       dataType === "abundance" &&
