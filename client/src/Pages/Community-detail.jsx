@@ -83,15 +83,15 @@ const Communitydetail = () => {
         </Modal.Footer>
       </Modal>
 
-      <div className="p-4">
+      <div className="p-4 bg-gray-100">
         <h1 className="text-2xl font-bold mb-4">Community Details</h1>
         {data.length > 0 ? (
           data.map((community, i) => (
-            <div key={i} className="bg-gray-800 rounded-lg shadow-md p-4 mb-6">
-              <h2 className="text-xl font-semibold text-white">
+            <div key={i} className="bg-white rounded-lg shadow-md p-4 mb-6">
+              <h2 className="text-xl font-semibold text-black">
                 Community Name: {community.community.name}
               </h2>
-              <h3 className="text-lg text-gray-400">
+              <h3 className="text-lg text-black-400">
                 Uploaded By: {community.uploadedBy.username}
               </h3>
 
