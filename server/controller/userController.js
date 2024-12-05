@@ -61,7 +61,7 @@ const parseExcelDate = (excelDate) => {
   );
 };
 
-const cleanData = (data, userId, id) => {
+const cleanData = (data, userId, id, dataType) => {
   return data.map((item) => {
     const species = [];
 
@@ -117,6 +117,7 @@ const cleanData = (data, userId, id) => {
       state,
       userId,
       dataId: id,
+      dataType,
       verified: false,
       total_weight: parseFloat(item.TOTAL_CATCH),
     };
@@ -135,19 +136,23 @@ function generateRandomId() {
 
 export const uploadCSV = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, dataType } = req.body;
     const file = req.file;
 
     const filePath = file.path;
     const fileType = file.mimetype; // Capture the file type (mimetype)
     console.log(filePath);
 
+    if (!dataType) {
+      return res.status(400).json({ message: "data type is required" });
+    }
     let data = [];
     let finalData = [];
     let id = generateRandomId();
 
     const logData = {
       userId,
+      dataType,
       fileType,
       dataId: id, // Include fileType here
     };
@@ -162,9 +167,9 @@ export const uploadCSV = async (req, res) => {
       const sheet = workbook.Sheets[sheetName];
       const rawData = xlsx.utils.sheet_to_json(sheet);
       console.log(rawData);
-   
+
       // Clean and normalize data
-      data = cleanData(rawData, userId, id);
+      data = cleanData(rawData, userId, id, dataType);
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
@@ -174,7 +179,7 @@ export const uploadCSV = async (req, res) => {
           results.push(row);
         })
         .on("end", async () => {
-          data = cleanData(results, userId);
+          data = cleanData(results, userId, id, dataType);
 
           // Log data to console
           console.log("Parsed Data:", data);
@@ -234,5 +239,138 @@ export const getLogsByUserIdWithUser = async (req, res) => {
   } catch (error) {
     console.error("Error fetching logs with user data:", error);
     res.status(500).json({ message: "Failed to fetch logs", error });
+  }
+};
+
+export const otherDataUpload = async (req, res) => {
+  try {
+    const {
+      date,
+      latitude,
+      longitude,
+      depth,
+      species,
+      sea,
+      state,
+      userId,
+      dataType,
+      total_weight,
+    } = req.body;
+
+    // Validate required fields
+    if (!date || !latitude || !longitude || !species || !userId || !dataType) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    let dataId = generateRandomId();
+    console.log(dataId);
+
+    // Create new catch entry
+    const newCatch = new Catch({
+      date,
+      latitude,
+      longitude,
+      depth,
+      species,
+      sea,
+      state,
+      userId,
+      dataType,
+      total_weight,
+      dataId,
+    });
+
+    const logData = {
+      userId,
+      dataType,
+      fileType: "manual",
+      dataId, // Include fileType here
+    };
+
+    // Comment out database insertion for debugging or re-enable as needed
+    try {
+      await newCatch.save();
+      await Log.create(logData);
+      res.status(200).json({
+        message: "Data uploaded successfully.",
+      });
+    } catch (dbError) {
+      res.status(500).json({
+        message: "Error inserting data into database",
+        error: dbError.message,
+      });
+    }
+  } catch (error) {
+    console.error("Error saving data:", error.message);
+    res.status(500).json({
+      message: "Error uploading data.",
+      error: error.message,
+    });
+  }
+};
+
+export const getDataByDataId = async (req, res) => {
+  try {
+    const { dataId } = req.params;
+
+    // Validate required field
+    if (!dataId) {
+      return res.status(400).json({ message: "dataId is required." });
+    }
+
+    // Find the catch data by dataId
+    const catchData = await Catch.findOne({ dataId });
+
+    // If no data found
+    if (!catchData) {
+      return res.status(404).json({ message: "Data not found." });
+    }
+
+    // Respond with the data
+    res.status(200).json({
+      message: "Data fetched successfully.",
+      data: catchData,
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+    res.status(500).json({
+      message: "Error fetching data.",
+      error: error.message,
+    });
+  }
+};
+
+export const getLogsByDataType = async (req, res) => {
+  try {
+    const { dataType } = req.body; // Specify the dataType as "other"
+    console.log(dataType);
+
+
+    // Fetch logs with the specified dataType
+    const logs = await Log.find({ dataType }).sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
+    .limit(5) // Limit to the latest 10 logs
+    .populate({
+      path: "userId", // Populate the userId field with user data
+      select: "username", // Only select the username field from the User model
+    });;
+
+    // If no logs found
+    if (!logs.length) {
+      return res
+        .status(404)
+        .json({ message: "No logs found for dataType 'other'." });
+    }
+
+    // Respond with the logs
+    res.status(200).json({
+      message: "Logs fetched successfully.",
+      logs,
+    });
+  } catch (error) {
+    console.error("Error fetching logs:", error.message);
+    res.status(500).json({
+      message: "Error fetching logs.",
+      error: error.message,
+    });
   }
 };

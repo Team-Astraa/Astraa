@@ -37,7 +37,10 @@ import {
 } from "./controller/admin-controller.js";
 
 import {
+  getDataByDataId,
+  getLogsByDataType,
   getLogsByUserIdWithUser,
+  otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
 
@@ -142,7 +145,8 @@ app.post("/admin/reject-log-data", rejectDataLog);
 app.post("/admin/accept-log-data", acceptDataLog);
 app.post("/admin/autoCheck-fishing-data", autoCheckData);
 app.post("/admin/saveValidatedData", saveValidatedData);
-
+app.post("/admin/get-other-log", getLogsByDataType);
+app.post("/admin/get-manual-data-by-id", getDataByDataId);
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
@@ -150,6 +154,8 @@ app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);
+app.post("/user/other-data-upload", otherDataUpload);
+
 
 // Scientist Routes
 app.get("/scientist/unique-species", getUnique);
@@ -175,11 +181,11 @@ app.get("/get-upload-url", async (req, res) => {
 });
 
 // CSV Upload Route
-// app.post("/upload", upload.single("file"), uploadCSV);
+app.post("/upload", upload.single("file"), uploadCSV);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes
-app.post("/upload", upload.single("file"), uploadCSV2);
+// app.post("/upload", upload.single("file"), uploadCSV2);
 
 // Route to fetch users by tag
 app.get("/admin/users-by-tag/:tag", getUsersByTag);

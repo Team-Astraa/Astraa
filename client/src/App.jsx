@@ -30,6 +30,7 @@ import Communitydetail from "./Pages/Community-detail";
 
 import Infographics from "./Pages/Infographics";
 import FishingData from "./Pages/community-fishing-data";
+import MapComponent from "./Pages/GetLatLong";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -100,6 +101,10 @@ function App() {
           <Route
             path="/dashboard"
             element={<PrivateRoute element={<Dashboard />} />}
+          />
+          <Route
+            path="/map-box"
+            element={<PrivateRoute element={<MapComponent />} />}
           />
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/unverify-user" element={<Adminverifyuser />} />
