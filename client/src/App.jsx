@@ -31,6 +31,7 @@ import Communitydetail from "./Pages/Community-detail";
 import Infographics from "./Pages/Infographics";
 import FishingData from "./Pages/community-fishing-data";
 import MapComponent from "./Pages/GetLatLong";
+import CustomizableChart from "./Pages/graphs";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -94,6 +95,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/infographics" element={<Infographics />} />
+          <Route path="/graphs" element={<CustomizableChart />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
 
           {/* Protected Routes */}

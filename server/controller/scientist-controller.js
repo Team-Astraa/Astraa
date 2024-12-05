@@ -470,3 +470,68 @@ export const fetchCommunityShareData = async (req, res) => {
   }
 };
 
+
+
+export const graphdata = async (req, res) => {
+  try {
+    const { xField, yField, speciesFilter, dateRange } = req.body;
+
+    // Basic validation
+    if (!xField || !yField) {
+      return res.status(400).json({ message: 'xField and yField are required.' });
+    }
+
+    let matchConditions = {};
+
+    // Apply date range filter
+    if (dateRange) {
+      const [startDate, endDate] = dateRange.split(',');
+      if (startDate && endDate) {
+        matchConditions.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+      }
+    }
+
+    // Apply species filter
+    if (speciesFilter) {
+      matchConditions['species.name'] = speciesFilter;
+    }
+
+    // Query the database with filtering
+    const catches = await Catch.aggregate([
+      {
+        $match: matchConditions,
+      },
+      {
+        $lookup: {
+          from: 'species',
+          localField: 'species',
+          foreignField: '_id',
+          as: 'speciesDetails',
+        },
+      },
+      {
+        $project: {
+          date: 1,
+          latitude: 1,
+          longitude: 1,
+          depth: 1,
+          'speciesDetails.name': 1,
+          total_weight: 1,
+          totalCount: { $size: '$species' },
+        },
+      },
+    ]);
+
+    // Transform data for charting
+    const chartData = catches.map((catchItem) => ({
+      [xField]: catchItem[xField],
+      [yField]: catchItem[yField],
+    }));
+
+    // Send the filtered data back
+    res.status(200).json({ data: chartData });
+  } catch (err) {
+    console.error('Error fetching catch data:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};

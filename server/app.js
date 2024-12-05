@@ -69,8 +69,10 @@ import {
   getCommunitiesByCreator,
   getFilteredCatches,
   getUnique,
+  graphdata,
   sendInvitation,
 } from "./controller/scientist-controller.js";
+import {  getCatchDataForBubbleChart, getCatchWeightVsDepth, getLocationDataForBubbleChart, totalCatchWeightByDataType, totalCatchWeightByDate, totalCatchWeightByDepth, totalCatchWeightBySea, totalCatchWeightBySpecies, totalCatchWeightByState } from "./controller/graphs.controller.js";
 
 dotenv.config();
 const app = express();
@@ -169,6 +171,7 @@ app.post("/scientist/fetch-invitations", fetchInvitation);
 app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
+app.post("/graph", graphdata);
 
 app.get("/get-upload-url", async (req, res) => {
   try {
@@ -195,6 +198,25 @@ app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
 
 // Optional: Route to fetch all users who uploaded any data
 app.get("/admin/all-users", getAllUsers);
+
+
+
+//bar chart
+
+app.post('/total-catch-weight-by-date' , totalCatchWeightByDate);
+app.post('/total-catch-weight-by-species' , totalCatchWeightBySpecies);
+app.post('/total-catch-weight-by-sea' , totalCatchWeightBySea);
+app.post('/total-catch-weight-by-state' , totalCatchWeightByState);
+app.post('/total-catch-weight-by-depth' , totalCatchWeightByDepth);
+app.post('/total-catch-weight-by-data-type' , totalCatchWeightByDataType);
+
+
+// bubble chart 
+app.post('/getCatchDataForBubbleChart' , getCatchDataForBubbleChart );
+app.post('/getCatchWeightVsDepth' , getCatchWeightVsDepth );
+app.post('/getLocationDataForBubbleChart' , getLocationDataForBubbleChart );
+
+
 
 // Server Setup
 const PORT = process.env.PORT || 5000;
