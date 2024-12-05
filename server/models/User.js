@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   username: { type: String },
-  password: { type: String }, // Store hashed password
+  password: { type: String },
   role: {
     type: String,
     required: true,
-    enum: ["admin", "user", "scientist"], // Primary roles
+    enum: ["admin", "user", "scientist"],
   },
   isVerifed: {
     type: Boolean,
@@ -28,11 +28,12 @@ const userSchema = new mongoose.Schema({
     ],
     required: function () {
       return this.role === "user";
-    }, // Only required if role is 'user'
+    },
   },
-  passwordChanged: { type: Boolean, default: false }, // New field
+  passwordChanged: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date },
+  communities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Community' }], // New field for storing communities
 });
 
 export default mongoose.model("User", userSchema);
