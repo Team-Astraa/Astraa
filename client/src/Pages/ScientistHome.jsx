@@ -21,7 +21,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { AppContext } from '../App';
+
 
 // Register the required components
 ChartJS.register(
@@ -39,7 +39,7 @@ ChartJS.register(
 mapboxgl.accessToken = 'pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA';
 
 const ScientistHome = () => {
-  let { fishData, setFishData } = useContext(AppContext)
+ 
   const [filters, setFilters] = useState({
     lat: '',
     long: '',
@@ -683,6 +683,8 @@ const ScientistHome = () => {
     </Button>
   </Modal.Footer>
 </Modal>
+
+
 
     </>
   );

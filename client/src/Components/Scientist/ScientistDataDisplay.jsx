@@ -2,14 +2,10 @@ import React, { useState } from "react";
 
 const DataDisplay = ({ data }) => {
   const [showResult, setShowResult] = useState(3);
-<<<<<<< HEAD
-  const limitData = data && data.slice(0, showResult);
-=======
   const limitData = data.slice(0, showResult);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 5;
->>>>>>> 3b090032b6c221a8e7a3cca6383b7e746db98fae
 
   const handleLoadMore = (type) => {
     if(type === "less") setShowResult(showResult - showResult + 3);

@@ -55,6 +55,7 @@ import {
   addCommunityData,
   createCommunity,
   fetchAllScientists,
+  fetchCommunityShareData,
   fetchCommunityWithData,
   fetchInvitation,
   getCommunitiesByCreator,
@@ -73,7 +74,8 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-      "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
+      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -154,8 +156,8 @@ app.post("/scientist/accept-or-reject-invitation", acceptInvitation);
 app.post("/scientist/fetch-invitations", fetchInvitation);
 app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
+app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 
-// Upload Routes
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();
