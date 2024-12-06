@@ -402,7 +402,7 @@ const Addexcel = () => {
         {/* Download Card */}
         <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] flex flex-col items-center justify-center border-2">
           <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-            Download
+            Download Templates
           </h2>
           <button
             className="px-6 py-3 mb-4 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
@@ -438,51 +438,61 @@ const Addexcel = () => {
             >
               <Close />
             </IconButton>
-            <Typography variant="h6">Instructions for {downloadType}</Typography>
+            {/* <Typography variant="h6">Instructions for {downloadType}</Typography> */}
             <Typography variant="body1" className=" mt-4 text-gray-700">
 
               {downloadType === "abundance" ? (
-                <div>
-                  <p className="text-lg font-semibold">1. Abundance Data</p>
-                  <p className="mt-2">
-                    The Abundance file contains data regarding abundance
-                    measurements. This file is essential for ecological analysis.
-                  </p>
-                  <p className="mt-2">
-                    <strong>Tip:</strong> Ensure that you have the correct
-                    software to open this file (e.g., Excel).
-                  </p>
-                  <p className="mt-2">
-                    This file includes various species data and their abundances,
-                    which are crucial for biodiversity studies.
-                  </p>
-                  <p className="mt-2">
-                    <strong>Note:</strong> You can use this data to generate
-                    reports or graphs for ecological studies.
-                  </p>
-                  <p className="mt-4 text-center font-semibold text-blue-600">
-                    Click the download button below to retrieve the file.
-                  </p>
-                </div>
+              <div>
+                <p className="text-lg font-semibold">Abundance Module Instructions</p>
+                <p className="mt-2">
+                  <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                </p>
+                <p className="mt-2">
+                  <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                </p>
+                <p className="mt-2">
+                  <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                </p>
+                <p className="mt-2">
+                  <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                </p>
+                <p className="mt-2">
+                  <strong>MAJOR_SPECIES WITH INDIVIDUAL WEIGHTS IN KGS:</strong> Enter species and their weights in the format: 
+                  <em>SpeciesName(Weight)</em> (e.g., Pomfret(400), Ponyfish(100)).
+                </p>
+                <p className="mt-2">
+                  <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Provide the combined weight for all species (e.g., 500).
+                </p>
+                <p className="mt-4 text-center font-semibold text-blue-600">
+                  Click the download button below to retrieve the file.
+                </p>
+              </div>              
               ) : (
-                <div>
-                  <p className="text-lg font-semibold">1. Occurrence Data</p>
-                  <p className="mt-2">
-                    The Occurrence file contains data regarding species occurrence
-                    records, valuable for biodiversity monitoring.
-                  </p>
-                  <p className="mt-2">
-                    <strong>Tip:</strong> Ensure that the occurrence data is ready
-                    for analysis before downloading.
-                  </p>
-                  <p className="mt-2">
-                    This file is formatted for easy import into analysis tools,
-                    ensuring smooth integration with your existing systems.
-                  </p>
-                  <p className="mt-4 text-center font-semibold text-blue-600">
-                    Click the download button below to retrieve the file.
-                  </p>
-                </div>
+              <div>
+                <p className="text-lg font-semibold">Occurrence Module Instructions</p>
+                <p className="mt-2">
+                  <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                </p>
+                <p className="mt-2">
+                  <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                </p>
+                <p className="mt-2">
+                  <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                </p>
+                <p className="mt-2">
+                  <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                </p>
+                <p className="mt-2">
+                  <strong>MAJOR_SPECIES:</strong> List the observed species (e.g., Pomfret, Ponyfish).
+                </p>
+                <p className="mt-2">
+                  <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field for total catch weight (e.g., 200).
+                </p>
+                <p className="mt-4 text-center font-semibold text-blue-600">
+                  Click the download button below to retrieve the file.
+                </p>
+              </div>
+
               )}
             </Typography>
 
@@ -520,7 +530,14 @@ const Addexcel = () => {
               <option value="abundance">Data Abundance</option>
               <option value="occurrence">Data Occurrence</option>
             </select>
-            <h1 onClick={openForm}>other</h1>
+            {/* <h1 onClick={openForm}>other</h1> */}
+            <button 
+              onClick={openForm} 
+              className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+              Other
+            </button>
+
           </div>
           <p className="text-gray-500 text-md text-center mb-8">
             Drag and drop an Excel or CSV file here, or click to select one.
