@@ -479,7 +479,7 @@ const ScientistHome = () => {
             <h1 className="text-4xl font-bold">Dashboard / Overview</h1>
 
             <div className="flex">
-              {/* <div className='flex items-center'>
+              <div className='flex items-center'>
               <button
                 onClick={downloadExcel}
                 className="text-[green] text-xl">
@@ -490,7 +490,7 @@ const ScientistHome = () => {
                 className="text-[red] text-xl">
                   <i class="fas fa-file-pdf mx-3"></i>Download PDF
               </button>
-              </div> */}
+              </div>
 
               <button
                 className="relative p-3 rounded-xl text-sm font-medium bg-red-500 text-white"
@@ -857,6 +857,15 @@ const ScientistHome = () => {
                         />
                       </div>
                     </div>
+
+                    {/* Submit Button */}
+                  <button
+                    type="submit"
+                    className="w-full mt-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Apply Filters
+                  </button>
+                  
                   </form>
                 </div>
               </div>
