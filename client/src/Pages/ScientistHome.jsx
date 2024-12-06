@@ -337,17 +337,6 @@ const ScientistHome = () => {
       console.error("Error generating Excel file:", error);
     }
   };
-  
-  
-  
-  
-  
-  
-  
-
-  
-  
-  
 
   // useEffect(() => {
   //   if (!map.current) {
