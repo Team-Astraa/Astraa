@@ -68,7 +68,7 @@ const dataSchema = new mongoose.Schema(
       type: Number,
       default: null, // Can be null if not provided
     },
-    tag: {
+    dataType: {
       type: String,
       enum: ["abundance", "occurrence"],
       required: true, // Indicates the type of data batch
