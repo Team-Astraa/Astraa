@@ -20,6 +20,9 @@ import {
 // import { assert } from "console";
 // import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 
+
+//charts controller//
+import {getChartData,getFilteredDashboard} from "./controller/ChartsController.js"
 import { downloadFile } from "./controller/fileController.js";
 import {
   getCatchDataGroupedByUser,
@@ -173,6 +176,13 @@ app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 app.post("/graph", graphdata);
 
+
+
+///Data Visulaization
+app.post('/scientist/visualize', getChartData);
+app.post("/scientist/get-chart-url", getFilteredDashboard);
+
+// Upload Routes
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();

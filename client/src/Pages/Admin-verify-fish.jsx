@@ -76,9 +76,9 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId, dataId: dataId }
       );
-      console.log("CATCH DATA", response.data);
+      console.log("CATCH DATA", response.data.data);
 
-      setCatchData(response.data);
+      setCatchData(response.data.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
         long: response.data.data[0].catches[0].longitude.toFixed(3),
@@ -381,21 +381,21 @@ const Adminverifyfish = () => {
     try {
       setIsLoading(true); // Show loading state
       const loadingToastId = toast.loading("Saving data..."); // Show a "saving..." toast notification and store the toast ID
-    
+
       // Send transformed data to the backend to save
       const response = await axios.post(
         "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
         { data: transformedData } // Send data as "data", not "validatedData"
       );
-    
+
       console.log("response after saving data", response);
-    
+
       // Dismiss the loading toast
       toast.dismiss(loadingToastId);
-    
+
       if (response.status === 200) {
         console.log("Data saved and verified successfully");
-    
+
         // Show success toast
         toast.success("Data saved successfully!", { autoClose: 3000 });
       } else if (response.status === 202) {
@@ -405,14 +405,13 @@ const Adminverifyfish = () => {
       }
     } catch (error) {
       console.error("Error saving data", error);
-    
+
       // Dismiss the loading toast in case of error
       toast.dismiss(loadingToastId);
-    
+
       // Show error toast
       toast.error("Error saving data. Please try again.", { autoClose: 3000 });
     }
-    
 
     setIsLoading(false); // Stop loading state
     setIsModalOpen(false); // Close the modal

@@ -27,7 +27,7 @@ import "./App.css"; // Import the CSS
 import DataTable from "./Pages/User-DataLogs";
 import Community from "./Pages/Community";
 import Communitydetail from "./Pages/Community-detail";
-
+import ScientistCharts from "./Pages/DataVisualization"
 // import Infographics from "./Pages/Infographics";
 import FishingData from "./Pages/community-fishing-data";
 import MapComponent from "./Pages/GetLatLong";
@@ -98,6 +98,8 @@ function App() {
           {/* <Route path="/infographics" element={<Infographics />} /> */}
           <Route path="/graphs" element={<CustomizableChart />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
+          <Route path="/ScientistCharts" element={<ScientistCharts />} />
+          
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
