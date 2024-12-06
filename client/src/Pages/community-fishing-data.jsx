@@ -99,50 +99,58 @@ const FishingData = () => {
                         Download Excel
                     </button>
                     <div className="bg-white shadow-lg rounded-lg p-6 mb-6 border border-gray-200">
-                        <h2 className="text-lg font-semibold text-gray-700">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4">
                             Community: {data.community.name}
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 mb-4">
                             Uploaded by: {data.uploadedBy.username} ({data.uploadedBy.email})
                         </p>
-                        <div className="mt-4">
-                            {data.data && data.data.map((entry) => (
-                                <div
-                                    key={entry._id}
-                                    className="p-4 bg-gray-100 rounded-lg mb-4 border border-gray-300"
-                                >
-                                    <h3 className="font-semibold text-gray-600">Data ID: {entry.dataId}</h3>
-                                    <p className="text-sm text-gray-500">
-                                        Date: {new Date(entry.date).toLocaleDateString()}
-                                    </p>
-                                    <p className="text-sm text-gray-500">Sea: {entry.sea}</p>
-                                    <p className="text-sm text-gray-500">State: {entry.state}</p>
-                                    <p className="text-sm text-gray-500">Depth: {entry.depth} meters</p>
-                                    <p className="text-sm text-gray-500">
-                                        Total Weight: {entry.total_weight} kg
-                                    </p>
-                                    <h4 className="font-medium text-gray-600 mt-2">Species:</h4>
-                                    <ul className="list-disc list-inside ml-4">
-                                        {entry.species && entry.species.map((species) => (
-                                            <li
-                                                key={species._id}
-                                                className="text-sm text-gray-500"
-                                            >
-                                                {species.name}: {species.catch_weight} kg
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <p className="text-sm mt-2 text-gray-500">
-                                        Verified: {entry.verified ? "Yes" : "No"}
-                                    </p>
-                                </div>
-                            ))}
+                        <div className="overflow-x-auto">
+                            <table className="table-auto w-full border-collapse border border-gray-300">
+                                <thead>
+                                    <tr className="bg-purple-200 text-left text-sm font-semibold text-gray-600 text-center">
+                                        <th className="border border-gray-400 px-4 py-2">Data ID</th>
+                                        <th className="border border-gray-400 px-4 py-2">Date</th>
+                                        <th className="border border-gray-400 px-4 py-2">Sea</th>
+                                        <th className="border border-gray-400 px-4 py-2">State</th>
+                                        <th className="border border-gray-400 px-4 py-2">Depth (m)</th>
+                                        <th className="border border-gray-400 px-4 py-2">Total Weight (kg)</th>
+                                        <th className="border border-gray-400 px-4 py-2">Species</th>
+                                        <th className="border border-gray-400 px-4 py-2">Verified</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.data && data.data.map((entry) => (
+                                        <tr key={entry._id} className="hover:bg-gray-50">
+                                            <td className="border border-gray-400 px-4 py-2 text-center">{entry.dataId}</td>
+                                            <td className="border border-gray-400 px-4 py-2 text-center">
+                                                {new Date(entry.date).toLocaleDateString()}
+                                            </td>
+                                            <td className="border border-gray-400 px-4 py-2 text-center">{entry.sea}</td>
+                                            <td className="border border-gray-400 px-4 py-2 text-center">{entry.state}</td>
+                                            <td className="border border-gray-400 px-4 py-2 text-center">{entry.depth}</td>
+                                            <td className="border border-gray-400 px-4 py-2 text-center">{entry.total_weight}</td>
+                                            <td className="border border-gray-400 px-4 py-2">
+                                                <ul className="list-disc list-inside">
+                                                    {entry.species &&
+                                                        entry.species.map((species) => (
+                                                            <li key={species._id}>
+                                                                {species.name}: {species.catch_weight} kg
+                                                            </li>
+                                                        ))}
+                                                </ul>
+                                            </td>
+                                            <td className="border border-gray-400 px-4 py-2 text-center">
+                                                {entry.verified ? "Yes" : "No"}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </>
             )}
         </div>
     );
-};
-
-export default FishingData;
+};export default FishingData;    
