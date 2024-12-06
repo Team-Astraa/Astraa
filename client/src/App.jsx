@@ -81,7 +81,8 @@ function AppLayout({ children }) {
       {login && !isNoLayoutRoute && <Sidebar />}
 
       <div
-        className={`${isNoLayoutRoute ? "" : "content"}`}
+        className={`${login ? "content" : ""}`}
+        // className={`${isNoLayoutRoute ? "" : "content"}`}
         style={{ borderRadius: "2rem 0 0 2rem" }}
       >
         {/* Render NavBar only if not on a no-layout route */}
