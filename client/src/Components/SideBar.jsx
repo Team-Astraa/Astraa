@@ -269,7 +269,7 @@ const Sidebar = () => {
       key: "trends",
     },
     {
-      to: "/community",
+      to: "/scientist/community",
       icon: <FaInfoCircle size={20} />,
       label: "Community",
       key: "community",
