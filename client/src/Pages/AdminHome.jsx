@@ -5,6 +5,8 @@ import AnimationWrapper from "./Animation-page";
 import AdminUpperStrip from "../Components/AdminUpperStrip";
 import UserTypeCount from "../Components/UserTypeCount";
 import Logs from "../Components/Admin-user-logs";
+import OtherLogs from "../Components/OtherLogs";
+
 
 const AdminHome = () => {
   const navigate = useNavigate();
@@ -37,19 +39,22 @@ const AdminHome = () => {
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row gap-10">
         {/* Logs Section */}
-        <div className="flex-grow lg:w-2/3">
+        <div className="flex-grow flex gap-2 lg:w-2/3">
           <Logs />
+          <OtherLogs />
 
           {/* Verify Users Button */}
-          <div className="mt-6 flex justify-center">
-            <button
-              className="py-4 px-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-950 hover:shadow-xl transition-all duration-200 flex items-center justify-center"
-              onClick={() => navigate("/admin/unverify-user")}
-            >
-              <span className="text-xl">Verify Users</span>
-            </button>
-          </div>
+
         </div>
+        <div className="mt-6 flex justify-center">
+         
+        </div>
+        <button
+            className="py-4 px-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-950 hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+            onClick={() => navigate("/admin/unverify-user")}
+          >
+            <span className="text-xl">Verify Users</span>
+          </button>
 
         {/* Sidebar Section */}
         <div className="lg:w-1/3 space-y-6">
@@ -59,6 +64,8 @@ const AdminHome = () => {
           </div>
         </div>
       </div>
+
+
     </AnimationWrapper>
   );
 };

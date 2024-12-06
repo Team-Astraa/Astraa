@@ -163,6 +163,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import astraaLogo from "../assets/astraa_logo.jpg";
+import profImage from "../assets/prof_img.png";
 
 import {
   FaTachometerAlt,
@@ -173,6 +174,7 @@ import {
   FaInfoCircle,
   FaCloudUploadAlt,
   FaBars,
+  FaDoorOpen
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -216,9 +218,9 @@ const Sidebar = () => {
       key: "dashboard",
     },
     {
-      to: "/dashboard",
+      to: "/scientist/community",
       icon: <FaPhoneAlt size={30} />,
-      label: "Contact",
+      label: "community",
       key: "contact",
     },
     {
@@ -234,6 +236,57 @@ const Sidebar = () => {
       key: "about",
     },
   ];
+
+  const scientistNavLinks = [
+    {
+      to: "/dashboard",
+      icon: <FaTachometerAlt size={20} />,
+      label: "Dashboard",
+      key: "dashboard",
+    },
+    {
+      to: "/feed",
+      icon: <FaCloudUploadAlt size={20} />,
+      label: "Feed",
+      key: "feed",
+    },
+    {
+      to: "/filter",
+      icon: <FaPhoneAlt size={20} />,
+      label: "Filter",
+      key: "filter",
+    },
+    {
+      to: "/infographics",
+      icon: <FaSignInAlt size={20} />,
+      label: "Infographics",
+      key: "infographics",
+    },
+    {
+      to: "/trends",
+      icon: <FaInfoCircle size={20} />,
+      label: "Trends",
+      key: "trends",
+    },
+    {
+      to: "/scientist/community",
+      icon: <FaInfoCircle size={20} />,
+      label: "Community",
+      key: "community",
+    },
+    {
+      to: "/datasets",
+      icon: <FaInfoCircle size={20} />,
+      label: "About",
+      key: "about",
+    },
+    {
+      to: "/data-upload",
+      icon: <FaCloudUploadAlt size={20} />,
+      label: "Upload",
+      key: "upload",
+    },
+  ]
 
   // Filter navLinks based on login state
   const filteredNavLinks = login
@@ -252,7 +305,7 @@ const Sidebar = () => {
       )}
 
       <div
-        className={`fixed mt-20 lg:mt-0 top-0 left-0 h-full text-white flex flex-col items-center p-5 border-[#436ec6] transform transition-transform duration-300 z-30 ${
+        className={`fixed mt-20 lg:mt-0 top-0 left-0 p-5 h-full text-white flex flex-col border-[#436ec6] transform transition-transform duration-300 z-30 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:w-48 w-64`}
         style={{
@@ -263,22 +316,48 @@ const Sidebar = () => {
           // backgroundPosition: "right",
         }}
       >
-        <div className="w-24">
-          <img
-            src={astraaLogo}
-            className="w-full rounded-full"
-            alt="astraa_logo"
-          />
-        </div>
-
-        <div className="flex flex-col items-center mt-4 mb-14">
-          <h1 className="text-lg font-bold">
-            {loggedUser && loggedUser.userType}
+        <div className="flex items-center mb-8">
+          <div className="w-12 mr-3">
+            <img
+              src={astraaLogo}
+              className="w-full rounded-full"
+              alt="astraa_logo"
+            />
+          </div>
+          <h1 className="text-3xl font-bold">
+            {/* {loggedUser && loggedUser.userType} */}
+            Astraa
           </h1>
         </div>
 
-        <ul className="flex flex-col items-center gap-12 w-full">
-          {filteredNavLinks.map(({ to, icon, label, key }) => (
+        <div className="bg-white h-[1px] w-full" style={{opacity: '0.1'}}></div>
+
+
+        <div className="flex items-center my-2">
+          <div className="w-10 mr-3"
+          >
+            <img
+              src={profImage}
+              className="w-full rounded-full"
+              alt="astraa_logo"
+            />
+          </div>
+
+          <div className="flex flex-col" style={{maxWidth: '50%'}}>
+            <h1 className="text-xl font-semibold">Name</h1>
+          <p className="text-md font-large" style={{opacity: '0.5'}}>
+            {loggedUser && loggedUser.userType}
+            
+          </p>
+          </div>
+          
+        </div>
+
+        <div className="bg-white h-[1px] w-full mb-8" style={{opacity: '0.1'}}></div>
+        
+
+        <ul className="flex flex-col gap-8 w-full mx-auto">
+          {/* {filteredNavLinks.map(({ to, icon, label, key }) => (
             <li key={key} className="relative group">
               <Link
                 to={to}
@@ -291,14 +370,33 @@ const Sidebar = () => {
                 </span>
               </Link>
             </li>
+          ))} */}
+
+          {scientistNavLinks.map(({ to, icon, label, key }) => (
+            <li key={key} className="">
+              <Link
+                to={to}
+                className="flex gap-3 text-white no-underline hover:bg-purple-500 p-2 rounded-lg"
+                onClick={() => setIsOpen(false)}
+              >
+                <div className="">{icon}</div>
+                <span className="text-sm">
+                  {label}
+                </span>
+              </Link>
+            </li>
           ))}
+
           <li>
             {loggedUser && (
               <button
-                className="border-none py-3 px-5 rounded-md bg-green-600 font-bold text-lg hover:bg-green-700"
+                className="py-1 px-3 rounded-md bg-red-600 font-bold text-lg hover:bg-red-700 w-full flex items-center"
                 onClick={logout}
               >
-                Sign Out
+                <FaSignInAlt/>
+                
+                <span className="ml-2">Sign Out</span>
+                
               </button>
             )}
           </li>

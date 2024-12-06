@@ -186,7 +186,7 @@ const MapboxVisualization = ({ catchData, props }) => {
           borderRadius: "1rem",
           height: !props.showButton ? "20vh" : "45vh"
         }}
-        mapStyle="mapbox://styles/mapbox/light-v11"
+        mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
       >
         {props.oneLat && props.oneLong && viewMode === "markers" && 
