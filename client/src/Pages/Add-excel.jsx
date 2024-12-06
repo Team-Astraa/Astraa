@@ -518,26 +518,27 @@ const Addexcel = () => {
             <label htmlFor="dataType" className="block text-gray-600 font-medium mt-5">
               Select Data Type:
             </label>
-            <select
-              id="dataType"
-              className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
-              onChange={(e) => setDownloadType(e.target.value)}
-              value={downloadType}
-            >
-              <option value="" disabled>
-                -- Choose an option --
-              </option>
-              <option value="abundance">Data Abundance</option>
-              <option value="occurrence">Data Occurrence</option>
-            </select>
-            {/* <h1 onClick={openForm}>other</h1> */}
-            <button 
-              onClick={openForm} 
-              className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            >
-              Other
-            </button>
-
+            <div className="flex flex-col items-start">
+              <select
+                id="dataType"
+                className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+                onChange={(e) => setDownloadType(e.target.value)}
+                value={downloadType}
+              >
+                <option value="" disabled>
+                  -- Choose an option --
+                </option>
+                <option value="abundance">Data Abundance</option>
+                <option value="occurrence">Data Occurrence</option>
+              </select>
+              {/* <h1 onClick={openForm}>other</h1> */}
+              <button 
+                onClick={openForm} 
+                className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                Others / Disorganized Data
+              </button>
+            </div>
           </div>
           <p className="text-gray-500 text-md text-center mb-8">
             Drag and drop an Excel or CSV file here, or click to select one.
