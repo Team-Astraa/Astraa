@@ -4,38 +4,42 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import DataDisplay from "../Components/Scientist/ScientistDataDisplay";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import AnimationWrapper from "./Animation-page";
 import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { Bar, Pie, Line } from "react-chartjs-2";
 import { Button, Modal } from "flowbite-react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   LineElement,
+//   PointElement,
+//   ArcElement,
+//   Title,
+//   Tooltip,
+//   Legend,
+// } from "chart.js";
+
+import ExcelJS from "exceljs";
+import Chart from "chart.js/auto";
+
 import Clock from "../Components/CircularClock";
 import MapboxVisualization from "./Admin-map";
 
 // Register the required components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   LineElement,
+//   PointElement,
+//   ArcElement,
+//   Title,
+//   Tooltip,
+//   Legend
+// );
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA";
@@ -150,12 +154,191 @@ const ScientistHome = () => {
     setMapMode(mode);
   };
 
-  const downloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Data");
-    XLSX.writeFile(workbook, "filtered_data.xlsx");
+  // const downloadExcel = () => {
+  //   const worksheet = XLSX.utils.json_to_sheet(data);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Data");
+  //   XLSX.writeFile(workbook, "filtered_data.xlsx");
+  // };
+
+  const downloadExcelWithCharts = async () => {
+    try {
+      if (!data || data.length === 0) {
+        console.error("No data available for export.");
+        return;
+      }
+  
+      // Chart Data Preparation
+      const stateNames = [...new Set(data.map((item) => item.state))];
+      const depthsByState = stateNames.map((state) =>
+        data
+          .filter((item) => item.state === state)
+          .reduce((sum, curr) => sum + parseFloat(curr.depth || 0), 0)
+      );
+  
+      const seas = [...new Set(data.map((item) => item.sea))];
+      const seaCounts = seas.map((sea) =>
+        data.filter((item) => item.sea === sea).length
+      );
+  
+      const dates = data.map((item) => new Date(item.date).toLocaleDateString());
+      const depths = data.map((item) => item.depth);
+  
+      const latitudes = data.map((item) => item.latitude);
+      const depthsForScatter = data.map((item) => item.depth);
+  
+      const longitudes = data.map((item) => item.longitude);
+  
+      const months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+      ];
+      const monthCounts = months.map((month, index) =>
+        data.filter((item) => new Date(item.date).getMonth() === index).length
+      );
+  
+      // Workbook and Worksheet
+      const workbook = new ExcelJS.Workbook();
+      const dataSheet = workbook.addWorksheet("Filtered Data");
+      const chartSheet = workbook.addWorksheet("Chart Sheet");
+  
+      // Populate Data Sheet
+      const columns = Object.keys(data[0] || {}).map((key) => ({
+        header: key,
+        key: key,
+      }));
+      dataSheet.columns = columns;
+      data.forEach((row) => {
+        dataSheet.addRow(row);
+      });
+  
+      // Generate Charts
+      const generateChart = (type, labels, dataset, chartTitle, colors) => {
+        const chartCanvas = document.createElement("canvas");
+        chartCanvas.width = 800;
+        chartCanvas.height = 400;
+  
+        // Set solid white background
+        const ctx = chartCanvas.getContext("2d");
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, chartCanvas.width, chartCanvas.height);
+  
+        new Chart(ctx, {
+          type,
+          data: {
+            labels,
+            datasets: [
+              {
+                label: chartTitle,
+                data: dataset,
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: 2, // Bold lines
+              },
+            ],
+          },
+          options: {
+            responsive: false,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: chartTitle },
+            },
+            scales: type !== "pie" ? { y: { beginAtZero: true } } : undefined,
+          },
+        });
+  
+        return chartCanvas;
+      };
+  
+      // Define color schemes
+      const colorSchemes = [
+        { background: "#FF6384", border: "#FF6384" },
+        { background: "#36A2EB", border: "#36A2EB" },
+        { background: "#FFCE56", border: "#FFCE56" },
+        { background: "#4BC0C0", border: "#4BC0C0" },
+        { background: "#9966FF", border: "#9966FF" },
+        { background: "#FF9F40", border: "#FF9F40" },
+      ];
+  
+      const chartCanvases = [
+        generateChart(
+          "bar",
+          stateNames,
+          depthsByState,
+          "Average Depth by State",
+          colorSchemes[0]
+        ),
+        generateChart("line", dates, depths, "Depth Over Time", colorSchemes[1]),
+        generateChart("bar", seas, seaCounts, "Entries by Sea", colorSchemes[2]),
+        generateChart(
+          "scatter",
+          latitudes,
+          depthsForScatter,
+          "Depth vs Latitude",
+          colorSchemes[3]
+        ),
+        generateChart("bar", months, monthCounts, "Entries by Month", colorSchemes[4]),
+        generateChart(
+          "scatter",
+          longitudes,
+          depths,
+          "Depth vs Longitude",
+          colorSchemes[5]
+        ),
+      ];
+  
+      // Style Chart Sheet Header
+      chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
+      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
+      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.mergeCells("A1:M2");
+  
+      // Add Charts in Grid Layout
+      const CHART_WIDTH = 600;
+      const CHART_HEIGHT = 400;
+      const CHARTS_PER_ROW = 3;
+      const startRow = 4; // Leave space after header
+  
+      for (let i = 0; i < chartCanvases.length; i++) {
+        const row = startRow + Math.floor(i / CHARTS_PER_ROW) * 20; // Space between rows
+        const col = (i % CHARTS_PER_ROW) * 10; // Space between columns
+        const chartBlob = await new Promise((resolve) =>
+          chartCanvases[i].toBlob((blob) => resolve(blob), "image/png")
+        );
+        const imageId = workbook.addImage({
+          buffer: await chartBlob.arrayBuffer(),
+          extension: "png",
+        });
+        chartSheet.addImage(imageId, {
+          tl: { col, row },
+          ext: { width: CHART_WIDTH, height: CHART_HEIGHT },
+        });
+      }
+  
+      // Write and Download
+      const excelBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+  
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "filtered_data_with_multiple_charts.xlsx";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error generating Excel file:", error);
+    }
   };
+  
+  
+  
+  
+  
+
+  
+  
+  
 
   // useEffect(() => {
   //   if (!map.current) {
@@ -481,7 +664,7 @@ const ScientistHome = () => {
             <div className="flex">
               <div className='flex items-center'>
               <button
-                onClick={downloadExcel}
+                onClick={downloadExcelWithCharts}
                 className="text-[green] text-xl">
                   <i class="fas fa-file-csv mx-3"></i>Download CSV
               </button>
