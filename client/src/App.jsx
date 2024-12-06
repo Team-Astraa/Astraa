@@ -26,6 +26,7 @@ import ScientistHome from "./Pages/ScientistHome";
 import "./App.css"; // Import the CSS
 import DataTable from "./Pages/User-DataLogs";
 import Infographics from "./Pages/Infographics";
+import ScientistCharts from "./Pages/DataVisualization"
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -103,6 +104,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/infographics" element={<Infographics />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
+          <Route path="/ScientistCharts" element={<ScientistCharts />} />
+          
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
