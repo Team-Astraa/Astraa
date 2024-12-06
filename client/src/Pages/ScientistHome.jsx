@@ -170,11 +170,14 @@ const ScientistHome = () => {
   
       // Chart Data Preparation
       const stateNames = [...new Set(data.map((item) => item.state))];
-      const depthsByState = stateNames.map((state) =>
-        data
-          .filter((item) => item.state === state)
-          .reduce((sum, curr) => sum + parseFloat(curr.depth || 0), 0)
-      );
+      const avgDepthsByState = stateNames.map((state) => {
+        const filteredData = data.filter((item) => item.state === state);
+        const totalDepth = filteredData.reduce(
+          (sum, curr) => sum + parseFloat(curr.depth || 0),
+          0
+        );
+        return totalDepth / filteredData.length || 0; // Calculate average depth
+      });
   
       const seas = [...new Set(data.map((item) => item.sea))];
       const seaCounts = seas.map((sea) =>
@@ -223,7 +226,7 @@ const ScientistHome = () => {
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, chartCanvas.width, chartCanvas.height);
   
-        new Chart(ctx, {
+        const chart = new Chart(ctx, {
           type,
           data: {
             labels,
@@ -233,7 +236,7 @@ const ScientistHome = () => {
                 data: dataset,
                 backgroundColor: colors.background,
                 borderColor: colors.border,
-                borderWidth: 2, // Bold lines
+                borderWidth: 3, // Bold lines
               },
             ],
           },
@@ -247,7 +250,11 @@ const ScientistHome = () => {
           },
         });
   
-        return chartCanvas;
+        // Wait for the chart to be fully rendered
+        return new Promise((resolve) => {
+          chart.update(); // Make sure the chart is fully rendered
+          setTimeout(() => resolve(chartCanvas), 1000); // Wait for 1 second before returning
+        });
       };
   
       // Define color schemes
@@ -261,24 +268,24 @@ const ScientistHome = () => {
       ];
   
       const chartCanvases = [
-        generateChart(
+        await generateChart(
           "bar",
           stateNames,
-          depthsByState,
+          avgDepthsByState,
           "Average Depth by State",
           colorSchemes[0]
         ),
-        generateChart("line", dates, depths, "Depth Over Time", colorSchemes[1]),
-        generateChart("bar", seas, seaCounts, "Entries by Sea", colorSchemes[2]),
-        generateChart(
+        await generateChart("line", dates, depths, "Depth Over Time", colorSchemes[1]),
+        await generateChart("bar", seas, seaCounts, "Entries by Sea", colorSchemes[2]),
+        await generateChart(
           "scatter",
           latitudes,
           depthsForScatter,
           "Depth vs Latitude",
           colorSchemes[3]
         ),
-        generateChart("bar", months, monthCounts, "Entries by Month", colorSchemes[4]),
-        generateChart(
+        await generateChart("bar", months, monthCounts, "Entries by Month", colorSchemes[4]),
+        await generateChart(
           "scatter",
           longitudes,
           depths,
@@ -330,6 +337,8 @@ const ScientistHome = () => {
       console.error("Error generating Excel file:", error);
     }
   };
+  
+  
   
   
   
