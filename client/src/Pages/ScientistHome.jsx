@@ -307,7 +307,7 @@ const ScientistHome = () => {
       const startRow = 4; // Leave space after header
   
       for (let i = 0; i < chartCanvases.length; i++) {
-        const row = startRow + Math.floor(i / CHARTS_PER_ROW) * 20; // Space between rows
+        const row = startRow + Math.floor(i / CHARTS_PER_ROW) * 24; // Space between rows
         const col = (i % CHARTS_PER_ROW) * 10; // Space between columns
         const chartBlob = await new Promise((resolve) =>
           chartCanvases[i].toBlob((blob) => resolve(blob), "image/png")
