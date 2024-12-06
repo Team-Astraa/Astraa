@@ -72,7 +72,7 @@ import {
   graphdata,
   sendInvitation,
 } from "./controller/scientist-controller.js";
-import {  getCatchDataForBubbleChart, getCatchWeightVsDepth, getLocationDataForBubbleChart, totalCatchWeightByDataType, totalCatchWeightByDate, totalCatchWeightByDepth, totalCatchWeightBySea, totalCatchWeightBySpecies, totalCatchWeightByState } from "./controller/graphs.controller.js";
+import  { getSpeciesData,  getCatchCountBySpeciesPerMonth, getCatchDataForBubbleChart, getCatchWeightBySea, getCatchWeightByState, getCatchWeightForEachSpeciesPerMonth, getCatchWeightVsDepth, getLocationDataForBubbleChart, getNumberOfCatchesPerMonth, getSpeciesDistribution, getTotalCatchWeightPerMonth, totalCatchWeightByDataType, totalCatchWeightByDate, totalCatchWeightByDepth, totalCatchWeightBySea, totalCatchWeightBySpecies, totalCatchWeightByState, getCatchTypeData, getSeaData, getStateData, getDateTotalWeightData,  getLatitudeDepthData } from "./controller/graphs.controller.js";
 
 dotenv.config();
 const app = express();
@@ -215,6 +215,37 @@ app.post('/total-catch-weight-by-data-type' , totalCatchWeightByDataType);
 app.post('/getCatchDataForBubbleChart' , getCatchDataForBubbleChart );
 app.post('/getCatchWeightVsDepth' , getCatchWeightVsDepth );
 app.post('/getLocationDataForBubbleChart' , getLocationDataForBubbleChart );
+
+
+// DoughnutChart 
+
+app.post('/getSpeciesDistribution' , getSpeciesDistribution );
+app.post('/getCatchWeightBySea' , getCatchWeightBySea );
+app.post('/getCatchWeightByState' , getCatchWeightByState );
+
+
+// line chart
+app.post('/getTotalCatchWeightPerMonth' , getTotalCatchWeightPerMonth );
+app.post('/getNumberOfCatchesPerMonth' , getNumberOfCatchesPerMonth );
+
+app.post('/getCatchCountBySpeciesPerMonth' , getCatchCountBySpeciesPerMonth );
+app.post('/getCatchWeightForEachSpeciesPerMonth' , getCatchWeightForEachSpeciesPerMonth );
+
+
+// pir chart
+
+app.post('/getSpeciesData' , getSpeciesData );
+app.post('/getCatchTypeData' , getCatchTypeData );
+app.post('/getSeaData' , getSeaData );
+app.post('/getStateData' , getStateData );
+
+
+// scattor plot
+
+app.post('/getDateTotalWeightData' , getDateTotalWeightData );
+app.post('/getLatitudeDepthData' , getLatitudeDepthData );
+
+
 
 
 
