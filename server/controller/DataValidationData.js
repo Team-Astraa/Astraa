@@ -10,7 +10,6 @@ const validateFishingData = (data, dataType = "abundance") => {
 
     // 1. Date Validation (Not future, not older than 6 months)
     console.log("entries: " + entry);
-    
 
     const fishingDate = entry.date;
     const currentDate = new Date();
@@ -19,7 +18,7 @@ const validateFishingData = (data, dataType = "abundance") => {
 
     console.log("entry", entry);
 
-    console.log("Values: " + fishingDate)
+    console.log("Values: " + fishingDate);
 
     if (
       dataType === "abundance" &&
@@ -241,8 +240,6 @@ export const autoCheckData = async (req, res) => {
   }
 };
 
-
-
 export const saveValidatedData = async (req, res) => {
   try {
     const { data } = req.body; // Data sent from frontend
@@ -271,16 +268,16 @@ export const saveValidatedData = async (req, res) => {
     // Now, save only the new data to the database
     const savedData = await ValidatedCatchData.insertMany(newData);
 
-    // Now update the 'verified' field to true for each of the saved records
-    const updatePromises = savedData.map(async (fishData) => {
-      await CatchData.updateOne(
-        { _id: fishData._id }, // Find the record by its unique ID
-        { $set: { verified: true } } // Set the 'verified' field to true
-      );
-    });
+    // // Now update the 'verified' field to true for each of the saved records
+    // const updatePromises = savedData.map(async (fishData) => {
+    //   await CatchData.updateOne(
+    //     { _id: fishData._id }, // Find the record by its unique ID
+    //     { $set: { verified: true } } // Set the 'verified' field to true
+    //   );
+    // });
 
-    // Wait for all the updates to finish
-    await Promise.all(updatePromises);
+    // // Wait for all the updates to finish
+    // await Promise.all(updatePromises);
 
     // Respond with success
     res
