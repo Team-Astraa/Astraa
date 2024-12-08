@@ -102,7 +102,6 @@ function App() {
           <Route path="/scientist/home" element={<ScientistHome />} />
           <Route path="/ScientistCharts" element={<ScientistCharts />} />
           
-
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
           <Route
