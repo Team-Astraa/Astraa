@@ -5,7 +5,7 @@ import { getDistance } from "geolib";
 
 import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
-
+import CatchData from "../models/FishcatchDataNew.js";
 const stateBoundaries = {
   Gujarat: { latitude: 22.2587, longitude: 71.1924 },
   Maharashtra: { latitude: 19.7515, longitude: 75.7139 },
@@ -141,6 +141,7 @@ export const uploadCSV = async (req, res) => {
     const filePath = file.path;
     const fileType = file.mimetype; // Capture the file type (mimetype)
     console.log(filePath);
+    console.log("dataType", dataType);
 
     if (!dataType) {
       return res.status(400).json({ message: "data type is required" });
@@ -185,7 +186,7 @@ export const uploadCSV = async (req, res) => {
 
           // Comment out database insertion for debugging or re-enable as needed
           try {
-            await Catch.insertMany(finalData);
+            await CatchData.insertMany(finalData);
             await Log.create(logData);
             return res.status(200).json({
               message:
@@ -207,7 +208,7 @@ export const uploadCSV = async (req, res) => {
 
     // Comment out database insertion for debugging or re-enable as needed
     try {
-      await Catch.insertMany(data);
+      await CatchData.insertMany(data);
       await Log.create(logData);
       res.status(200).json({
         message: "File uploaded successfully. Data logged for verification.",
@@ -344,14 +345,14 @@ export const getLogsByDataType = async (req, res) => {
     const { dataType } = req.body; // Specify the dataType as "other"
     console.log(dataType);
 
-
     // Fetch logs with the specified dataType
-    const logs = await Log.find({ dataType }).sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
-    .limit(5) // Limit to the latest 10 logs
-    .populate({
-      path: "userId", // Populate the userId field with user data
-      select: "username", // Only select the username field from the User model
-    });;
+    const logs = await Log.find({ dataType })
+      .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
+      .limit(5) // Limit to the latest 10 logs
+      .populate({
+        path: "userId", // Populate the userId field with user data
+        select: "username", // Only select the username field from the User model
+      });
 
     // If no logs found
     if (!logs.length) {

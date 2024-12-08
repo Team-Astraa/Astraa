@@ -27,7 +27,7 @@ import "./App.css"; // Import the CSS
 import DataTable from "./Pages/User-DataLogs";
 import Community from "./Pages/Community";
 import Communitydetail from "./Pages/Community-detail";
-
+import ScientistCharts from "./Pages/DataVisualization"
 // import Infographics from "./Pages/Infographics";
 import FishingData from "./Pages/community-fishing-data";
 import MapComponent from "./Pages/GetLatLong";
@@ -73,7 +73,8 @@ function AppLayout({ children }) {
       {login && !isNoLayoutRoute && <Sidebar />}
 
       <div
-        className={`${isNoLayoutRoute ? "" : "content"}`}
+        className={`${login ? "content" : ""}`}
+        // className={`${isNoLayoutRoute ? "" : "content"}`}
         style={{ borderRadius: "2rem 0 0 2rem" }}
       >
         {/* Render NavBar only if not on a no-layout route */}
@@ -99,6 +100,8 @@ function App() {
           {/* <Route path="/infographics" element={<Infographics />} /> */}
           <Route path="/graphs" element={<CustomizableChart />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
+          <Route path="/ScientistCharts" element={<ScientistCharts />} />
+          
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
