@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
@@ -14,6 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { Autocomplete } from '@mui/material'
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -52,15 +54,16 @@ const Addexcel = () => {
     }));
   };
 
-  const handleSpeciesChange = (index, e) => {
-    const { name, value } = e.target;
+  const handleSpeciesChange = (index, fieldName, value) => {
     const updatedSpecies = [...catchData.species];
-    updatedSpecies[index][name] = value;
+    updatedSpecies[index][fieldName] = value;
+
     setCatchData((prevState) => ({
       ...prevState,
       species: updatedSpecies,
     }));
   };
+
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({

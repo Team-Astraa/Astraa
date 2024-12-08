@@ -176,63 +176,12 @@ export const getDetailsData = async (req, res) => {
   }
 };
 
-// export const getCatchDataGroupedByUser = async (req, res) => {
-
-//   try {
-//     const { userId } = req.body;
-
-//     if (!userId) {
-//       return res.status(400).json({ message: "User ID is required." });
-//     }
-
-//     // Validate if userId is a valid ObjectId
-//     if (!mongoose.Types.ObjectId.isValid(userId)) {
-//       return res.status(400).json({ message: "Invalid User ID format." });
-//     }
-
-//     // Use ObjectId to query the database
-//     const objectId = new mongoose.Types.ObjectId(userId);
-
-//     // Aggregate query to filter by userId and group the data by userId
-//     const catchData = await Catch.aggregate([
-//       { $match: { userId: objectId } }, // Match the userId passed in the request
-//       {
-//         $group: {
-//           _id: "$userId", // Group by userId
-//           catches: { $push: "$$ROOT" }, // Push all catch data for the user
-//         },
-//       },
-//     ]);
-
-//     // Check if any data was found
-//     if (catchData.length === 0) {
-//       return res
-//         .status(404)
-//         .json({ message: "No catch data found for this user" });
-//     }
-
-//     // Return the grouped data
-//     return res.status(200).json({
-//       message: "Catch data fetched successfully",
-//       data: catchData,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching catch data: ", error);
-//     return res
-//       .status(500)
-//       .json({ message: "Error fetching catch data", error: error.message });
-//   }
-// };
-
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
-    const { userId, dataId } = req.body;
-    console.log(userId, dataId);
-    // Validate required fields
-    if (!userId || !dataId) {
-      return res
-        .status(400)
-        .json({ message: "User ID and Data ID are required." });
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required." });
     }
 
     // Validate if userId is a valid ObjectId
@@ -242,11 +191,10 @@ export const getCatchDataGroupedByUser = async (req, res) => {
 
     // Use ObjectId to query the database
     const objectId = new mongoose.Types.ObjectId(userId);
-    console.log("objectId", objectId);
 
-    // Aggregate query to filter by userId and dataId, and group the data by userId
-    const catchData = await CatchData.aggregate([
-      { $match: { userId: objectId, dataId } }, // Match both userId and dataId
+    // Aggregate query to filter by userId and group the data by userId
+    const catchData = await Catch.aggregate([
+      { $match: { userId: objectId } }, // Match the userId passed in the request
       {
         $group: {
           _id: "$userId", // Group by userId
@@ -254,12 +202,12 @@ export const getCatchDataGroupedByUser = async (req, res) => {
         },
       },
     ]);
-    console.log("catchData", catchData);
+
     // Check if any data was found
     if (catchData.length === 0) {
       return res
         .status(404)
-        .json({ message: "No catch data found for this user and dataId" });
+        .json({ message: "No catch data found for this user" });
     }
 
     // Return the grouped data
@@ -620,7 +568,7 @@ export const getUserTypeAndCount = async (req, res) => {
 export const getLatestLogs = async (req, res) => {
   try {
     // Fetch the latest logs (adjust the number of logs you need, here it's set to 10)
-    const logs = await Log.find()
+    const logs = await Log.find({ fileType: { $ne: "manual" } })
       .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
       .limit(10) // Limit to the latest 10 logs
       .populate({

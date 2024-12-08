@@ -43,6 +43,7 @@ import {
   getDataByDataId,
   getLogsByDataType,
   getLogsByUserIdWithUser,
+  getUniqueSpeciesNames,
   otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
@@ -87,7 +88,7 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
       "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
@@ -160,6 +161,7 @@ app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
 // Password Update Route
 app.put("/user/Password-update", changePassword);
 app.post("/user/other-data-upload", otherDataUpload);
+app.post("/user/getUniqueSpeciesNames", getUniqueSpeciesNames);
 
 
 // Scientist Routes
