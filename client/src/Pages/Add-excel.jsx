@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import AnimationWrapper from "./Animation-page";
-import { Button, Modal, Box, Typography, IconButton, TextField } from "@mui/material";
+import {
+  Button,
+  Modal,
+  Box,
+  Typography,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { Autocomplete } from '@mui/material'
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -28,10 +37,7 @@ const Addexcel = () => {
     userId: "", // Assuming userId is passed as a prop
     dataType: "",
     total_weight: 0,
-   
-    
   });
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,15 +54,16 @@ const Addexcel = () => {
     }));
   };
 
-  const handleSpeciesChange = (index, e) => {
-    const { name, value } = e.target;
+  const handleSpeciesChange = (index, fieldName, value) => {
     const updatedSpecies = [...catchData.species];
-    updatedSpecies[index][name] = value;
+    updatedSpecies[index][fieldName] = value;
+
     setCatchData((prevState) => ({
       ...prevState,
       species: updatedSpecies,
     }));
   };
+
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
@@ -64,7 +71,6 @@ const Addexcel = () => {
       species: [...prevState.species, { name: "", catch_weight: "" }],
     }));
   };
-
 
   const handleRemoveSpecies = (index) => {
     const updatedSpecies = [...catchData.species];
@@ -77,11 +83,11 @@ const Addexcel = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Retrieve user data from localStorage
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
-  
+
     // Prepare the data object to send
     const requestData = {
       date: catchData.date,
@@ -99,7 +105,7 @@ const Addexcel = () => {
         catch_weight: species.catch_weight,
       })),
     };
-  
+
     try {
       // Make the API request to save data
       const response = await axios.post(
@@ -111,7 +117,7 @@ const Addexcel = () => {
           },
         }
       );
-  
+
       if (response.data.success) {
         toast.success("Data successfully added!");
         setopenform(false); // Close the modal on success
@@ -120,8 +126,6 @@ const Addexcel = () => {
       toast.error("Error adding data");
     }
   };
-  
-
 
   // Handle file drop
   const onDrop = (acceptedFiles) => {
@@ -156,11 +160,12 @@ const Addexcel = () => {
       return;
     }
     console.log(userId);
-
+    // const tag = downloadType;
     const formData = new FormData();
     formData.append("file", selectedFile);
     formData.append("userId", userId); // Pass the user ID along with the file
     formData.append("dataType", downloadType);
+    // formData.append("tag", downloadType);
 
     const uploadToastId = toast.loading("Uploading...");
     try {
@@ -234,187 +239,216 @@ const Addexcel = () => {
     }
   };
 
-
   let openForm = () => {
     console.log("varad");
-    setDownloadType('other')
-    setopenform(true)
+    setDownloadType("other");
+    setopenform(true);
     console.log(openForm);
-  }
+  };
 
   return (
     <AnimationWrapper className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {
-  downloadType === "other" &&
-  <Modal open={openform} onClose={() => setopenform(false)}>
-    <Box
-      className="p-6 bg-white rounded-md shadow-lg"
-      style={{
-        width: "400px",
-        margin: "100px auto",
-        textAlign: "center",
-        position: "relative",
-      }}
-    >
-      <IconButton
-        onClick={() => setopenform(false)}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-        }}
+      {downloadType === "other" && (
+        <Modal open={openform} onClose={() => setopenform(false)}>
+          <Box
+            className="p-6 bg-white rounded-md shadow-lg"
+            style={{
+              width: "400px",
+              margin: "100px auto",
+              textAlign: "center",
+              position: "relative",
+            }}
+          >
+            <IconButton
+              onClick={() => setopenform(false)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+              }}
+            >
+              <Close />
+            </IconButton>
+
+            <h2>Add New Catch Record</h2>
+
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Date */}
+                <TextField
+                  label="Date"
+                  type="date"
+                  name="date"
+                  value={catchData.date}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+
+                {/* Latitude */}
+                <TextField
+                  label="Latitude"
+                  type="number"
+                  name="latitude"
+                  value={catchData.latitude}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+
+                {/* Longitude */}
+                <TextField
+                  label="Longitude"
+                  type="number"
+                  name="longitude"
+                  value={catchData.longitude}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+
+                {/* Depth */}
+                <TextField
+                  label="Depth"
+                  type="number"
+                  name="depth"
+                  value={catchData.depth}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </div>
+
+              {/* Species */}
+              {catchData.species.map((species, index) => (
+                <div key={index} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <TextField
+                      label={`Species Name ${index + 1}`}
+                      name="name"
+                      value={species.name}
+                      onChange={(e) => handleSpeciesChange(index, e)}
+                      required
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
+                    <TextField
+                      label={`Catch Weight ${index + 1}`}
+                      name="catch_weight"
+                      type="number"
+                      value={species.catch_weight}
+                      onChange={(e) => handleSpeciesChange(index, e)}
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
+                  </div>
+                  <Button
+                    onClick={() => handleRemoveSpecies(index)}
+                    color="error"
+                    fullWidth
+                  >
+                    Remove Species
+                  </Button>
+                </div>
+              ))}
+              <Button
+                onClick={handleAddSpecies}
+                variant="contained"
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                Add Species
+              </Button>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Sea */}
+                <TextField
+                  label="Sea"
+                  name="sea"
+                  value={catchData.sea}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+
+                {/* State */}
+                <TextField
+                  label="State"
+                  name="state"
+                  value={catchData.state}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Total Weight */}
+                <TextField
+                  label="Total Weight"
+                  name="total_weight"
+                  type="number"
+                  value={catchData.total_weight}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                Submit
+              </Button>
+            </form>
+          </Box>
+        </Modal>
+      )}
+
+<div className="flex space-x-8">
+  {/* Download Card */}
+  <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] border-2 flex flex-col space-y-6">
+    {/* Title */}
+    <h2 className="text-4xl font-bold text-gray-800 text-center">
+      Download Templates
+    </h2>
+    {/* Abundance Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
+      <h3 className="text-2xl font-semibold text-gray-700">
+        Abundance
+      </h3>
+      <p>Abundance includes both the presence and the quantity (e.g., count or weight) of that species in the area.</p>
+      <strong className="pt-3">Click the button below to view detailed instructions on how to upload</strong>
+      <button
+        className="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
+        onClick={() => handleDownload("abundance")}
       >
-        <Close />
-      </IconButton>
-
-      <h2>Add New Catch Record</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Date */}
-          <TextField
-            label="Date"
-            type="date"
-            name="date"
-            value={catchData.date}
-            onChange={handleChange}
-            required
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-
-          {/* Latitude */}
-          <TextField
-            label="Latitude"
-            type="number"
-            name="latitude"
-            value={catchData.latitude}
-            onChange={handleChange}
-            required
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-
-          {/* Longitude */}
-          <TextField
-            label="Longitude"
-            type="number"
-            name="longitude"
-            value={catchData.longitude}
-            onChange={handleChange}
-            required
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-
-          {/* Depth */}
-          <TextField
-            label="Depth"
-            type="number"
-            name="depth"
-            value={catchData.depth}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-        </div>
-
-        {/* Species */}
-        {catchData.species.map((species, index) => (
-          <div key={index} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <TextField
-                label={`Species Name ${index + 1}`}
-                name="name"
-                value={species.name}
-                onChange={(e) => handleSpeciesChange(index, e)}
-                required
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label={`Catch Weight ${index + 1}`}
-                name="catch_weight"
-                type="number"
-                value={species.catch_weight}
-                onChange={(e) => handleSpeciesChange(index, e)}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-            </div>
-            <Button onClick={() => handleRemoveSpecies(index)} color="error" fullWidth>
-              Remove Species
-            </Button>
-          </div>
-        ))}
-        <Button onClick={handleAddSpecies} variant="contained" fullWidth sx={{ mb: 2 }}>
-          Add Species
-        </Button>
-
-        <div className="grid grid-cols-2 gap-4">
-          {/* Sea */}
-          <TextField
-            label="Sea"
-            name="sea"
-            value={catchData.sea}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-
-          {/* State */}
-          <TextField
-            label="State"
-            name="state"
-            value={catchData.state}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          {/* Total Weight */}
-          <TextField
-            label="Total Weight"
-            name="total_weight"
-            type="number"
-            value={catchData.total_weight}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />         
-        </div>
-
-       
-        {/* Submit Button */}
-        <Button type="submit" variant="contained" fullWidth sx={{ mb: 2 }}>
-          Submit
-        </Button>
-      </form>
-    </Box>
-  </Modal>
-}
-
-      <div className="flex space-x-8">
-        {/* Download Card */}
-        <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] flex flex-col items-center justify-center border-2">
-          <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-            Download Templates
-          </h2>
-          <button
-            className="px-6 py-3 mb-4 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
-            onClick={() => handleDownload("abundance")}
-          >
-            Download Abundance
-          </button>
-          <button
-            className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
-            onClick={() => handleDownload("occurrence")}
-          >
-            Download Occurrence
-          </button>
-        </div>
+        Download Abundance
+      </button>
+    </div>
+    {/* Occurrence Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
+      <h3 className="text-2xl font-semibold text-gray-700">
+        Occurrence
+      </h3>
+      <p>Occurrence refers to the presence or absence of a species in a specific area</p>
+      <strong className="pt-4">Click the button below to view detailed instructions on how to upload</strong>
+      <button
+        className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
+        onClick={() => handleDownload("occurrence")}
+      >
+        Download Occurrence
+      </button>
+    </div>
+  </div>
+  
         {/* Modal for Download Instructions */}
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
           <Box
@@ -438,59 +472,76 @@ const Addexcel = () => {
             </IconButton>
             {/* <Typography variant="h6">Instructions for {downloadType}</Typography> */}
             <Typography variant="body1" className=" mt-4 text-gray-700">
-
               {downloadType === "abundance" ? (
-              <div>
-                <p className="text-lg font-semibold">Abundance Module Instructions</p>
-                <p className="mt-2">
-                  <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
-                </p>
-                <p className="mt-2">
-                  <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
-                </p>
-                <p className="mt-2">
-                  <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
-                </p>
-                <p className="mt-2">
-                  <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
-                </p>
-                <p className="mt-2">
-                  <strong>MAJOR_SPECIES WITH INDIVIDUAL WEIGHTS IN KGS:</strong> Enter species and their weights in the format: 
-                  <em>SpeciesName(Weight)</em> (e.g., Pomfret(400), Ponyfish(100)).
-                </p>
-                <p className="mt-2">
-                  <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Provide the combined weight for all species (e.g., 500).
-                </p>
-                <p className="mt-4 text-center font-semibold text-blue-600">
-                  Click the download button below to retrieve the file.
-                </p>
-              </div>              
+                <div>
+                  <p className="text-lg font-semibold">
+                    Abundance Module Instructions
+                  </p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the
+                    fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal
+                    degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LONG:</strong> Provide the longitude in
+                    decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth
+                    value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                  </p>
+                  <p className="mt-2">
+                    <strong>
+                      MAJOR_SPECIES WITH INDIVIDUAL WEIGHTS IN KGS:
+                    </strong>{" "}
+                    Enter species and their weights in the format:
+                    <em>SpeciesName(Weight)</em> (e.g., Pomfret(400),
+                    Ponyfish(100)).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Provide the
+                    combined weight for all species (e.g., 500).
+                  </p>
+                  <p className="mt-4 text-center font-semibold text-blue-600">
+                    Click the download button below to retrieve the file.
+                  </p>
+                </div>
               ) : (
-              <div>
-                <p className="text-lg font-semibold">Occurrence Module Instructions</p>
-                <p className="mt-2">
-                  <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
-                </p>
-                <p className="mt-2">
-                  <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
-                </p>
-                <p className="mt-2">
-                  <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
-                </p>
-                <p className="mt-2">
-                  <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
-                </p>
-                <p className="mt-2">
-                  <strong>MAJOR_SPECIES:</strong> List the observed species (e.g., Pomfret, Ponyfish).
-                </p>
-                <p className="mt-2">
-                  <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field for total catch weight (e.g., 200).
-                </p>
-                <p className="mt-4 text-center font-semibold text-blue-600">
-                  Click the download button below to retrieve the file.
-                </p>
-              </div>
-
+                <div>
+                  <p className="text-lg font-semibold">
+                    Occurrence Module Instructions
+                  </p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the
+                    fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal
+                    degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LONG:</strong> Provide the longitude in
+                    decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth
+                    value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                  </p>
+                  <p className="mt-2">
+                    <strong>MAJOR_SPECIES:</strong> List the observed species
+                    (e.g., Pomfret, Ponyfish).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field
+                    for total catch weight (e.g., 200).
+                  </p>
+                  <p className="mt-4 text-center font-semibold text-blue-600">
+                    Click the download button below to retrieve the file.
+                  </p>
+                </div>
               )}
             </Typography>
 
@@ -507,13 +558,16 @@ const Addexcel = () => {
         </Modal>
 
         {/* Upload Card */}
-        <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] flex flex-col items-center justify-center border-2">
+        <div className="bg-white shadow-xl rounded-xl p-8 pt-1 w-[700px] flex flex-col items-center justify-center border-2">
           <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-            Upload
+            Upload Data
           </h2>
           {/* Dropdown for Data Type Selection */}
           <div className=" w-full mb-6 pb-9">
-            <label htmlFor="dataType" className="block text-gray-600 font-medium mt-5">
+            <label
+              htmlFor="dataType"
+              className="block text-gray-600 font-medium mt-5"
+            >
               Select Data Type:
             </label>
             <div className="flex flex-col items-start">
@@ -530,24 +584,46 @@ const Addexcel = () => {
                 <option value="occurrence">Data Occurrence</option>
               </select>
               {/* <h1 onClick={openForm}>other</h1> */}
-              <button 
-                onClick={openForm} 
+              <button
+                onClick={openForm}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 Others / Disorganized Data
               </button>
             </div>
+            <div className="flex items-center gap-20 ">
+                <select
+                  id="dataType"
+                  className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+                  onChange={(e) => setDownloadType(e.target.value)}
+                  value={downloadType}
+                >
+                  <option value="" disabled>
+                    -- Choose an option --
+                  </option>
+                  <option value="abundance">Data Abundance</option>
+                  <option value="occurrence">Data Occurrence</option>
+                </select>
+              
+                <button
+                  onClick={openForm}
+                 className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
+                  Others / Disorganized Data
+                </button>
+              </div>
           </div>
-          <p className="text-gray-500 text-md text-center mb-8">
-            Drag and drop an Excel or CSV file here, or click to select one.
+          <p className="text-gray-500 text-md text-center mb-3 -mt-2">
+            Upload a CSV or Excel File
           </p>
           <div
             {...getRootProps()}
             className={`w-full max-w-xl h-64 flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all 
-    ${isDragActive
-                ? "border-purple-500 bg-purple-100"
-                : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-purple-500"
-              }`}
+    ${
+      isDragActive
+        ? "border-purple-500 bg-purple-100"
+        : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-purple-500"
+    }`}
           >
             <input {...getInputProps()} disabled={isLoading} />
             <div className="relative w-20 h-20 mx-auto mb-2">
@@ -567,7 +643,7 @@ const Addexcel = () => {
 
                 // Centered Image Overlapping Progress Bar Area
                 <img
-                  src="https://cdn-icons-png.flaticon.com/512/9811/9811676.png"
+                  src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQuSrARSPAhLt7xK4AS8k6aSF9kmvbXao_Jg4LdBcxOV46EIStQ"
                   alt="Upload Illustration"
                   className="absolute top-0 left-0 w-full h-full object-cover rounded-full"
                 />
@@ -584,7 +660,7 @@ const Addexcel = () => {
           </div>
 
           {selectedFile && (
-            <div className="mt-4 w-full max-w-md">
+            <div className="mt-4 w-full max-w-xl">
               <div className="flex justify-between items-center p-2 border rounded-lg bg-white shadow-sm">
                 <div>
                   <p className="text-sm font-medium text-gray-800">
@@ -594,7 +670,7 @@ const Addexcel = () => {
                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
-                <div className="w-1/2">
+                <div className="w-1/3">
                   <div
                     className="bg-purple-500 h-2 rounded-full"
                     style={{ width: `${uploadProgress}%` }}
@@ -610,10 +686,11 @@ const Addexcel = () => {
           <button
             onClick={handleUpload}
             className={`mt-6 px-6 py-3 mb-5 text-white font-semibold rounded-lg shadow-md transition-all 
-            ${isLoading
+            ${
+              isLoading
                 ? "bg-blue-300 cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-600"
-              }`}
+            }`}
             disabled={isLoading}
           >
             {isLoading ? "Uploading..." : "Upload File"}

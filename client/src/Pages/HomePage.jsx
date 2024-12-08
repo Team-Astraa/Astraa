@@ -128,6 +128,7 @@ import toast from "react-hot-toast";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import aquadb_logo from "../assets/AquaDB.png";
 import sea_bg from "../assets/sea_bg.jpg";
+import { Button } from "flowbite-react";
 
 
 const HomePage = () => {

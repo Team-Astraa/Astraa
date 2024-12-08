@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -27,11 +27,14 @@ import "./App.css"; // Import the CSS
 import DataTable from "./Pages/User-DataLogs";
 import Community from "./Pages/Community";
 import Communitydetail from "./Pages/Community-detail";
-
+import ScientistCharts from "./Pages/DataVisualization";
 // import Infographics from "./Pages/Infographics";
 import FishingData from "./Pages/community-fishing-data";
 import MapComponent from "./Pages/GetLatLong";
 import CustomizableChart from "./Pages/graphs";
+import Filters from "./Pages/ScientistFilters";
+import FilterForm from "./Pages/ScientistFilters";
+import Profile from "./Pages/Profile";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -42,14 +45,10 @@ import CustomizableChart from "./Pages/graphs";
 //   // List of routes without Sidebar and NavBar
 //   const noLayoutRoutes = ["/signin", "/signup"];
 
-
-
-
 function AppLayout({ children }) {
   const location = useLocation();
   const [login, setLogin] = useState(false);
   const user = localStorage.getItem("aquaUser");
-
 
   useEffect(() => {
     if (user) {
@@ -86,9 +85,7 @@ function AppLayout({ children }) {
 function App() {
   let [fistData, setFishData] = useState([]);
   return (
-   
-
-<Router>
+    <Router>
       <AppLayout>
         <Routes>
           {/* Public Routes */}
@@ -98,6 +95,8 @@ function App() {
           {/* <Route path="/infographics" element={<Infographics />} /> */}
           <Route path="/graphs" element={<CustomizableChart />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
+          <Route path="/ScientistCharts" element={<ScientistCharts />} />
+          <Route path="/profile" element={<Profile />} />
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
@@ -121,6 +120,7 @@ function App() {
           />
           <Route path="/map" element={<FishingMap />} />
           <Route path="/data-upload" element={<Addexcel />} />
+          <Route path="/filter" element={<FilterForm />} />
 
           {/* Researcher Routes */}
           <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
@@ -130,12 +130,17 @@ function App() {
           {/* Scientist Routes */}
           <Route path="/scientist/home" element={<ScientistHome />} />
           <Route path="/scientist/community" element={<Community />} />
-          <Route path="/scientist/community/:communityId" element={<Communitydetail />} />
-          <Route path="/scientist/community/share/:shareURL" element={<FishingData />} />
+          <Route
+            path="/scientist/community/:communityId"
+            element={<Communitydetail />}
+          />
+          <Route
+            path="/scientist/community/share/:shareURL"
+            element={<Filters />}
+          />
         </Routes>
       </AppLayout>
     </Router>
-
   );
 }
 export default App;

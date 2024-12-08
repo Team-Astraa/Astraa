@@ -20,6 +20,9 @@ import {
 // import { assert } from "console";
 // import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 
+
+//charts controller//
+import {getChartData,getFilteredDashboard} from "./controller/ChartsController.js"
 import { downloadFile } from "./controller/fileController.js";
 import {
   getCatchDataGroupedByUser,
@@ -40,6 +43,7 @@ import {
   getDataByDataId,
   getLogsByDataType,
   getLogsByUserIdWithUser,
+  getUniqueSpeciesNames,
   otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
@@ -84,7 +88,7 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/sih-practice"
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
       "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
@@ -157,6 +161,7 @@ app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
 // Password Update Route
 app.put("/user/Password-update", changePassword);
 app.post("/user/other-data-upload", otherDataUpload);
+app.post("/user/getUniqueSpeciesNames", getUniqueSpeciesNames);
 
 
 // Scientist Routes
@@ -173,6 +178,13 @@ app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 app.post("/graph", graphdata);
 
+
+
+///Data Visulaization
+app.post('/scientist/visualize', getChartData);
+app.post("/scientist/get-chart-url", getFilteredDashboard);
+
+// Upload Routes
 app.get("/get-upload-url", async (req, res) => {
   try {
     const uploadUrl = await generateUploadUrl();

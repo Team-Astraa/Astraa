@@ -76,9 +76,9 @@ const Adminverifyfish = () => {
         "http://localhost:5000/admin/get-fish-data",
         { userId: userId, dataId: dataId }
       );
-      console.log("CATCH DATA", response.data);
+      console.log("CATCH DATA", response.data.data);
 
-      setCatchData(response.data);
+      setCatchData(response.data.data);
       setviewedRow({
         lat: response.data.data[0].catches[0].latitude.toFixed(3),
         long: response.data.data[0].catches[0].longitude.toFixed(3),
@@ -193,10 +193,11 @@ const Adminverifyfish = () => {
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
       console.log("Catch Data before validation:", catchData);
-
+      let tag;
       // Transforming catch data to match the required format
       const transformedData = catchData.flatMap((userData) =>
         userData.catches.map((fishData) => ({
+          tag: fishData.Type,
           _id: fishData?._id,
           date: fishData?.date.split("T")[0] || null, // Ensure valid date or default to null
           latitude: fishData?.latitude, // Extract latitude
@@ -213,7 +214,7 @@ const Adminverifyfish = () => {
       );
 
       const payload = {
-        dataType: "occurrence",
+        dataType: tag,
         data: transformedData,
       };
 
@@ -371,7 +372,7 @@ const Adminverifyfish = () => {
             }))
           : [],
         total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
-        tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
+        dataType: fishData?.dataType || "", // Ensure tag is never null, fallback to empty string if missing
         userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
       }))
     );
@@ -381,21 +382,21 @@ const Adminverifyfish = () => {
     try {
       setIsLoading(true); // Show loading state
       const loadingToastId = toast.loading("Saving data..."); // Show a "saving..." toast notification and store the toast ID
-    
+
       // Send transformed data to the backend to save
       const response = await axios.post(
         "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
         { data: transformedData } // Send data as "data", not "validatedData"
       );
-    
+
       console.log("response after saving data", response);
-    
+
       // Dismiss the loading toast
       toast.dismiss(loadingToastId);
-    
+
       if (response.status === 200) {
         console.log("Data saved and verified successfully");
-    
+
         // Show success toast
         toast.success("Data saved successfully!", { autoClose: 3000 });
       } else if (response.status === 202) {
@@ -405,14 +406,13 @@ const Adminverifyfish = () => {
       }
     } catch (error) {
       console.error("Error saving data", error);
-    
+
       // Dismiss the loading toast in case of error
       toast.dismiss(loadingToastId);
-    
+
       // Show error toast
       toast.error("Error saving data. Please try again.", { autoClose: 3000 });
     }
-    
 
     setIsLoading(false); // Stop loading state
     setIsModalOpen(false); // Close the modal
