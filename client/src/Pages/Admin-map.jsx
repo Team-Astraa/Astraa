@@ -7,6 +7,9 @@ const MapboxVisualization = ({ catchData, props }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState(props.type); // 'markers', 'heatmap', 'clusters'
 
+  console.log(catchData, props);
+  
+
   let heatmapData;
   if(props.oneLat && props.oneLong) {
     heatmapData = {
