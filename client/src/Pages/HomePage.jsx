@@ -179,31 +179,31 @@ return(
 
     {isLoggedIn ? (
       <div className="w-full my-10">
-        <Button
+        <button
         variant="danger"
           onClick={handleLogout}
           className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
         >
           Log Out
-        </Button>
+        </button>
       </div>
     ) : (
       <div className="w-full h-fit  flex flex-col gap-10 items-center white justify-center">
         <div className="flex gap-10 mt-10">
-        <Button
+        <button
           variant="primary"
           onClick={() => navigate("/signin", { state: { userType: "Admin" } })}
           className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
         >
           Login as Admin
-        </Button>
-        <Button
+        </button>
+        <button
           variant="secondary"
           onClick={() => navigate("/signup")}
           className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
         >
           Login as User
-        </Button>
+        </button>
         </div>
       </div>
     )}
