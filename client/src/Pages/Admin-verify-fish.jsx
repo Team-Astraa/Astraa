@@ -193,10 +193,11 @@ const Adminverifyfish = () => {
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
       console.log("Catch Data before validation:", catchData);
-
+      let tag;
       // Transforming catch data to match the required format
       const transformedData = catchData.flatMap((userData) =>
         userData.catches.map((fishData) => ({
+          tag: fishData.Type,
           _id: fishData?._id,
           date: fishData?.date.split("T")[0] || null, // Ensure valid date or default to null
           latitude: fishData?.latitude, // Extract latitude
@@ -213,7 +214,7 @@ const Adminverifyfish = () => {
       );
 
       const payload = {
-        dataType: "occurrence",
+        dataType: tag,
         data: transformedData,
       };
 
@@ -371,7 +372,7 @@ const Adminverifyfish = () => {
             }))
           : [],
         total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
-        tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
+        dataType: fishData?.dataType || "", // Ensure tag is never null, fallback to empty string if missing
         userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
       }))
     );

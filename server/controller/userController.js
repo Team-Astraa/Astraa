@@ -186,7 +186,7 @@ export const uploadCSV = async (req, res) => {
 
           // Comment out database insertion for debugging or re-enable as needed
           try {
-            await CatchData.insertMany(finalData);
+            await Catch.insertMany(finalData);
             await Log.create(logData);
             return res.status(200).json({
               message:
@@ -208,7 +208,7 @@ export const uploadCSV = async (req, res) => {
 
     // Comment out database insertion for debugging or re-enable as needed
     try {
-      await CatchData.insertMany(data);
+      await Catch.insertMany(data);
       await Log.create(logData);
       res.status(200).json({
         message: "File uploaded successfully. Data logged for verification.",
