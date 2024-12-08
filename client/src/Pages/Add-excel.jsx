@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
@@ -14,6 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { Autocomplete } from '@mui/material'
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -35,8 +37,38 @@ const Addexcel = () => {
     userId: "", // Assuming userId is passed as a prop
     dataType: "",
     total_weight: 0,
+<<<<<<< HEAD
+
+
   });
 
+  const [uniqueSpecies, setUniquesSpecies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch unique species from the backend API
+  useEffect(() => {
+    const fetchUniqueSpecies = async () => {
+      try {
+        const response = await axios.post("http://localhost:5000/user/getUniqueSpeciesNames"); // Make sure the correct API URL is used
+        setUniquesSpecies(response.data.species);
+        console.log(species);
+
+      } catch (err) {
+        setError("Failed to load species");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUniqueSpecies();
+  }, []);
+
+
+=======
+  });
+
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCatchData((prevState) => ({
@@ -52,15 +84,16 @@ const Addexcel = () => {
     }));
   };
 
-  const handleSpeciesChange = (index, e) => {
-    const { name, value } = e.target;
+  const handleSpeciesChange = (index, fieldName, value) => {
     const updatedSpecies = [...catchData.species];
-    updatedSpecies[index][name] = value;
+    updatedSpecies[index][fieldName] = value;
+
     setCatchData((prevState) => ({
       ...prevState,
       species: updatedSpecies,
     }));
   };
+
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
@@ -123,6 +156,11 @@ const Addexcel = () => {
       toast.error("Error adding data");
     }
   };
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
 
   // Handle file drop
   const onDrop = (acceptedFiles) => {
@@ -245,7 +283,12 @@ const Addexcel = () => {
 
   return (
     <AnimationWrapper className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+<<<<<<< HEAD
+      {
+        downloadType === "other" &&
+=======
       {downloadType === "other" && (
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
         <Modal open={openform} onClose={() => setopenform(false)}>
           <Box
             className="p-6 bg-white rounded-md shadow-lg"
@@ -318,11 +361,41 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
               </div>
+<<<<<<< HEAD
+              {/* <TextField
+                      label={`Species Name ${index + 1}`}
+                      name="name"
+                      value={species.name}
+                      onChange={(e) => handleSpeciesChange(index, e)}
+                      required
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    /> */}
+=======
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
 
               {/* Species */}
               {catchData.species.map((species, index) => (
                 <div key={index} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
+<<<<<<< HEAD
+                    {/* Autocomplete Component */}
+                    <Autocomplete
+                      disablePortal
+                      name="name"
+                      value={species.name || ""}
+                      options={uniqueSpecies}
+                      onChange={(event, newValue) =>
+                        handleSpeciesChange(index, "name", newValue)
+                      }
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      renderInput={(params) => (
+                        <TextField label={`Species Name ${index + 1}`} {...params} />
+                      )}
+                    />
+                    {/* TextField for Catch Weight */}
+=======
                     <TextField
                       label={`Species Name ${index + 1}`}
                       name="name"
@@ -332,36 +405,92 @@ const Addexcel = () => {
                       fullWidth
                       sx={{ mb: 2 }}
                     />
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                     <TextField
                       label={`Catch Weight ${index + 1}`}
                       name="catch_weight"
                       type="number"
+<<<<<<< HEAD
+                      value={species.catch_weight || ""}
+                      onChange={(e) => handleSpeciesChange(index, "catch_weight", e.target.value)}
+=======
                       value={species.catch_weight}
                       onChange={(e) => handleSpeciesChange(index, e)}
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                       fullWidth
                       sx={{ mb: 2 }}
                     />
                   </div>
+<<<<<<< HEAD
+                  <Button onClick={() => handleRemoveSpecies(index)} color="error" fullWidth>
+=======
                   <Button
                     onClick={() => handleRemoveSpecies(index)}
                     color="error"
                     fullWidth
                   >
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                     Remove Species
                   </Button>
                 </div>
               ))}
+<<<<<<< HEAD
+
+              <Button onClick={handleAddSpecies} variant="contained" fullWidth sx={{ mb: 2 }}>
+=======
               <Button
                 onClick={handleAddSpecies}
                 variant="contained"
                 fullWidth
                 sx={{ mb: 2 }}
               >
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                 Add Species
               </Button>
 
               <div className="grid grid-cols-2 gap-4">
                 {/* Sea */}
+<<<<<<< HEAD
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel id="sea-label">Sea</InputLabel>
+                  <Select
+                    labelId="sea-label"
+                    id="sea"
+                    name="sea"
+                    value={catchData.sea}
+                    onChange={handleChange}
+                    label="Sea"
+                  >
+                    <MenuItem value="Arabian Sea">Arabian Sea</MenuItem>
+                    <MenuItem value="Bay of Bengal">Bay of Bengal</MenuItem>
+                    <MenuItem value="Indian Ocean">Indian Ocean</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel id="state-label">State</InputLabel>
+                  <Select
+                    labelId="state-label"
+                    id="state"
+                    name="state"
+                    value={catchData.state}
+                    onChange={handleChange}
+                    label="State"
+                  >
+                    <MenuItem value="Gujarat">Gujarat</MenuItem>
+                    <MenuItem value="Maharashtra">Maharashtra</MenuItem>
+                    <MenuItem value="Goa">Goa</MenuItem>
+                    <MenuItem value="Karnataka">Karnataka</MenuItem>
+                    <MenuItem value="Kerala">Kerala</MenuItem>
+                    <MenuItem value="TamilNadu">Tamil Nadu</MenuItem>
+                    <MenuItem value="AndhraPradesh">Andhra Pradesh</MenuItem>
+                    <MenuItem value="Odisha">Odisha</MenuItem>
+                    <MenuItem value="WestBengal">West Bengal</MenuItem>
+                    <MenuItem value="Lakshadweep">Lakshadweep</MenuItem>
+                  </Select>
+                </FormControl>
+=======
                 <TextField
                   label="Sea"
                   name="sea"
@@ -380,6 +509,7 @@ const Addexcel = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -393,6 +523,15 @@ const Addexcel = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
+<<<<<<< HEAD
+
+
+              </div>
+
+
+              {/* Submit Button */}
+              <Button type="submit" variant="contained" fullWidth sx={{ mb: 2 }}>
+=======
               </div>
 
               {/* Submit Button */}
@@ -402,12 +541,17 @@ const Addexcel = () => {
                 fullWidth
                 sx={{ mb: 2 }}
               >
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                 Submit
               </Button>
             </form>
           </Box>
         </Modal>
+<<<<<<< HEAD
+      }
+=======
       )}
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
 
       <div className="flex space-x-8">
         {/* Download Card */}
@@ -453,6 +597,27 @@ const Addexcel = () => {
             <Typography variant="body1" className=" mt-4 text-gray-700">
               {downloadType === "abundance" ? (
                 <div>
+<<<<<<< HEAD
+                  <p className="text-lg font-semibold">Abundance Module Instructions</p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                  </p>
+                  <p className="mt-2">
+                    <strong>MAJOR_SPECIES WITH INDIVIDUAL WEIGHTS IN KGS:</strong> Enter species and their weights in the format:
+                    <em>SpeciesName(Weight)</em> (e.g., Pomfret(400), Ponyfish(100)).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Provide the combined weight for all species (e.g., 500).
+=======
                   <p className="text-lg font-semibold">
                     Abundance Module Instructions
                   </p>
@@ -483,6 +648,7 @@ const Addexcel = () => {
                   <p className="mt-2">
                     <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Provide the
                     combined weight for all species (e.g., 500).
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                   </p>
                   <p className="mt-4 text-center font-semibold text-blue-600">
                     Click the download button below to retrieve the file.
@@ -490,6 +656,26 @@ const Addexcel = () => {
                 </div>
               ) : (
                 <div>
+<<<<<<< HEAD
+                  <p className="text-lg font-semibold">Occurrence Module Instructions</p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                  </p>
+                  <p className="mt-2">
+                    <strong>MAJOR_SPECIES:</strong> List the observed species (e.g., Pomfret, Ponyfish).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field for total catch weight (e.g., 200).
+=======
                   <p className="text-lg font-semibold">
                     Occurrence Module Instructions
                   </p>
@@ -516,11 +702,16 @@ const Addexcel = () => {
                   <p className="mt-2">
                     <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field
                     for total catch weight (e.g., 200).
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
                   </p>
                   <p className="mt-4 text-center font-semibold text-blue-600">
                     Click the download button below to retrieve the file.
                   </p>
                 </div>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 497aa70d4e247c298914eedd4ef9bb893ff52a4c
               )}
             </Typography>
 

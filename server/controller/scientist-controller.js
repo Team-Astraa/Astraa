@@ -25,6 +25,7 @@ export const getUnique = async (req, res) => {
   }
 };
 
+
 export const getFilteredCatches = async (req, res) => {
   try {
     const {
@@ -38,6 +39,8 @@ export const getFilteredCatches = async (req, res) => {
       sea,
       state,
       total_weight,
+      dataType, // Filter: abundance or occurrence
+      zoneType, // Filter: PFZ or NON-PFZ
     } = req.body;
     console.log(req.body);
 
@@ -87,12 +90,17 @@ export const getFilteredCatches = async (req, res) => {
       }
     }
 
+    // Zone type filter
+    if (zoneType) {
+      query.zoneType = zoneType.toUpperCase(); // PFZ or NON-PFZ
+    }
+
     // Fetch and sort catches matching the query
     const catches = await Catch.find(query).sort({ createdAt: -1 }); // Sort by createdAt in descending order
 
     // Apply additional filters in-memory if required
     const filteredCatches = catches.filter((catchItem) => {
-      // Species filter
+      // Species filter (speciesName filter)
       if (speciesName) {
         // Create a case-insensitive regex pattern for the species name
         const speciesRegex = new RegExp(`^${speciesName}$`, "i");
@@ -106,6 +114,20 @@ export const getFilteredCatches = async (req, res) => {
         if (catchItem.species.length === 0) {
           return false; // Optionally exclude this item if no species match
         }
+      }
+
+      // Handle dataType-specific logic (abundance or occurrence)
+      if (dataType === "abundance") {
+        // Filter species to include only those with non-null catch_weight
+        catchItem.species = catchItem.species.filter(
+          (species) => species.catch_weight !== null
+        );
+
+        // Exclude the catch if all species are filtered out
+        if (catchItem.species.length === 0) return false;
+      } else if (dataType === "occurrence") {
+        // Include all species, even if catch_weight is null
+        // No filtering is needed here, so do not alter species array
       }
 
       // Geographical filter
@@ -135,7 +157,10 @@ export const getFilteredCatches = async (req, res) => {
       .status(500)
       .json({ message: "An error occurred while filtering the catches." });
   }
-};
+}
+
+
+
 
 export const createCommunity = async (req, res) => {
   try {
