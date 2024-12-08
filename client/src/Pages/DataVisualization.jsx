@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const ScientistCharts = () => {
   const [iframeSrc, setIframeSrc] = useState(
@@ -8,19 +8,26 @@ const ScientistCharts = () => {
 
   const refreshDashboard = () => {
     setStatus("Refreshing dashboard...");
+    // Force iframe to reload by temporarily clearing the src
     setIframeSrc("");
     setTimeout(() => {
       setIframeSrc(
         "https://charts.mongodb.com/charts-sneha-lqltzmn/public/dashboards/ccf47374-f531-4d96-8188-99168ef9197e"
       );
       setStatus("Dashboard updated!");
-    }, 1000);
+    }, 1000); // Add a slight delay to trigger a proper reload
   };
 
   useEffect(() => {
+    // Refresh the dashboard on component mount
+    refreshDashboard();
+
+    // Set up an interval to refresh the dashboard every 5 minutes
     const interval = setInterval(() => {
       refreshDashboard();
-    }, 15000);
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+    // Clear the interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -28,7 +35,7 @@ const ScientistCharts = () => {
     <div className="w-screen h-screen flex flex-col bg-gray-900">
       {/* Header */}
       <header className="bg-gray-800 text-white text-center py-4">
-        <h1 className="text-3xl font-bold">MongoDB Dashboard</h1>
+        <h1 className="text-3xl font-bold"> Data Insight Visualization</h1>
         <p className="text-sm">{status}</p>
       </header>
 
@@ -55,3 +62,4 @@ const ScientistCharts = () => {
 };
 
 export default ScientistCharts;
+

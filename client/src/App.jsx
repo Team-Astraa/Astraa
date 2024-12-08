@@ -35,6 +35,7 @@ import CustomizableChart from "./Pages/graphs";
 import Filters from "./Pages/ScientistFilters";
 import FilterForm from "./Pages/ScientistFilters";
 import Profile from "./Pages/Profile";
+import SidebarNew from "./Components/SidebarNew";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -67,7 +68,7 @@ function AppLayout({ children }) {
   return (
     <div className="container2">
       {/* Render Sidebar only if user is logged in and not on a no-layout route */}
-      {login && !isNoLayoutRoute && <Sidebar />}
+      {login && !isNoLayoutRoute && <SidebarNew />}
 
       <div
         className={`${login ? "content" : ""}`}
