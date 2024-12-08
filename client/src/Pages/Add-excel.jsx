@@ -412,25 +412,43 @@ const Addexcel = () => {
         </Modal>
       )}
 
-      <div className="flex space-x-8">
-        {/* Download Card */}
-        <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] flex flex-col items-center justify-center border-2">
-          <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-            Download Templates
-          </h2>
-          <button
-            className="px-6 py-3 mb-4 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
-            onClick={() => handleDownload("abundance")}
-          >
-            Download Abundance
-          </button>
-          <button
-            className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
-            onClick={() => handleDownload("occurrence")}
-          >
-            Download Occurrence
-          </button>
-        </div>
+<div className="flex space-x-8">
+  {/* Download Card */}
+  <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] border-2 flex flex-col space-y-6">
+    {/* Title */}
+    <h2 className="text-4xl font-bold text-gray-800 text-center">
+      Download Templates
+    </h2>
+    {/* Abundance Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
+      <h3 className="text-2xl font-semibold text-gray-700">
+        Abundance
+      </h3>
+      <p>Abundance includes both the presence and the quantity (e.g., count or weight) of that species in the area.</p>
+      <strong className="pt-3">Click the button below to view detailed instructions on how to upload</strong>
+      <button
+        className="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
+        onClick={() => handleDownload("abundance")}
+      >
+        Download Abundance
+      </button>
+    </div>
+    {/* Occurrence Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
+      <h3 className="text-2xl font-semibold text-gray-700">
+        Occurrence
+      </h3>
+      <p>Occurrence refers to the presence or absence of a species in a specific area</p>
+      <strong className="pt-4">Click the button below to view detailed instructions on how to upload</strong>
+      <button
+        className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
+        onClick={() => handleDownload("occurrence")}
+      >
+        Download Occurrence
+      </button>
+    </div>
+  </div>
+  
         {/* Modal for Download Instructions */}
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
           <Box
@@ -540,9 +558,9 @@ const Addexcel = () => {
         </Modal>
 
         {/* Upload Card */}
-        <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] flex flex-col items-center justify-center border-2">
+        <div className="bg-white shadow-xl rounded-xl p-8 pt-1 w-[700px] flex flex-col items-center justify-center border-2">
           <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-            Upload
+            Upload Data
           </h2>
           {/* Dropdown for Data Type Selection */}
           <div className=" w-full mb-6 pb-9">
@@ -573,9 +591,30 @@ const Addexcel = () => {
                 Others / Disorganized Data
               </button>
             </div>
+            <div className="flex items-center gap-20 ">
+                <select
+                  id="dataType"
+                  className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+                  onChange={(e) => setDownloadType(e.target.value)}
+                  value={downloadType}
+                >
+                  <option value="" disabled>
+                    -- Choose an option --
+                  </option>
+                  <option value="abundance">Data Abundance</option>
+                  <option value="occurrence">Data Occurrence</option>
+                </select>
+              
+                <button
+                  onClick={openForm}
+                 className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
+                  Others / Disorganized Data
+                </button>
+              </div>
           </div>
-          <p className="text-gray-500 text-md text-center mb-8">
-            Drag and drop an Excel or CSV file here, or click to select one.
+          <p className="text-gray-500 text-md text-center mb-3 -mt-2">
+            Upload a CSV or Excel File
           </p>
           <div
             {...getRootProps()}
@@ -604,7 +643,7 @@ const Addexcel = () => {
 
                 // Centered Image Overlapping Progress Bar Area
                 <img
-                  src="https://cdn-icons-png.flaticon.com/512/9811/9811676.png"
+                  src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQuSrARSPAhLt7xK4AS8k6aSF9kmvbXao_Jg4LdBcxOV46EIStQ"
                   alt="Upload Illustration"
                   className="absolute top-0 left-0 w-full h-full object-cover rounded-full"
                 />
@@ -621,7 +660,7 @@ const Addexcel = () => {
           </div>
 
           {selectedFile && (
-            <div className="mt-4 w-full max-w-md">
+            <div className="mt-4 w-full max-w-xl">
               <div className="flex justify-between items-center p-2 border rounded-lg bg-white shadow-sm">
                 <div>
                   <p className="text-sm font-medium text-gray-800">
@@ -631,7 +670,7 @@ const Addexcel = () => {
                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
-                <div className="w-1/2">
+                <div className="w-1/3">
                   <div
                     className="bg-purple-500 h-2 rounded-full"
                     style={{ width: `${uploadProgress}%` }}
