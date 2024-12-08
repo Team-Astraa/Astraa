@@ -3,32 +3,51 @@ import Map, { Marker, Popup, Source, Layer } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Typography } from "@mui/material";
 
-const MapboxVisualization = ({ catchData, props }) => {
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught by ErrorBoundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h2>Something went wrong.</h2>;
+    }
+
+    return this.props.children;
+  }
+}
+
+const MapboxVisualization2 = ({ catchData, props }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState(props.type); // 'markers', 'heatmap', 'clusters'
 
-
-console.log(catchData);
-
-  
-
   let heatmapData;
-  if(props.oneLat && props.oneLong) {
+  if (props.oneLat && props.oneLong) {
     heatmapData = {
       type: "FeatureCollection",
-      features: {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [props.oneLat, props.oneLong],
-          }
+      features: [{
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [props.oneLat, props.oneLong],
         }
-    }
+      }]
+    };
   } else {
     heatmapData = {
       type: "FeatureCollection",
       features: catchData.flatMap((data) =>
-        data.catches.map((catchDetail) => ({
+        data.species.map((catchDetail) => ({
           type: "Feature",
           geometry: {
             type: "Point",
@@ -36,13 +55,12 @@ console.log(catchData);
           },
           properties: {
             depth: catchDetail.depth,
-            weight: catchDetail.totalCatchWeight,
+            weight: catchDetail.catch_weight,
           },
         }))
       ),
     };
   }
-  
 
   const heatmapLayer = {
     id: "heatmap-layer",
@@ -93,8 +111,8 @@ console.log(catchData);
       "circle-stroke-width": 2,
       "circle-stroke-color": "#ffffff",
     },
-  };  
-  
+  };
+
   const clusterCountLayer = {
     id: "cluster-count",
     type: "symbol",
@@ -113,7 +131,7 @@ console.log(catchData);
       "text-halo-width": 1.5,
     },
   };
-  
+
   const unclusteredPointLayer = {
     id: "unclustered-point",
     type: "circle",
@@ -129,11 +147,10 @@ console.log(catchData);
   };
 
   return (
+    <ErrorBoundary>
       <div>
-        {props.showButton &&  <div style={{
-            position: "absolute",
-            zIndex: 20, paddingLeft: "2rem"}} > 
-                
+        {props.showButton && (
+          <div style={{ position: "absolute", zIndex: 20, paddingLeft: "2rem" }}>
             <div className="flex flex-col gap-4 mt-8">
               <button
                 onClick={() => setViewMode("markers")}
@@ -175,35 +192,29 @@ console.log(catchData);
                 Show Clusters
               </button>
             </div>
-        </div> }
+          </div>
+        )}
 
-      <Map
-        initialViewState={{
-          latitude: props.oneLat ? props.oneLat : 18.45,
-          longitude: props.oneLong ? props.oneLong : 84.431,
-          zoom: 7,
-        }}
-        style={{
-          // margin: "30px auto", // Center the map horizontally
-        
-          // marginBottom:"50px",
-          // border: "solid 5px #6096B4",
-          borderRadius: "1rem",
-          height: !props.showButton ? "20vh" : "45vh"
-        }}
-        mapStyle="mapbox://styles/mapbox/dark-v11"
-        mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
-      >
-        {props.oneLat && props.oneLong && viewMode === "markers" && 
-          
+        <Map
+          initialViewState={{
+            latitude: props.oneLat ? props.oneLat : 18.45,
+            longitude: props.oneLong ? props.oneLong : 84.431,
+            zoom: 7,
+          }}
+          style={{
+            borderRadius: "1rem",
+            height: !props.showButton ? "20vh" : "45vh",
+          }}
+          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapboxAccessToken="YOUR_MAPBOX_ACCESS_TOKEN"
+        >
+          {props.oneLat && props.oneLong && viewMode === "markers" && (
             <Marker
-              // key={catchDetail._id}
               longitude={props.oneLong}
               latitude={props.oneLat}
               anchor="bottom"
               onClick={(e) => {
                 e.originalEvent.stopPropagation();
-                //setPopupInfo(catchDetail);
               }}
             >
               <div
@@ -218,12 +229,9 @@ console.log(catchData);
                 }}
               ></div>
             </Marker>
-          
-        
-        }
-        {!props.oneLat && !props.oneLong && viewMode === "markers" &&
-          catchData.map((data) =>
-            data.catches.map((catchDetail) => (
+          )}
+          {!props.oneLat && !props.oneLong && viewMode === "markers" && catchData.map((data) =>
+            data.species.map((catchDetail) => (
               <Marker
                 key={catchDetail._id}
                 longitude={catchDetail.longitude}
@@ -249,83 +257,53 @@ console.log(catchData);
             ))
           )}
 
-        {viewMode === "heatmap" && (
-          <Source id="heatmap" type="geojson" data={heatmapData}>
-            <Layer {...heatmapLayer} />
-          </Source>
-        )}
+          {viewMode === "heatmap" && (
+            <>
+              <Source id="heatmap" type="geojson" data={heatmapData}>
+                <Layer {...heatmapLayer} />
+              </Source>
+              <Layer {...clusterLayer} />
+              <Layer {...clusterCountLayer} />
+              <Layer {...unclusteredPointLayer} />
+            </>
+          )}
 
-        {viewMode === "clusters" && (
-          <Source
-            id="heatmap"
-            type="geojson"
-            data={heatmapData}
-            cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={50}
-          >
-            <Layer {...clusterLayer} />
-            <Layer {...clusterCountLayer} />
-            <Layer {...unclusteredPointLayer} />
-          </Source>
-        )}
+          {viewMode === "clusters" && (
+            <>
+              <Source id="heatmap" type="geojson" data={heatmapData}>
+                <Layer {...clusterLayer} />
+              </Source>
+            </>
+          )}
 
-        {popupInfo && (
-          <Popup
-            longitude={popupInfo.longitude}
-            latitude={popupInfo.latitude}
-            anchor="top"
-            onClose={() => setPopupInfo(null)}
-            style={{
-              borderRadius: "10px",
-              padding: "10px",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-              maxWidth: "300px",
-            }}
-          >
-            <div style={{ fontFamily: "'Roboto', sans-serif" }}>
-              <h3 style={{ margin: "0 0 10px 0", color: "#333" }}>Details</h3>
-              <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Latitude:</strong> {popupInfo.latitude.toFixed(6)}
-              </p>
-              <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Longitude:</strong> {popupInfo.longitude.toFixed(6)}
-              </p>
-              <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Depth:</strong> {popupInfo.depth} meters
-              </p>
-              <ul
-                style={{
-                  padding: "0",
-                  margin: "0",
-                  listStyleType: "none",
-                  color: "#555",
-                }}
-              >
-                {popupInfo.species.map((s) => (
-                  <li
-                    key={s.name}
-                    style={{
-                      margin: "5px 0",
-                      padding: "5px",
-                      backgroundColor: "#ffffff",
-                      borderRadius: "5px",
-                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                    }}
-                  >
-                    {s.name}: {s.catch_weight} kg
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Popup>
-        )}
-      </Map>
-    </div>
+          {viewMode === "markers" && !props.oneLat && !props.oneLong && (
+            <>
+              <Source id="heatmap" type="geojson" data={heatmapData}>
+                <Layer {...unclusteredPointLayer} />
+              </Source>
+            </>
+          )}
+
+          {popupInfo && (
+            <Popup
+              longitude={popupInfo.longitude}
+              latitude={popupInfo.latitude}
+              closeButton={true}
+              closeOnClick={false}
+              onClose={() => setPopupInfo(null)}
+              anchor="top"
+            >
+              <Typography variant="body1">
+                Species: {popupInfo.species.join(", ")}<br />
+                Weight: {popupInfo.catch_weight} kg<br />
+                Depth: {popupInfo.depth} m
+              </Typography>
+            </Popup>
+          )}
+        </Map>
+      </div>
+    </ErrorBoundary>
   );
 };
 
-export default MapboxVisualization;
-
-
-
+export default MapboxVisualization2;
