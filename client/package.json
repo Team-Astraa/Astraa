@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",
+    "atob": "^2.1.2",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "client": "file:",

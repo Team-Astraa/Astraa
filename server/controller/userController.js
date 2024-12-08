@@ -89,11 +89,6 @@ const cleanData = (data, userId, id, dataType) => {
       ? parseFloat(item.DEPTH.split("-")[0].trim()) // Take the first part before the "-"
       : null;
 
-    //old
-    // const depth = item.DEPTH
-    // ? parseFloat(item.DEPTH.replace(/[^0-9.]/g, ""))
-    // : null;
-
     // Categorize by sea and state
     const latitude = parseFloat(item.SHOOT_LAT);
     const longitude = parseFloat(item.SHOOT_LONG);
@@ -101,11 +96,13 @@ const cleanData = (data, userId, id, dataType) => {
 
     // Convert Excel date or handle as string date
     const dateValue = item["FISHING Date"];
-    console.log("dateValue", typeof dateValue);
     const date =
       typeof dateValue === "number"
         ? parseExcelDate(dateValue) // Excel serial number
         : parseDate(dateValue); // Regular date string
+
+    // Get the zone value or default to an empty string
+    const zone = item.TYPE ? item.TYPE.trim() : "";
 
     return {
       date, // Use the parsed date
@@ -120,9 +117,11 @@ const cleanData = (data, userId, id, dataType) => {
       dataType,
       verified: false,
       total_weight: parseFloat(item.TOTAL_CATCH),
+      zoneType:zone, // Include the zone value
     };
   });
 };
+
 
 function generateRandomId() {
   const date = new Date();
@@ -371,6 +370,33 @@ export const getLogsByDataType = async (req, res) => {
     res.status(500).json({
       message: "Error fetching logs.",
       error: error.message,
+    });
+  }
+};
+
+
+export const getUniqueSpeciesNames = async (req, res) => {
+  try {
+    // Aggregate to flatten the species array and get unique species names
+    const uniqueSpecies = await Catch.aggregate([
+      { $unwind: "$species" }, // Unwind the species array to make it a flat list
+      { $group: { _id: "$species.name" } }, // Group by the species name and get unique names
+      { $project: { _id: 0, name: "$_id" } } // Format the output to show just the species names
+    ]);
+
+    // Extract species names into an array
+    const speciesNames = uniqueSpecies.map(species => species.name);
+
+    // Return the unique species names as a response
+    res.status(200).json({
+      success: true,
+      species: speciesNames, // Return an array of species names
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
     });
   }
 };

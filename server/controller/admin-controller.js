@@ -635,7 +635,7 @@ export const getUserTypeAndCount = async (req, res) => {
 export const getLatestLogs = async (req, res) => {
   try {
     // Fetch the latest logs (adjust the number of logs you need, here it's set to 10)
-    const logs = await Log.find()
+    const logs = await Log.find({ fileType: { $ne: "manual" } })
       .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
       .limit(10) // Limit to the latest 10 logs
       .populate({

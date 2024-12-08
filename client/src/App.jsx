@@ -32,6 +32,8 @@ import Communitydetail from "./Pages/Community-detail";
 import FishingData from "./Pages/community-fishing-data";
 import MapComponent from "./Pages/GetLatLong";
 import CustomizableChart from "./Pages/graphs";
+import Filters from "./Pages/ScientistFilters";
+import FilterForm from "./Pages/ScientistFilters";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -120,6 +122,7 @@ function App() {
           />
           <Route path="/map" element={<FishingMap />} />
           <Route path="/data-upload" element={<Addexcel />} />
+          <Route path="/filter" element={<FilterForm />} />
 
           {/* Researcher Routes */}
           <Route path="/Research/Map-data/:id" element={<ResearchMap />} />
@@ -130,7 +133,7 @@ function App() {
           <Route path="/scientist/home" element={<ScientistHome />} />
           <Route path="/scientist/community" element={<Community />} />
           <Route path="/scientist/community/:communityId" element={<Communitydetail />} />
-          <Route path="/scientist/community/share/:shareURL" element={<FishingData />} />
+          <Route path="/scientist/community/share/:shareURL" element={<Filters />} />
         </Routes>
       </AppLayout>
     </Router>
