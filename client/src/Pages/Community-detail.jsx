@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import CatchItemDetail from "../Components/Scientist/Community-data";
 import { Button, Modal } from "flowbite-react";
+
 
 const Communitydetail = () => {
   const [data, setData] = useState([]); // To store the community data
@@ -11,6 +13,7 @@ const Communitydetail = () => {
   const [showComments, setShowComments] = useState({}); // State to track visibility of comments for each community
   const { communityId } = useParams(); // Get the communityId from the URL params
   const [openModal, setOpenModal] = useState(false);
+  const [openModalTwo, setOpenModalTwo] = useState(false); // Modal visibility state
   const [id, setId] = useState(false);
 
   useEffect(() => {
@@ -38,7 +41,8 @@ const Communitydetail = () => {
       ...prevState,
       [communityId]: !prevState[communityId], // Toggle the visibility of the specific card
     }));
-  };  
+  };
+
   const handleShareClick = (id) => {
     setId(id)
     setOpenModal(true); // Open the modal
@@ -65,70 +69,81 @@ const Communitydetail = () => {
 
   return (
     <>
-  <Modal show={openModal} onClose={() => setOpenModal(false)}>
-    <Modal.Header>Share Community</Modal.Header>
-    <Modal.Body>
-      <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-        How do you want to share this community?
-      </p>
-    </Modal.Body>
-    <Modal.Footer>
-      <Button color="green" onClick={() => generateUrl("public")}>
-        Keep as Public
-      </Button>
-      <Button color="blue" onClick={() => generateUrl("private")}>
-        Keep as Private
-      </Button>
-    </Modal.Footer>
-  </Modal>
+      {/* Share Modal */}
+      <Modal show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal.Header>Share Community</Modal.Header>
+        <Modal.Body>
+          <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+            How do you want to share this community?
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button color="green" onClick={() => generateUrl("public")}>
+            Keep as Public
+          </Button>
+          <Button color="blue" onClick={() => generateUrl("private")}>
+            Keep as Private
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-  <div className="min-h-screen bg-gray-100 p-4">
-    <h1 className="text-2xl font-bold mb-4">Community Details</h1>
-    {data.length > 0 ? (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((community, i) => (
-          <div
-            key={i}
-            className="bg-white rounded-lg shadow-md p-4"
-          >
-            <h2 className="text-xl font-semibold text-black">
-              Community Name: {community.community.name}
-            </h2>
-            <h3 className="text-lg text-black-400">
-              Uploaded By: {community.uploadedBy.username}
-            </h3>
-
-            <button
-              className="bg-blue-600 text-white px-4 py-2 mt-4 rounded-md"
-              onClick={() => toggleCommentVisibility(community.community._id)}
-            >
-              {showComments[community.community._id]
-                ? "Hide Details"
-                : "Show Details"}
-            </button>
-
-            {showComments[community.community._id] && community.data.length > 0 ? (
-              community.data.map((catchItem) => (
-                <CatchItemDetail key={catchItem._id} catchItem={catchItem} />
-              ))
-            ) : (
-              <div>No data available for this community.</div>
-            )}
-
-            <button
-              className="bg-green-600 text-white px-4 py-2 mt-4 rounded-md"
-              onClick={() => handleShareClick(community._id)}
-            >
-              Share
-            </button>
+      {/* Main Community Details */}
+      <div className="min-h-screen bg-gray-100 p-4">
+        <h1 className="text-2xl font-bold mb-4">Community Details</h1>
+        {data.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.map((community, i) => (
+              <div key={i} className="bg-white rounded-lg shadow-md p-4">
+                <h2 className="text-xl font-semibold text-black">
+                  Community Name: {community.community.name}
+                </h2>
+                <h3 className="text-lg text-black-400">
+                  Uploaded By: {community.uploadedBy.username}
+                </h3>
+              <div  className="flex gap-20">
+                <button
+                  className="bg-blue-600 text-white px-4 py-2 mt-4 rounded-md"
+                  onClick={() => setOpenModalTwo(true)}
+                >
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                
+                <button
+                  className="bg-green-600 text-white px-4 py-2 mt-4 rounded-md"
+                  onClick={() => handleShareClick(community._id)}
+                >
+                  <i class="fa-solid fa-share-nodes"></i>
+                </button>
+                </div>
+                {/* Modal to show community details */}
+                <Modal show={openModalTwo} onClose={() => setOpenModalTwo(false)} size="7xl">
+                  <Modal.Header>Community Details</Modal.Header>
+                  <Modal.Body>
+                    {community.data.length > 0 ? (
+                      community.data.map((catchItem) => (
+                        <CatchItemDetail key={catchItem._id} catchItem={catchItem} />
+                      ))
+                    ) : (
+                      <div>No data available for this community.</div>
+                    )}
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <button
+                      className="bg-red-600 text-white px-4 py-2 rounded-md"
+                      onClick={() => setOpenModalTwo(false)} // Close the modal when clicked
+                    >
+                      Close
+                    </button>
+                  </Modal.Footer>
+                </Modal>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <div>No communities found.</div>
+        )}
       </div>
-    ) : (
-      <div>No communities found.</div>
-    )}
-  </div>
-</>
+    </>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 // Schema for species details within each fishing record
@@ -57,9 +56,9 @@ const ValidatedCatchSchema = new mongoose.Schema(
       type: Number,
       default: null, // Total weight of the catch, can be null
     },
-    tag: {
+    dataType: {
       type: String,
-      enum: ["abundance", "occurrence"], // Defines if data is of type "abundance" or "occurrence"
+      enum: ["abundance", "occurrence","other"], // Defines if data is of type "abundance" or "occurrence"
       required: true, // Indicates the type of data
     },
     timestamp: {
