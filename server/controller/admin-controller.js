@@ -16,7 +16,7 @@ import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
 import Scientist from "../models/Scientist.js";
 
-import CatchData from "../models/FishcatchDataNew.js"
+import CatchData from "../models/FishcatchDataNew.js";
 // Get unverified users by userType
 export const getUnverifiedUser = async (req, res) => {
   const { userType } = req.body; // Get userType from query parameters
@@ -224,20 +224,6 @@ export const getDetailsData = async (req, res) => {
 //   }
 // };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
     const { userId, dataId } = req.body;
@@ -257,7 +243,6 @@ export const getCatchDataGroupedByUser = async (req, res) => {
     // Use ObjectId to query the database
     const objectId = new mongoose.Types.ObjectId(userId);
     console.log("objectId", objectId);
-   
 
     // Aggregate query to filter by userId and dataId, and group the data by userId
     const catchData = await CatchData.aggregate([
@@ -269,7 +254,7 @@ export const getCatchDataGroupedByUser = async (req, res) => {
         },
       },
     ]);
-
+    console.log("catchData", catchData);
     // Check if any data was found
     if (catchData.length === 0) {
       return res
@@ -635,7 +620,7 @@ export const getUserTypeAndCount = async (req, res) => {
 export const getLatestLogs = async (req, res) => {
   try {
     // Fetch the latest logs (adjust the number of logs you need, here it's set to 10)
-    const logs = await Log.find()
+    const logs = await Log.find({ fileType: { $ne: "manual" } })
       .sort({ uploadTimestamp: -1 }) // Sort by the latest uploadTimestamp
       .limit(10) // Limit to the latest 10 logs
       .populate({

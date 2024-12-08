@@ -53,6 +53,9 @@ const CatchSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    zoneType: {
+      type: String,
+    },
     total_weight: {
       type: Number,
       default: 0,

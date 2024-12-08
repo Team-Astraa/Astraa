@@ -36,6 +36,7 @@
     "nodemailer": "^6.9.16",
     "path": "^0.12.7",
     "server": "file:",
+    "socket.io": "^4.8.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
