@@ -74,6 +74,7 @@ import {
   getFilteredCatches,
   getUnique,
   graphdata,
+  saveScientistData,
   sendInvitation,
 } from "./controller/scientist-controller.js";
 import  { getSpeciesData,  getCatchCountBySpeciesPerMonth, getCatchDataForBubbleChart, getCatchWeightBySea, getCatchWeightByState, getCatchWeightForEachSpeciesPerMonth, getCatchWeightVsDepth, getLocationDataForBubbleChart, getNumberOfCatchesPerMonth, getSpeciesDistribution, getTotalCatchWeightPerMonth, totalCatchWeightByDataType, totalCatchWeightByDate, totalCatchWeightByDepth, totalCatchWeightBySea, totalCatchWeightBySpecies, totalCatchWeightByState, getCatchTypeData, getSeaData, getStateData, getDateTotalWeightData,  getLatitudeDepthData } from "./controller/graphs.controller.js";
@@ -176,6 +177,7 @@ app.post("/scientist/fetch-invitations", fetchInvitation);
 app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
+app.post("/scientist/saveScientistData", saveScientistData);
 app.post("/graph", graphdata);
 
 

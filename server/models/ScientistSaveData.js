@@ -1,0 +1,19 @@
+// models/CommunityData.js
+import mongoose from "mongoose";
+// Define the community data schema
+const scientistSaveData = new mongoose.Schema(
+  {
+    data: [],
+    uploadedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    createdAt: { type: Date, default: Date.now }
+  },
+  {
+    timestamps: true, // Automatically include createdAt and updatedAt fields
+  }
+);
+
+export default mongoose.model("scientistSaveData", scientistSaveData);

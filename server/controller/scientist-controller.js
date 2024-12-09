@@ -5,6 +5,7 @@ import Scientist from "../models/Scientist.js";
 import Invitation from "../models/invitation.js";
 import User from "../models/User.js";
 import CommunityData from "../models/CommunityData.js";
+import ScientistSaveData from "../models/ScientistSaveData.js";
 
 export const getUnique = async (req, res) => {
   try {
@@ -24,7 +25,6 @@ export const getUnique = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
-
 
 export const getFilteredCatches = async (req, res) => {
   try {
@@ -157,10 +157,7 @@ export const getFilteredCatches = async (req, res) => {
       .status(500)
       .json({ message: "An error occurred while filtering the catches." });
   }
-}
-
-
-
+};
 
 export const createCommunity = async (req, res) => {
   try {
@@ -464,7 +461,6 @@ export const fetchCommunityWithData = async (req, res) => {
   }
 };
 
-
 export const fetchCommunityShareData = async (req, res) => {
   const communityId = req.body.communityDataId;
 
@@ -495,30 +491,33 @@ export const fetchCommunityShareData = async (req, res) => {
   }
 };
 
-
-
 export const graphdata = async (req, res) => {
   try {
     const { xField, yField, speciesFilter, dateRange } = req.body;
 
     // Basic validation
     if (!xField || !yField) {
-      return res.status(400).json({ message: 'xField and yField are required.' });
+      return res
+        .status(400)
+        .json({ message: "xField and yField are required." });
     }
 
     let matchConditions = {};
 
     // Apply date range filter
     if (dateRange) {
-      const [startDate, endDate] = dateRange.split(',');
+      const [startDate, endDate] = dateRange.split(",");
       if (startDate && endDate) {
-        matchConditions.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+        matchConditions.date = {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate),
+        };
       }
     }
 
     // Apply species filter
     if (speciesFilter) {
-      matchConditions['species.name'] = speciesFilter;
+      matchConditions["species.name"] = speciesFilter;
     }
 
     // Query the database with filtering
@@ -528,10 +527,10 @@ export const graphdata = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'species',
-          localField: 'species',
-          foreignField: '_id',
-          as: 'speciesDetails',
+          from: "species",
+          localField: "species",
+          foreignField: "_id",
+          as: "speciesDetails",
         },
       },
       {
@@ -540,9 +539,9 @@ export const graphdata = async (req, res) => {
           latitude: 1,
           longitude: 1,
           depth: 1,
-          'speciesDetails.name': 1,
+          "speciesDetails.name": 1,
           total_weight: 1,
-          totalCount: { $size: '$species' },
+          totalCount: { $size: "$species" },
         },
       },
     ]);
@@ -556,7 +555,46 @@ export const graphdata = async (req, res) => {
     // Send the filtered data back
     res.status(200).json({ data: chartData });
   } catch (err) {
-    console.error('Error fetching catch data:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error("Error fetching catch data:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+export const saveScientistData = async (req, res) => {
+  try {
+    const { data, uploadedBy } = req.body;
+
+    console.log("the uplo", uploadedBy, "dada", data);
+
+    // Validate request body
+    if (!data || !Array.isArray(data)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid data format. 'data' must be an array." });
+    }
+
+    if (!uploadedBy) {
+      return res
+        .status(400)
+        .json({ error: "The 'uploadedBy' field is required." });
+    }
+
+    // Save the data to the database
+    const scientistData = new ScientistSaveData({
+      data,
+      uploadedBy,
+    });
+
+    const savedData = await scientistData.save();
+
+    return res.status(201).json({
+      message: "Data saved successfully.",
+      savedData,
+    });
+  } catch (error) {
+    console.error("Error saving scientist data:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while saving the data." });
   }
 };
