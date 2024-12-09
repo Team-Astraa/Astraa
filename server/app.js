@@ -20,9 +20,11 @@ import {
 // import { assert } from "console";
 // import serviceAccountKey from "./medium-clone-2b0eb-firebase-adminsdk-4m109-6a21350bd0.json" assert { type: "json" };
 
-
 //charts controller//
-import {getChartData,getFilteredDashboard} from "./controller/ChartsController.js"
+import {
+  getChartData,
+  getFilteredDashboard,
+} from "./controller/ChartsController.js";
 import { downloadFile } from "./controller/fileController.js";
 import {
   getCatchDataGroupedByUser,
@@ -76,7 +78,30 @@ import {
   graphdata,
   sendInvitation,
 } from "./controller/scientist-controller.js";
-import  { getSpeciesData,  getCatchCountBySpeciesPerMonth, getCatchDataForBubbleChart, getCatchWeightBySea, getCatchWeightByState, getCatchWeightForEachSpeciesPerMonth, getCatchWeightVsDepth, getLocationDataForBubbleChart, getNumberOfCatchesPerMonth, getSpeciesDistribution, getTotalCatchWeightPerMonth, totalCatchWeightByDataType, totalCatchWeightByDate, totalCatchWeightByDepth, totalCatchWeightBySea, totalCatchWeightBySpecies, totalCatchWeightByState, getCatchTypeData, getSeaData, getStateData, getDateTotalWeightData,  getLatitudeDepthData } from "./controller/graphs.controller.js";
+import {
+  getSpeciesData,
+  getCatchCountBySpeciesPerMonth,
+  getCatchDataForBubbleChart,
+  getCatchWeightBySea,
+  getCatchWeightByState,
+  getCatchWeightForEachSpeciesPerMonth,
+  getCatchWeightVsDepth,
+  getLocationDataForBubbleChart,
+  getNumberOfCatchesPerMonth,
+  getSpeciesDistribution,
+  getTotalCatchWeightPerMonth,
+  totalCatchWeightByDataType,
+  totalCatchWeightByDate,
+  totalCatchWeightByDepth,
+  totalCatchWeightBySea,
+  totalCatchWeightBySpecies,
+  totalCatchWeightByState,
+  getCatchTypeData,
+  getSeaData,
+  getStateData,
+  getDateTotalWeightData,
+  getLatitudeDepthData,
+} from "./controller/graphs.controller.js";
 
 dotenv.config();
 const app = express();
@@ -88,8 +113,13 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
+<<<<<<< HEAD
+    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+=======
       //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
       "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+>>>>>>> da6e42774735e6a829f4eabb47272175fef3f2d9
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -163,7 +193,6 @@ app.put("/user/Password-update", changePassword);
 app.post("/user/other-data-upload", otherDataUpload);
 app.post("/user/getUniqueSpeciesNames", getUniqueSpeciesNames);
 
-
 // Scientist Routes
 app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
@@ -178,10 +207,8 @@ app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 app.post("/graph", graphdata);
 
-
-
 ///Data Visulaization
-app.post('/scientist/visualize', getChartData);
+app.post("/scientist/visualize", getChartData);
 app.post("/scientist/get-chart-url", getFilteredDashboard);
 
 // Upload Routes
@@ -211,58 +238,50 @@ app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
 // Optional: Route to fetch all users who uploaded any data
 app.get("/admin/all-users", getAllUsers);
 
-
-
 //bar chart
 
-app.post('/total-catch-weight-by-date' , totalCatchWeightByDate);
-app.post('/total-catch-weight-by-species' , totalCatchWeightBySpecies);
-app.post('/total-catch-weight-by-sea' , totalCatchWeightBySea);
-app.post('/total-catch-weight-by-state' , totalCatchWeightByState);
-app.post('/total-catch-weight-by-depth' , totalCatchWeightByDepth);
-app.post('/total-catch-weight-by-data-type' , totalCatchWeightByDataType);
+app.post("/total-catch-weight-by-date", totalCatchWeightByDate);
+app.post("/total-catch-weight-by-species", totalCatchWeightBySpecies);
+app.post("/total-catch-weight-by-sea", totalCatchWeightBySea);
+app.post("/total-catch-weight-by-state", totalCatchWeightByState);
+app.post("/total-catch-weight-by-depth", totalCatchWeightByDepth);
+app.post("/total-catch-weight-by-data-type", totalCatchWeightByDataType);
 
+// bubble chart
+app.post("/getCatchDataForBubbleChart", getCatchDataForBubbleChart);
+app.post("/getCatchWeightVsDepth", getCatchWeightVsDepth);
+app.post("/getLocationDataForBubbleChart", getLocationDataForBubbleChart);
 
-// bubble chart 
-app.post('/getCatchDataForBubbleChart' , getCatchDataForBubbleChart );
-app.post('/getCatchWeightVsDepth' , getCatchWeightVsDepth );
-app.post('/getLocationDataForBubbleChart' , getLocationDataForBubbleChart );
+// DoughnutChart
 
-
-// DoughnutChart 
-
-app.post('/getSpeciesDistribution' , getSpeciesDistribution );
-app.post('/getCatchWeightBySea' , getCatchWeightBySea );
-app.post('/getCatchWeightByState' , getCatchWeightByState );
-
+app.post("/getSpeciesDistribution", getSpeciesDistribution);
+app.post("/getCatchWeightBySea", getCatchWeightBySea);
+app.post("/getCatchWeightByState", getCatchWeightByState);
 
 // line chart
-app.post('/getTotalCatchWeightPerMonth' , getTotalCatchWeightPerMonth );
-app.post('/getNumberOfCatchesPerMonth' , getNumberOfCatchesPerMonth );
+app.post("/getTotalCatchWeightPerMonth", getTotalCatchWeightPerMonth);
+app.post("/getNumberOfCatchesPerMonth", getNumberOfCatchesPerMonth);
 
-app.post('/getCatchCountBySpeciesPerMonth' , getCatchCountBySpeciesPerMonth );
-app.post('/getCatchWeightForEachSpeciesPerMonth' , getCatchWeightForEachSpeciesPerMonth );
-
+app.post("/getCatchCountBySpeciesPerMonth", getCatchCountBySpeciesPerMonth);
+app.post(
+  "/getCatchWeightForEachSpeciesPerMonth",
+  getCatchWeightForEachSpeciesPerMonth
+);
 
 // pir chart
 
-app.post('/getSpeciesData' , getSpeciesData );
-app.post('/getCatchTypeData' , getCatchTypeData );
-app.post('/getSeaData' , getSeaData );
-app.post('/getStateData' , getStateData );
-
+app.post("/getSpeciesData", getSpeciesData);
+app.post("/getCatchTypeData", getCatchTypeData);
+app.post("/getSeaData", getSeaData);
+app.post("/getStateData", getStateData);
 
 // scattor plot
 
-app.post('/getDateTotalWeightData' , getDateTotalWeightData );
-app.post('/getLatitudeDepthData' , getLatitudeDepthData );
-
-
-
-
+app.post("/getDateTotalWeightData", getDateTotalWeightData);
+app.post("/getLatitudeDepthData", getLatitudeDepthData);
 
 // Server Setup
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

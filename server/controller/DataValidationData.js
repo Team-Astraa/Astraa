@@ -240,51 +240,129 @@ export const autoCheckData = async (req, res) => {
   }
 };
 
+// export const saveValidatedData = async (req, res) => {
+//   try {
+//     const { data } = req.body; // Data sent from frontend
+
+//     console.log("Data in save:", data);
+
+//     // First, check if each dataId already exists in the database
+//     const existingDataIds = await CatchData.find({
+//       _id: { $in: data.map((item) => item.dataId) }, // Find all dataId present in the database
+//     }).select("_id"); // Only retrieve the _id of existing records
+
+//     const existingDataIdsSet = new Set(
+//       existingDataIds.map((item) => item._id.toString())
+//     ); // Create a Set for fast lookup
+
+//     // Filter out the data that already exists in the database
+//     const newData = data.filter((item) => !existingDataIdsSet.has(item.dataId));
+
+//     if (newData.length === 0) {
+//       return res.status(202).json({
+//         success: false,
+//         message: "All data is already saved in the database.",
+//       });
+//     }
+
+//     // Now, save only the new data to the database
+//     const savedData = await ValidatedCatchData.insertMany(newData);
+//     console.log("savedData", savedData);
+//     // Now update the 'verified' field to true for each of the saved records
+//     const updatePromises = savedData.map(async (fishData) => {
+//       await CatchData.updateOne(
+//         { _id: fishData._id }, // Find the record by its unique ID
+//         { $set: { verified: true } } // Set the 'verified' field to true
+//       );
+//     });
+
+//     console.log("updatePromises", updatePromises);
+//     // Wait for all the updates to finish
+//     await Promise.all(updatePromises);
+
+//     // Respond with success
+//     res
+//       .status(200)
+//       .json({ success: true, message: "Data saved and marked as verified" });
+//   } catch (error) {
+//     console.error("Error saving data:", error);
+//     res.status(500).json({ success: false, error: "Internal server error" });
+//   }
+// };
+
 export const saveValidatedData = async (req, res) => {
   try {
-    const { data } = req.body; // Data sent from frontend
+    const { data } = req.body;
 
     console.log("Data in save:", data);
 
-    // First, check if each dataId already exists in the database
+    // Extract data IDs for processing
+    const dataIds = data.map((item) => item.dataId);
+
+    // Check if the data IDs exist in `ValidatedCatchData`
+    const existingValidatedDataIds = await ValidatedCatchData.find({
+      _id: { $in: dataIds },
+    }).select("_id");
+
+    const existingValidatedDataSet = new Set(
+      existingValidatedDataIds.map((item) => item._id.toString())
+    );
+
+    // Filter out data already in `ValidatedCatchData`
+    const newValidatedData = data.filter(
+      (item) => !existingValidatedDataSet.has(item.dataId)
+    );
+
+    if (newValidatedData.length === 0) {
+      return res.status(202).json({
+        success: false,
+        message: "All data is already saved in ValidatedCatchData.",
+      });
+    }
+
+    // Check for existing data in `CatchData`
     const existingDataIds = await CatchData.find({
-      _id: { $in: data.map((item) => item.dataId) }, // Find all dataId present in the database
-    }).select("_id"); // Only retrieve the _id of existing records
+      _id: { $in: newValidatedData.map((item) => item.dataId) },
+    }).select("_id");
 
     const existingDataIdsSet = new Set(
       existingDataIds.map((item) => item._id.toString())
-    ); // Create a Set for fast lookup
+    );
 
-    // Filter out the data that already exists in the database
-    const newData = data.filter((item) => !existingDataIdsSet.has(item.dataId));
+    // Filter out data already in `CatchData`
+    const newData = newValidatedData.filter((item) =>
+      existingDataIdsSet.has(item.dataId)
+    );
 
     if (newData.length === 0) {
       return res.status(202).json({
         success: false,
-        message: "All data is already saved in the database.",
+        message: "All data is already saved in CatchData.",
       });
     }
 
-    // Now, save only the new data to the database
+    // Save the new data to `ValidatedCatchData`
     const savedData = await ValidatedCatchData.insertMany(newData);
+    console.log("savedData", savedData);
 
-    // // Now update the 'verified' field to true for each of the saved records
-    // const updatePromises = savedData.map(async (fishData) => {
-    //   await CatchData.updateOne(
-    //     { _id: fishData._id }, // Find the record by its unique ID
-    //     { $set: { verified: true } } // Set the 'verified' field to true
-    //   );
-    // });
+    // Bulk update `verified` field in `CatchData`
+    const bulkUpdateOperations = savedData.map((item) => ({
+      updateOne: {
+        filter: { _id: item.dataId },
+        update: { $set: { verified: true } },
+      },
+    }));
 
-    // // Wait for all the updates to finish
-    // await Promise.all(updatePromises);
+    if (bulkUpdateOperations.length > 0) {
+      await CatchData.bulkWrite(bulkUpdateOperations);
+    }
 
     // Respond with success
     res
       .status(200)
-      .json({ success: true, message: "Data saved and marked as verified" });
+      .json({ success: true, message: "Data saved and marked as verified." });
   } catch (error) {
     console.error("Error saving data:", error);
-    res.status(500).json({ success: false, error: "Internal server error" });
+    res.status(500).json({ success: false, error: "Internal server error." });
   }
 };
