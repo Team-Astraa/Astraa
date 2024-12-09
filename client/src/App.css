@@ -178,3 +178,64 @@ html {
   font-size: 30px;
   animation: textPulse 1.5s infinite;
 }
+
+
+.VIpgJd-ZVi9od-l4eHX-hSRGPd{
+  display: none !important;
+}
+
+
+#google_translate_element {
+  text-align: right;
+  margin: 10px;
+  font-family: Arial, sans-serif;
+
+}
+
+/* Dropdown styling */
+.goog-te-combo {
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  border: 2px solid black; /* Matches your preferred hacker theme */
+  border-radius: 8px;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+  width: 200px;
+  font-weight: bold;
+  
+}
+
+.goog-te-combo:hover {
+  background-color: #e9ecef;
+  color: black;
+  cursor: pointer;
+}
+
+/* Dropdown container adjustments */
+.skiptranslate {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Placeholder "Select Language" option styling */
+.goog-te-combo option[value=""] {
+  font-style: italic;
+  color: #666;
+  padding: 4px;
+  
+}
+
+.goog-te-combo{
+  border: none !important;
+}
+
+.goog-te-combo option{
+  background-color: #f8f9fa;
+  color: #333;
+  padding: 3px !important;
+font-weight: 700;
+}
+
