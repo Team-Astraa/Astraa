@@ -62,7 +62,15 @@ const ScientistHome = () => {
     totalWeightMax: "",
   });
   const [data, setData] = useState([]);
-  const [communityData, setCommunityData] = useState([]);
+  const [features, setFeatures] = useState([
+    "average depth",
+    "total fish catch",
+    "common species",
+    "clock"
+  ]);
+
+  const [selectedFeature, setselectedFeature] = useState(features);
+  const [featureCount, setfeatureCount] = useState(4);
 
   const [showMapAndFilters, setShowMapAndFilters] = useState(false);
   const [loading, setLoading] = useState(false); // Loader state
@@ -648,6 +656,21 @@ const ScientistHome = () => {
     }
   };
 
+
+  const handleFeatureSelection = (feature) => {
+    if (selectedFeature.includes(feature)) {
+      // Remove the feature if it's already selected
+      setselectedFeature(selectedFeature.filter((item) => item !== feature));
+      setfeatureCount(featureCount - 1);
+    } else if(featureCount < 4) {   
+      // Add the feature if it's not already selected
+      setselectedFeature([...selectedFeature, feature]);
+      setfeatureCount(featureCount + 1);
+    } else {
+      alert("Upto 4 features only");
+    }
+  };
+
   return (
     <>
       <AnimationWrapper className="md:flex-row  rounded-[3xl]">
@@ -676,6 +699,11 @@ const ScientistHome = () => {
               <button
                 className="relative p-3 rounded-xl text-sm font-medium bg-red-500 text-white"
                 style={{ padding: "0 1rem 0 2rem" }}
+                onClick={() => {
+                  setOpenModal(true)
+                  setselectedFeature(features);
+                  }
+                }
               >
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <svg
@@ -756,10 +784,10 @@ const ScientistHome = () => {
           )}
 
           <div className="grid grid-cols-4 gap-6 h-1/3 mb-5">
-            <div
+
+            { features.includes("average depth") &&   <div
               className="bg-white rounded-xl p-4"
-              style={{ boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px" }}
-            >
+              style={{ boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px"}}>
               <Typography
                 variant="h4"
                 color="textSecondary"
@@ -778,17 +806,16 @@ const ScientistHome = () => {
                 Min: 0 <br />
                 Max: 110120m
               </Typography>
-            </div>
+            </div> }
 
-            <div
+            { features.includes("total fish catch") && <div
               className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
               style={{
                 boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
                 backgroundImage: "url(../../public/sea3_bg.jpg)",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
-              }}
-            >
+              }} >
               <Typography
                 variant="h4"
                 color="white"
@@ -800,43 +827,114 @@ const ScientistHome = () => {
                 16535 Kg <br />
                 (In Total){" "}
               </p>
-            </div>
+            </div> }
 
-            <div
+            {features.includes('common species') && <div
               className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
               style={{
                 boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
                 backgroundImage: "url(../../public/sea3_bg.jpg)",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
-              }}
-            >
+              }} >
+
               <Typography
                 variant="h4"
                 color="white"
-                style={{ fontSize: "1rem" }}
-              >
+                style={{ fontSize: "1rem" }} >
                 Most Common Species
               </Typography>
               <p className="  text-4xl text-white font-bold">
                 Mackeral (1950 kg)
               </p>
-            </div>
+            </div> }
 
-            <div
+            {features.includes('clock') && <div
               className="bg-white rounded-xl p-4 mx-auto w-full"
-              style={{ boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px" }}
-            >
+              style={{ boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px" }} >
               <Clock />
-            </div>
+            </div> }
 
-            {/* <div className="bg-white rounded-xl p-4 mx-auto w-full"  style={{boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px"
-            }}>
-              <MapboxVisualization
-                catchData={data}
-                props={{ type: "markers", showButton: true }}
-              />
-            </div> */}
+            { features.includes('average catch') && <div
+              onClick={() => handleFeatureSelection("average catch")}
+              className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 "
+              style={{
+                boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
+                backgroundImage: "url(../../public/sea3_bg.jpg)",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }} >
+
+              <Typography
+                variant="h4"
+                color="white"
+                style={{ fontSize: "1rem" }} >
+                Average Catch
+              </Typography>
+              <p className="  text-4xl text-white font-bold">
+                500 kg
+              </p>
+            </div> }
+
+            { features.includes('current location') && <div
+              className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
+              style={{
+                boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
+                backgroundImage: "url(../../public/sea3_bg.jpg)",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }} >
+
+              <Typography
+                variant="h4"
+                color="white"
+                style={{ fontSize: "1rem" }} >
+                Current Location
+              </Typography>
+              <p className="  text-4xl text-white font-bold">
+                Lingumpalli, Hyderabad
+              </p>
+            </div> }
+
+            { features.includes('feature7') && <div
+              className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
+              style={{
+                boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
+                backgroundImage: "url(../../public/sea3_bg.jpg)",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }} >
+
+              <Typography
+                variant="h4"
+                color="white"
+                style={{ fontSize: "1rem" }} >
+                Feature 7
+              </Typography>
+              <p className="  text-4xl text-white font-bold">
+                Lorem ipsum dolor sit amet.
+              </p>
+            </div> }
+
+            { features.includes('feature8') && <div
+              className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
+              style={{
+                boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
+                backgroundImage: "url(../../public/sea3_bg.jpg)",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }} >
+
+              <Typography
+                variant="h4"
+                color="white"
+                style={{ fontSize: "1rem" }} >
+                Feature 8
+              </Typography>
+              <p className="  text-4xl text-white font-bold">
+                Lorem ipsum dolor sit amet.
+              </p>
+            </div> }
           </div>
 
           {/* Left Side: Map and Filters */}
@@ -1072,59 +1170,62 @@ const ScientistHome = () => {
       >
         {/* Modal Header */}
         <Modal.Header className="bg-gray-800 border-b border-gray-700">
-          <h2 className="text-2xl font-bold text-green-500">
-            Select a Community
+          <h2 className="text-2xl font-bold text-white">
+            Customize your screen (select 4 features)
           </h2>
         </Modal.Header>
 
         {/* Modal Body */}
         <Modal.Body className="bg-gray-900">
-          <div className="space-y-6">
-            {/* Title */}
-            <div className="text-center">
-              <h3 className="text-xl font-semibold text-gray-300">
-                Please select the community you want to interact with.
-              </h3>
-            </div>
+          <div className=" grid grid-cols-4 grid-rows-2 gap-4">
 
-            {/* Community List */}
-            <div className="max-h-60 overflow-y-auto space-y-4">
-              {communities.map((community, index) => (
-                <div
-                  key={index}
-                  onClick={() => sendDataForCommunity(community._id)}
-                  className="flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer shadow-md transition duration-300"
-                >
-                  <span className="text-lg font-medium">{community.name}</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-              ))}
+          {[
+            "average depth",
+            "total fish catch",
+            "common species",
+            "clock",
+            "average catch",
+            "current location",
+            "feature7",
+            "feature8",
+          ].map((feature, index) => (
+            <div
+              key={index}
+              className={`bg-white rounded-xl p-4 text-white h-full ${
+                selectedFeature.includes(feature) ? "bg-blue-200" : "bg-white"
+              }`}
+              onClick={() => handleFeatureSelection(feature)}
+              style={{ boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px" }}
+            >
+              <Typography
+                variant="h4"
+                color="black"
+                style={{ fontSize: "1rem" }}
+              >
+                {feature.charAt(0).toUpperCase() + feature.slice(1)}
+              </Typography>
             </div>
+          ))}
+
+                
           </div>
         </Modal.Body>
 
         {/* Modal Footer */}
-        <Modal.Footer className="bg-gray-800 border-t border-gray-700">
-          <Button
-            color="gray"
-            onClick={() => setOpenModal(false)}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
-          >
-            Decline
-          </Button>
+
+        <Modal.Footer className="bg-gray-800 border-t border-gray-700 flex" style={{flexDirection: 'row-reverse',}}>
+          <button
+            onClick={() => {
+              setOpenModal(false)
+              setFeatures(selectedFeature);
+              console.log(selectedFeature);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md m" >
+            Select
+          </button>
+          
+      
+
         </Modal.Footer>
       </Modal>
     </>

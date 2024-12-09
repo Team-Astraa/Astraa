@@ -29,6 +29,23 @@ const ChartComponent = () => {
   const [selectedOptionp, setSelectedOptionp] = useState('getSpeciesData');
   const [selectedOptions, setSelectedOptions] = useState('getLatitudeDepthData');
 
+  const [selectedCharts, setSelectedCharts] = useState({
+    bar: false,
+    bubble: false,
+    doughnut: false,
+    line: true,
+    pie: false,
+    scatter: false,
+  });
+
+
+  const handleCheckboxChange = (chartType) => {
+    setSelectedCharts({
+      ...selectedCharts,
+      [chartType]: !selectedCharts[chartType],
+    });
+  };
+
   const options = [
     { label: 'Catch Weight by Date', value: 'by-date' },
     { label: 'Catch Weight by Species', value: 'by-species' },
@@ -475,54 +492,79 @@ const ChartComponent = () => {
 
 
 
-      {/* Chart Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
-        {/* Bar Chart */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
-          <h3 className="text-white text-center text-lg mb-4">Bar Chart</h3>
-
-          <BarChart toDate={toDate} fromDate={fromDate} selectedOption={selectedOption} />
-          <i onClick={() => setOpenModalBar(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
-        </div>
-
-        {/* Bubble Chart */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
-          <h3 className="text-white text-center text-lg mb-4">Bubble Chart</h3>
-          <BubbleChart toDate={toDate} fromDate={fromDate} selectedOptionBub={selectedOptionBub} />
-          <i onClick={() => setOpenModalBub(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
-        </div>
-
-        {/* Doughnut Chart */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
-          <h3 className="text-white text-center text-lg mb-4">Doughnut Chart</h3>
-          <DoughnutChart toDate={toDate} fromDate={fromDate} selectedOptiond={selectedOptiond} />
-          <i onClick={() => setOpenModald(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
-        </div>
-
-        {/* Line Chart */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
-          <h3 className="text-white text-center text-lg mb-4">Line Chart</h3>
-          <LineChart toDate={toDate} fromDate={fromDate} selectedOptionl={selectedOptionl} />
-          <i onClick={() => setOpenModall(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
-        </div>
-
-
-
-        {/* Pie Chart */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
-          <h3 className="text-white text-center text-lg mb-4">Pie Chart</h3>
-          <PieChart toDate={toDate} fromDate={fromDate} selectedOptionp={selectedOptionp} />
-          <i onClick={() => setOpenModalp(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
-        </div>
-
-        {/* Scatter Chart */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
-          <h3 className="text-white text-center text-lg mb-4">Scatter Chart</h3>
-          <ScatterChart toDate={toDate} fromDate={fromDate} selectedOptions={selectedOptions} />
-          <i onClick={() => setOpenModals(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+      <div>
+        <div className="flex flex-wrap justify-center mb-4 text-white gap-4">
+          {['bar', 'bubble', 'doughnut', 'line', 'pie', 'scatter'].map((chart) => (
+            <label
+              key={chart}
+              className="flex items-center bg-gray-800 p-2 rounded-lg shadow-md hover:bg-gray-700 transition-all cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={selectedCharts[chart]}
+                onChange={() => handleCheckboxChange(chart)}
+                className="appearance-none h-5 w-5 border border-gray-400 rounded-md checked:bg-green-500 focus:ring focus:ring-green-300 mr-2"
+              />
+              <span className="capitalize">{chart} Chart</span>
+            </label>
+          ))}
         </div>
 
         
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+          {/* Checkbox filters */}
+
+
+          {/* Conditional rendering based on selected charts */}
+          {selectedCharts.bar && (
+            <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
+              <h3 className="text-white text-center text-lg mb-4">Bar Chart</h3>
+              <BarChart toDate={toDate} fromDate={fromDate} selectedOption={selectedOption} />
+              <i onClick={() => setOpenModalBar(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+            </div>
+          )}
+
+          {selectedCharts.bubble && (
+            <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
+              <h3 className="text-white text-center text-lg mb-4">Bubble Chart</h3>
+              <BubbleChart toDate={toDate} fromDate={fromDate} selectedOptionBub={selectedOptionBub} />
+              <i onClick={() => setOpenModalBub(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+            </div>
+          )}
+
+          {selectedCharts.doughnut && (
+            <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
+              <h3 className="text-white text-center text-lg mb-4">Doughnut Chart</h3>
+              <DoughnutChart toDate={toDate} fromDate={fromDate} selectedOptiond={selectedOptiond} />
+              <i onClick={() => setOpenModald(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+            </div>
+          )}
+
+          {selectedCharts.line && (
+            <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
+              <h3 className="text-white text-center text-lg mb-4">Line Chart</h3>
+              <LineChart toDate={toDate} fromDate={fromDate} selectedOptionl={selectedOptionl} />
+              <i onClick={() => setOpenModall(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+            </div>
+          )}
+
+          {selectedCharts.pie && (
+            <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
+              <h3 className="text-white text-center text-lg mb-4">Pie Chart</h3>
+              <PieChart toDate={toDate} fromDate={fromDate} selectedOptionp={selectedOptionp} />
+              <i onClick={() => setOpenModalp(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+            </div>
+          )}
+
+          {selectedCharts.scatter && (
+            <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
+              <h3 className="text-white text-center text-lg mb-4">Scatter Chart</h3>
+              <ScatterChart toDate={toDate} fromDate={fromDate} selectedOptions={selectedOptions} />
+              <i onClick={() => setOpenModals(true)} className="fa-solid fa-filter text-2xl cursor-pointer text-white absolute right-3 top-3 hover:text-3xl transition-all duration-150"></i>
+            </div>
+          )}
+        </div>
       </div>
     </AnimationWrapper>
   );
