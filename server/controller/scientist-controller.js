@@ -6,6 +6,7 @@ import Invitation from "../models/invitation.js";
 import User from "../models/User.js";
 import CommunityData from "../models/CommunityData.js";
 import ScientistSaveData from "../models/ScientistSaveData.js";
+import mongoose from "mongoose";
 
 export const getUnique = async (req, res) => {
   try {
@@ -560,10 +561,18 @@ export const graphdata = async (req, res) => {
   }
 };
 
+function generateRandomId() {
+  const date = new Date();
+  const timestamp = date.getTime(); // Get the current timestamp in milliseconds
+  const randomNumber = Math.floor(Math.random() * 100000); // Generate a random number
+  const randomId = `ID-${timestamp}-${randomNumber}`; // Combine the timestamp and random number
+  return randomId;
+}
+
 export const saveScientistData = async (req, res) => {
   try {
     const { data, uploadedBy } = req.body;
-
+    let id = generateRandomId()
     console.log("the uplo", uploadedBy, "dada", data);
 
     // Validate request body
@@ -582,6 +591,7 @@ export const saveScientistData = async (req, res) => {
     // Save the data to the database
     const scientistData = new ScientistSaveData({
       data,
+      dataId: id,
       uploadedBy,
     });
 
@@ -596,5 +606,36 @@ export const saveScientistData = async (req, res) => {
     return res
       .status(500)
       .json({ error: "An error occurred while saving the data." });
+  }
+};
+
+
+export const getScientistSaveDataByUser = async (req, res) => {
+  try {
+    const { userId: uploadedBy } = req.body;
+
+    // Validate uploadedBy as a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(uploadedBy)) {
+      return res.status(400).json({ message: "Invalid uploadedBy ID format" });
+    }
+
+    // Convert uploadedBy to an ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(uploadedBy);
+
+    // Aggregation to group data by dataId
+    const aggregatedData = await CommunityData.aggregate([
+      { $match: { uploadedBy: userObjectId } },
+      { $group: { _id: "$dataId", data: { $push: "$data" } } },
+    ]);
+
+    // If no data is found, return an empty array
+    if (aggregatedData.length === 0) {
+      return res.status(404).json({ message: "No data found for this user" });
+    }
+
+    // Return the aggregated data
+    res.status(200).json(aggregatedData[0].data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
