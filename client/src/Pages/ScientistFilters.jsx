@@ -9,6 +9,7 @@ import ScientistFileDownload from "../Components/Scientist/ScientistFileDownload
 import Loader from "../Components/Loader";
 import ScientistLoader from "../Components/Scientist/ScientistLoader";
 import toast from "react-hot-toast";
+import FishCatchGraphs from "../Components/Scientist/FilterDataGraphs";
 
 
 const FilterForm = () => {
@@ -40,7 +41,9 @@ const FilterForm = () => {
   const [data, setData] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   let [message, setMessage] = useState("")
-  let [Visualize , setVisualize] = useState(false);
+  let [Visualize, setVisualize] = useState(false);
+  const [activeTab, setActiveTab] = useState('data'); // 'data' as the initial active tab
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -397,7 +400,7 @@ const FilterForm = () => {
 
   const [onConfirm, setOnConfirm] = useState(() => () => { });
 
-  let [openModalc , setOpenModalc] = useState(false)
+  let [openModalc, setOpenModalc] = useState(false)
   const [communities, setCommunities] = useState([]);
   let shareToCommunity = async () => {
     console.log("varad");
@@ -454,6 +457,17 @@ const FilterForm = () => {
   };
 
 
+  const handleVisualize = async () => {
+    setVisualize(true);
+  }
+
+  const handleTabClick = (tab) => {
+    if (!data) {
+      return toast.error("Please Apply the filters first...")
+    }
+    setActiveTab(tab);
+  };
+
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
       <nav className="w-full mb-4 px-12 flex items-center justify-between p-4 shadow-lg bg-white">
@@ -488,125 +502,146 @@ const FilterForm = () => {
 
 
               <div className="w-[60%] h-auto shadow-lg bg-white rounded-md">
-                {data ? (
-                  <>
-                    <div className="flex items-center justify-between w-full p-4 shadow-md">
-                      <h1 className="text-2xl font-bold">Your Data</h1>
-                      <div className="flex flex-col gap-2">
-                        <div className="flex gap-4 items-center justify-evenly">
-                          <div className="flex flex-col items-center justify-center text-green-500">
-                            <i onClick={() => downloadExcelWithCharts("xlsx")} className="fa-solid fa-file-excel text-xl"></i>
-                            <p className="text-sm text-center">Excel</p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center text-green-500">
-                            <i onClick={() => downloadExcelWithCharts("csv")} className="fa-solid fa-file-csv text-xl"></i>
-                            <p className="text-sm text-center">CSV</p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center text-blue-500">
-                            <i onClick={handleSaveData} className="fa-solid fa-floppy-disk text-xl"></i>
-                            <p className="text-sm text-center">Save</p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center text-purple-500">
-                            <i onClick={shareToCommunity} className="fa-solid fa-share text-xl"></i>
-                            <p className="text-sm text-center">Share</p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center text-red-500">
-                            <i className="fa-solid fa-chart-simple text-xl"></i>
-                            <p className="text-sm text-center">Visualize</p>
-                          </div>
-                        </div>
-
-                        <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
-                    </div>
-                    <div className="grid grid-cols-9 gap-2 p-4 border-t">
-                      {[
-                        "Species Name",
-                        "Latitude",
-                        "Longitude",
-                        "Depth",
-                        "Total Weight (kg)",
-                        "Sea",
-                        "State",
-                        "Zone Type",
-                        "Date",
-                      ].map((header) => (
-                        <div
-                          key={header}
-                          className="font-bold text-sm uppercase bg-gray-200 p-2 border"
-                        >
-                          {header}
-                        </div>
-                      ))}
-                    </div>
-                    {data.map((item, index) => (
-                      <div
-                        key={index}
-                        className="grid grid-cols-9 gap-2 p-4 border-t border-gray-200"
-                      >
-                        <div className="p-2 border">
-                          <div
-                            className="cursor-pointer flex items-center justify-center h-full text-black"
-                            onClick={() => openModal2(item.species)}
-                          >
-                            <i className="fa-solid fa-eye hover:text-lg transition-all duration-150"></i>
-                          </div>
-                        </div>
-                        <div className="p-2 border">
-                          {truncateDecimals(item.latitude, 2)}
-                        </div>
-                        <div className="p-2 border">
-                          {truncateDecimals(item.longitude, 2)}
-                        </div>
-                        <div className="p-2 border break-words">{item.depth}</div>
-                        <div className="p-2 border break-words">{item.total_weight}</div>
-                        <div className="p-2 border break-words">{item.sea}</div>
-                        <div className="p-2 border break-words">{item.state}</div>
-                        <div className="p-2 border break-words">{item.zoneType}</div>
-                        <div className="p-2 border break-words">
-                          {new Date(item.date).toLocaleDateString()}
-                        </div>
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <div className="flex items-center justify-center mt-24">
-                    <h1 className="text-3xl font-bold">Please Apply The Filters</h1>
+                <div className="w-full flex">
+                  <div
+                    className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'data' ? 'bg-green-500' : ''}`}
+                    onClick={() => handleTabClick('data')}
+                  >
+                    <h1 className="text-xl font-bold">DATA</h1>
                   </div>
-                )}
-
-                {/* Modal */}
-                {isModalOpen && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg w-1/3 p-6">
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Species Details</h2>
-                        <button
-                          className="text-gray-600 hover:text-gray-800"
-                          onClick={closeModal}
-                        >
-                          ✖
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        {modalData.map((species, idx) => (
-                          <div key={idx} className="text-gray-800">
-                            {`${species.name} (${species.catch_weight || "N/A"})`}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-6 text-right">
-                        <button
-                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          onClick={closeModal}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
+                  <div
+                    className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'graphs' ? 'bg-green-500' : ''}`}
+                    onClick={() => handleTabClick('graphs')}
+                  >
+                    <h1 className="text-xl font-bold">GRAPHS</h1>
                   </div>
-                )}
+                </div>
+                {
+
+                  activeTab == 'graphs' ? <FishCatchGraphs data={data} fileLoader={fileLoader} setfileLoader={setfileLoader} /> :
+                    <>
+
+                      {data ? (
+                        <>
+                          <div className="flex items-center justify-between w-full p-4 shadow-md">
+                            <h1 className="text-2xl font-bold">Your Data</h1>
+                            <div className="flex flex-col gap-2">
+                              <div className="flex gap-4 items-center justify-evenly">
+                                <div className="flex flex-col items-center justify-center text-green-500">
+                                  <i onClick={() => downloadExcelWithCharts("xlsx")} className="fa-solid fa-file-excel text-xl"></i>
+                                  <p className="text-sm text-center">Excel</p>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-green-500">
+                                  <i onClick={() => downloadExcelWithCharts("csv")} className="fa-solid fa-file-csv text-xl"></i>
+                                  <p className="text-sm text-center">CSV</p>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-blue-500">
+                                  <i onClick={handleSaveData} className="fa-solid fa-floppy-disk text-xl"></i>
+                                  <p className="text-sm text-center">Save</p>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-purple-500">
+                                  <i onClick={shareToCommunity} className="fa-solid fa-share text-xl"></i>
+                                  <p className="text-sm text-center">Share</p>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-red-500">
+                                  <i onClick={handleVisualize} className="fa-solid fa-chart-simple text-xl"></i>
+                                  <p className="text-sm text-center">Visualize</p>
+                                </div>
+                              </div>
+
+                              <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
+                          </div>
+                          <div className="grid grid-cols-9 gap-2 p-4 border-t">
+                            {[
+                              "Species Name",
+                              "Latitude",
+                              "Longitude",
+                              "Depth",
+                              "Total Weight (kg)",
+                              "Sea",
+                              "State",
+                              "Zone Type",
+                              "Date",
+                            ].map((header) => (
+                              <div
+                                key={header}
+                                className="font-bold text-sm uppercase bg-gray-200 p-2 border"
+                              >
+                                {header}
+                              </div>
+                            ))}
+                          </div>
+                          {data.map((item, index) => (
+                            <div
+                              key={index}
+                              className="grid grid-cols-9 gap-2 p-4 border-t border-gray-200"
+                            >
+                              <div className="p-2 border">
+                                <div
+                                  className="cursor-pointer flex items-center justify-center h-full text-black"
+                                  onClick={() => openModal2(item.species)}
+                                >
+                                  <i className="fa-solid fa-eye hover:text-lg transition-all duration-150"></i>
+                                </div>
+                              </div>
+                              <div className="p-2 border">
+                                {truncateDecimals(item.latitude, 2)}
+                              </div>
+                              <div className="p-2 border">
+                                {truncateDecimals(item.longitude, 2)}
+                              </div>
+                              <div className="p-2 border break-words">{item.depth}</div>
+                              <div className="p-2 border break-words">{item.total_weight}</div>
+                              <div className="p-2 border break-words">{item.sea}</div>
+                              <div className="p-2 border break-words">{item.state}</div>
+                              <div className="p-2 border break-words">{item.zoneType}</div>
+                              <div className="p-2 border break-words">
+                                {new Date(item.date).toLocaleDateString()}
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <div className="flex items-center justify-center mt-24">
+                          <h1 className="text-3xl font-bold">Please Apply The Filters</h1>
+                        </div>
+                      )}
+
+                      {/* Modal */}
+                      {isModalOpen && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                          <div className="bg-white rounded-lg w-1/3 p-6">
+                            <div className="flex justify-between items-center mb-4">
+                              <h2 className="text-xl font-bold">Species Details</h2>
+                              <button
+                                className="text-gray-600 hover:text-gray-800"
+                                onClick={closeModal}
+                              >
+                                ✖
+                              </button>
+                            </div>
+                            <div className="space-y-2">
+                              {modalData.map((species, idx) => (
+                                <div key={idx} className="text-gray-800">
+                                  {`${species.name} (${species.catch_weight || "N/A"})`}
+                                </div>
+                              ))}
+                            </div>
+                            <div className="mt-6 text-right">
+                              <button
+                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                onClick={closeModal}
+                              >
+                                Close
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+
+                }
               </div>
-
 
               <div className="w-[30%] h-auto shadow-lg bg-white rounded-md">
 
@@ -701,68 +736,68 @@ const FilterForm = () => {
           onConfirm={onConfirm}
         />
 
-<Modal
-        show={openModalc}
-        onClose={() => setOpenModalc(false)}
-        className="bg-gray-900 text-white"
-      >
-        {/* Modal Header */}
-        <Modal.Header className="bg-gray-800 border-b border-gray-700">
-          <h2 className="text-2xl font-bold text-green-500">
-            Select a Community
-          </h2>
-        </Modal.Header>
+        <Modal
+          show={openModalc}
+          onClose={() => setOpenModalc(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">
+              Select a Community
+            </h2>
+          </Modal.Header>
 
-        {/* Modal Body */}
-        <Modal.Body className="bg-gray-900">
-          <div className="space-y-6">
-            {/* Title */}
-            <div className="text-center">
-              <h3 className="text-xl font-semibold text-gray-300">
-                Please select the community you want to interact with.
-              </h3>
-            </div>
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <div className="space-y-6">
+              {/* Title */}
+              <div className="text-center">
+                <h3 className="text-xl font-semibold text-gray-300">
+                  Please select the community you want to interact with.
+                </h3>
+              </div>
 
-            {/* Community List */}
-            <div className="max-h-60 overflow-y-auto space-y-4">
-              {communities.map((community, index) => (
-                <div
-                  key={index}
-                  onClick={() => sendDataForCommunity(community._id)}
-                  className="flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer shadow-md transition duration-300"
-                >
-                  <span className="text-lg font-medium">{community.name}</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+              {/* Community List */}
+              <div className="max-h-60 overflow-y-auto space-y-4">
+                {communities.map((community, index) => (
+                  <div
+                    key={index}
+                    onClick={() => sendDataForCommunity(community._id)}
+                    className="flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer shadow-md transition duration-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-              ))}
+                    <span className="text-lg font-medium">{community.name}</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </Modal.Body>
+          </Modal.Body>
 
-        {/* Modal Footer */}
-        <Modal.Footer className="bg-gray-800 border-t border-gray-700">
-          <Button
-            color="gray"
-            onClick={() => setOpenModalc(false)}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
-          >
-            Decline
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              color="gray"
+              onClick={() => setOpenModalc(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </>
     </div>
   );

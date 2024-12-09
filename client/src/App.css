@@ -244,3 +244,20 @@ html {
   padding: 3px !important;
   font-weight: 700;
 }
+
+
+.mapboxgl-ctrl-logo{
+  display: none !important;
+}
+
+.mapboxgl-ctrl-attrib.mapboxgl-compact{
+  display: none !important;;
+}
+
+.mapboxgl-ctrl-bottom-right{
+  display: none !important;
+}
+
+#goog-gt-tt{
+  display: none !important;
+}
