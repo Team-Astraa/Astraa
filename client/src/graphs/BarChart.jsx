@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 
-const BarChart = ({toDate, fromDate,selectedOption }) => {
+const BarChart = ({toDate, fromDate,selectedOption ,filters }) => {
   const [chartData, setChartData] = useState({});
  
 
@@ -14,7 +14,8 @@ const BarChart = ({toDate, fromDate,selectedOption }) => {
     try {
       const response = await axios.post(`http://localhost:5000/total-catch-weight-${selectedOption}`, {
         from: fromDate,
-        to: toDate
+        to: toDate,
+        filters
       });
 
       const data = response.data;

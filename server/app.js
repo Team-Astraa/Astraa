@@ -76,6 +76,7 @@ import {
   getFilteredCatches,
   getUnique,
   graphdata,
+  saveScientistData,
   sendInvitation,
 } from "./controller/scientist-controller.js";
 import {
@@ -115,6 +116,8 @@ mongoose
   .connect(
     // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
     "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+      //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -200,6 +203,7 @@ app.post("/scientist/fetch-invitations", fetchInvitation);
 app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
+app.post("/scientist/saveScientistData", saveScientistData);
 app.post("/graph", graphdata);
 
 ///Data Visulaization

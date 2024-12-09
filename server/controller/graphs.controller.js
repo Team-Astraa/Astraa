@@ -3,6 +3,10 @@ import Catch from "../models/FishCatchData.js";
 import moment from 'moment'; 
 
 // Helper function for generating random colors
+
+
+
+
 const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -37,7 +41,7 @@ const formatChartData = (data, field) => {
   };
 
 export let  totalCatchWeightByDate = async(req , res)=>{
-    const { from, to } = req.body;
+    const { from, to  , filter} = req.body;
 
   // Parse the 'from' and 'to' dates
   const fromDate = parseDate(from);
