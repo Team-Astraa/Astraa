@@ -8,7 +8,6 @@ const ScientistCharts = () => {
   const [lastUpdated, setLastUpdated] = useState(Date.now());
   const [timeAgo, setTimeAgo] = useState(0);
 
-
   // const refreshDashboard = () => {
   //   setStatus("Refreshing dashboard...");
   //   setIframeSrc("");
@@ -30,7 +29,6 @@ const ScientistCharts = () => {
       setLastUpdated(Date.now()); // Update the last updated time
     }, 1000);
   };
-  
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -44,7 +42,7 @@ const ScientistCharts = () => {
     }, 1000); // Update every second
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, [lastUpdated]); // Only run this effect when `lastUpdated` changes
+  }, [lastUpdated]); // Only run this effect when lastUpdated changes
 
   // Auto-refresh the dashboard every 10 minutes (600,000 ms)
   useEffect(() => {
@@ -69,8 +67,9 @@ const ScientistCharts = () => {
       {/* Header */}
       <header className="bg-gray-800 text-white text-center py-4">
         <h1 className="text-3xl font-bold">Data Insights Visualization</h1>
-        <p className="text-sm">{status} Last Updated {formatTimeAgo()}</p>
-
+        <p className="text-sm">
+          {status} Last Updated {formatTimeAgo()}
+        </p>
       </header>
 
       {/* Fullscreen Dashboard */}
