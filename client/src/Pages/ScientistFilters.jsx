@@ -513,7 +513,7 @@ const FilterForm = () => {
                     className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'graphs' ? 'bg-green-500' : ''}`}
                     onClick={() => handleTabClick('graphs')}
                   >
-                    <h1 className="text-xl font-bold">GRAPHS</h1>
+                    <h1 className="text-xl font-bold">VISUAliZE</h1>
                   </div>
                 </div>
                 {
@@ -543,10 +543,7 @@ const FilterForm = () => {
                                   <i onClick={shareToCommunity} className="fa-solid fa-share text-xl"></i>
                                   <p className="text-sm text-center">Share</p>
                                 </div>
-                                <div className="flex flex-col items-center justify-center text-red-500">
-                                  <i onClick={handleVisualize} className="fa-solid fa-chart-simple text-xl"></i>
-                                  <p className="text-sm text-center">Visualize</p>
-                                </div>
+                               
                               </div>
 
                               <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
