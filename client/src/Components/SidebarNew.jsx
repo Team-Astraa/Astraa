@@ -302,7 +302,7 @@ const SidebarNew = () => {
       label: "Community",
     },
     {
-      to: "/datasets",
+      to: "/scientist/datasets",
       icon: <FaCloudUploadAlt size={20} />,
       label: "Datasets",
     },
