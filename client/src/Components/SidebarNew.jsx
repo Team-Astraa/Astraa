@@ -1,4 +1,3 @@
-// //
 // import React, { useEffect, useState } from "react";
 // import { Link, useNavigate } from "react-router-dom";
 // import astraaLogo from "../assets/astraa_logo.jpg";
@@ -44,6 +43,25 @@
 //     navigate("/signin");
 //   };
 
+//   const adminNavLinks = [
+//     {
+//       to: "/admin/home",
+//       icon: <FaTachometerAlt size={20} />,
+//       label: "Dashboard",
+//     },
+//     {
+//       to: "/admin/unverify-user",
+//       icon: <FaTachometerAlt size={20} />,
+//       label: "Unverfied Users",
+//     },
+//     {
+//       to: "/admin/get-data-upload-user",
+//       icon: <FaTachometerAlt size={20} />,
+//       label: "Uploaded Data",
+//     },
+//     { to: "/about", icon: <FaInfoCircle size={20} />, label: "About" },
+//     { to: "/profile", icon: <FaSignInAlt size={20} />, label: "Profile" },
+//   ];
 //   const defaultNavLinks = [
 //     {
 //       to: "/dashboard",
@@ -61,18 +79,22 @@
 
 //   const scientistNavLinks = [
 //     {
-//       to: "/dashboard",
+//       to: "/scientist/home",
 //       icon: <FaTachometerAlt size={20} />,
 //       label: "Dashboard",
 //     },
-//     { to: "/feed", icon: <FaCloudUploadAlt size={20} />, label: "Feed" },
+
 //     { to: "/filter", icon: <FaCloudUploadAlt size={20} />, label: "Filter" },
 //     {
-//       to: "/infographics",
+//       to: "/graphs",
 //       icon: <FaInfoCircle size={20} />,
 //       label: "Infographics",
 //     },
-//     { to: "/trends", icon: <FaInfoCircle size={20} />, label: "Trends" },
+//     {
+//       to: "/ScientistCharts",
+//       icon: <FaInfoCircle size={20} />,
+//       label: "Trends",
+//     },
 //     {
 //       to: "/scientist/community",
 //       icon: <FaInfoCircle size={20} />,
@@ -85,8 +107,13 @@
 //     },
 //   ];
 
-//   const navLinks =
-//     loggedUser?.userType === "scientist" ? scientistNavLinks : defaultNavLinks;
+//   // let navLinks = loggedUser?.userType === "scientist" && scientistNavLinks;
+//   let navLinks =
+//     loggedUser?.userType === "admin"
+//       ? adminNavLinks
+//       : loggedUser?.userType === "scientist"
+//       ? scientistNavLinks
+//       : defaultNavLinks;
 
 //   return (
 //     <>
@@ -172,7 +199,7 @@
 // export default SidebarNew;
 
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import astraaLogo from "../assets/astraa_logo.jpg";
 import profImage from "../assets/prof_img.png";
 import {
@@ -188,15 +215,16 @@ const SidebarNew = () => {
   const [login, setLogin] = useState(false);
   const [loggedUser, setLoggedUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to get current pathname
 
   useEffect(() => {
     const user = localStorage.getItem("aquaUser");
     if (user) {
-      const token = JSON.parse(user)?.token; // Extract token
+      const token = JSON.parse(user)?.token;
       if (token) {
         try {
-          const base64Payload = token.split(".")[1]; // Get the payload part
-          const decodedPayload = JSON.parse(atob(base64Payload)); // Decode and parse JSON
+          const base64Payload = token.split(".")[1];
+          const decodedPayload = JSON.parse(atob(base64Payload));
           setLoggedUser({
             username: decodedPayload?.username || "Guest",
             userType: decodedPayload?.userType || "N/A",
@@ -216,6 +244,26 @@ const SidebarNew = () => {
     navigate("/signin");
   };
 
+  const adminNavLinks = [
+    {
+      to: "/admin/home",
+      icon: <FaTachometerAlt size={20} />,
+      label: "Dashboard",
+    },
+    {
+      to: "/admin/unverify-user",
+      icon: <FaTachometerAlt size={20} />,
+      label: "Unverfied Users",
+    },
+    {
+      to: "/admin/get-data-upload-user",
+      icon: <FaTachometerAlt size={20} />,
+      label: "Uploaded Data",
+    },
+    { to: "/about", icon: <FaInfoCircle size={20} />, label: "About" },
+    { to: "/profile", icon: <FaSignInAlt size={20} />, label: "Profile" },
+  ];
+
   const defaultNavLinks = [
     {
       to: "/dashboard",
@@ -233,18 +281,21 @@ const SidebarNew = () => {
 
   const scientistNavLinks = [
     {
-      to: "/dashboard",
+      to: "/scientist/home",
       icon: <FaTachometerAlt size={20} />,
       label: "Dashboard",
     },
-    { to: "/feed", icon: <FaCloudUploadAlt size={20} />, label: "Feed" },
     { to: "/filter", icon: <FaCloudUploadAlt size={20} />, label: "Filter" },
     {
-      to: "/infographics",
+      to: "/graphs",
       icon: <FaInfoCircle size={20} />,
       label: "Infographics",
     },
-    { to: "/trends", icon: <FaInfoCircle size={20} />, label: "Trends" },
+    {
+      to: "/ScientistCharts",
+      icon: <FaInfoCircle size={20} />,
+      label: "Trends",
+    },
     {
       to: "/scientist/community",
       icon: <FaInfoCircle size={20} />,
@@ -257,8 +308,12 @@ const SidebarNew = () => {
     },
   ];
 
-  const navLinks =
-    loggedUser?.userType === "scientist" ? scientistNavLinks : defaultNavLinks;
+  let navLinks =
+    loggedUser?.userType === "admin"
+      ? adminNavLinks
+      : loggedUser?.userType === "scientist"
+      ? scientistNavLinks
+      : defaultNavLinks;
 
   return (
     <>
@@ -315,7 +370,11 @@ const SidebarNew = () => {
             <li key={label}>
               <Link
                 to={to}
-                className="flex gap-3 text-white no-underline hover:bg-purple-500 p-2 rounded-lg"
+                className={`flex gap-3 text-white no-underline p-2 rounded-lg ${
+                  location.pathname === to
+                    ? "bg-purple-500"
+                    : "hover:bg-gray-700"
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 <div>{icon}</div>
