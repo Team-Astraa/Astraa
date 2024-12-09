@@ -137,239 +137,72 @@ const Dashboard = () => {
           },
         ],
       };
-    return (
-    
-        <div className="flex-1 p-5 bg-white rounded-2xl">
-            <Typography variant="h4" gutterBottom>
-                Dashboard
-            </Typography>
-            <div className="flex gap-8 justify-between">
-                {/* Left Section */}
-                <div className="w-[70%]">
-                    {/* Some Visuals */}
-                    <div className="grid grid-cols-[40%_60%] gap-5">
-                        <div className="rounded-xl p-3 border border-lg border-purple-200">
-                                    <Typography variant="h6" color="textSecondary">
-                                        Species Weight Distribution
-                                    </Typography>
-                                    <Line data={lineData} />
-                        </div>
-
-                        <div className="rounded-xl p-3 border border-lg border-purple-500 row-span-2">
-                        
-                            <div className='h-full w-full'>
-                            
-                                <Typography variant="h6" color="textSecondary">
-                                    Species Weight Distribution
-                                </Typography>
-                                <div style={{ height: '450px' }}>
-                                    <Pie data={pieData} 
-                                    options={ {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        plugins: {
-                                            legend: {
-                                              labels: {
-                                                font: {
-                                                  size: 10, // Reduce font size
-                                                },
-                                              },
-                                              position: 'right'
-                                            },
-                                            tooltip: {
-                                              bodyFont: {
-                                                size: 1, // Adjust tooltip font size
-                                              },
-                                            },
-                                          },
-                                        }}
-                                       />
-                                        </div>
-                            </div>
-                        </div>
-
-                        <div className="rounded-xl p-3 border border-lg border-purple-500" >
-                            
-                            
-                                <Typography variant="h6" color="textSecondary">
-                                    Species Weight Distribution
-                                </Typography>
-                                <Bar data={barData} />
-                        
-                        </div>
-                    </div>
-
-                    <section className="my-5">
-                        <h3 className="font-semibold ml-6">Today's Tasks</h3>
-                        <Table />
-                    </section>
-
-                    {/* Some Details */}
-                    <div className="grid grid-cols-5 gap-5 my-4">
-                        <div className="rounded-xl p-3 border border-lg h-[10rem] border-purple-200 col-span-2"></div>
-                        <div className="rounded-xl p-3 border border-lg h-[10rem] border-purple-500"></div>
-                        <div className="rounded-xl p-3 border border-lg h-[10rem] border-purple-500"></div>
-                        <div className="rounded-xl p-3 border border-lg h-[10rem] border-purple-200"></div>
-                    </div>
-
-
-                    <div className="grid grid-cols-3 gap-5 my-4">
-                        <div className="rounded-xl p-3 border border-lg h-[10rem] border-purple-200 col-span-2"></div>
-                        <div className="rounded-xl p-3 border border-lg h-[10rem] border-purple-500"></div>
-                    </div>
-
-                    
+      return (
+          <div className="w-full h-full p-5 bg-white rounded-2xl flex flex-col gap-4">
+            {/* Header */}
+            <header className="w-full">
+              <Typography variant="h4" gutterBottom>
+                User Dashboard
+              </Typography>
+            </header>
+      
+            {/* Dashboard Sections */}
+            <div className="w-full h-full flex flex-wrap gap-4">
+              {/* First and Second Sections Side-by-Side */}
+              <div className="flex w-full gap-4">
+                {/* Section 1: Species Details (4 Cards) */}
+                <div className="w-1/2 h-auto grid grid-cols-2 grid-rows-2 gap-4">
+                  <div className="rounded-xl p-3 border border-purple-500">
+                    <Typography variant="h6" color="textSecondary">
+                      Total Unique Species
+                    </Typography>
+                  </div>
+                  <div className="rounded-xl p-3 border border-purple-500">
+                    <Typography variant="h6" color="textSecondary">
+                      Most Common Species
+                    </Typography>
+                  </div>
+                  <div className="rounded-xl p-3 border border-purple-500">
+                    <Typography variant="h6" color="textSecondary">
+                      Other Details 1
+                    </Typography>
+                  </div>
+                  <div className="rounded-xl p-3 border border-purple-500">
+                    <Typography variant="h6" color="textSecondary">
+                      Other Details 2
+                    </Typography>
+                  </div>
                 </div>
-                {/* Right Section */}
-                <div className="w-[30%] flex flex-col gap-5 ml-3">
-                    
-                    {/* <div><CustomCalendar /></div> */}
-                    <div className="rounded-xl p-3 border border-lg border-purple-200">
-                            <Typography variant="h6" color="textPrimary">
-                                Revenue Reports
-                            </Typography>
-
-                            <div className="grid grid-rows-2 gap-5 mt-6">    
-                                <div className="rounded-xl bg-[#F3F6FD] h-[10rem] p-4 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <h1 className='font-bold text-black text-xl'>10000</h1>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, quia.</p>
-                                    </div>
-
-                                    <div class="relative w-[7rem] h-[7rem] mt-3">
-                                    
-                                        <div class="absolute inset-0 rounded-full border-8 border-gray-300"></div>
-                                        
-                                        <div
-                                            class="absolute inset-0 rounded-full border-8 border-purple-500"
-                                            style={{clipPath: "inset(0 calc(50% - 2px) 0 0)", transform: "rotate(-160deg)"}}
-                                        ></div>
-                                        
-                                        <div class="absolute inset-0 flex items-center justify-center text-sm font-bold">
-                                            50%
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="rounded-xl bg-[#F3F6FD] h-[10rem] p-4 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <h1 className='font-bold text-black text-xl'>10000</h1>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, quia.</p>
-                                    </div>
-
-                                    <div class="relative w-[7rem] h-[7rem] mt-3">
-                                    
-                                        <div class="absolute inset-0 rounded-full border-8 border-gray-300"></div>
-                                        
-                                        <div
-                                            class="absolute inset-0 rounded-full border-8 border-purple-500"
-                                            style={{clipPath: "inset(0 calc(50% - 2px) 0 0)", transform: "rotate(-160deg)"}}
-                                        ></div>
-                                        
-                                        <div class="absolute inset-0 flex items-center justify-center text-sm font-bold">
-                                            50%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-
-                    <div className="rounded-xl p-3 border border-lg border-purple-200">
-                        <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900">
-                             Open Projects <strong>500</strong>
-                         </div>
-                    </div>
-                    <div className="rounded-xl p-3 border border-lg border-purple-200">
-                        <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900">
-                            Successfully Completed <strong>3502</strong>
-                        </div>
-                    </div>
-                    <div className="rounded-xl p-3 border border-lg border-purple-200">
-                        <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900">
-                            Earned this month <strong>$15000</strong>
-                        </div>
-                    </div>
+      
+                {/* Section 2: Map Component */}
+                <div className="w-1/2 h-auto rounded-xl p-3 border border-purple-500">
+                  <Typography variant="h6" color="textPrimary">
+                    Map Component
+                  </Typography>
                 </div>
+              </div>
+      
+              {/* Third and Fourth Sections Below */}
+              <div className="flex w-full gap-4">
+                {/* Section 3: Linear Graph */}
+                <div className="w-4/5 rounded-xl p-3 border border-purple-500">
+                  <Typography variant="h6" color="textSecondary">
+                    Linear Graph
+                  </Typography>
+                </div>
+      
+                {/* Section 4: Filter Options */}
+                <div className="w-1/5 rounded-xl p-3 border border-purple-500">
+                  <Typography variant="h6" color="textSecondary">
+                    Filter Options
+                  </Typography>
+                </div>
+              </div>
             </div>
-        </div>
-    );
-};
-
-export default Dashboard;
-
-
-// import React from 'react';
-// import CustomCalendar from '../Components/CustomCalendar';
-// import Table from '../Components/Table';
-
-// const Dashboard = () => {
-//     return (
-//         <div className="flex-1 p-5 bg-[#F4F7FC] rounded-2xl h-full">
-//             <div className="flex gap-8 justify-between">
-//                 {/* Left Section */}
-//                 <div className="w-[70%]">
-//                     {/* Dashboard Header */}
-//                     <header className="flex gap-8 items-center mb-5">
-//                         <h1 className="text-xl font-semibold">Dashboard</h1>
-//                         <input
-//                             type="text"
-//                             placeholder="Search"
-//                             className="py-2 px-4 rounded-full border-0 shadow-sm w-1/2"
-//                         />
-//                     </header>
-
-//                     {/* Greeting Section */}
-//                     <section className="bg-[#0f123f] text-white px-6 py-8 rounded-xl mb-5">
-//                         <div>
-//                             <h2 className="text-lg font-light">Good Morning, Farhaan</h2>
-//                             <p className="text-3xl font-semibold">Check your daily tasks & schedules</p>
-//                         </div>
-//                     </section>
-
-//                     {/* Activities Section */}
-//                     <section className="mb-5 p-6 bg-white rounded-xl shadow-md h-[18rem]">
-//                         <div className="flex justify-between items-center mb-4">
-//                             <h3 className="font-semibold text-lg">Activities</h3>
-//                             <div className="flex gap-2">
-//                                 <button className="py-1 px-3 rounded-md bg-blue-800 text-white">
-//                                     This Month
-//                                 </button>
-//                                 <button className="py-1 px-3 rounded-md bg-blue-800 text-white">
-//                                     This Week
-//                                 </button>
-//                             </div>
-//                         </div>
-//                         <div className="flex items-center justify-center text-blue-800">
-//                             Graph will go here
-//                         </div>
-//                     </section>
-
-//                     {/* Today's Tasks Section */}
-                    // <section className="mb-5">
-                    //     <h3 className="font-semibold ml-6">Today's Tasks</h3>
-                    //     <Table />
-                    // </section>
-//                 </div>
-
-//                 {/* Right Section */}
-//                 <div className="w-[30%]">
-//                     <CustomCalendar />
-
-//                     {/* Statistics Section */}
-//                     <section className="mt-8 flex flex-col gap-5">
-//                         <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900 shadow-md">
-//                             Open Projects <strong>500</strong>
-//                         </div>
-                        // <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900 shadow-md">
-                        //     Successfully Completed <strong>3502</strong>
-                        // </div>
-                        // <div className="flex-1 p-5 bg-white rounded-xl text-center text-lg text-blue-900 shadow-md">
-                        //     Earned this month <strong>$15000</strong>
-                        // </div>
-//                     </section>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Dashboard;
+          </div>
+        );
+      };
+      
+      export default Dashboard;
+      
+      
