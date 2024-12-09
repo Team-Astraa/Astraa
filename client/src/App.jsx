@@ -34,6 +34,7 @@ import MapComponent from "./Pages/GetLatLong";
 import CustomizableChart from "./Pages/graphs";
 import Filters from "./Pages/ScientistFilters";
 import FilterForm from "./Pages/ScientistFilters";
+import ProfilePage from "./Pages/Profile";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -97,6 +98,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile" element={<ProfilePage />} />
           {/* <Route path="/infographics" element={<Infographics />} /> */}
           <Route path="/graphs" element={<CustomizableChart />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
