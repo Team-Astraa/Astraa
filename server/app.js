@@ -88,7 +88,11 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
+<<<<<<< HEAD
       //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+=======
+      // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+>>>>>>> e8cc613dda67cd8ce40fac38d0603fdd845b7850
       "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
