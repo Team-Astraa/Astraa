@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import CatchItemDetail from "../Components/Scientist/Community-data";
 import { Button, Modal } from "flowbite-react";
-
 
 const Communitydetail = () => {
   const [data, setData] = useState([]); // To store the community data
@@ -44,22 +42,31 @@ const Communitydetail = () => {
   };
 
   const handleShareClick = (id) => {
-    setId(id)
+    setId(id);
     setOpenModal(true); // Open the modal
   };
 
-  const generateUrl = (type) => {
-    const baseUrl = `http://localhost:5173/scientist/community/share`;
+  const generateUrl = (id, type) => {
+    const baseUrl = "http://localhost:5173/scientist/community/share";
+
+    if (!id) {
+      console.error("id is required to generate the URL.");
+      return;
+    }
+
     // Encode the communityId with Base64
-    console.log(id);
-    
     const encodedId = btoa(`${id}-${type}`);
     const url = `${baseUrl}/${encodedId}`;
 
     // Copy the generated URL to the clipboard
-    navigator.clipboard.writeText(url).then(() => {
-      alert(`URL copied to clipboard: ${url}`);
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert(`URL copied to clipboard: ${url}`);
+      })
+      .catch((error) => {
+        console.error("Failed to copy URL to clipboard", error);
+      });
 
     setOpenModal(false); // Close the modal
   };
@@ -100,28 +107,35 @@ const Communitydetail = () => {
                 <h3 className="text-lg text-black-400">
                   Uploaded By: {community.uploadedBy.username}
                 </h3>
-              <div  className="flex gap-20">
-                <button
-                  className="bg-blue-600 text-white px-4 py-2 mt-4 rounded-md"
-                  onClick={() => setOpenModalTwo(true)}
-                >
-                  <i class="fa-solid fa-eye"></i>
-                </button>
-                
-                <button
-                  className="bg-green-600 text-white px-4 py-2 mt-4 rounded-md"
-                  onClick={() => handleShareClick(community._id)}
-                >
-                  <i class="fa-solid fa-share-nodes"></i>
-                </button>
+                <div className="flex gap-20">
+                  <button
+                    className="bg-blue-600 text-white px-4 py-2 mt-4 rounded-md"
+                    onClick={() => setOpenModalTwo(true)}
+                  >
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+
+                  <button
+                    className="bg-green-600 text-white px-4 py-2 mt-4 rounded-md"
+                    onClick={() => handleShareClick(community._id)}
+                  >
+                    <i class="fa-solid fa-share-nodes"></i>
+                  </button>
                 </div>
                 {/* Modal to show community details */}
-                <Modal show={openModalTwo} onClose={() => setOpenModalTwo(false)} size="7xl">
+                <Modal
+                  show={openModalTwo}
+                  onClose={() => setOpenModalTwo(false)}
+                  size="7xl"
+                >
                   <Modal.Header>Community Details</Modal.Header>
                   <Modal.Body>
                     {community.data.length > 0 ? (
                       community.data.map((catchItem) => (
-                        <CatchItemDetail key={catchItem._id} catchItem={catchItem} />
+                        <CatchItemDetail
+                          key={catchItem._id}
+                          catchItem={catchItem}
+                        />
                       ))
                     ) : (
                       <div>No data available for this community.</div>
