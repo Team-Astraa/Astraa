@@ -5,7 +5,7 @@ import MapboxVisualization from "./Admin-map";
 import { toast } from "react-hot-toast";
 import AnimationWrapper from "./Animation-page";
 import { Typography } from "@mui/material";
-// import Modal from "../Components/Modal";
+import Modal from "../Components/Modal";
 import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 const Adminverifyfish = () => {
   const [catchData, setCatchData] = useState([]);
@@ -16,6 +16,11 @@ const Adminverifyfish = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showRows, setshowRows] = useState(17);
+  const [errorRows, setErrorRows] = useState([]);
+  const [errorMessage, seterrorMessage] = useState([])
+  
+  const [hoveredRow, setHoveredRow] = useState(null);
+
 
   let { userId, dataId } = useParams();
   // console.log("USER ID in frontend", userId);
@@ -240,6 +245,14 @@ const Adminverifyfish = () => {
       }
 
       console.log("Validation Response:", response.data);
+      console.log("Dekhte hai", response.data.errors);
+      seterrorMessage(response.data.errors);
+
+      const errorRows = response.data.errors.map((error) => error.row);
+      // console.log("Errors are: " + errorRows);
+      setErrorRows(errorRows);
+
+    
     } catch (error) {
       console.error("Error validating catch data:", error);
       toast.error(
@@ -717,6 +730,7 @@ const Adminverifyfish = () => {
                       {/* <th className="text-xs text-gray-400 border border-gray-200">
                           Catch ID
                         </th> */}
+                        <th className="p-2 text-xs text-black">Actions</th>
                       <th className="p-2 text-xs text-black">Date</th>
                       <th className="p-2 text-xs text-black">
                         Latitude: (Float)
@@ -730,19 +744,101 @@ const Adminverifyfish = () => {
                       <th className="p-2 text-xs text-black">Species</th>
                       <th className="p-2 text-xs text-black">Total Weight</th>
 
-                      <th className="p-2 text-xs text-black">Actions</th>
+                      
                     </tr>
                   </thead>
                   <tbody>
                     {catchData.map((data) =>
-                      data.catches.slice(0, showRows).map((catchItem) => (
+                      data.catches.slice(0, showRows).map((catchItem, index) => (
+
                         <tr
                           key={catchItem._id}
-                          className="border-b border-gray-200 even:bg-gray-100"
-                        >
+                          className={`border-b border-gray-200
+                            ${errorRows.includes(index) ? " bg-red-100" : ""} `}
+                          onMouseEnter={() => setHoveredRow(index) }
+                          onMouseLeave={() => setHoveredRow(null)} >
                           {/* <td className="p-2 text-xs text-gray-400 border border-gray-200">
                               {catchItem._id}
                             </td> */}
+
+                          <td className="text-xs text-gray-300 border-gray-200">
+                            {editMode === true ? (
+                              <button
+                                className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
+                                onClick={() => handleDeleteRow(catchItem._id)}
+                              >
+                                "Delete"
+                              </button>
+                            ) : (hoveredRow === index && errorRows?.includes(index)) ? (
+                              <div className="absolute">
+                                <div className="bg-white border rounded shadow-md text-xs text-red-500 p-2 top-full mt-1 left-0 top-0 z-10">
+                                  <div className="flex items-center space-x-2">
+
+                                  <span>
+                                    {errorMessage
+                                      .filter((err) => err.row === hoveredRow) // Filter errors for the hovered row
+                                      .map((err, idx) => ( // Map over the filtered errors
+                                        <div key={idx}>{err.message}</div> // Render each error message
+                                      ))}
+                                  </span>
+                                  </div>
+                                </div>
+                              </div> ) :
+                            
+                            errorRows.includes(index) ? (
+                              <button
+                                style={{
+                                  width: "20px",
+                                  height: "20px",
+                                  color: "blue",  
+                                }}
+                                // onClick={() =>
+                                //   handleViewRow({
+                                //     lat: catchItem.latitude.toFixed(3),
+                                //     long: catchItem.longitude.toFixed(3),
+                                //   })
+                                // }
+                              >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    class="w-6 h-6 text-red-500"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      d="M12 2a10 10 0 100 20 10 10 0 000-20zM10.75 8.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4zM12 15.25a.75.75 0 110 1.5.75.75 0 010-1.5z"
+                                      clip-rule="evenodd"
+                                    />
+                                  </svg>
+
+                              </button>
+                            ) : (
+                              <button
+                                style={{
+                                  width: "20px",
+                                  height: "20px",
+                                  color: "blue",
+                                }}
+                                onClick={() =>
+                                  handleViewRow({
+                                    lat: catchItem.latitude.toFixed(3),
+                                    long: catchItem.longitude.toFixed(3),
+                                  })
+                                }
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 576 512"
+                                  fill="currentColor"
+                                >
+                                  <path d="M572.52 241.4C518.78 135.6 404.78 64 288 64S57.22 135.6 3.48 241.4a48.16 48.16 0 0 0 0 29.2C57.22 376.4 171.22 448 288 448s230.78-71.6 284.52-177.4a48.16 48.16 0 0 0 0-29.2zM288 400c-70.58 0-128-57.42-128-128s57.42-128 128-128 128 57.42 128 128-57.42 128-128 128zm0-208a80 80 0 1 0 80 80 80.09 80.09 0 0 0-80-80z" />
+                                </svg>
+                              </button>
+                            )}
+                          </td>
+
+                            
                           <td className="text-xs text-gray-400 p-0">
                             <input
                               type="date"
@@ -870,38 +966,9 @@ const Adminverifyfish = () => {
                           </td>
                           {/* Actions column with border (Delete button) */}
 
-                          <td className="text-xs text-gray-300 border-gray-200">
-                            {editMode === true ? (
-                              <button
-                                className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-                                onClick={() => handleDeleteRow(catchItem._id)}
-                              >
-                                "Delete"
-                              </button>
-                            ) : (
-                              <button
-                                style={{
-                                  width: "20px",
-                                  height: "20px",
-                                  color: "blue",
-                                }}
-                                onClick={() =>
-                                  handleViewRow({
-                                    lat: catchItem.latitude.toFixed(3),
-                                    long: catchItem.longitude.toFixed(3),
-                                  })
-                                }
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 576 512"
-                                  fill="currentColor"
-                                >
-                                  <path d="M572.52 241.4C518.78 135.6 404.78 64 288 64S57.22 135.6 3.48 241.4a48.16 48.16 0 0 0 0 29.2C57.22 376.4 171.22 448 288 448s230.78-71.6 284.52-177.4a48.16 48.16 0 0 0 0-29.2zM288 400c-70.58 0-128-57.42-128-128s57.42-128 128-128 128 57.42 128 128-57.42 128-128 128zm0-208a80 80 0 1 0 80 80 80.09 80.09 0 0 0-80-80z" />
-                                </svg>
-                              </button>
-                            )}
-                          </td>
+                          
+
+
                         </tr>
                       ))
                     )}

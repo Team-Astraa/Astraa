@@ -591,7 +591,7 @@ const Addexcel = () => {
                 Others / Disorganized Data
               </button>
             </div>
-            <div className="flex items-center gap-20 ">
+            {/* <div className="flex items-center gap-20 ">
                 <select
                   id="dataType"
                   className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
@@ -611,7 +611,7 @@ const Addexcel = () => {
                 >
                   Others / Disorganized Data
                 </button>
-              </div>
+              </div> */}
           </div>
           <p className="text-gray-500 text-md text-center mb-3 -mt-2">
             Upload a CSV or Excel File
