@@ -12,6 +12,7 @@ import HomePage from "./Pages/HomePage";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
+import About from "./Pages/About";
 import AdminHome from "./Pages/AdminHome";
 import Adminverifyuser from "./Pages/Admin-verify-user";
 import Adminverifyfish from "./Pages/Admin-verify-fish";
@@ -105,6 +106,10 @@ function App() {
           <Route
             path="/dashboard"
             element={<PrivateRoute element={<Dashboard />} />}
+          />
+          <Route
+            path="/about"
+            element={<PrivateRoute element={<About />} />}
           />
           <Route
             path="/map-box"
