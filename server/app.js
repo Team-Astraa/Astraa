@@ -39,6 +39,7 @@ import {
   getLatestLogs,
   acceptDataLog,
   rejectDataLog,
+  getMostCommonSpecies,
 } from "./controller/admin-controller.js";
 
 import {
@@ -49,8 +50,6 @@ import {
   otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
-
-import { uploadCSV2 } from "./controller/userControllerNew.js";
 
 import {
   autoCheckData,
@@ -236,6 +235,7 @@ app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
 
 // Optional: Route to fetch all users who uploaded any data
 app.get("/admin/all-users", getAllUsers);
+app.get("/admin/getMostCommonSpecies", getMostCommonSpecies);
 
 //bar chart
 

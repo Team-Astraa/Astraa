@@ -642,3 +642,44 @@ export const rejectDataLog = async (req, res) => {
       .json({ message: "An error occurred", error: error.message });
   }
 };
+
+
+export const getMostCommonSpecies = async (req, res) => {
+  try {
+    const mostCommonSpecies = await ValidatedCatch.aggregate([
+      {
+        $unwind: "$species", // Deconstruct the species array
+      },
+      {
+        $group: {
+          _id: "$species.name", // Group by species name
+          count: { $sum: 1 }, // Count occurrences of each species
+        },
+      },
+      {
+        $sort: { count: -1 }, // Sort by count in descending order
+      },
+      {
+        $limit: 1, // Limit to only the top 1 species
+      },
+    ]);
+
+    if (mostCommonSpecies.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No species data found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: mostCommonSpecies[0], // Return the most common species
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch the most common species",
+      error: error.message,
+    });
+  }
+};
