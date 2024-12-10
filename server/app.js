@@ -33,7 +33,7 @@ import {
   getUnverifiedUser,
   verifyUser,
   updateCatchData,
-  validateCatchData,
+  // validateCatchData,
   getUniqueSpeciesCount,
   getUserTypeAndCount,
   getLatestLogs,
@@ -113,13 +113,10 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-<<<<<<< HEAD
     // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    // "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+    //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
     "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
-=======
-      //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
->>>>>>> da6e42774735e6a829f4eabb47272175fef3f2d9
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -173,7 +170,7 @@ app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
 app.put("/admin/update-catch-data/:id", updateCatchData);
 app.get("/admin/usernames", getusername);
-app.post("/admin/validate-catch", validateCatchData);
+// app.post("/admin/validate-catch", validateCatchData);
 app.get("/admin/get-unique-fish-count", getUniqueSpeciesCount);
 app.get("/admin/get-userType-Count", getUserTypeAndCount);
 app.get("/admin/get-latest-logs", getLatestLogs);

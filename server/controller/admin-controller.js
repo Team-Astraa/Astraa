@@ -400,106 +400,106 @@ export const updateCatchData = async (req, res) => {
 };
 
 // POST endpoint to validate and save catch data
-export const validateCatchData = async (req, res) => {
-  try {
-    // Extracting the validated data (which is in an array of arrays)
-    const { validatedData } = req.body;
+// export const validateCatchData = async (req, res) => {
+//   try {
+//     // Extracting the validated data (which is in an array of arrays)
+//     const { validatedData } = req.body;
 
-    // Flatten the validated data if it's an array of arrays
-    const flattenedData = validatedData.flat(); // This flattens the array by one level
+//     // Flatten the validated data if it's an array of arrays
+//     const flattenedData = validatedData.flat(); // This flattens the array by one level
 
-    // console.log("Flattened validated data:", flattenedData);
+//     // console.log("Flattened validated data:", flattenedData);
 
-    // Validate the input: check if it's an array and not empty
-    if (!Array.isArray(flattenedData) || flattenedData.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "No validated catches provided." });
-    }
+//     // Validate the input: check if it's an array and not empty
+//     if (!Array.isArray(flattenedData) || flattenedData.length === 0) {
+//       return res
+//         .status(400)
+//         .json({ message: "No validated catches provided." });
+//     }
 
-    // Map through each validated catch object in the array
-    const processedValidatedCatches = flattenedData.map((catchData) => {
-      const {
-        _id, // Include the ID in the processed data
-        date,
-        latitude,
-        longitude,
-        depth,
-        species,
-        total_weight,
-        verified_date,
-        verifier_id,
-      } = catchData;
+//     // Map through each validated catch object in the array
+//     const processedValidatedCatches = flattenedData.map((catchData) => {
+//       const {
+//         _id, // Include the ID in the processed data
+//         date,
+//         latitude,
+//         longitude,
+//         depth,
+//         species,
+//         total_weight,
+//         verified_date,
+//         verifier_id,
+//       } = catchData;
 
-      // Processing the species array to handle missing fields inside each species object
-      const processedSpecies =
-        species && Array.isArray(species)
-          ? species.map((specie) => ({
-              name: specie.name || null, // If species name is missing, set to null
-              catch_weight: specie.catch_weight || null, // If catch weight is missing, set to null
-            }))
-          : [];
+//       // Processing the species array to handle missing fields inside each species object
+//       const processedSpecies =
+//         species && Array.isArray(species)
+//           ? species.map((specie) => ({
+//               name: specie.name || null, // If species name is missing, set to null
+//               catch_weight: specie.catch_weight || null, // If catch weight is missing, set to null
+//             }))
+//           : [];
 
-      // Returning the processed validated catch object
-      return {
-        _id, // Ensure the ID is included for uniqueness check
-        date: date || null, // If no date, set null
-        latitude: latitude || null, // If no latitude, set null
-        longitude: longitude || null, // If no longitude, set null
-        depth: depth || null, // If no depth, set null
-        species: processedSpecies, // Processed species array
-        total_weight: total_weight || 0, // If no total_weight, set to 0
-        verified_date: verified_date || null, // If no verified_date, set null
-        verifier_id: verifier_id || null, // If no verifier_id, set null
-      };
-    });
+//       // Returning the processed validated catch object
+//       return {
+//         _id, // Ensure the ID is included for uniqueness check
+//         date: date || null, // If no date, set null
+//         latitude: latitude || null, // If no latitude, set null
+//         longitude: longitude || null, // If no longitude, set null
+//         depth: depth || null, // If no depth, set null
+//         species: processedSpecies, // Processed species array
+//         total_weight: total_weight || 0, // If no total_weight, set to 0
+//         verified_date: verified_date || null, // If no verified_date, set null
+//         verifier_id: verifier_id || null, // If no verifier_id, set null
+//       };
+//     });
 
-    // console.log(
-    //   "Processed validated catches before DB insert:",
-    //   processedValidatedCatches
-    // );
+//     // console.log(
+//     //   "Processed validated catches before DB insert:",
+//     //   processedValidatedCatches
+//     // );
 
-    // Check if any catch already exists in the database using the provided _id
-    const existingCatches = await ValidatedCatch.find({
-      _id: { $in: processedValidatedCatches.map((catchData) => catchData._id) },
-    });
-    // console.log("existingCatches", existingCatches);
+//     // Check if any catch already exists in the database using the provided _id
+//     const existingCatches = await ValidatedCatch.find({
+//       _id: { $in: processedValidatedCatches.map((catchData) => catchData._id) },
+//     });
+//     // console.log("existingCatches", existingCatches);
 
-    // Filter out the already existing catches from the processed data
-    const newValidatedCatches = processedValidatedCatches.filter(
-      (catchData) =>
-        !existingCatches.some(
-          (existing) => existing._id.toString() === catchData._id.toString()
-        )
-    );
+//     // Filter out the already existing catches from the processed data
+//     const newValidatedCatches = processedValidatedCatches.filter(
+//       (catchData) =>
+//         !existingCatches.some(
+//           (existing) => existing._id.toString() === catchData._id.toString()
+//         )
+//     );
 
-    // Insert only the new validated catches
-    if (newValidatedCatches.length > 0) {
-      const createdValidatedCatches = await ValidatedCatch.insertMany(
-        newValidatedCatches
-      );
-      console.log(
-        "Successfully inserted validated catches:",
-        createdValidatedCatches
-      );
+//     // Insert only the new validated catches
+//     if (newValidatedCatches.length > 0) {
+//       const createdValidatedCatches = await ValidatedCatch.insertMany(
+//         newValidatedCatches
+//       );
+//       console.log(
+//         "Successfully inserted validated catches:",
+//         createdValidatedCatches
+//       );
 
-      return res.status(201).json({
-        message: "Validated catches successfully created.",
-        data: createdValidatedCatches, // The array of created objects
-      });
-    } else {
-      return res
-        .status(200)
-        .json({ message: "No new validated catches to insert." });
-    }
-  } catch (error) {
-    console.error("Error creating validated catches:", error);
-    return res.status(500).json({
-      message: "An error occurred while creating validated catches.",
-      error: error.message,
-    });
-  }
-};
+//       return res.status(201).json({
+//         message: "Validated catches successfully created.",
+//         data: createdValidatedCatches, // The array of created objects
+//       });
+//     } else {
+//       return res
+//         .status(200)
+//         .json({ message: "No new validated catches to insert." });
+//     }
+//   } catch (error) {
+//     console.error("Error creating validated catches:", error);
+//     return res.status(500).json({
+//       message: "An error occurred while creating validated catches.",
+//       error: error.message,
+//     });
+//   }
+// };
 
 export const getUniqueSpeciesCount = async (req, res) => {
   try {
