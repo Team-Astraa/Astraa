@@ -451,8 +451,8 @@ export const fetchCommunityWithData = async (req, res) => {
 
     if (!communities.length) {
       return res
-        .status(404)
-        .json({ message: "No communities found for the given ID." });
+        .status(400)
+        .json({ message: "No communities data for the given ID." });
     }
 
     res.status(200).json(communities);
@@ -572,9 +572,7 @@ function generateRandomId() {
 
 export const saveScientistData = async (req, res) => {
   try {
-    const { data, uploadedBy } = req.body;
-    let id = generateRandomId()
-    console.log("the uplo", uploadedBy, "dada", data);
+    const { data, uploadedBy, filters, name } = req.body;
 
     // Validate request body
     if (!data || !Array.isArray(data)) {
@@ -589,13 +587,25 @@ export const saveScientistData = async (req, res) => {
         .json({ error: "The 'uploadedBy' field is required." });
     }
 
-    // Save the data to the database
+    // Filter out keys with empty or null values from filters
+    const validFilters = Object.fromEntries(
+      Object.entries(filters || {}).filter(
+        ([_, value]) => value != null && value !== ""
+      )
+    );
+
+    const id = generateRandomId();
+
+    // Create a new instance of ScientistSaveData
     const scientistData = new ScientistSaveData({
       data,
       dataId: id,
       uploadedBy,
+      name,
+      filters: validFilters, // Save only valid filters
     });
 
+    // Save the data to the database
     const savedData = await scientistData.save();
 
     return res.status(201).json({
@@ -610,7 +620,6 @@ export const saveScientistData = async (req, res) => {
   }
 };
 
-
 export const getScientistSaveDataByUser = async (req, res) => {
   try {
     const { userId: uploadedBy } = req.body;
@@ -623,23 +632,22 @@ export const getScientistSaveDataByUser = async (req, res) => {
     // Convert uploadedBy to an ObjectId
     const userObjectId = new mongoose.Types.ObjectId(uploadedBy);
 
-    // Aggregation to group data by dataId
-    const aggregatedData = await CommunityData.aggregate([
-      { $match: { uploadedBy: userObjectId } },
-      { $group: { _id: "$dataId", data: { $push: "$data" } } },
-    ]);
+    // Fetch all data with the matching uploadedBy
+    const data = await ScientistSaveData.find({ uploadedBy: userObjectId });
 
-    // If no data is found, return an empty array
-    if (aggregatedData.length === 0) {
+    // If no data is found, return a 404 response
+    if (data.length === 0) {
       return res.status(404).json({ message: "No data found for this user" });
     }
 
-    // Return the aggregated data
-    res.status(200).json(aggregatedData[0].data);
+    // Return the data
+    res.status(200).json({ success: true, data });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    // Handle unexpected errors
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 export let sendEmailWithExcel = async (req, res) => {
   try {
@@ -648,22 +656,23 @@ export let sendEmailWithExcel = async (req, res) => {
     const fileName = req.file.originalname; // Extract the original filename
 
     if (!emails || emails.length === 0) {
-      return res.status(400).json({ message: 'No email addresses provided.' });
+      return res.status(400).json({ message: "No email addresses provided." });
     }
 
     // Create email options for each recipient
     const emailPromises = emails.map((email) => {
       const mailOptions = {
-        from: 'prathameshk990@gmail.com', // Replace with your email address
+        from: "prathameshk990@gmail.com", // Replace with your email address
         to: email,
-        subject: 'Filtered Data with Multiple Charts',
-        text: 'Please find the attached Excel file with multiple charts.',
+        subject: "Filtered Data with Multiple Charts",
+        text: "Please find the attached Excel file with multiple charts.",
         attachments: [
           {
             filename: fileName,
             content: fileBuffer,
-            encoding: 'base64',
-            contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            encoding: "base64",
+            contentType:
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           },
         ],
       };
@@ -675,9 +684,11 @@ export let sendEmailWithExcel = async (req, res) => {
     // Wait for all emails to be sent
     await Promise.all(emailPromises);
 
-    res.status(200).json({ message: 'Emails sent successfully!' });
+    res.status(200).json({ message: "Emails sent successfully!" });
   } catch (error) {
-    console.error('Error sending emails:', error);
-    res.status(500).json({ message: 'Failed to send emails.', error: error.message });
+    console.error("Error sending emails:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to send emails.", error: error.message });
   }
 };

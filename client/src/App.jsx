@@ -144,7 +144,7 @@ function App() {
           />
           <Route
             path="/scientist/community/share/:shareURL"
-            element={<Filters />}
+            element={<FishingData />}
           />
           <Route
             path="/scientist/datasets"

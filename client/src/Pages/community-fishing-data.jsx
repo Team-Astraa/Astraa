@@ -33,6 +33,9 @@ const FishingData = () => {
             }
 
             const { communityId } = decodedData;
+            
+            console.log(communityId);
+            
 
             try {
                 const response = await axios.post(

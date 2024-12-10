@@ -111,6 +111,12 @@ const FilterForm = () => {
 
   const [modalData, setModalData] = useState(null); // Stores data for the modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState("");
+
+  const handlenameChange = (e) => {
+    setName(e.target.value);
+  };
+  const [openModaln, setOpenModaln] = useState(false);
 
   const openModal2 = (species) => {
     setModalData(species);
@@ -331,7 +337,7 @@ const FilterForm = () => {
   const [emails, setEmails] = useState([]);
 
 
-  let emailModel = ()=>{
+  let emailModel = () => {
     setOpenModale(true)
 
   }
@@ -339,7 +345,7 @@ const FilterForm = () => {
   const downloadExcelWithCharts2 = async () => {
     setLoading(true)
     setOpenModale(false)
- 
+
 
     try {
       // Check if data is valid
@@ -400,8 +406,8 @@ const FilterForm = () => {
       setMessage("Wait!... Creating Excel...");
       // Simulate creating Excel file
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual Excel creation logic
-  
-      setMessage("Adding Charts in Excel file...");      const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+
+      setMessage("Adding Charts in Excel file..."); const generateChart = async (type, labels, dataset, chartTitle, colors) => {
         const chartCanvas = document.createElement("canvas");
         chartCanvas.width = 800;
         chartCanvas.height = 400;
@@ -534,14 +540,14 @@ const FilterForm = () => {
       // link.download = `filtered_data_with_multiple_charts.xlsx`;
       // link.click();
       // URL.revokeObjectURL(link.href);
- 
+
       setMessage("sending Email...")
       const formData = new FormData();
       formData.append("file", blob, "filtered_data_with_multiple_charts.xlsx");
 
 
       emails.forEach((email) => formData.append("emails[]", email));
-      
+
       try {
         await axios.post("http://localhost:5000/scientist/sendEmail", formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -551,7 +557,7 @@ const FilterForm = () => {
         console.error("Error sending email:", error);
         toast.error("Failed to send email. Check console for details.");
       }
-  
+
 
       setLoading(false)
       setMessage("")
@@ -571,6 +577,14 @@ const FilterForm = () => {
 
   const handleSaveData = async () => {
 
+
+
+    if (!name) {
+      toast.error("Please enter name first")
+      return;
+    }
+
+    setOpenModaln(false)
 
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
@@ -599,6 +613,8 @@ const FilterForm = () => {
     const dataToSend = {
       uploadedBy: userId,
       data: data,
+      filters,
+      name
     };
 
     setMessage("Wait Saving Your Filtered Data")
@@ -635,7 +651,7 @@ const FilterForm = () => {
 
 
   const [onConfirm, setOnConfirm] = useState(() => () => { });
- 
+
 
   const handleEmailChange = (e) => {
     const input = e.target.value;
@@ -714,6 +730,13 @@ const FilterForm = () => {
     setActiveTab(tab);
   };
 
+  let openNameModel = () => {
+    setOpenModaln(true)
+
+  }
+
+
+
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
       <nav className="w-full mb-4 px-12 flex items-center justify-between p-4 shadow-lg bg-white">
@@ -782,7 +805,7 @@ const FilterForm = () => {
                                   <p className="text-sm text-center">CSV</p>
                                 </div>
                                 <div className="flex flex-col items-center justify-center text-blue-500">
-                                  <i onClick={handleSaveData} className="fa-solid fa-floppy-disk text-xl"></i>
+                                  <i onClick={openNameModel} className="fa-solid fa-floppy-disk text-xl"></i>
                                   <p className="text-sm text-center">Save</p>
                                 </div>
                                 <div className="flex flex-col items-center justify-center text-purple-500">
@@ -793,7 +816,7 @@ const FilterForm = () => {
                                   <i onClick={emailModel} className="fa-solid fa-envelope text-xl"></i>
                                   <p className="text-sm text-center">email</p>
                                 </div>
-                               
+
                               </div>
 
                               <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
@@ -1047,43 +1070,81 @@ const FilterForm = () => {
         </Modal>
 
         <Modal
-        show={openModale}
-        onClose={() => setOpenModale(false)}
-        className="bg-gray-900 text-white"
-      >
-        {/* Modal Header */}
-        <Modal.Header className="bg-gray-800 border-b border-gray-700">
-          <h2 className="text-2xl font-bold text-green-500">Enter Emails</h2>
-        </Modal.Header>
+          show={openModale}
+          onClose={() => setOpenModale(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">Enter Emails</h2>
+          </Modal.Header>
 
-        {/* Modal Body */}
-        <Modal.Body className="bg-gray-900">
-          <textarea
-            rows="5"
-            placeholder="Enter emails separated by commas or new lines"
-            onChange={handleEmailChange}
-            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none"
-          ></textarea>
-        </Modal.Body>
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <textarea
+              rows="5"
+              placeholder="Enter emails separated by commas or new lines"
+              onChange={handleEmailChange}
+              className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none"
+            ></textarea>
+          </Modal.Body>
 
-        {/* Modal Footer */}
-        <Modal.Footer className="bg-gray-800 border-t border-gray-700">
-          <Button
-            color="gray"
-            onClick={downloadExcelWithCharts2}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
-          >
-            Submit
-          </Button>
-          <Button
-            color="gray"
-            onClick={() => setOpenModale(false)}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
-          >
-            Decline
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              color="gray"
+              onClick={downloadExcelWithCharts2}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Submit
+            </Button>
+            <Button
+              color="gray"
+              onClick={() => setOpenModale(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={openModaln}
+          onClose={() => setOpenModaln(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">Enter Name</h2>
+          </Modal.Header>
+
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <input
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={handlenameChange}
+              className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none"
+            />
+          </Modal.Body>
+
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              onClick={handleSaveData}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Submit
+            </Button>
+            <Button
+              onClick={() => setOpenModaln(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
       </>
     </div>
   );
