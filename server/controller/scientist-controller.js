@@ -5,6 +5,8 @@ import Scientist from "../models/Scientist.js";
 import Invitation from "../models/invitation.js";
 import User from "../models/User.js";
 import CommunityData from "../models/CommunityData.js";
+import ScientistSaveData from "../models/ScientistSaveData.js";
+import mongoose from "mongoose";
 
 export const getUnique = async (req, res) => {
   try {
@@ -24,7 +26,6 @@ export const getUnique = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
-
 
 export const getFilteredCatches = async (req, res) => {
   try {
@@ -157,10 +158,7 @@ export const getFilteredCatches = async (req, res) => {
       .status(500)
       .json({ message: "An error occurred while filtering the catches." });
   }
-}
-
-
-
+};
 
 export const createCommunity = async (req, res) => {
   try {
@@ -464,7 +462,6 @@ export const fetchCommunityWithData = async (req, res) => {
   }
 };
 
-
 export const fetchCommunityShareData = async (req, res) => {
   const communityId = req.body.communityDataId;
 
@@ -495,30 +492,33 @@ export const fetchCommunityShareData = async (req, res) => {
   }
 };
 
-
-
 export const graphdata = async (req, res) => {
   try {
     const { xField, yField, speciesFilter, dateRange } = req.body;
 
     // Basic validation
     if (!xField || !yField) {
-      return res.status(400).json({ message: 'xField and yField are required.' });
+      return res
+        .status(400)
+        .json({ message: "xField and yField are required." });
     }
 
     let matchConditions = {};
 
     // Apply date range filter
     if (dateRange) {
-      const [startDate, endDate] = dateRange.split(',');
+      const [startDate, endDate] = dateRange.split(",");
       if (startDate && endDate) {
-        matchConditions.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+        matchConditions.date = {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate),
+        };
       }
     }
 
     // Apply species filter
     if (speciesFilter) {
-      matchConditions['species.name'] = speciesFilter;
+      matchConditions["species.name"] = speciesFilter;
     }
 
     // Query the database with filtering
@@ -528,10 +528,10 @@ export const graphdata = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'species',
-          localField: 'species',
-          foreignField: '_id',
-          as: 'speciesDetails',
+          from: "species",
+          localField: "species",
+          foreignField: "_id",
+          as: "speciesDetails",
         },
       },
       {
@@ -540,9 +540,9 @@ export const graphdata = async (req, res) => {
           latitude: 1,
           longitude: 1,
           depth: 1,
-          'speciesDetails.name': 1,
+          "speciesDetails.name": 1,
           total_weight: 1,
-          totalCount: { $size: '$species' },
+          totalCount: { $size: "$species" },
         },
       },
     ]);
@@ -556,7 +556,86 @@ export const graphdata = async (req, res) => {
     // Send the filtered data back
     res.status(200).json({ data: chartData });
   } catch (err) {
-    console.error('Error fetching catch data:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error("Error fetching catch data:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+function generateRandomId() {
+  const date = new Date();
+  const timestamp = date.getTime(); // Get the current timestamp in milliseconds
+  const randomNumber = Math.floor(Math.random() * 100000); // Generate a random number
+  const randomId = `ID-${timestamp}-${randomNumber}`; // Combine the timestamp and random number
+  return randomId;
+}
+
+export const saveScientistData = async (req, res) => {
+  try {
+    const { data, uploadedBy } = req.body;
+    let id = generateRandomId()
+    console.log("the uplo", uploadedBy, "dada", data);
+
+    // Validate request body
+    if (!data || !Array.isArray(data)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid data format. 'data' must be an array." });
+    }
+
+    if (!uploadedBy) {
+      return res
+        .status(400)
+        .json({ error: "The 'uploadedBy' field is required." });
+    }
+
+    // Save the data to the database
+    const scientistData = new ScientistSaveData({
+      data,
+      dataId: id,
+      uploadedBy,
+    });
+
+    const savedData = await scientistData.save();
+
+    return res.status(201).json({
+      message: "Data saved successfully.",
+      savedData,
+    });
+  } catch (error) {
+    console.error("Error saving scientist data:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while saving the data." });
+  }
+};
+
+
+export const getScientistSaveDataByUser = async (req, res) => {
+  try {
+    const { userId: uploadedBy } = req.body;
+
+    // Validate uploadedBy as a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(uploadedBy)) {
+      return res.status(400).json({ message: "Invalid uploadedBy ID format" });
+    }
+
+    // Convert uploadedBy to an ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(uploadedBy);
+
+    // Aggregation to group data by dataId
+    const aggregatedData = await CommunityData.aggregate([
+      { $match: { uploadedBy: userObjectId } },
+      { $group: { _id: "$dataId", data: { $push: "$data" } } },
+    ]);
+
+    // If no data is found, return an empty array
+    if (aggregatedData.length === 0) {
+      return res.status(404).json({ message: "No data found for this user" });
+    }
+
+    // Return the aggregated data
+    res.status(200).json(aggregatedData[0].data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

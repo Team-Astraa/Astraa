@@ -39,6 +39,7 @@ import {
   getLatestLogs,
   acceptDataLog,
   rejectDataLog,
+  getMostCommonSpecies,
 } from "./controller/admin-controller.js";
 
 import {
@@ -49,8 +50,6 @@ import {
   otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
-
-import { uploadCSV2 } from "./controller/userControllerNew.js";
 
 import {
   autoCheckData,
@@ -74,8 +73,10 @@ import {
   fetchInvitation,
   getCommunitiesByCreator,
   getFilteredCatches,
+  getScientistSaveDataByUser,
   getUnique,
   graphdata,
+  saveScientistData,
   sendInvitation,
 } from "./controller/scientist-controller.js";
 import {
@@ -114,9 +115,7 @@ app.use(bodyParser.json());
 mongoose
   .connect(
     // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    // "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
-    //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -202,6 +201,8 @@ app.post("/scientist/fetch-invitations", fetchInvitation);
 app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
+app.post("/scientist/saveScientistData", saveScientistData);
+app.post("/scientist/getScientistSaveDataByUser", getScientistSaveDataByUser);
 app.post("/graph", graphdata);
 
 ///Data Visulaization
@@ -234,6 +235,7 @@ app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
 
 // Optional: Route to fetch all users who uploaded any data
 app.get("/admin/all-users", getAllUsers);
+app.get("/admin/getMostCommonSpecies", getMostCommonSpecies);
 
 //bar chart
 
@@ -278,7 +280,7 @@ app.post("/getDateTotalWeightData", getDateTotalWeightData);
 app.post("/getLatitudeDepthData", getLatitudeDepthData);
 
 // Server Setup
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
