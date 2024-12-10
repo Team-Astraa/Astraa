@@ -77,6 +77,7 @@ import {
   getUnique,
   graphdata,
   saveScientistData,
+  sendEmailWithExcel,
   sendInvitation,
 } from "./controller/scientist-controller.js";
 import {
@@ -222,6 +223,7 @@ app.get("/get-upload-url", async (req, res) => {
 
 // CSV Upload Route
 app.post("/upload", upload.single("file"), uploadCSV);
+app.post("/scientist/sendEmail", upload.single("file"), sendEmailWithExcel);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes

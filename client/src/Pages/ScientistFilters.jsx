@@ -326,6 +326,242 @@ const FilterForm = () => {
   };
 
 
+  let [openModale, setOpenModale] = useState(false)
+
+  const [emails, setEmails] = useState([]);
+
+
+  let emailModel = ()=>{
+    setOpenModale(true)
+
+  }
+
+  const downloadExcelWithCharts2 = async () => {
+    setLoading(true)
+    setOpenModale(false)
+ 
+
+    try {
+      // Check if data is valid
+      if (!Array.isArray(data) || data.length === 0) {
+        console.error("No valid data available for export.");
+        return;
+      }
+
+      // Prepare data for charts
+      const stateNames = [...new Set(data.map((item) => item.state))];
+      const seaNames = [...new Set(data.map((item) => item.sea))];
+
+      const speciesCounts = {};
+      const seaSpeciesCounts = {};
+      const stateSpeciesCounts = {};
+
+      data.forEach((item) => {
+        item.species.forEach(({ name, catch_weight }) => {
+          speciesCounts[name] = (speciesCounts[name] || 0) + catch_weight;
+          seaSpeciesCounts[item.sea] = seaSpeciesCounts[item.sea] || {};
+          seaSpeciesCounts[item.sea][name] = (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
+
+          stateSpeciesCounts[item.state] = stateSpeciesCounts[item.state] || {};
+          stateSpeciesCounts[item.state][name] = (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
+        });
+      });
+
+      // Flatten species counts for charts
+      const speciesLabels = Object.keys(speciesCounts);
+      const speciesData = Object.values(speciesCounts);
+
+      // Workbook and Worksheet
+      const workbook = new ExcelJS.Workbook();
+      const dataSheet = workbook.addWorksheet("Filtered Data");
+      const chartSheet = workbook.addWorksheet("Chart Sheet");
+
+      // Populate Data Sheet
+      const flattenedData = data.map((item) => {
+        const speciesNames = item.species.map((s) => s.name).join(", ");
+        const speciesWeights = item.species.map((s) => s.catch_weight).join(", ");
+        return {
+          ...item,
+          species_names: speciesNames,
+          species_weights: speciesWeights,
+        };
+      });
+
+      const columns = Object.keys(flattenedData[0] || {}).map((key) => ({
+        header: key,
+        key: key,
+      }));
+      dataSheet.columns = columns;
+      flattenedData.forEach((row) => {
+        dataSheet.addRow(row);
+      });
+
+      // Generate Charts
+      setMessage("Wait!... Creating Excel...");
+      // Simulate creating Excel file
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual Excel creation logic
+  
+      setMessage("Adding Charts in Excel file...");      const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+        const chartCanvas = document.createElement("canvas");
+        chartCanvas.width = 800;
+        chartCanvas.height = 400;
+
+        const ctx = chartCanvas.getContext("2d");
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, chartCanvas.width, chartCanvas.height);
+
+        const chart = new Chart(ctx, {
+          type,
+          data: {
+            labels,
+            datasets: [
+              {
+                label: chartTitle,
+                data: dataset,
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: false,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: chartTitle },
+            },
+            scales: type !== "pie" ? { y: { beginAtZero: true } } : undefined,
+          },
+        });
+
+        return new Promise((resolve) => {
+          chart.update();
+          setTimeout(() => resolve(chartCanvas), 1000);
+        });
+      };
+
+      // Define color schemes
+      const colorSchemes = [
+        { background: "#FF6384", border: "#FF6384" },
+        { background: "#36A2EB", border: "#36A2EB" },
+        { background: "#FFCE56", border: "#FFCE56" },
+        { background: "#4BC0C0", border: "#4BC0C0" },
+        { background: "#9966FF", border: "#9966FF" },
+        { background: "#FF9F40", border: "#FF9F40" },
+      ];
+
+      const chartCanvases = [
+        await generateChart(
+          "pie",
+          speciesLabels,
+          speciesData,
+          "Total Species Distribution",
+          colorSchemes[0]
+        ),
+        await generateChart(
+          "bar",
+          stateNames,
+          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          "Total Weight by State",
+          colorSchemes[1]
+        ),
+        await generateChart(
+          "bar",
+          seaNames,
+          seaNames.map((sea) => Object.values(seaSpeciesCounts[sea] || {}).reduce((a, b) => a + b, 0)),
+          "Total Weight by Sea",
+          colorSchemes[2]
+        ),
+        await generateChart(
+          "line",
+          speciesLabels,
+          speciesLabels.map((label) => speciesCounts[label] || 0),
+          "Species Catch Trends",
+          colorSchemes[3]
+        ),
+        await generateChart(
+          "doughnut",
+          speciesLabels,
+          speciesData,
+          "Species Distribution Doughnut",
+          colorSchemes[4]
+        ),
+        await generateChart(
+          "radar",
+          stateNames,
+          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          "State Comparison Radar",
+          colorSchemes[5]
+        ),
+      ];
+
+      // Style Chart Sheet Header
+      chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
+      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
+      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.mergeCells("A1:M2");
+
+      // Add Charts in Grid Layout
+      const CHART_WIDTH = 600;
+      const CHART_HEIGHT = 400;
+      const CHARTS_PER_ROW = 2;
+      const startRow = 4;
+
+      for (let i = 0; i < chartCanvases.length; i++) {
+        const row = startRow + Math.floor(i / CHARTS_PER_ROW) * 24;
+        const col = (i % CHARTS_PER_ROW) * 10;
+        const chartBlob = await new Promise((resolve) =>
+          chartCanvases[i].toBlob((blob) => resolve(blob), "image/png")
+        );
+        const imageId = workbook.addImage({
+          buffer: await chartBlob.arrayBuffer(),
+          extension: "png",
+        });
+        chartSheet.addImage(imageId, {
+          tl: { col, row },
+          ext: { width: CHART_WIDTH, height: CHART_HEIGHT },
+        });
+      }
+
+      // Write and Download
+      const excelBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      // const link = document.createElement("a");
+      // link.href = URL.createObjectURL(blob);
+      // link.download = `filtered_data_with_multiple_charts.xlsx`;
+      // link.click();
+      // URL.revokeObjectURL(link.href);
+ 
+      setMessage("sending Email...")
+      const formData = new FormData();
+      formData.append("file", blob, "filtered_data_with_multiple_charts.xlsx");
+
+
+      emails.forEach((email) => formData.append("emails[]", email));
+      
+      try {
+        await axios.post("http://localhost:5000/scientist/sendEmail", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Excel file and email sent successfully!");
+      } catch (error) {
+        console.error("Error sending email:", error);
+        toast.error("Failed to send email. Check console for details.");
+      }
+  
+
+      setLoading(false)
+      setMessage("")
+    } catch (error) {
+      setfileLoader(false)
+      console.error("Error generating Excel file:", error);
+    }
+  };
+
+
   const handleModalClose = () => {
     setIsModalOpen3(false);
   };
@@ -399,6 +635,16 @@ const FilterForm = () => {
 
 
   const [onConfirm, setOnConfirm] = useState(() => () => { });
+ 
+
+  const handleEmailChange = (e) => {
+    const input = e.target.value;
+    const emailArray = input
+      .split(/[\s,]+/) // Split by commas or whitespace
+      .filter((email) => email.trim() !== ""); // Remove empty strings
+    setEmails(emailArray);
+  };
+
 
   let [openModalc, setOpenModalc] = useState(false)
   const [communities, setCommunities] = useState([]);
@@ -542,6 +788,10 @@ const FilterForm = () => {
                                 <div className="flex flex-col items-center justify-center text-purple-500">
                                   <i onClick={shareToCommunity} className="fa-solid fa-share text-xl"></i>
                                   <p className="text-sm text-center">Share</p>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-purple-500">
+                                  <i onClick={emailModel} className="fa-solid fa-envelope text-xl"></i>
+                                  <p className="text-sm text-center">email</p>
                                 </div>
                                
                               </div>
@@ -795,6 +1045,45 @@ const FilterForm = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+
+        <Modal
+        show={openModale}
+        onClose={() => setOpenModale(false)}
+        className="bg-gray-900 text-white"
+      >
+        {/* Modal Header */}
+        <Modal.Header className="bg-gray-800 border-b border-gray-700">
+          <h2 className="text-2xl font-bold text-green-500">Enter Emails</h2>
+        </Modal.Header>
+
+        {/* Modal Body */}
+        <Modal.Body className="bg-gray-900">
+          <textarea
+            rows="5"
+            placeholder="Enter emails separated by commas or new lines"
+            onChange={handleEmailChange}
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none"
+          ></textarea>
+        </Modal.Body>
+
+        {/* Modal Footer */}
+        <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+          <Button
+            color="gray"
+            onClick={downloadExcelWithCharts2}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+          >
+            Submit
+          </Button>
+          <Button
+            color="gray"
+            onClick={() => setOpenModale(false)}
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+          >
+            Decline
+          </Button>
+        </Modal.Footer>
+      </Modal>
       </>
     </div>
   );
