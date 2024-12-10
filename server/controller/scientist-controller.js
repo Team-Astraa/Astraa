@@ -7,6 +7,7 @@ import User from "../models/User.js";
 import CommunityData from "../models/CommunityData.js";
 import ScientistSaveData from "../models/ScientistSaveData.js";
 import mongoose from "mongoose";
+import transporter from "../Config/transporter.js";
 
 export const getUnique = async (req, res) => {
   try {
@@ -637,5 +638,46 @@ export const getScientistSaveDataByUser = async (req, res) => {
     res.status(200).json(aggregatedData[0].data);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export let sendEmailWithExcel = async (req, res) => {
+  try {
+    const emails = req.body.emails; // Extract the array of emails from the request body
+    const fileBuffer = req.file; // Extract the file buffer
+    const fileName = req.file.originalname; // Extract the original filename
+
+    if (!emails || emails.length === 0) {
+      return res.status(400).json({ message: 'No email addresses provided.' });
+    }
+
+    // Create email options for each recipient
+    const emailPromises = emails.map((email) => {
+      const mailOptions = {
+        from: 'prathameshk990@gmail.com', // Replace with your email address
+        to: email,
+        subject: 'Filtered Data with Multiple Charts',
+        text: 'Please find the attached Excel file with multiple charts.',
+        attachments: [
+          {
+            filename: fileName,
+            content: fileBuffer,
+            encoding: 'base64',
+            contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          },
+        ],
+      };
+
+      // Send email for this recipient
+      return transporter.sendMail(mailOptions);
+    });
+
+    // Wait for all emails to be sent
+    await Promise.all(emailPromises);
+
+    res.status(200).json({ message: 'Emails sent successfully!' });
+  } catch (error) {
+    console.error('Error sending emails:', error);
+    res.status(500).json({ message: 'Failed to send emails.', error: error.message });
   }
 };
