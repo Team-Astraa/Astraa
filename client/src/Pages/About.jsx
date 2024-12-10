@@ -7,7 +7,7 @@ const About = () => {
     >
       <div className="w-[90%] h-[90%] bg-white rounded-lg p-12 shadow">
         <h1 className="text-5xl font-extrabold font-serif text-center text-blue-600  mb-8">
-          About AquaDB
+          About Aquacd DB
         </h1>
         <p className="text-gray-800 text-lg leading-relaxed text-center mb-10">
           Welcome to <span className="font-semibold">Aqua DB</span>, a cutting-edge data platform crafted by <span className="font-semibold">Team Astraa</span>. It empowers stakeholders (marine and fisheries researchers) by providing tools to analyze, share, and collaborate on aquatic data efficiently and securely.
@@ -35,7 +35,7 @@ const About = () => {
             Our Vision
           </h2>
           <p className="text-gray-800 text-lg leading-relaxed">
-            Aqua DB envisions simplifying data management for marine researchers and enabling collaboration on a global scale. We aim to support decisions that promote the conservation of aquatic ecosystems through an intuitive, reliable platform.
+            AquaDB envisions simplifying data management for marine researchers and enabling collaboration on a global scale. We aim to support decisions that promote the conservation of aquatic ecosystems through an intuitive, reliable platform.
           </p>
         </div>
 

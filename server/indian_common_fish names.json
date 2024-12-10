@@ -4,7 +4,7 @@
         "Albacore",
         "Alcock's Tongue-sole",
         "Alghad Snowtrout",
-        "Alikunhii's Blind Catfish.",
+        "Alikunhii's Blind Catfish",
         "Almorha Loach",
         "Alwen Snow Trout",
         "Anamalai Loach",
@@ -1847,6 +1847,12 @@
         "Zebra Loach.",
         "Zebra Moray",
         "Zebra Shark",
-        "Zebrafish"
+        "Zebrafish",
+        "nemipters",
+        "squid",
+        "mixed",
+        "upenius",
+        "drabcrocker"
+
     ]
 }

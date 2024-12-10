@@ -104,6 +104,8 @@ export const signUp = async (req, res) => {
 export const login = async (req, res) => {
   const { username, password } = req.body; // Get the username and password from the request body
   const SECRET_KEY = "vard177";
+  console.log(username , password);
+  
   // Check if the username and password are provided
   if (!username || !password) {
     return res

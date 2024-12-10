@@ -232,7 +232,6 @@ const LoginForm = () => {
         </form>
       </div>
 
-
       {/* Right Section */}
       <div className="bg-white">
         <div

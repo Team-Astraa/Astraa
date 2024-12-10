@@ -33,7 +33,7 @@ import {
   getUnverifiedUser,
   verifyUser,
   updateCatchData,
-  validateCatchData,
+  // validateCatchData,
   getUniqueSpeciesCount,
   getUserTypeAndCount,
   getLatestLogs,
@@ -169,7 +169,7 @@ app.post("/admin/get-fish-data", getCatchDataGroupedByUser);
 app.get("/admin/get-data-upload-users", getdataUploaduser);
 app.put("/admin/update-catch-data/:id", updateCatchData);
 app.get("/admin/usernames", getusername);
-app.post("/admin/validate-catch", validateCatchData);
+// app.post("/admin/validate-catch", validateCatchData);
 app.get("/admin/get-unique-fish-count", getUniqueSpeciesCount);
 app.get("/admin/get-userType-Count", getUserTypeAndCount);
 app.get("/admin/get-latest-logs", getLatestLogs);
