@@ -178,36 +178,31 @@ return(
       </p>
     </div>
 
-    {isLoggedIn ? (
-      <div className="w-full my-10">
-        <button
-        variant="danger"
-          onClick={handleLogout}
-          className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
-        >
-          Log Out
-        </button>
-      </div>
-    ) : (
-      <div className="w-full h-fit  flex flex-col gap-10 items-center white justify-center">
-        <div className="flex gap-10 mt-10">
-        <button
-          variant="primary"
-          onClick={() => navigate("/signin", { state: { userType: "Admin" } })}
-          className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
-        >
-          Login as Admin
-        </button>
-        <button
-          variant="secondary"
-          onClick={() => navigate("/signup")}
-          className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
-        >
-          Login as User
-        </button>
-        </div>
-      </div>
-    )}
+    {!isLoggedIn ? (
+  <div className="w-full h-fit flex flex-col gap-10 items-center justify-center py-10">
+    {/* Buttons */}
+    <div className="flex gap-10">
+      {/* Admin Login Button */}
+      <button
+        onClick={() => navigate("/signin", { state: { userType: "Admin" } })}
+        className="rounded-lg h-fit border-4 border-blue-600 bg-blue-500 hover:bg-blue-600 hover:text-white px-5 py-3 font-bold text-xl text-white transition-all"
+        aria-label="Login as Admin"
+      >
+        Login as Admin
+      </button>
+
+      {/* User Login Button */}
+      <button
+        onClick={() => navigate("/signup")}
+        className="rounded-lg h-fit border-4 border-green-600 bg-green-500 hover:bg-green-600 hover:text-white px-5 py-3 font-bold text-xl text-white transition-all"
+        aria-label="Login as User"
+      >
+        Login as User
+      </button>
+    </div>
+  </div>
+) : null}
+
   </div>
 </div>
 
