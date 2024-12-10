@@ -1,25 +1,17 @@
-//validation code for both abundance and occurence
-import CatchData from "../models/FishcatchDataNew.js";
-import ValidatedCatchData from "../models/ValidatedCatchData.js";
+import common_names from "../indian_common_fish names.json" assert { type: "json" };
+import { ratio } from "fuzzball";
 
-const validateFishingData = (data, dataType = "abundance") => {
-  let errors = [];
+export const validateFishingData = (data, dataType = "abundance") => {
+  let errors = []; // To store any validation errors found
 
   data.forEach((entry, index) => {
     // General validation for all fields: handle missing, undefined, and null values.
 
     // 1. Date Validation (Not future, not older than 6 months)
-    console.log("entries: " + entry);
-
     const fishingDate = entry.date;
     const currentDate = new Date();
-    const thresholdDate = new Date();
-    thresholdDate.setMonth(currentDate.getMonth() - 6); // 6 months age
 
-    console.log("entry", entry);
-
-    console.log("Values: " + fishingDate);
-
+    // Check for missing or invalid fishing date
     if (
       dataType === "abundance" &&
       (fishingDate === null || fishingDate === undefined || fishingDate === "")
@@ -31,6 +23,7 @@ const validateFishingData = (data, dataType = "abundance") => {
       });
     } else {
       const dateObj = new Date(fishingDate);
+      // Check if the date is a valid date and not in the future
       if (isNaN(dateObj)) {
         errors.push({
           row: index,
@@ -43,12 +36,6 @@ const validateFishingData = (data, dataType = "abundance") => {
           column: "date",
           message: "Date cannot be a future date.",
         });
-      } else if (dateObj < thresholdDate) {
-        errors.push({
-          row: index,
-          column: "date",
-          message: "Date cannot be older than 6 months.",
-        });
       }
     }
 
@@ -56,6 +43,7 @@ const validateFishingData = (data, dataType = "abundance") => {
     const latitude = entry.latitude;
     const longitude = entry.longitude;
 
+    // Check for missing latitude
     if (
       dataType === "abundance" &&
       (latitude === null || latitude === undefined || latitude === "")
@@ -66,6 +54,7 @@ const validateFishingData = (data, dataType = "abundance") => {
         message: "Latitude is required.",
       });
     } else if (isNaN(latitude) || latitude < -90 || latitude > 90) {
+      // Validate latitude range
       errors.push({
         row: index,
         column: "latitude",
@@ -73,6 +62,7 @@ const validateFishingData = (data, dataType = "abundance") => {
       });
     }
 
+    // Check for missing longitude
     if (
       dataType === "abundance" &&
       (longitude === null || longitude === undefined || longitude === "")
@@ -83,6 +73,7 @@ const validateFishingData = (data, dataType = "abundance") => {
         message: "Longitude is required.",
       });
     } else if (isNaN(longitude) || longitude < -180 || longitude > 180) {
+      // Validate longitude range
       errors.push({
         row: index,
         column: "longitude",
@@ -94,6 +85,7 @@ const validateFishingData = (data, dataType = "abundance") => {
     const speciesNames = new Set(); // Use Set for unique species tracking
     const species = entry.species || [];
 
+    // Ensure at least one species is provided
     if (species.length === 0) {
       errors.push({
         row: index,
@@ -107,6 +99,7 @@ const validateFishingData = (data, dataType = "abundance") => {
           : "";
         const catchWeight = speciesItem.catch_weight;
 
+        // Check for missing species name and catch weight
         if (
           !speciesItem.name ||
           catchWeight === undefined ||
@@ -119,17 +112,7 @@ const validateFishingData = (data, dataType = "abundance") => {
           });
         }
 
-        // Check for invalid species format (e.g., Salmon(15.5))
-        const speciesMatch = /(.+)\((\d+(\.\d+)?)\)/.exec(speciesItem.name);
-        if (!speciesMatch) {
-          errors.push({
-            row: index,
-            column: `species[${speciesIndex}]`,
-            message: "Invalid species format. Expected 'name(weight)'.",
-          });
-        }
-
-        // Check if the species name is duplicated
+        // Check for duplicate species in the same entry
         if (speciesNames.has(speciesName)) {
           errors.push({
             row: index,
@@ -140,7 +123,7 @@ const validateFishingData = (data, dataType = "abundance") => {
           speciesNames.add(speciesName); // Track species name for duplicates
         }
 
-        // Validate catch weight
+        // Validate catch weight to be a positive number
         if (isNaN(catchWeight) || catchWeight <= 0) {
           errors.push({
             row: index,
@@ -148,12 +131,41 @@ const validateFishingData = (data, dataType = "abundance") => {
             message: "Catch weight must be a positive number.",
           });
         }
+
+        // Species name fuzzy matching
+        if (speciesName) {
+          const matches = common_names.common_names.map((dictName) => ({
+            name: dictName,
+            score: ratio(speciesName.toLowerCase(), dictName.toLowerCase()),
+          }));
+          const bestMatch = matches.reduce(
+            (a, b) => (a.score > b.score ? a : b),
+            {}
+          );
+
+          // If the match is close (but not perfect), suggest a correction
+          if (bestMatch.score >= 80 && bestMatch.score < 100) {
+            errors.push({
+              row: index,
+              column: `species[${speciesIndex}]`,
+              message: `Species name '${speciesName}' is similar to '${bestMatch.name}'. Did you mean '${bestMatch.name}'?`,
+            });
+          } else if (bestMatch.score < 70) {
+            // If the match is poor, flag as invalid
+            errors.push({
+              row: index,
+              column: `species[${speciesIndex}]`,
+              message: `Species name '${speciesName}' is invalid. Please check the spelling.`,
+            });
+          }
+        }
       });
     }
 
     // 4. Total Weight Validation
     const totalWeight = entry.total_weight;
 
+    // Check for missing total weight
     if (
       dataType === "abundance" &&
       (totalWeight === null || totalWeight === undefined || totalWeight === "")
@@ -182,7 +194,6 @@ const validateFishingData = (data, dataType = "abundance") => {
     // 5. Handle Optional Depth Field (if present)
     const depth = entry.depth;
     if (depth !== null && depth !== undefined && depth !== "") {
-      // Validate if depth is provided
       let depthValue = depth.trim();
       if (depthValue.includes("-")) {
         // Depth range (e.g., "10-20")
@@ -216,7 +227,7 @@ const validateFishingData = (data, dataType = "abundance") => {
     }
   });
 
-  return errors;
+  return errors; // Return the accumulated validation errors
 };
 
 export const autoCheckData = async (req, res) => {
@@ -242,51 +253,78 @@ export const autoCheckData = async (req, res) => {
 
 // export const saveValidatedData = async (req, res) => {
 //   try {
-//     const { data } = req.body; // Data sent from frontend
+//     const { data } = req.body;
 
 //     console.log("Data in save:", data);
 
-//     // First, check if each dataId already exists in the database
+//     // Extract data IDs for processing
+//     const dataIds = data.map((item) => item.dataId);
+
+//     // Check if the data IDs exist in `ValidatedCatchData`
+//     const existingValidatedDataIds = await ValidatedCatchData.find({
+//       _id: { $in: dataIds },
+//     }).select("_id");
+
+//     const existingValidatedDataSet = new Set(
+//       existingValidatedDataIds.map((item) => item._id.toString())
+//     );
+
+//     // Filter out data already in `ValidatedCatchData`
+//     const newValidatedData = data.filter(
+//       (item) => !existingValidatedDataSet.has(item.dataId)
+//     );
+
+//     if (newValidatedData.length === 0) {
+//       return res.status(202).json({
+//         success: false,
+//         message: "All data is already saved in ValidatedCatchData.",
+//       });
+//     }
+
+//     // Check for existing data in `CatchData`
 //     const existingDataIds = await CatchData.find({
-//       _id: { $in: data.map((item) => item.dataId) }, // Find all dataId present in the database
-//     }).select("_id"); // Only retrieve the _id of existing records
+//       _id: { $in: newValidatedData.map((item) => item.dataId) },
+//     }).select("_id");
 
 //     const existingDataIdsSet = new Set(
 //       existingDataIds.map((item) => item._id.toString())
-//     ); // Create a Set for fast lookup
+//     );
 
-//     // Filter out the data that already exists in the database
-//     const newData = data.filter((item) => !existingDataIdsSet.has(item.dataId));
+//     // Filter out data already in `CatchData`
+//     const newData = newValidatedData.filter((item) =>
+//       existingDataIdsSet.has(item.dataId)
+//     );
 
 //     if (newData.length === 0) {
 //       return res.status(202).json({
 //         success: false,
-//         message: "All data is already saved in the database.",
+//         message: "All data is already saved in CatchData.",
 //       });
 //     }
 
-//     // Now, save only the new data to the database
+//     // Save the new data to `ValidatedCatchData`
 //     const savedData = await ValidatedCatchData.insertMany(newData);
 //     console.log("savedData", savedData);
-//     // Now update the 'verified' field to true for each of the saved records
-//     const updatePromises = savedData.map(async (fishData) => {
-//       await CatchData.updateOne(
-//         { _id: fishData._id }, // Find the record by its unique ID
-//         { $set: { verified: true } } // Set the 'verified' field to true
-//       );
-//     });
 
-//     console.log("updatePromises", updatePromises);
-//     // Wait for all the updates to finish
-//     await Promise.all(updatePromises);
+//     // Bulk update `verified` field in `CatchData`
+//     const bulkUpdateOperations = savedData.map((item) => ({
+//       updateOne: {
+//         filter: { _id: item.dataId },
+//         update: { $set: { verified: true } },
+//       },
+//     }));
+
+//     if (bulkUpdateOperations.length > 0) {
+//       await CatchData.bulkWrite(bulkUpdateOperations);
+//     }
 
 //     // Respond with success
 //     res
 //       .status(200)
-//       .json({ success: true, message: "Data saved and marked as verified" });
+//       .json({ success: true, message: "Data saved and marked as verified." });
 //   } catch (error) {
 //     console.error("Error saving data:", error);
-//     res.status(500).json({ success: false, error: "Internal server error" });
+//     res.status(500).json({ success: false, error: "Internal server error." });
 //   }
 // };
 
@@ -299,13 +337,13 @@ export const saveValidatedData = async (req, res) => {
     // Extract data IDs for processing
     const dataIds = data.map((item) => item.dataId);
 
-    // Check if the data IDs exist in `ValidatedCatchData`
+    // Check if the data IDs exist in `ValidatedCatchData` by `dataId` field
     const existingValidatedDataIds = await ValidatedCatchData.find({
-      _id: { $in: dataIds },
-    }).select("_id");
+      dataId: { $in: dataIds }, // Use `dataId` instead of `_id`
+    }).select("dataId");
 
     const existingValidatedDataSet = new Set(
-      existingValidatedDataIds.map((item) => item._id.toString())
+      existingValidatedDataIds.map((item) => item.dataId)
     );
 
     // Filter out data already in `ValidatedCatchData`
@@ -320,13 +358,13 @@ export const saveValidatedData = async (req, res) => {
       });
     }
 
-    // Check for existing data in `CatchData`
+    // Check for existing data in `CatchData` by `dataId` field
     const existingDataIds = await CatchData.find({
-      _id: { $in: newValidatedData.map((item) => item.dataId) },
-    }).select("_id");
+      dataId: { $in: newValidatedData.map((item) => item.dataId) }, // Use `dataId`
+    }).select("dataId");
 
     const existingDataIdsSet = new Set(
-      existingDataIds.map((item) => item._id.toString())
+      existingDataIds.map((item) => item.dataId)
     );
 
     // Filter out data already in `CatchData`
@@ -348,7 +386,7 @@ export const saveValidatedData = async (req, res) => {
     // Bulk update `verified` field in `CatchData`
     const bulkUpdateOperations = savedData.map((item) => ({
       updateOne: {
-        filter: { _id: item.dataId },
+        filter: { dataId: item.dataId }, // Use `dataId`
         update: { $set: { verified: true } },
       },
     }));
