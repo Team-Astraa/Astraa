@@ -184,7 +184,7 @@ html {
   animation: textPulse 1.5s infinite;
 }
 
-.VIpgJd-ZVi9od-l4eHX-hSRGPd {
+/* .VIpgJd-ZVi9od-l4eHX-hSRGPd {
   display: none !important;
 }
 
@@ -195,12 +195,12 @@ html {
   height: 40px;
 }
 
-/* Dropdown styling */
+
 .goog-te-combo {
   background-color: #f8f9fa;
   color: #333;
   font-size: 16px;
-  border: 2px solid black; /* Matches your preferred hacker theme */
+  border: 2px solid black;
   border-radius: 8px;
   padding: 5px 10px;
   transition: all 0.3s ease;
@@ -216,7 +216,7 @@ html {
   cursor: pointer;
 }
 
-/* Dropdown container adjustments */
+
 .skiptranslate {
   display: flex;
   justify-content: flex-end;
@@ -224,7 +224,7 @@ html {
   gap: 10px;
 }
 
-/* Placeholder "Select Language" option styling */
+
 .goog-te-combo option[value=""] {
   font-style: italic;
   color: #666;
@@ -243,7 +243,7 @@ html {
   color: #333;
   padding: 3px !important;
   font-weight: 700;
-}
+} */
 
 
 .mapboxgl-ctrl-logo{
