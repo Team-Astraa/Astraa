@@ -623,7 +623,7 @@ export const getScientistSaveDataByUser = async (req, res) => {
     const userObjectId = new mongoose.Types.ObjectId(uploadedBy);
 
     // Aggregation to group data by dataId
-    const aggregatedData = await CommunityData.aggregate([
+    const aggregatedData = await ScientistSaveData.aggregate([
       { $match: { uploadedBy: userObjectId } },
       { $group: { _id: "$dataId", data: { $push: "$data" } } },
     ]);
