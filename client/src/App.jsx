@@ -37,6 +37,7 @@ import Filters from "./Pages/ScientistFilters";
 import FilterForm from "./Pages/ScientistFilters";
 import Profile from "./Pages/Profile";
 import SidebarNew from "./Components/SidebarNew";
+import ScientistSavedDataSets from "./Pages/ScientistSavedDataSets";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -144,6 +145,10 @@ function App() {
           <Route
             path="/scientist/community/share/:shareURL"
             element={<Filters />}
+          />
+          <Route
+            path="/scientist/datasets"
+            element={<ScientistSavedDataSets />}
           />
         </Routes>
       </AppLayout>
