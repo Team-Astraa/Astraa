@@ -49,6 +49,7 @@ import {
   getUniqueSpeciesNames,
   otherDataUpload,
   uploadCSV,
+  getDataStatus,
 } from "./controller/userController.js";
 
 import {
@@ -115,7 +116,7 @@ app.use(bodyParser.json());
 mongoose
   .connect(
     // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -179,10 +180,12 @@ app.post("/admin/autoCheck-fishing-data", autoCheckData);
 app.post("/admin/saveValidatedData", saveValidatedData);
 app.post("/admin/get-other-log", getLogsByDataType);
 app.post("/admin/get-manual-data-by-id", getDataByDataId);
+
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
 app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
+app.get("/user/getUserLogs/:userId", getDataStatus);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);

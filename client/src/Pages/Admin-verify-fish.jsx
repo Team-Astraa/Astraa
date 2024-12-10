@@ -322,7 +322,6 @@ const Adminverifyfish = () => {
     setIsModalOpen(true); // Open the modal to confirm save
   };
 
-  
   // When the user clicks 'Cancel' in the modal, close it without doing anything
   const handleSubmit = async () => {
     // Transform the data to the format expected by the backend
@@ -655,26 +654,39 @@ const Adminverifyfish = () => {
                   <div>
                     <button
                       onClick={() => setEditMode(!editMode)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-md mb-6 text-xs"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-6 text-base font-semibold"
                     >
                       {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
                     </button>
                     <button
                       onClick={handleSaveClick}
-                      className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Save
+                    </button>
+
+                    <button
+                      onClick={acceptData}
+                      className="bg-teal-500 hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={rejectdata}
+                      className="bg-red-500 hover:bg-red-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                    >
+                      Reject
                     </button>
                     <button
                       onClick={handleValidateCatch} // Validate button
                       // onClick={handleValidate}
-                      className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                      className="bg-yellow-500 hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Validate
                     </button>
                     <button
                       onClick={toggleViewMode}
-                      className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                      className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       {viewMode === "table" ? "Card View" : "Table View"}
                     </button>
