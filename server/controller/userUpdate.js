@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+
 import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchCruise.js";

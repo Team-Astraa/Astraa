@@ -39,6 +39,7 @@ import {
   getLatestLogs,
   acceptDataLog,
   rejectDataLog,
+  getMostCommonSpecies,
 } from "./controller/admin-controller.js";
 
 import {
@@ -49,8 +50,6 @@ import {
   otherDataUpload,
   uploadCSV,
 } from "./controller/userController.js";
-
-import { uploadCSV2 } from "./controller/userControllerNew.js";
 
 import {
   autoCheckData,
@@ -74,6 +73,7 @@ import {
   fetchInvitation,
   getCommunitiesByCreator,
   getFilteredCatches,
+  getScientistSaveDataByUser,
   getUnique,
   graphdata,
   saveScientistData,
@@ -114,7 +114,7 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-      //"mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
       "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
@@ -202,6 +202,7 @@ app.post("/scientist/insert-community-data", addCommunityData);
 app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 app.post("/scientist/saveScientistData", saveScientistData);
+app.post("/scientist/getScientistSaveDataByUser", getScientistSaveDataByUser);
 app.post("/graph", graphdata);
 
 ///Data Visulaization
@@ -234,6 +235,7 @@ app.get("/admin/data/:userId/:tag", getDataByUserAndTag);
 
 // Optional: Route to fetch all users who uploaded any data
 app.get("/admin/all-users", getAllUsers);
+app.get("/admin/getMostCommonSpecies", getMostCommonSpecies);
 
 //bar chart
 

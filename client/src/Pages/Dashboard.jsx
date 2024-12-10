@@ -18,6 +18,7 @@ import {
     Legend,
   } from "chart.js";
 
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -35,6 +36,10 @@ const Dashboard = () => {
     useEffect(() => {
         getData()
       }, [])
+
+      const [fishCount, setFishCount] = useState(0);
+      const [commonSpecies, setCommonSpecies] = useState(0);
+      const [error, setError] = useState('');
     
     const getData = async () => {
     try {
@@ -45,6 +50,32 @@ const Dashboard = () => {
         console.error('Error fetching filtered data:', error);
     }
     }
+
+
+    useEffect(() => {
+      fetchUniqueFishCount();
+      mostCommonSpeciess()
+  }, []);
+
+  const fetchUniqueFishCount = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/admin/get-unique-fish-count');
+        setFishCount(response.data.uniqueSpeciesCount); // Adjust based on your API's response structure
+    } catch (err) {
+        console.error('Error fetching fish count:', err);
+        setError(err.message || 'An error occurred');
+    }
+};
+  const mostCommonSpeciess = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/admin/getMostCommonSpecies');
+        setCommonSpecies(response.data.data._id); // Adjust based on your API's response structure
+    } catch (err) {
+        console.error('Error fetching fish count:', err);
+        setError(err.message || 'An error occurred');
+    }
+};
+
 
     const calculateSpeciesStats = () => {
         const speciesMap = new Map();
@@ -152,25 +183,25 @@ const Dashboard = () => {
               <div className="flex w-full gap-4">
                 {/* Section 1: Species Details (4 Cards) */}
                 <div className="w-1/2 h-auto grid grid-cols-2 grid-rows-2 gap-4">
-                  <div className="rounded-xl p-3 border border-purple-500">
-                    <Typography variant="h6" color="textSecondary">
-                      Total Unique Species
-                    </Typography>
+                  <div className="h-full bg-red-500 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
+                    <h2 className="text-center text-white text-2xl font-bold">
+                      {fishCount ? fishCount : "Loading Count"}
+                    </h2>
                   </div>
-                  <div className="rounded-xl p-3 border border-purple-500">
-                    <Typography variant="h6" color="textSecondary">
-                      Most Common Species
-                    </Typography>
+                  <div className="h-full bg-yellow-400 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
+                    <h2 className="text-center text-white text-2xl font-bold">
+                    {commonSpecies ? commonSpecies : "Loading species"}
+                    </h2>
                   </div>
-                  <div className="rounded-xl p-3 border border-purple-500">
-                    <Typography variant="h6" color="textSecondary">
-                      Other Details 1
-                    </Typography>
+                  <div className="h-full bg-purple-300 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
+                    <h2 className="text-center text-white text-2xl font-bold">
+                      Other 1
+                    </h2>
                   </div>
-                  <div className="rounded-xl p-3 border border-purple-500">
-                    <Typography variant="h6" color="textSecondary">
-                      Other Details 2
-                    </Typography>
+                  <div className="h-full bg-purple-200 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
+                    <h2 className="text-center text-white text-2xl font-bold">
+                      Other 2
+                    </h2>
                   </div>
                 </div>
       

@@ -12,6 +12,7 @@ import HomePage from "./Pages/HomePage";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
+import About from "./Pages/About";
 import AdminHome from "./Pages/AdminHome";
 import Adminverifyuser from "./Pages/Admin-verify-user";
 import Adminverifyfish from "./Pages/Admin-verify-fish";
@@ -36,6 +37,7 @@ import Filters from "./Pages/ScientistFilters";
 import FilterForm from "./Pages/ScientistFilters";
 import Profile from "./Pages/Profile";
 import SidebarNew from "./Components/SidebarNew";
+import ScientistSavedDataSets from "./Pages/ScientistSavedDataSets";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -107,6 +109,10 @@ function App() {
             element={<PrivateRoute element={<Dashboard />} />}
           />
           <Route
+            path="/about"
+            element={<PrivateRoute element={<About />} />}
+          />
+          <Route
             path="/map-box"
             element={<PrivateRoute element={<MapComponent />} />}
           />
@@ -139,6 +145,10 @@ function App() {
           <Route
             path="/scientist/community/share/:shareURL"
             element={<Filters />}
+          />
+          <Route
+            path="/scientist/datasets"
+            element={<ScientistSavedDataSets />}
           />
         </Routes>
       </AppLayout>
