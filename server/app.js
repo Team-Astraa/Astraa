@@ -9,7 +9,7 @@ import { nanoid } from "nanoid";
 import fs from "fs";
 import path from "path";
 
-import { uploadSpeciesData } from "./controller/userController.js";
+import { getSpeciesDataByUserId, uploadSpeciesData } from "./controller/userController.js";
 
 // Controllers
 import {
@@ -119,8 +119,8 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-    "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    // "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -243,6 +243,7 @@ app.get("/get-upload-url", async (req, res) => {
 app.post("/upload", upload.single("file"), uploadCSV);
 app.post("/scientist/sendEmail", upload.single("file"), sendEmailWithExcel);
 app.post("/uploadSpecies", SpeciesUpload, uploadSpeciesData);
+app.post("/getSpeciesDataByUserId", getSpeciesDataByUserId);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes

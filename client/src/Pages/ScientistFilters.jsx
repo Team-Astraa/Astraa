@@ -763,8 +763,77 @@ const FilterForm = () => {
     { label: "PFZ/NON-PFZ", value: "PFZ/NON-PFZ" },
     { label: "Landing Village", value: "Landing-Village" },
     { label: "GEO-REF", value: "GEO-REF" },
-    { label: "All", value: "All" },
+    { label: "ALL", value: "ALL" },
   ];
+
+
+  const headers = [
+    {
+      header: "Species Name",
+      key: "species",
+      showIn: ["ALL","GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Latitude",
+      key: "latitude",
+      showIn: ["ALL","GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Longitude",
+      key: "longitude",
+      showIn: ["ALL","GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Depth",
+      key: "depth",
+      showIn: ["ALL","PFZ/NON-PFZ"],
+    },
+    {
+      header: "Total Weight (kg)",
+      key: "total_weight",
+      showIn: ["ALL","GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Sea",
+      key: "sea",
+      showIn: ["GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "State",
+      key: "state",
+      showIn: ["ALL","GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Zone Type",
+      key: "zoneType",
+      showIn: ["ALL","PFZ/NON-PFZ"],
+    },
+    {
+      header: "Gear_type",
+      key: "Gear_type",
+      showIn: ["ALL","GEO-REF"],
+    },
+    {
+      header: "LANDINGNAME",
+      key: "LANDINGNAME",
+      showIn: ["GEO-REF"],
+    },
+    {
+      header: "Date",
+      key: "date",
+      showIn: ["ALL","GEO-REF", "PFZ/NON-PFZ"],
+    },
+  ];
+
+
+
+  // Filter headers based on activeTab
+  const filteredHeaders = headers.filter((header) =>
+    header.showIn.includes(activeTab)
+
+  
+  );
+   
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
@@ -782,7 +851,7 @@ const FilterForm = () => {
 
 
 
-              <div className="w-[70%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
+              <div className="w-[80%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
                 <div className="w-full h-12 bg-gray-100 flex items-center justify-between px-6 shadow-sm rounded-t-lg">
                   {tabs2.map((tab) => (
                     <div
@@ -867,55 +936,45 @@ const FilterForm = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-9 gap-4 p-4 border-t bg-gray-50">
-                      {[
-                        "Species Name",
-                        "Latitude",
-                        "Longitude",
-                        "Depth",
-                        "Total Weight (kg)",
-                        "Sea",
-                        "State",
-                        "Zone Type",
-                        "Date",
-                      ].map((header, idx) => (
+                    <div
+                      className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-50`}
+                    >
+                      {filteredHeaders.map((item, idx) => (
                         <div
                           key={idx}
                           className="text-center font-semibold text-sm uppercase bg-gray-200 p-2 border rounded shadow-sm"
                         >
-                          {header}
+                          {item.header}
                         </div>
                       ))}
                     </div>
 
+                    {/* Render Data Rows */}
                     {data.map((item, index) => (
                       <div
                         key={index}
-                        className={`grid grid-cols-9 gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                        className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
                           }`}
                       >
-                        <div className="text-center cursor-pointer hover:text-blue-500">
-                          <i
-                            onClick={() => openModal2(item.species)}
-                            className="fa-solid fa-eye text-xl"
-                          ></i>
-                        </div>
-                        <div className="text-center text-gray-700 font-medium">
-                          {truncateDecimals(item.latitude, 2)}
-                        </div>
-                        <div className="text-center text-gray-700 font-medium">
-                          {truncateDecimals(item.longitude, 2)}
-                        </div>
-                        <div className="text-center">{item.depth}</div>
-                        <div className="text-center">{item.total_weight}</div>
-                        <div className="text-center">{item.sea}</div>
-                        <div className="text-center">{item.state}</div>
-                        <div className="text-center">{item.zoneType}</div>
-                        <div className="text-center text-gray-600">
-                          {new Date(item.date).toLocaleDateString()}
-                        </div>
+                        {filteredHeaders.map((field, idx) => (
+                          <div key={idx} className="text-center text-gray-700 font-medium">
+                            {field.key === "date"
+                              ? new Date(item[field.key]).toLocaleDateString()
+                              : field.key === "latitude" || field.key === "longitude"
+                                ? truncateDecimals(item[field.key], 2)
+                                : field.key === "species"
+                                  ? (
+                                    <i
+                                      onClick={() => openModal2(item[field.key])}
+                                      className="fa-solid fa-eye text-xl cursor-pointer hover:text-blue-500"
+                                    ></i>
+                                  )
+                                  : item[field.key]}
+                          </div>
+                        ))}
                       </div>
                     ))}
+
                   </>
                 ) : (
                   <div className="flex items-center justify-center mt-24">
@@ -975,7 +1034,7 @@ const FilterForm = () => {
               </div>
 
 
-              <div className="w-[30%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
+              <div className="w-[20%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
 
                 <FilterMap catchData={data} props={{ type: "markers", showButton: true }} />
                 <div className="w-full h-fit ml-2 m-4 shadow-md bg-gradient-to-r from-gray-50 via-white to-gray-50 p-6 rounded-lg border border-gray-200">
@@ -1055,19 +1114,44 @@ const FilterForm = () => {
                 { label: "State", name: "state", type: "text" },
                 { label: "Wt. Min (kg)", name: "totalWeightMin", type: "number" },
                 { label: "Wt. Max (kg)", name: "totalWeightMax", type: "number" },
+                ...(activeTab === "ALL" || activeTab === "GEO-REF"
+                  ? [
+                    { label: "LANDINGNAME", name: "LANDINGNAME", type: "text" },
+                    { label: "Gear Type", name: "gearType", type: "dropdown" },
+                  ]
+                  : []),
               ].map(({ label, name, type }, index) => (
                 <div key={index} className="flex flex-col">
                   <label className="text-sm font-medium text-gray-600">{label}</label>
-                  <input
-                    type={type}
-                    name={name}
-                    value={filters[name]}
-                    onChange={handleChange}
-                    className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
+                  {type === "dropdown" ? (
+                    <select
+                      name={name}
+                      value={filters[name]}
+                      onChange={handleChange}
+                      className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    >
+                      <option value="">Select</option>
+                      <option value="Hook and Line">Hook and Line</option>
+                      <option value="Gill Net">Gill Net</option>
+                      <option value="Bottom Trawling">Bottom Trawling</option>
+                      <option value="Ring Net">Ring Net</option>
+                      <option value="Trawler">Trawler</option>
+                      <option value="Seine nets">Seine nets</option>
+                      <option value="Fyke nets">Fyke nets</option>
+                    </select>
+                  ) : (
+                    <input
+                      type={type}
+                      name={name}
+                      value={filters[name]}
+                      onChange={handleChange}
+                      className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  )}
                 </div>
               ))}
             </div>
+
             {/* Submit Button */}
 
 
