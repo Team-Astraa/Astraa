@@ -3,30 +3,15 @@ import Map, { Marker, Popup, Source, Layer } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Typography } from "@mui/material";
 
-const MapboxVisualization = ({ catchData, props }) => {
+const FilterMap = ({ catchData, props }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState(props.type); // 'markers', 'heatmap', 'clusters'
 
+  console.log(catchData);
 
-console.log(catchData);
-
-  let heatmapData;
-  if(props.oneLat && props.oneLong) {
-    heatmapData = {
+  const heatmapData = {
       type: "FeatureCollection",
-      features: {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [props.oneLat, props.oneLong],
-          }
-        }
-    }
-  } else {
-    heatmapData = {
-      type: "FeatureCollection",
-      features: catchData.flatMap((data) =>
-        data.catches.map((catchDetail) => ({
+      features: catchData.map((catchDetail) => ({
           type: "Feature",
           geometry: {
             type: "Point",
@@ -37,10 +22,7 @@ console.log(catchData);
             weight: catchDetail.totalCatchWeight,
           },
         }))
-      ),
-    };
   }
-  
 
   const heatmapLayer = {
     id: "heatmap-layer",
@@ -91,8 +73,8 @@ console.log(catchData);
       "circle-stroke-width": 2,
       "circle-stroke-color": "#ffffff",
     },
-  };  
-  
+  };
+
   const clusterCountLayer = {
     id: "cluster-count",
     type: "symbol",
@@ -111,7 +93,7 @@ console.log(catchData);
       "text-halo-width": 1.5,
     },
   };
-  
+
   const unclusteredPointLayer = {
     id: "unclustered-point",
     type: "circle",
@@ -127,101 +109,69 @@ console.log(catchData);
   };
 
   return (
-      <div>
-        {props.showButton &&  <div style={{
-            position: "absolute",
-            zIndex: 20, paddingLeft: "2rem"}} > 
-                
-            <div className="flex flex-col gap-4 mt-8">
-              <button
-                onClick={() => setViewMode("markers")}
-                style={{
-                  padding: "10px 15px",
-                  background: viewMode === "markers" ? "#007bff" : "#ccc",
-                  color: viewMode === "markers" ? "#fff" : "#000",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Show Markers
-              </button>
-              <button
-                onClick={() => setViewMode("heatmap")}
-                style={{
-                  padding: "10px 15px",
-                  background: viewMode === "heatmap" ? "#007bff" : "#ccc",
-                  color: viewMode === "heatmap" ? "#fff" : "#000",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Show Heatmap
-              </button>
-              <button
-                onClick={() => setViewMode("clusters")}
-                style={{
-                  padding: "10px 15px",
-                  background: viewMode === "clusters" ? "#007bff" : "#ccc",
-                  color: viewMode === "clusters" ? "#fff" : "#000",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Show Clusters
-              </button>
-            </div>
-        </div> }
+    <div>
+      {props.showButton && (
+        <div style={{ position: "absolute", zIndex: 20, paddingLeft: "2rem" }}>
+          <div className="flex flex-col gap-4 mt-8">
+            <button
+              onClick={() => setViewMode("markers")}
+              style={{
+                padding: "10px 15px",
+                background: viewMode === "markers" ? "#007bff" : "#ccc",
+                color: viewMode === "markers" ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Show Markers
+            </button>
+            <button
+              onClick={() => setViewMode("heatmap")}
+              style={{
+                padding: "10px 15px",
+                background: viewMode === "heatmap" ? "#007bff" : "#ccc",
+                color: viewMode === "heatmap" ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Show Heatmap
+            </button>
+            <button
+              onClick={() => setViewMode("clusters")}
+              style={{
+                padding: "10px 15px",
+                background: viewMode === "clusters" ? "#007bff" : "#ccc",
+                color: viewMode === "clusters" ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Show Clusters
+            </button>
+          </div>
+        </div>
+      )}
 
       <Map
         initialViewState={{
-          latitude: props.oneLat ? props.oneLat : 18.45,
-          longitude: props.oneLong ? props.oneLong : 84.431,
+          latitude: 18.45,
+          longitude: 84.431,
           zoom: 7,
         }}
         style={{
-          // margin: "30px auto", // Center the map horizontally
-        
-          // marginBottom:"50px",
-          // border: "solid 5px #6096B4",
           borderRadius: "1rem",
-          height: !props.showButton ? "20vh" : "45vh"
+          height: !props.showButton ? "20vh" : "45vh",
         }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
       >
-        {props.oneLat && props.oneLong && viewMode === "markers" && 
-          
-            <Marker
-              // key={catchDetail._id}
-              longitude={props.oneLong}
-              latitude={props.oneLat}
-              anchor="bottom"
-              onClick={(e) => {
-                e.originalEvent.stopPropagation();
-                //setPopupInfo(catchDetail);
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: "rgba(255, 0, 0, 0.8)",
-                  border: "2px solid white",
-                  borderRadius: "50%",
-                  width: "12px",
-                  height: "12px",
-                  boxShadow: "0 0 10px rgba(255, 0, 0, 0.5)",
-                  cursor: "pointer",
-                }}
-              ></div>
-            </Marker>
-          
-        
-        }
+
         {!props.oneLat && !props.oneLong && viewMode === "markers" &&
-          catchData.map((data) =>
-            data.catches.map((catchDetail) => (
+          catchData.map((catchDetail) => (
               <Marker
                 key={catchDetail._id}
                 longitude={catchDetail.longitude}
@@ -230,8 +180,7 @@ console.log(catchData);
                 onClick={(e) => {
                   e.originalEvent.stopPropagation();
                   setPopupInfo(catchDetail);
-                }}
-              >
+                }} >
                 <div
                   style={{
                     backgroundColor: "rgba(255, 0, 0, 0.8)",
@@ -245,7 +194,7 @@ console.log(catchData);
                 ></div>
               </Marker>
             ))
-          )}
+          }
 
         {viewMode === "heatmap" && (
           <Source id="heatmap" type="geojson" data={heatmapData}>
@@ -284,37 +233,20 @@ console.log(catchData);
             <div style={{ fontFamily: "'Roboto', sans-serif" }}>
               <h3 style={{ margin: "0 0 10px 0", color: "#333" }}>Details</h3>
               <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Latitude:</strong> {popupInfo.latitude.toFixed(6)}
+                <strong>Latitude:</strong> {popupInfo.latitude}
               </p>
               <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Longitude:</strong> {popupInfo.longitude.toFixed(6)}
+                <strong>Longitude:</strong> {popupInfo.longitude}
               </p>
               <p style={{ margin: "0 0 5px 0", color: "#555" }}>
                 <strong>Depth:</strong> {popupInfo.depth} meters
               </p>
-              <ul
-                style={{
-                  padding: "0",
-                  margin: "0",
-                  listStyleType: "none",
-                  color: "#555",
-                }}
-              >
-                {popupInfo.species.map((s) => (
-                  <li
-                    key={s.name}
-                    style={{
-                      margin: "5px 0",
-                      padding: "5px",
-                      backgroundColor: "#ffffff",
-                      borderRadius: "5px",
-                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                    }}
-                  >
-                    {s.name}: {s.catch_weight} kg
-                  </li>
-                ))}
-              </ul>
+              <p style={{ margin: "0 0 5px 0", color: "#555" }}>
+                <strong>Weight:</strong> {popupInfo.totalCatchWeight} kg
+              </p>
+              <p style={{ margin: "0", color: "#555" }}>
+                <strong>Species:</strong> {popupInfo.species}
+              </p>
             </div>
           </Popup>
         )}
@@ -323,7 +255,4 @@ console.log(catchData);
   );
 };
 
-export default MapboxVisualization;
-
-
-
+export default FilterMap;
