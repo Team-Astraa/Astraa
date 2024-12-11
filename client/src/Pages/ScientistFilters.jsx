@@ -772,81 +772,96 @@ const FilterForm = () => {
                           <div className="flex items-center justify-between w-full p-4 shadow-md">
                             <h1 className="text-2xl font-bold">Your Data</h1>
                             <div className="flex flex-col gap-2">
-                              <div className="flex gap-4 items-center justify-evenly">
-                                <div className="flex flex-col items-center justify-center text-green-500">
-                                  <i onClick={() => downloadExcelWithCharts("xlsx")} className="fa-solid fa-file-excel text-xl"></i>
-                                  <p className="text-sm text-center">Excel</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-green-500">
-                                  <i onClick={() => downloadExcelWithCharts("csv")} className="fa-solid fa-file-csv text-xl"></i>
-                                  <p className="text-sm text-center">CSV</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-blue-500">
-                                  <i onClick={handleSaveData} className="fa-solid fa-floppy-disk text-xl"></i>
-                                  <p className="text-sm text-center">Save</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-purple-500">
-                                  <i onClick={shareToCommunity} className="fa-solid fa-share text-xl"></i>
-                                  <p className="text-sm text-center">Share</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-purple-500">
-                                  <i onClick={emailModel} className="fa-solid fa-envelope text-xl"></i>
-                                  <p className="text-sm text-center">email</p>
-                                </div>
-                               
+                            <div className="flex gap-4 items-center">
+        {/* Excel Button */}
+        <button
+          onClick={() => downloadExcelWithCharts("xlsx")}
+          className="flex flex-col items-center justify-center bg-gradient-to-r from-green-500 to-green-400 text-white rounded-lg p-2 shadow-md transform hover:scale-105 hover:shadow-lg transition-all duration-300 text-sm"
+        >
+          <i className="fa-solid fa-file-excel text-4xl"></i>
+        </button>
+                                {/* CSV Button */}
+        <button
+          onClick={() => downloadExcelWithCharts("csv")}
+          className="flex flex-col items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-400 text-black rounded-lg p-2 shadow-md transform hover:scale-105 hover:shadow-lg transition-all duration-300 text-sm"
+        >
+          <i className="fa-solid fa-file-csv text-4xl"></i>
+        </button>
+                                {/* Save Button */}
+        <button
+          onClick={handleSaveData}
+          className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg p-2 shadow-md transform hover:scale-105 hover:shadow-lg transition-all duration-300 text-sm"
+        >
+          <i className="fa-solid fa-floppy-disk text-4xl"></i>
+        </button>
+                                {/* Share Button */}
+        <button
+          onClick={shareToCommunity}
+          className="flex flex-col items-center justify-center bg-gradient-to-r from-purple-500 to-purple-400 text-white rounded-lg p-2 shadow-md transform hover:scale-105 hover:shadow-lg transition-all duration-300 text-sm"
+        >
+          <i className="fa-solid fa-share text-4xl"></i>
+        </button>
+                                 {/* Email Button */}
+        <button
+          onClick={emailModel}
+          className="flex flex-col items-center justify-center bg-gradient-to-r from-red-500 to-red-400 text-white rounded-lg p-2 shadow-md transform hover:scale-105 hover:shadow-lg transition-all duration-300 text-sm"
+        >
+          <i className="fa-solid fa-envelope text-4xl"></i>
+        </button>
                               </div>
 
-                              <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
+                              <p className="font-bold text-black flex">Total Rows:<p className="text-green-600 ml-2">{data.length}</p></p></div>
                           </div>
                           <div className="grid grid-cols-9 gap-2 p-4 border-t">
-                            {[
-                              "Species Name",
-                              "Latitude",
-                              "Longitude",
-                              "Depth",
-                              "Total Weight (kg)",
-                              "Sea",
-                              "State",
-                              "Zone Type",
-                              "Date",
-                            ].map((header) => (
-                              <div
-                                key={header}
-                                className="font-bold text-sm uppercase bg-gray-200 p-2 border"
-                              >
-                                {header}
-                              </div>
-                            ))}
-                          </div>
-                          {data.map((item, index) => (
-                            <div
-                              key={index}
-                              className="grid grid-cols-9 gap-2 p-4 border-t border-gray-200"
-                            >
-                              <div className="p-2 border">
-                                <div
-                                  className="cursor-pointer flex items-center justify-center h-full text-black"
-                                  onClick={() => openModal2(item.species)}
-                                >
-                                  <i className="fa-solid fa-eye hover:text-lg transition-all duration-150"></i>
-                                </div>
-                              </div>
-                              <div className="p-2 border">
-                                {truncateDecimals(item.latitude, 2)}
-                              </div>
-                              <div className="p-2 border">
-                                {truncateDecimals(item.longitude, 2)}
-                              </div>
-                              <div className="p-2 border break-words">{item.depth}</div>
-                              <div className="p-2 border break-words">{item.total_weight}</div>
-                              <div className="p-2 border break-words">{item.sea}</div>
-                              <div className="p-2 border break-words">{item.state}</div>
-                              <div className="p-2 border break-words">{item.zoneType}</div>
-                              <div className="p-2 border break-words">
-                                {new Date(item.date).toLocaleDateString()}
-                              </div>
-                            </div>
-                          ))}
+  {[
+    "Species Name",
+    "Latitude",
+    "Longitude",
+    "Depth",
+    "Total Weight (kg)",
+    "Sea",
+    "State",
+    "Zone Type",
+    "Date",
+  ].map((header) => (
+    <div
+      key={header}
+      className="font-bold text-sm uppercase bg-gray-200 p-2 border rounded-lg text-center shadow-md"
+    >
+      {header}
+    </div>
+  ))}
+</div>
+
+{data.map((item, index) => (
+  <div
+    key={index}
+    className={`grid grid-cols-9 gap-2 p-4 rounded-lg shadow hover:bg-gray-50 transition-colors duration-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
+  >
+    {/* Species with the eye icon */}
+    <div className="p-2 flex items-center justify-center cursor-pointer hover:text-blue-500">
+      <i onClick={() => openModal2(item.species)} className="fa-solid fa-eye text-2xl"></i>
+    </div>
+
+    {/* Data Cells */}
+    <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
+      {truncateDecimals(item.latitude, 2)}
+    </div>
+
+    <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
+      {truncateDecimals(item.longitude, 2)}
+    </div>
+
+    <div className="p-2 text-center border border-purple-200 break-words">{item.depth}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.total_weight}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.sea}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.state}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.zoneType}</div>
+    <div className="p-2 text-center border border-purple-200 font-medium text-gray-600">
+      {new Date(item.date).toLocaleDateString()}
+    </div>
+  </div>
+))}
                         </>
                       ) : (
                         <div className="flex items-center justify-center mt-24">
@@ -855,36 +870,52 @@ const FilterForm = () => {
                       )}
 
                       {/* Modal */}
-                      {isModalOpen && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                          <div className="bg-white rounded-lg w-1/3 p-6">
-                            <div className="flex justify-between items-center mb-4">
-                              <h2 className="text-xl font-bold">Species Details</h2>
-                              <button
-                                className="text-gray-600 hover:text-gray-800"
-                                onClick={closeModal}
-                              >
-                                ✖
-                              </button>
-                            </div>
-                            <div className="space-y-2">
-                              {modalData.map((species, idx) => (
-                                <div key={idx} className="text-gray-800">
-                                  {`${species.name} (${species.catch_weight || "N/A"})`}
-                                </div>
-                              ))}
-                            </div>
-                            <div className="mt-6 text-right">
-                              <button
-                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                onClick={closeModal}
-                              >
-                                Close
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+{isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg w-1/2 p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Species Details</h2>
+        <button
+          className="text-gray-600 hover:text-gray-800"
+          onClick={closeModal}
+        >
+          ✖
+        </button>
+      </div>
+
+      {/* Table to Display Species Data */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="py-2 px-4 border-b text-left font-medium">Species Name</th>
+              <th className="py-2 px-4 border-b text-left font-medium">Catch Weight (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {modalData.map((species, idx) => (
+              <tr key={idx} className="hover:bg-gray-50">
+                <td className="py-2 px-4 border-t text-gray-800">{species.name}</td>
+                <td className="py-2 px-4 border-t text-gray-600">
+                  {species.catch_weight || "N/A"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-6 text-right">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={closeModal}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
                     </>
 
                 }
