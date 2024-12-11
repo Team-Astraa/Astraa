@@ -209,6 +209,7 @@ const Addexcel = () => {
 
   // Handle download
   const handleDownload = (type) => {
+    console.log(type)
     setDownloadType(type); // Set the download type (either "abundance" or "occurrence")
     setOpenModal(true); // Open the modal with instructions
   };
@@ -427,7 +428,7 @@ const Addexcel = () => {
   </p>
   <button
     className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 custom-pulse"
-    onClick={() => handleDownload("PFZ/NON-PFZ")}
+    onClick={() => handleDownload("pfz")}
     style={{
       width: "auto", // Adjust to content
     }}
@@ -481,7 +482,7 @@ const Addexcel = () => {
         Information linked to specific locations on the Earth's surface using geographic coordinates.
       </p>
       <button
-        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300"
+        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 custom-pulse"
         onClick={() => handleDownload("GEO-REF")}
         style={{
           width: "auto", // Adjust to content
@@ -508,8 +509,11 @@ const Addexcel = () => {
         Data abundance is the volume of data available, while data occurrence is the recording of specific events or fish presence.
       </p>
       <button
-        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 opacity-100"
-        onClick={() => handleDownload("ABUNDANCE/OCCURRENCE")}
+        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 opacity-100 "
+        onClick={() => handleDownload("AbuOcu")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
       >
         Download Abundance/Occurrence
       </button>
