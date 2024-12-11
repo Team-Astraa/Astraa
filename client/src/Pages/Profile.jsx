@@ -101,7 +101,6 @@ const Profile = () => {
     <button className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium">Save</button>
   </div>
 </div>
-
           {/* Your Photo Section */}
           <div className="flex-1 h-fit max-w-sm bg-white p-6 rounded-lg shadow-md border border-gray-200">
             <h2 className="text-lg font-semibold mb-4">Your Photo</h2>

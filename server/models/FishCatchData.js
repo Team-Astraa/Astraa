@@ -11,6 +11,9 @@ const SpeciesSchema = new mongoose.Schema({
   },
 });
 
+// const Species = mongoose.model("speciesSchema", SpeciesSchema);
+// export default Species; 
+
 const CatchSchema = new mongoose.Schema(
   {
     date: {
@@ -78,6 +81,6 @@ const CatchSchema = new mongoose.Schema(
   }
 );
 
-const Catch = mongoose.model("Catch", CatchSchema);
+const CatchDataSchema = mongoose.model("Catch", CatchSchema);
 
-export default Catch;
+export default CatchDataSchema;

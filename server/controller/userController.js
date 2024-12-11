@@ -8,6 +8,9 @@ import Log from "../models/logSchema.js";
 import CatchData from "../models/FishcatchDataNew.js";
 
 // Helper function to clean and normalize data
+import SpeciesData from "../models/Species.js"; // Import the schema
+
+import path from "path"; // To handle file paths
 const stateBoundaries = {
   Gujarat: { latitude: 22.2587, longitude: 71.1924 },
   Maharashtra: { latitude: 19.7515, longitude: 75.7139 },
@@ -143,29 +146,29 @@ const parseExcelDate = (excelDate) => {
 //   });
 // };
 
-const parseDate = (dateString) => {
-  if (!dateString) return null; // Handle missing or invalid date strings
-  try {
-    // Try parsing the date using JavaScript's Date constructor
-    const parsedDate = new Date(dateString);
-    if (!isNaN(parsedDate.getTime())) {
-      return parsedDate.toISOString(); // Return in ISO format if valid
-    }
-    // Handle custom formats if needed (e.g., DD-MM-YYYY)
-    const parts = dateString.split(/[-./]/); // Split by common delimiters
-    if (parts.length === 3) {
-      const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1; // Month is 0-based in JS
-      const year = parseInt(parts[2], 10);
-      const customDate = new Date(year, month, day);
-      return customDate.toISOString();
-    }
-    return null; // Return null if parsing fails
-  } catch (error) {
-    console.error("Error parsing date:", error);
-    return null; // Return null if an exception occurs
-  }
-};
+// const parseDate = (dateString) => {
+//   if (!dateString) return null; // Handle missing or invalid date strings
+//   try {
+//     // Try parsing the date using JavaScript's Date constructor
+//     const parsedDate = new Date(dateString);
+//     if (!isNaN(parsedDate.getTime())) {
+//       return parsedDate.toISOString(); // Return in ISO format if valid
+//     }
+//     // Handle custom formats if needed (e.g., DD-MM-YYYY)
+//     const parts = dateString.split(/[-./]/); // Split by common delimiters
+//     if (parts.length === 3) {
+//       const day = parseInt(parts[0], 10);
+//       const month = parseInt(parts[1], 10) - 1; // Month is 0-based in JS
+//       const year = parseInt(parts[2], 10);
+//       const customDate = new Date(year, month, day);
+//       return customDate.toISOString();
+//     }
+//     return null; // Return null if parsing fails
+//   } catch (error) {
+//     console.error("Error parsing date:", error);
+//     return null; // Return null if an exception occurs
+//   }
+// };
 
 const cleanData = (data, userId, id, dataType) => {
   let flag = false;
@@ -369,6 +372,311 @@ export const uploadCSV = async (req, res) => {
   }
 };
 
+// Controller to handle file upload and data extraction
+// export const uploadSpeciesData = async (req, res) => {
+//   try {
+//     // Get the file from request
+//     const file = req.file;
+
+//     // Parse the file based on extension
+//     let data;
+//     const fileExtension = path.extname(file.originalname);
+
+//     if (fileExtension === ".xlsx") {
+//       // Read the xlsx file
+//       const workbook = xlsx.readFile(file.path);
+//       const sheetName = workbook.SheetNames[0]; // Get the first sheet
+//       const worksheet = workbook.Sheets[sheetName];
+//       data = xlsx.utils.sheet_to_json(worksheet);
+//     } else if (fileExtension === ".csv") {
+//       // Read the csv file
+//       data = xlsx.utils.csv_to_json(file.buffer.toString());
+//     } else {
+//       return res
+//         .status(400)
+//         .send("Invalid file type. Please upload an xlsx or csv file.");
+//     }
+
+//     // Transform data
+//     const transformedData = data.map((row) => {
+//       const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+
+//       return {
+//         longitude: parseFloat(Longitude),
+//         latitude: parseFloat(Latitude),
+//         date: new Date(Date),
+//         village: Village || null,
+//         species: Object.keys(speciesData).reduce((acc, key) => {
+//           const weight = parseFloat(speciesData[key]);
+//           acc.set(key, isNaN(weight) ? 0 : weight); // Store 0 if the weight is invalid or missing
+//           return acc;
+//         }, new Map()),
+//       };
+//     });
+
+//     // Save the transformed data to the database
+//     await SpeciesData.insertMany(transformedData);
+
+//     // Send success response
+//     return res.status(200).send("File uploaded and data saved successfully.");
+//   } catch (error) {
+//     console.error("Error uploading species data:", error);
+//     return res.status(500).send("Internal server error.");
+//   }
+// };
+
+const excelDateToJSDate = (serial) => {
+  const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Excel's base date is 1899-12-30
+  return new Date(excelEpoch.getTime() + serial * 86400000); // Convert to milliseconds
+};
+
+// Function to parse the date format DD-MM-YYYY or YYYY-MM-DD
+const parseDate = (dateValue) => {
+  // If it's an instance of Date, return it
+  console.log("dateValue", dateValue);
+  if (dateValue instanceof Date) {
+    return dateValue;
+  }
+
+  // If it's a number (Excel serial number), convert it
+  if (typeof dateValue === "number") {
+    const date = excelDateToJSDate(dateValue);
+    console.log("date", date);
+    return date;
+  }
+
+  // If it's a string, check for a valid format 'YYYY-MM-DD'
+  if (typeof dateValue === "string") {
+    const parts = dateValue.split("-");
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      if (year.length === 4 && month.length === 2 && day.length === 2) {
+        const date = new Date(dateValue);
+        if (!isNaN(date.getTime())) {
+          return date; // Return the Date object if valid
+        }
+      }
+    }
+  }
+
+  // Return null if date is invalid
+  return null;
+};
+
+// export const uploadSpeciesData = async (req, res) => {
+//   try {
+//     // Get the file from the request
+//     const file = req.file;
+//     console.log(req.file);
+
+//     // Parse the file based on extension
+//     let data;
+//     const fileExtension = path.extname(file.originalname);
+
+//     if (fileExtension === ".xlsx") {
+//       // Read the xlsx file
+//       const workbook = xlsx.read(file.buffer); // Use buffer instead of file.path for multer memoryStorage
+//       const sheetName = workbook.SheetNames[0]; // Get the first sheet
+//       const worksheet = workbook.Sheets[sheetName];
+//       data = xlsx.utils.sheet_to_json(worksheet);
+//     } else if (fileExtension === ".csv") {
+//       // Read the csv file
+//       data = xlsx.utils.csv_to_json(file.buffer.toString());
+//     } else {
+//       return res
+//         .status(400)
+//         .send("Invalid file type. Please upload an xlsx or csv file.");
+//     }
+
+//     // Transform data
+//     // const transformedData = data.map((row) => {
+//     //   const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+
+//     //   const parsedDate = parseDate(Date); // Parse the date
+//     //   if (!parsedDate) {
+//     //     console.error("Invalid date format:", Date);
+//     //   }
+
+//     //   return {
+//     //     longitude: parseFloat(Longitude), // Parse Longitude to float
+//     //     latitude: parseFloat(Latitude), // Parse Latitude to float
+//     //     date: parsedDate || new Date(), // Use parsed date or current date if invalid
+//     //     village: Village || null, // Set to null if Village is missing
+//     //     species: Object.keys(speciesData).reduce((acc, key) => {
+//     //       const weight = parseFloat(speciesData[key]);
+//     //       acc.set(key, isNaN(weight) ? 0 : weight); // Store 0 if the weight is invalid or missing
+//     //       return acc;
+//     //     }, new Map()),
+//     //   };
+//     // });
+
+//     // const transformedData = data.map((row) => {
+//     //   const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+
+//     //   const parsedDate = parseDate(Date); // Parse the date (now handles Date object or string)
+//     //   if (!parsedDate) {
+//     //     console.error("Invalid date format:", Date);
+//     //   }
+
+//     //   return {
+//     //     longitude: parseFloat(Longitude), // Parse Longitude to float
+//     //     latitude: parseFloat(Latitude), // Parse Latitude to float
+//     //     date: parsedDate || new Date(), // Use parsed date or current date if invalid
+//     //     village: Village || null, // Set to null if Village is missing
+//     //     species: Object.keys(speciesData).reduce((acc, key) => {
+//     //       const weight = parseFloat(speciesData[key]);
+//     //       acc.set(key, isNaN(weight) ? 0 : weight); // Store 0 if the weight is invalid or missing
+//     //       return acc;
+//     //     }, new Map()),
+//     //   };
+//     // });
+
+//     const transformedData = data.map((row) => {
+//       const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+
+//       const parsedDate = parseDate(Date); // Parse the date using the updated function
+//       if (!parsedDate) {
+//         console.error("Invalid date format:", Date);
+//       }
+
+//       return {
+//         longitude: parseFloat(Longitude), // Parse Longitude to float
+//         latitude: parseFloat(Latitude), // Parse Latitude to float
+//         date: parsedDate || new Date(), // Use parsed date or the current date if invalid
+//         village: Village || null, // Set to null if Village is missing
+//         species: Object.keys(speciesData).reduce((acc, key) => {
+//           const weight = parseFloat(speciesData[key]);
+//           acc.set(key, isNaN(weight) ? 0 : weight); // Store 0 if weight is invalid or missing
+//           return acc;
+//         }, new Map()),
+//       };
+//     });
+
+//     // Save the transformed data to the database
+//     await SpeciesData.insertMany(transformedData);
+
+//     // Send success response
+//     return res.status(200).send("File uploaded and data saved successfully.");
+//   } catch (error) {
+//     console.error("Error uploading species data:", error);
+//     return res.status(500).send("Internal server error.");
+//   }
+// };
+
+// export const uploadSpeciesData = async (req, res) => {
+//   try {
+//     // Get the file from the request
+//     const file = req.file;
+
+//     if (!file) {
+//       return res.status(400).send("No file uploaded.");
+//     }
+
+//     // Parse the file based on extension
+//     let data;
+//     const fileExtension = path.extname(file.originalname);
+
+//     if (fileExtension === ".xlsx") {
+//       // Use the buffer directly with xlsx.read
+//       const workbook = xlsx.read(file.buffer, { type: "buffer" });
+//       const sheetName = workbook.SheetNames[0]; // Get the first sheet
+//       const worksheet = workbook.Sheets[sheetName];
+//       data = xlsx.utils.sheet_to_json(worksheet);
+//     } else if (fileExtension === ".csv") {
+//       // Read the csv file
+//       data = xlsx.utils.csv_to_json(file.buffer.toString());
+//     } else {
+//       return res
+//         .status(400)
+//         .send("Invalid file type. Please upload an xlsx or csv file.");
+//     }
+
+//     // Transform data
+//     const transformedData = data.map((row) => {
+//       const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+
+//       const parsedDate = parseDate(Date); // Parse the date
+//       if (!parsedDate) {
+//         console.error("Invalid date format:", Date);
+//       }
+
+//       return {
+//         longitude: parseFloat(Longitude), // Parse Longitude to float
+//         latitude: parseFloat(Latitude), // Parse Latitude to float
+//         date: parsedDate || new Date(), // Use parsed date or current date if invalid
+//         village: Village || null, // Set to null if Village is missing
+//         species: Object.keys(speciesData).reduce((acc, key) => {
+//           const weight = parseFloat(speciesData[key]);
+//           acc.set(key, isNaN(weight) ? 0 : weight); // Store 0 if the weight is invalid or missing
+//           return acc;
+//         }, new Map()),
+//       };
+//     });
+
+//     // Save the transformed data to the database
+//     await SpeciesData.insertMany(transformedData);
+
+//     // Send success response
+//     return res.status(200).send("File uploaded and data saved successfully.");
+//   } catch (error) {
+//     console.error("Error uploading species data:", error);
+//     return res.status(500).send("Internal server error.");
+//   }
+// };
+
+export const uploadSpeciesData = async (req, res) => {
+  try {
+    // Get the file from the request
+    const file = req.file;
+    console.log(req.file);
+
+    // Parse the file based on extension
+    let data;
+    const fileExtension = path.extname(file.originalname);
+
+    if (fileExtension === ".xlsx") {
+      // Read the xlsx file
+      const workbook = xlsx.read(file.buffer); // Use buffer instead of file.path for multer memoryStorage
+      const sheetName = workbook.SheetNames[0]; // Get the first sheet
+      const worksheet = workbook.Sheets[sheetName];
+      data = xlsx.utils.sheet_to_json(worksheet);
+    } else if (fileExtension === ".csv") {
+      // Read the csv file
+      data = xlsx.utils.csv_to_json(file.buffer.toString());
+    } else {
+      return res
+        .status(400)
+        .send("Invalid file type. Please upload an xlsx or csv file.");
+    }
+
+    // Transform data
+    const transformedData = data.map((row) => {
+      const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+
+      const parsedDate = parseDate(Date); // Parse the date using the updated function
+      if (!parsedDate) {
+        console.error("Invalid date format:", Date);
+      }
+
+      return {
+        longitude: parseFloat(Longitude), // Parse Longitude to float
+        latitude: parseFloat(Latitude), // Parse Latitude to float
+        date: parsedDate || new Date(), // Use parsed date or the current date if invalid
+        village: Village || null, // Set to null if Village is missing
+        species: speciesData, // Directly store species data as an object (Mixed type)
+      };
+    });
+
+    // Save the transformed data to the database
+    await SpeciesData.insertMany(transformedData);
+
+    // Send success response
+    return res.status(200).send("File uploaded and data saved successfully.");
+  } catch (error) {
+    console.error("Error uploading species data:", error);
+    return res.status(500).send("Internal server error.");
+  }
+};
 export const getLogsByUserIdWithUser = async (req, res) => {
   try {
     const { userid } = req.body;

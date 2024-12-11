@@ -43,7 +43,7 @@ const HomePage = () => {
         navigate('/industry-collaborators/home')
         toast.success('Welcome industry collaborators')
       }else if(userType == "research_cruises"){
-        navigate('/research-cruises/home')
+        navigate('/research_cruises/home')
         toast.success('Welcome Research Cruises')
       }else if(userType == 'research_institute'){
         navigate('/research-institute/home')
@@ -91,7 +91,7 @@ const HomePage = () => {
               <button
                 variant="danger"
                 onClick={handleNavigate}
-                className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
+                className="rounded-lg h-fit border-4 border-green-600 bg-green-300 hover:bg-green-400 hover:text-white px-5 py-3 font-bold text-xl text-white transition-all"
               >
               GO TO DASHBOARD
               </button>
@@ -100,16 +100,16 @@ const HomePage = () => {
             <div className="w-full h-fit  flex flex-col gap-10 items-center white justify-center">
               <div className="flex gap-10 mt-10">
                 <button
-                  variant="primary"
                   onClick={() => navigate("/signin", { state: { userType: "Admin" } })}
-                  className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
+                  className="rounded-lg h-fit border-4 border-blue-600 bg-blue-500 hover:bg-blue-600 hover:text-white px-5 py-3 font-bold text-xl text-white transition-all"
+                  aria-label="Login as Admin"
                 >
-                  Login as Admin
+                Login as Admin
                 </button>
                 <button
-                  variant="secondary"
                   onClick={() => navigate("/signup")}
-                  className="rounded-lg h-fit border-4 px-5 font-bold text-2xl text-white"
+                  className="rounded-lg h-fit border-4 border-green-600 bg-green-500 hover:bg-green-600 hover:text-white px-5 py-3 font-bold text-xl text-white transition-all"
+                  aria-label="Login as User"
                 >
                   Login as User
                 </button>
