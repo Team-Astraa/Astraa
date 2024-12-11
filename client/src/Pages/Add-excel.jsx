@@ -14,8 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Autocomplete } from '@mui/material'
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Autocomplete } from "@mui/material";
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,7 +63,6 @@ const Addexcel = () => {
       species: updatedSpecies,
     }));
   };
-
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
@@ -272,9 +271,9 @@ const Addexcel = () => {
 
             <h2>Add New Catch Record</h2>
 
-            <form onSubmit={handleSubmit}>
+            {/* manual form */}
+            {/* <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
-                {/* Date */}
                 <TextField
                   label="Date"
                   type="date"
@@ -286,7 +285,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Latitude */}
                 <TextField
                   label="Latitude"
                   type="number"
@@ -298,7 +296,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Longitude */}
                 <TextField
                   label="Longitude"
                   type="number"
@@ -310,7 +307,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Depth */}
                 <TextField
                   label="Depth"
                   type="number"
@@ -322,7 +318,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Species */}
               {catchData.species.map((species, index) => (
                 <div key={index} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -364,7 +359,6 @@ const Addexcel = () => {
               </Button>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Sea */}
                 <TextField
                   label="Sea"
                   name="sea"
@@ -374,7 +368,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* State */}
                 <TextField
                   label="State"
                   name="state"
@@ -386,7 +379,6 @@ const Addexcel = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Total Weight */}
                 <TextField
                   label="Total Weight"
                   name="total_weight"
@@ -398,7 +390,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 variant="contained"
@@ -407,48 +398,56 @@ const Addexcel = () => {
               >
                 Submit
               </Button>
-            </form>
+            </form> */}
           </Box>
         </Modal>
       )}
 
-<div className="flex space-x-8">
-  {/* Download Card */}
-  <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] border-2 flex flex-col space-y-6">
-    {/* Title */}
-    <h2 className="text-4xl font-bold text-gray-800 text-center">
-      Download Templates
-    </h2>
-    {/* Abundance Section */}
-    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
-      <h3 className="text-2xl font-semibold text-gray-700">
-        Abundance
-      </h3>
-      <p>Abundance includes both the presence and the quantity (e.g., count or weight) of that species in the area.</p>
-      <strong className="pt-3">Click the button below to view detailed instructions on how to upload</strong>
-      <button
-        className="px-2 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
-        onClick={() => handleDownload("abundance")}
-      >
-        Download Abundance
-      </button>
-    </div>
-    {/* Occurrence Section */}
-    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
-      <h3 className="text-2xl font-semibold text-gray-700">
-        Occurrence
-      </h3>
-      <p>Occurrence refers to the presence or absence of a species in a specific area</p>
-      <strong className="pt-4">Click the button below to view detailed instructions on how to upload</strong>
-      <button
-        className="px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
-        onClick={() => handleDownload("occurrence")}
-      >
-        Download Occurrence
-      </button>
-    </div>
-  </div>
-  
+      <div className="flex space-x-8">
+        {/* Download Card */}
+        <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] border-2 flex flex-col space-y-6">
+          {/* Title */}
+          <h2 className="text-4xl font-bold text-gray-800 text-center">
+            Download Templates
+          </h2>
+          {/* Abundance Section */}
+          <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
+            <h3 className="text-2xl font-semibold text-gray-700">Abundance</h3>
+            <p>
+              Abundance includes both the presence and the quantity (e.g., count
+              or weight) of that species in the area.
+            </p>
+            <strong className="pt-3">
+              Click the button below to view detailed instructions on how to
+              upload
+            </strong>
+            <button
+              className="px-2 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
+              onClick={() => handleDownload("abundance")}
+            >
+              Download Abundance
+            </button>
+          </div>
+          {/* Occurrence Section */}
+          <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
+            <h3 className="text-2xl font-semibold text-gray-700">Occurrence</h3>
+            <p>
+              Occurrence refers to the presence or absence of a species in a
+              specific area
+            </p>
+            <strong className="pt-4">
+              Click the button below to view detailed instructions on how to
+              upload
+            </strong>
+            <button
+              className="px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
+              onClick={() => handleDownload("occurrence")}
+            >
+              Download Occurrence
+            </button>
+          </div>
+        </div>
+
         {/* Modal for Download Instructions */}
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
           <Box

@@ -1,4 +1,4 @@
-import common_names from "../indian_common_fish names.json" with { type: "json" };
+import common_names from "../indian_common_fish names.json" assert { type: "json" };
 import { ratio } from "fuzzball";
 
 export const validateFishingData = (data, dataType = "abundance") => {
