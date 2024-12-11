@@ -111,6 +111,12 @@ const FilterForm = () => {
 
   const [modalData, setModalData] = useState(null); // Stores data for the modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState("");
+
+  const handlenameChange = (e) => {
+    setName(e.target.value);
+  };
+  const [openModaln, setOpenModaln] = useState(false);
 
   const openModal2 = (species) => {
     setModalData(species);
@@ -326,6 +332,242 @@ const FilterForm = () => {
   };
 
 
+  let [openModale, setOpenModale] = useState(false)
+
+  const [emails, setEmails] = useState([]);
+
+
+  let emailModel = () => {
+    setOpenModale(true)
+
+  }
+
+  const downloadExcelWithCharts2 = async () => {
+    setLoading(true)
+    setOpenModale(false)
+
+
+    try {
+      // Check if data is valid
+      if (!Array.isArray(data) || data.length === 0) {
+        console.error("No valid data available for export.");
+        return;
+      }
+
+      // Prepare data for charts
+      const stateNames = [...new Set(data.map((item) => item.state))];
+      const seaNames = [...new Set(data.map((item) => item.sea))];
+
+      const speciesCounts = {};
+      const seaSpeciesCounts = {};
+      const stateSpeciesCounts = {};
+
+      data.forEach((item) => {
+        item.species.forEach(({ name, catch_weight }) => {
+          speciesCounts[name] = (speciesCounts[name] || 0) + catch_weight;
+          seaSpeciesCounts[item.sea] = seaSpeciesCounts[item.sea] || {};
+          seaSpeciesCounts[item.sea][name] = (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
+
+          stateSpeciesCounts[item.state] = stateSpeciesCounts[item.state] || {};
+          stateSpeciesCounts[item.state][name] = (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
+        });
+      });
+
+      // Flatten species counts for charts
+      const speciesLabels = Object.keys(speciesCounts);
+      const speciesData = Object.values(speciesCounts);
+
+      // Workbook and Worksheet
+      const workbook = new ExcelJS.Workbook();
+      const dataSheet = workbook.addWorksheet("Filtered Data");
+      const chartSheet = workbook.addWorksheet("Chart Sheet");
+
+      // Populate Data Sheet
+      const flattenedData = data.map((item) => {
+        const speciesNames = item.species.map((s) => s.name).join(", ");
+        const speciesWeights = item.species.map((s) => s.catch_weight).join(", ");
+        return {
+          ...item,
+          species_names: speciesNames,
+          species_weights: speciesWeights,
+        };
+      });
+
+      const columns = Object.keys(flattenedData[0] || {}).map((key) => ({
+        header: key,
+        key: key,
+      }));
+      dataSheet.columns = columns;
+      flattenedData.forEach((row) => {
+        dataSheet.addRow(row);
+      });
+
+      // Generate Charts
+      setMessage("Wait!... Creating Excel...");
+      // Simulate creating Excel file
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual Excel creation logic
+
+      setMessage("Adding Charts in Excel file..."); const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+        const chartCanvas = document.createElement("canvas");
+        chartCanvas.width = 800;
+        chartCanvas.height = 400;
+
+        const ctx = chartCanvas.getContext("2d");
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, chartCanvas.width, chartCanvas.height);
+
+        const chart = new Chart(ctx, {
+          type,
+          data: {
+            labels,
+            datasets: [
+              {
+                label: chartTitle,
+                data: dataset,
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: false,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: chartTitle },
+            },
+            scales: type !== "pie" ? { y: { beginAtZero: true } } : undefined,
+          },
+        });
+
+        return new Promise((resolve) => {
+          chart.update();
+          setTimeout(() => resolve(chartCanvas), 1000);
+        });
+      };
+
+      // Define color schemes
+      const colorSchemes = [
+        { background: "#FF6384", border: "#FF6384" },
+        { background: "#36A2EB", border: "#36A2EB" },
+        { background: "#FFCE56", border: "#FFCE56" },
+        { background: "#4BC0C0", border: "#4BC0C0" },
+        { background: "#9966FF", border: "#9966FF" },
+        { background: "#FF9F40", border: "#FF9F40" },
+      ];
+
+      const chartCanvases = [
+        await generateChart(
+          "pie",
+          speciesLabels,
+          speciesData,
+          "Total Species Distribution",
+          colorSchemes[0]
+        ),
+        await generateChart(
+          "bar",
+          stateNames,
+          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          "Total Weight by State",
+          colorSchemes[1]
+        ),
+        await generateChart(
+          "bar",
+          seaNames,
+          seaNames.map((sea) => Object.values(seaSpeciesCounts[sea] || {}).reduce((a, b) => a + b, 0)),
+          "Total Weight by Sea",
+          colorSchemes[2]
+        ),
+        await generateChart(
+          "line",
+          speciesLabels,
+          speciesLabels.map((label) => speciesCounts[label] || 0),
+          "Species Catch Trends",
+          colorSchemes[3]
+        ),
+        await generateChart(
+          "doughnut",
+          speciesLabels,
+          speciesData,
+          "Species Distribution Doughnut",
+          colorSchemes[4]
+        ),
+        await generateChart(
+          "radar",
+          stateNames,
+          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          "State Comparison Radar",
+          colorSchemes[5]
+        ),
+      ];
+
+      // Style Chart Sheet Header
+      chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
+      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
+      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.mergeCells("A1:M2");
+
+      // Add Charts in Grid Layout
+      const CHART_WIDTH = 600;
+      const CHART_HEIGHT = 400;
+      const CHARTS_PER_ROW = 2;
+      const startRow = 4;
+
+      for (let i = 0; i < chartCanvases.length; i++) {
+        const row = startRow + Math.floor(i / CHARTS_PER_ROW) * 24;
+        const col = (i % CHARTS_PER_ROW) * 10;
+        const chartBlob = await new Promise((resolve) =>
+          chartCanvases[i].toBlob((blob) => resolve(blob), "image/png")
+        );
+        const imageId = workbook.addImage({
+          buffer: await chartBlob.arrayBuffer(),
+          extension: "png",
+        });
+        chartSheet.addImage(imageId, {
+          tl: { col, row },
+          ext: { width: CHART_WIDTH, height: CHART_HEIGHT },
+        });
+      }
+
+      // Write and Download
+      const excelBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      // const link = document.createElement("a");
+      // link.href = URL.createObjectURL(blob);
+      // link.download = `filtered_data_with_multiple_charts.xlsx`;
+      // link.click();
+      // URL.revokeObjectURL(link.href);
+
+      setMessage("sending Email...")
+      const formData = new FormData();
+      formData.append("file", blob, "filtered_data_with_multiple_charts.xlsx");
+
+
+      emails.forEach((email) => formData.append("emails[]", email));
+
+      try {
+        await axios.post("http://localhost:5000/scientist/sendEmail", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Excel file and email sent successfully!");
+      } catch (error) {
+        console.error("Error sending email:", error);
+        toast.error("Failed to send email. Check console for details.");
+      }
+
+
+      setLoading(false)
+      setMessage("")
+    } catch (error) {
+      setfileLoader(false)
+      console.error("Error generating Excel file:", error);
+    }
+  };
+
+
   const handleModalClose = () => {
     setIsModalOpen3(false);
   };
@@ -335,6 +577,14 @@ const FilterForm = () => {
 
   const handleSaveData = async () => {
 
+
+
+    if (!name) {
+      toast.error("Please enter name first")
+      return;
+    }
+
+    setOpenModaln(false)
 
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
@@ -363,6 +613,8 @@ const FilterForm = () => {
     const dataToSend = {
       uploadedBy: userId,
       data: data,
+      filters,
+      name
     };
 
     setMessage("Wait Saving Your Filtered Data")
@@ -399,6 +651,16 @@ const FilterForm = () => {
 
 
   const [onConfirm, setOnConfirm] = useState(() => () => { });
+
+
+  const handleEmailChange = (e) => {
+    const input = e.target.value;
+    const emailArray = input
+      .split(/[\s,]+/) // Split by commas or whitespace
+      .filter((email) => email.trim() !== ""); // Remove empty strings
+    setEmails(emailArray);
+  };
+
 
   let [openModalc, setOpenModalc] = useState(false)
   const [communities, setCommunities] = useState([]);
@@ -468,6 +730,13 @@ const FilterForm = () => {
     setActiveTab(tab);
   };
 
+  let openNameModel = () => {
+    setOpenModaln(true)
+
+  }
+
+
+
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
       <nav className="w-full mb-4 px-12 flex items-center justify-between p-4 shadow-lg bg-white">
@@ -484,7 +753,7 @@ const FilterForm = () => {
               <div className="w-[10%] h-fit ml-2 shadow-lg bg-white p-4 rounded-lg">
                 <div><h1 className="text-lg font-bold mb-2">Your Filters</h1></div>
                 <div>
-                  <ul className="list-disc list-inside space-y-1">
+                  <ul className="list-none list-disc list-inside space-y-1">
                     {Object.entries(filters).map(([key, value], index) => {
                       // Check if the value exists (is not empty, null, or undefined)
                       if (value) {
@@ -513,7 +782,7 @@ const FilterForm = () => {
                     className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'graphs' ? 'bg-green-500' : ''}`}
                     onClick={() => handleTabClick('graphs')}
                   >
-                    <h1 className="text-xl font-bold">VISUAliZE</h1>
+                    <h1 className="text-xl font-bold">VISUALIZE</h1>
                   </div>
                 </div>
                 {
@@ -526,77 +795,90 @@ const FilterForm = () => {
                           <div className="flex items-center justify-between w-full p-4 shadow-md">
                             <h1 className="text-2xl font-bold">Your Data</h1>
                             <div className="flex flex-col gap-2">
-                              <div className="flex gap-4 items-center justify-evenly">
-                                <div className="flex flex-col items-center justify-center text-green-500">
-                                  <i onClick={() => downloadExcelWithCharts("xlsx")} className="fa-solid fa-file-excel text-xl"></i>
-                                  <p className="text-sm text-center">Excel</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-green-500">
-                                  <i onClick={() => downloadExcelWithCharts("csv")} className="fa-solid fa-file-csv text-xl"></i>
-                                  <p className="text-sm text-center">CSV</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-blue-500">
-                                  <i onClick={handleSaveData} className="fa-solid fa-floppy-disk text-xl"></i>
-                                  <p className="text-sm text-center">Save</p>
-                                </div>
-                                <div className="flex flex-col items-center justify-center text-purple-500">
-                                  <i onClick={shareToCommunity} className="fa-solid fa-share text-xl"></i>
-                                  <p className="text-sm text-center">Share</p>
-                                </div>
-                               
-                              </div>
-
+                            <div className="flex gap-6 items-center justify-evenly">
+  <button
+    onClick={() => downloadExcelWithCharts("xlsx")}
+    className="flex flex-col items-center p-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-300"
+  >
+    <i className="fa-solid fa-file-excel text-2xl mb-1"></i>
+  </button>
+  <button
+    onClick={() => downloadExcelWithCharts("csv")}
+    className="flex flex-col items-center p-3 bg-green-400 text-white rounded-lg shadow-md hover:bg-gren-500 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300"
+  >
+    <i className="fa-solid fa-file-csv text-2xl mb-1"></i>
+  </button>
+  <button
+    onClick={openNameModel}
+    className="flex flex-col items-center p-3 bg-blue-400 text-black rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300 transition-all duration-300"
+  >
+    <i className="fa-solid fa-floppy-disk text-2xl mb-1"></i>
+  </button>
+  <button
+    onClick={shareToCommunity}
+    className="flex flex-col items-center p-3 bg-purple-500 text-white rounded-lg shadow-md hover:bg-purple-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300"
+  >
+    <i className="fa-solid fa-share text-2xl mb-1"></i>
+  </button>
+  <button
+    onClick={emailModel}
+    className="flex flex-col items-center p-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
+  >
+    <i className="fa-solid fa-envelope text-2xl mb-1"></i>
+  </button>
+</div>
                               <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
                           </div>
                           <div className="grid grid-cols-9 gap-2 p-4 border-t">
-                            {[
-                              "Species Name",
-                              "Latitude",
-                              "Longitude",
-                              "Depth",
-                              "Total Weight (kg)",
-                              "Sea",
-                              "State",
-                              "Zone Type",
-                              "Date",
-                            ].map((header) => (
-                              <div
-                                key={header}
-                                className="font-bold text-sm uppercase bg-gray-200 p-2 border"
-                              >
-                                {header}
-                              </div>
-                            ))}
-                          </div>
-                          {data.map((item, index) => (
-                            <div
-                              key={index}
-                              className="grid grid-cols-9 gap-2 p-4 border-t border-gray-200"
-                            >
-                              <div className="p-2 border">
-                                <div
-                                  className="cursor-pointer flex items-center justify-center h-full text-black"
-                                  onClick={() => openModal2(item.species)}
-                                >
-                                  <i className="fa-solid fa-eye hover:text-lg transition-all duration-150"></i>
-                                </div>
-                              </div>
-                              <div className="p-2 border">
-                                {truncateDecimals(item.latitude, 2)}
-                              </div>
-                              <div className="p-2 border">
-                                {truncateDecimals(item.longitude, 2)}
-                              </div>
-                              <div className="p-2 border break-words">{item.depth}</div>
-                              <div className="p-2 border break-words">{item.total_weight}</div>
-                              <div className="p-2 border break-words">{item.sea}</div>
-                              <div className="p-2 border break-words">{item.state}</div>
-                              <div className="p-2 border break-words">{item.zoneType}</div>
-                              <div className="p-2 border break-words">
-                                {new Date(item.date).toLocaleDateString()}
-                              </div>
-                            </div>
-                          ))}
+  {[
+    "Species Name",
+    "Latitude",
+    "Longitude",
+    "Depth",
+    "Total Weight (kg)",
+    "Sea",
+    "State",
+    "Zone Type",
+    "Date",
+  ].map((header) => (
+    <div
+      key={header}
+      className="font-bold text-sm uppercase bg-gray-200 p-2 border rounded-lg text-center shadow-md"
+    >
+      {header}
+    </div>
+  ))}
+</div>
+
+{data.map((item, index) => (
+  <div
+    key={index}
+    className={`grid grid-cols-9 gap-2 p-4 rounded-lg shadow hover:bg-gray-50 transition-colors duration-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
+  >
+    {/* Species with the eye icon */}
+    <div className="p-2 flex items-center justify-center cursor-pointer hover:text-blue-500">
+      <i onClick={() => openModal2(item.species)} className="fa-solid fa-eye text-2xl"></i>
+    </div>
+
+    {/* Data Cells */}
+    <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
+      {truncateDecimals(item.latitude, 2)}
+    </div>
+
+    <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
+      {truncateDecimals(item.longitude, 2)}
+    </div>
+
+    <div className="p-2 text-center border border-purple-200 break-words">{item.depth}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.total_weight}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.sea}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.state}</div>
+    <div className="p-2 text-center border border-purple-200 break-words">{item.zoneType}</div>
+    <div className="p-2 text-center border border-purple-200 font-medium text-gray-600">
+      {new Date(item.date).toLocaleDateString()}
+    </div>
+  </div>
+))}
                         </>
                       ) : (
                         <div className="flex items-center justify-center mt-24">
@@ -605,36 +887,52 @@ const FilterForm = () => {
                       )}
 
                       {/* Modal */}
-                      {isModalOpen && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                          <div className="bg-white rounded-lg w-1/3 p-6">
-                            <div className="flex justify-between items-center mb-4">
-                              <h2 className="text-xl font-bold">Species Details</h2>
-                              <button
-                                className="text-gray-600 hover:text-gray-800"
-                                onClick={closeModal}
-                              >
-                                ✖
-                              </button>
-                            </div>
-                            <div className="space-y-2">
-                              {modalData.map((species, idx) => (
-                                <div key={idx} className="text-gray-800">
-                                  {`${species.name} (${species.catch_weight || "N/A"})`}
-                                </div>
-                              ))}
-                            </div>
-                            <div className="mt-6 text-right">
-                              <button
-                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                onClick={closeModal}
-                              >
-                                Close
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+{isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg w-1/2 p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Species Details</h2>
+        <button
+          className="text-gray-600 hover:text-gray-800"
+          onClick={closeModal}
+        >
+          ✖
+        </button>
+      </div>
+
+      {/* Table to Display Species Data */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="py-2 px-4 border-b text-left font-medium">Species Name</th>
+              <th className="py-2 px-4 border-b text-left font-medium">Catch Weight (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {modalData.map((species, idx) => (
+              <tr key={idx} className="hover:bg-gray-50">
+                <td className="py-2 px-4 border-t text-gray-800">{species.name}</td>
+                <td className="py-2 px-4 border-t text-gray-600">
+                  {species.catch_weight || "N/A"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-6 text-right">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={closeModal}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
                     </>
 
                 }
@@ -795,6 +1093,83 @@ const FilterForm = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+
+        <Modal
+          show={openModale}
+          onClose={() => setOpenModale(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">Enter Emails</h2>
+          </Modal.Header>
+
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <textarea
+              rows="5"
+              placeholder="Enter emails separated by commas or new lines"
+              onChange={handleEmailChange}
+              className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none"
+            ></textarea>
+          </Modal.Body>
+
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              color="gray"
+              onClick={downloadExcelWithCharts2}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Submit
+            </Button>
+            <Button
+              color="gray"
+              onClick={() => setOpenModale(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={openModaln}
+          onClose={() => setOpenModaln(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">Enter Name</h2>
+          </Modal.Header>
+
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <input
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={handlenameChange}
+              className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none"
+            />
+          </Modal.Body>
+
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              onClick={handleSaveData}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Submit
+            </Button>
+            <Button
+              onClick={() => setOpenModaln(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
       </>
     </div>
   );

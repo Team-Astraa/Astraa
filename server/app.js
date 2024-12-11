@@ -49,6 +49,7 @@ import {
   getUniqueSpeciesNames,
   otherDataUpload,
   uploadCSV,
+  getDataStatus,
 } from "./controller/userController.js";
 
 import {
@@ -77,6 +78,7 @@ import {
   getUnique,
   graphdata,
   saveScientistData,
+  sendEmailWithExcel,
   sendInvitation,
 } from "./controller/scientist-controller.js";
 import {
@@ -115,7 +117,7 @@ app.use(bodyParser.json());
 mongoose
   .connect(
     // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-      "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -179,10 +181,12 @@ app.post("/admin/autoCheck-fishing-data", autoCheckData);
 app.post("/admin/saveValidatedData", saveValidatedData);
 app.post("/admin/get-other-log", getLogsByDataType);
 app.post("/admin/get-manual-data-by-id", getDataByDataId);
+
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
 app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
+app.get("/user/getUserLogs/:userId", getDataStatus);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);
@@ -222,6 +226,7 @@ app.get("/get-upload-url", async (req, res) => {
 
 // CSV Upload Route
 app.post("/upload", upload.single("file"), uploadCSV);
+app.post("/scientist/sendEmail", upload.single("file"), sendEmailWithExcel);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes
