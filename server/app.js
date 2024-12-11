@@ -9,7 +9,7 @@ import { nanoid } from "nanoid";
 import fs from "fs";
 import path from "path";
 
-import { getSpeciesDataByUserId, uploadSpeciesData } from "./controller/userController.js";
+import { getSpeciesDataByUserId, uploadSpeciesData, villagefilter } from "./controller/userController.js";
 
 // Controllers
 import {
@@ -244,6 +244,7 @@ app.post("/upload", upload.single("file"), uploadCSV);
 app.post("/scientist/sendEmail", upload.single("file"), sendEmailWithExcel);
 app.post("/uploadSpecies", SpeciesUpload, uploadSpeciesData);
 app.post("/getSpeciesDataByUserId", getSpeciesDataByUserId);
+app.post("/villagefilter", villagefilter);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes

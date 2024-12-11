@@ -15,7 +15,7 @@ const speciesSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  villege: {
+  village: {
     type: String,
     required: false, // Optional field
   },

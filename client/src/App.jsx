@@ -39,6 +39,7 @@ import Profile from "./Pages/Profile";
 import SidebarNew from "./Components/SidebarNew";
 import ScientistSavedDataSets from "./Pages/ScientistSavedDataSets";
 import StatusPanel from "./Pages/StatusPanel";
+import DataTable2 from "./Pages/VillageData";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -152,6 +153,10 @@ function App() {
           <Route
             path="/scientist/community/:communityId"
             element={<Communitydetail />}
+          />
+          <Route
+            path="/village"
+            element={<DataTable2 />}
           />
           <Route
             path="/scientist/community/share/:shareURL"

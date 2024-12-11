@@ -633,11 +633,11 @@ export const uploadSpeciesData = async (req, res) => {
   try {
     let { userId, dataType } = req.body;
 
-    let id = generateRandomId()
+    let id = generateRandomId();
     // Get the file from the request
     const file = req.file;
     console.log(req.file);
-    const fileType = file.mimetype; 
+    const fileType = file.mimetype;
 
     // Parse the file based on extension
     let data;
@@ -675,7 +675,7 @@ export const uploadSpeciesData = async (req, res) => {
         species: speciesData,
         userId,
         dataType,
-        dataId : id // Directly store species data as an object (Mixed type)
+        dataId: id, // Directly store species data as an object (Mixed type)
       };
     });
 
@@ -903,7 +903,7 @@ export const getUniqueSpeciesNames = async (req, res) => {
 // };
 
 export const getDataStatus = async (req, res) => {
-  console.log('Controller reached');
+  console.log("Controller reached");
   const { userId } = req.query; // Extract userId from query parameters
   console.log("userId", userId);
   try {
@@ -929,8 +929,6 @@ export const getDataStatus = async (req, res) => {
   }
 };
 
-
-
 export const getSpeciesDataByUserId = async (req, res) => {
   const { userId } = req.body; // Extract userId from request params
 
@@ -941,7 +939,7 @@ export const getSpeciesDataByUserId = async (req, res) => {
 
   try {
     // Query the database to find all species data for the given userId
-    const speciesData = await SpeciesData.find({ userId })
+    const speciesData = await SpeciesData.find({ userId });
 
     // Check if data exists
     if (!speciesData || speciesData.length === 0) {
@@ -959,3 +957,51 @@ export const getSpeciesDataByUserId = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export let villagefilter = async (req, res) => {
+  try {
+    console.log("Request Body:", req.body);
+    const { from, to, longitude, latitude, village } = req.body.filters;
+    console.log(village);
+    
+    let query = {};
+
+    // Add date range filter if provided
+    if (from || to) {
+      query.date = {};
+      if (from) query.date.$gte = new Date(from);
+      if (to) query.date.$lte = new Date(to);
+    }
+
+    // Validate and add longitude filter if provided
+    if (longitude !== undefined && longitude !== null) {
+      const parsedLongitude = parseFloat(longitude);
+      if (!isNaN(parsedLongitude)) {
+        query.longitude = parsedLongitude;
+      }
+    }
+
+    // Validate and add latitude filter if provided
+    if (latitude !== undefined && latitude !== null) {
+      const parsedLatitude = parseFloat(latitude);
+      if (!isNaN(parsedLatitude)) {
+        query.latitude = parsedLatitude;
+      }
+    }
+
+    // Add village filter if provided
+    if (village) {
+      query.village = { $regex: new RegExp(village, 'i') }; // Case-insensitive regex for partial match
+    }
+
+    console.log("Query:", query);
+
+    const data = await SpeciesData.find(query); // Replace `SpeciesData` with your actual model
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+};
+
+

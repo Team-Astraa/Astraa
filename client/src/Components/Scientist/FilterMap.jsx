@@ -108,6 +108,8 @@ const FilterMap = ({ catchData, props }) => {
     },
   };
 
+  
+
   return (
     <div>
       {props.showButton && (
