@@ -665,7 +665,7 @@ const Adminverifyfish = () => {
                       Save
                     </button>
 
-                    <button
+                    {/* <button
                       onClick={acceptData}
                       className="bg-teal-500 hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
                     >
@@ -683,7 +683,7 @@ const Adminverifyfish = () => {
                       className="bg-yellow-500 hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Validate
-                    </button>
+                    </button> */}
                     <button
                       onClick={toggleViewMode}
                       className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
