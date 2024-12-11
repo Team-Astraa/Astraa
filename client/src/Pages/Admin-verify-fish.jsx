@@ -693,33 +693,33 @@ const Adminverifyfish = () => {
                     </button>
                     <button
                       onClick={handleSaveClick}
-                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-green-500  hover:bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Save
                     </button>
 
                     <button
                       onClick={acceptData}
-                      className="bg-teal-500 hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
+                      className="bg-teal-500 hidden hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
                     >
                       Accept
                     </button>
                     <button
                       onClick={rejectdata}
-                      className="bg-red-500 hover:bg-red-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-red-500 hidden hover:bg-red-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Reject
                     </button>
                     <button
                       onClick={handleValidateCatch} // Validate button
                       // onClick={handleValidate}
-                      className="bg-yellow-500 hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-yellow-500 hidden hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Validate
                     </button>
                     <button
                       onClick={toggleViewMode}
-                      className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-red-600 hidden text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       {viewMode === "table" ? "Card View" : "Table View"}
                     </button>

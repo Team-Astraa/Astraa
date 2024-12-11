@@ -1,6 +1,5 @@
 import Log from "../models/logSchema.js";
 import mongoose from "mongoose";
-// import axios from "axios"
 import ValidatedCatchData from "../models/ValidatedCatchData.js";
 
 function generateRandomId() {

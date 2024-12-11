@@ -7,6 +7,7 @@ import Catch from "../models/FishCatchData.js";
 import Log from "../models/logSchema.js";
 import CatchData from "../models/FishcatchDataNew.js";
 
+// Helper function to clean and normalize data
 import SpeciesData from "../models/Species.js"; // Import the schema
 
 import path from "path"; // To handle file paths
@@ -22,19 +23,14 @@ const stateBoundaries = {
   WestBengal: { latitude: 22.9868, longitude: 87.855 },
   Lakshadweep: { latitude: 10.5667, longitude: 72.6417 },
 };
-// Helper function to clean and normalize data
+
 const categorizeLocation = (latitude, longitude) => {
   let sea = "Unknown Region";
 
   // Determine the sea region
   if (latitude >= 8 && latitude <= 23 && longitude >= 68 && longitude <= 75) {
     sea = "Arabian Sea";
-  } else if (
-    latitude >= 10 &&
-    latitude <= 23 &&
-    longitude >= 80 &&
-    longitude <= 90
-  ) {
+  } else if (latitude >= 10 && latitude <= 23 && longitude >= 80 && longitude <= 90) {
     sea = "Bay of Bengal";
   } else if (latitude < 8) {
     sea = "Indian Ocean";
@@ -45,15 +41,38 @@ const categorizeLocation = (latitude, longitude) => {
   let shortestDistance = Infinity;
 
   for (const [state, coordinates] of Object.entries(stateBoundaries)) {
-    const distance = getDistance({ latitude, longitude }, coordinates);
+    const distance = getDistance({ latitude, longitude }, coordinates); // Assuming getDistance is defined elsewhere
     if (distance < shortestDistance) {
       shortestDistance = distance;
       closestState = state;
     }
   }
 
-  return { sea, state: closestState };
+  // Categorize region based on coordinates
+  let region = "Unknown Region";
+  if (latitude >= 20) {
+    if (longitude <= 75) {
+      region = "North-West";
+    } else if (longitude >= 85) {
+      region = "North-East";
+    } else {
+      region = "Central";
+    }
+  } else if (latitude >= 10) {
+    if (longitude <= 75) {
+      region = "South-West";
+    } else if (longitude >= 85) {
+      region = "South-East";
+    } else {
+      region = "Central South";
+    }
+  } else {
+    region = "Southern Oceanic Region"; // For regions below latitude 10
+  }
+
+  return { sea, state: closestState, region };
 };
+
 
 // Main cleanData function
 // Function to handle Excel date serial numbers
@@ -65,51 +84,170 @@ const parseExcelDate = (excelDate) => {
   );
 };
 
+// const cleanData = (data, userId, id, dataType) => {
+
+//   return data.map((item) => {
+//     const species = [];
+
+//     // Check if MAJOR_SPECIES exists and process it
+//     if (item.MAJOR_SPECIES) {
+//       const speciesData = item.MAJOR_SPECIES.split(","); // Split by commas
+//       speciesData.forEach((s) => {
+//         const match = s.match(/([A-Za-z\s]+)\((\d+)\)/); // Regex to extract name and weight
+//         if (match) {
+//           species.push({
+//             name: match[1].trim().toLowerCase(),
+//             catch_weight: parseInt(match[2].trim()),
+//           });
+//         } else {
+//           species.push({
+//             name: s.trim().toLowerCase(),
+//             catch_weight: null,
+//           });
+//         }
+//       });
+//     }
+
+//     // Normalize depth values by removing non-numeric characters
+//     const depth = item.DEPTH
+//       ? parseFloat(item.DEPTH.split("-")[0].trim()) // Take the first part before the "-"
+//       : null;
+
+//     // Categorize by sea and state
+//     const latitude = parseFloat(item.SHOOT_LAT);
+//     const longitude = parseFloat(item.SHOOT_LONG);
+//     const { sea, state } = categorizeLocation(latitude, longitude);
+
+//     // Convert Excel date or handle as string date
+//     const dateValue = item["FISHING Date"];
+//     const date =
+//       typeof dateValue === "number"
+//         ? parseExcelDate(dateValue) // Excel serial number
+//         : parseDate(dateValue); // Regular date string
+
+//     // Get the zone value or default to an empty string
+//     const zone = item.TYPE ? item.TYPE.trim() : "";
+
+//     return {
+//       date, // Use the parsed date
+//       latitude,
+//       longitude,
+//       depth,
+//       species,
+//       sea,
+//       state,
+//       userId,
+//       dataId: id,
+//       dataType,
+//       verified: false,
+//       total_weight: parseFloat(item.TOTAL_CATCH),
+//       zoneType: zone, // Include the zone value
+//     };
+//   });
+// };
+
+// const parseDate = (dateString) => {
+//   if (!dateString) return null; // Handle missing or invalid date strings
+//   try {
+//     // Try parsing the date using JavaScript's Date constructor
+//     const parsedDate = new Date(dateString);
+//     if (!isNaN(parsedDate.getTime())) {
+//       return parsedDate.toISOString(); // Return in ISO format if valid
+//     }
+//     // Handle custom formats if needed (e.g., DD-MM-YYYY)
+//     const parts = dateString.split(/[-./]/); // Split by common delimiters
+//     if (parts.length === 3) {
+//       const day = parseInt(parts[0], 10);
+//       const month = parseInt(parts[1], 10) - 1; // Month is 0-based in JS
+//       const year = parseInt(parts[2], 10);
+//       const customDate = new Date(year, month, day);
+//       return customDate.toISOString();
+//     }
+//     return null; // Return null if parsing fails
+//   } catch (error) {
+//     console.error("Error parsing date:", error);
+//     return null; // Return null if an exception occurs
+//   }
+// };
+
 const cleanData = (data, userId, id, dataType) => {
+  let flag = false;
   return data.map((item) => {
     const species = [];
+    const speciesSet = new Set(); // Set to track unique species
 
-    // Check if MAJOR_SPECIES exists and process it
-    if (item.MAJOR_SPECIES) {
+    // Check if MAJOR_SPECIES is available and process it
+    if (item.MAJOR_SPECIES && typeof item.MAJOR_SPECIES === "string") {
       const speciesData = item.MAJOR_SPECIES.split(","); // Split by commas
-      speciesData.forEach((s) => {
-        const match = s.match(/([A-Za-z\s]+)\((\d+)\)/); // Regex to extract name and weight
+      let catchWeights = []; // To hold the catch weights
+
+      // Case 1: If TOTAL_CATCH is available and is a string, split it by commas and map to weights
+      if (item.TOTAL_CATCH && typeof item.TOTAL_CATCH === "string") {
+        flag = true;
+        catchWeights = item.TOTAL_CATCH.split(",").map((w) =>
+          parseFloat(w.trim())
+        ); // Map TOTAL_CATCH to an array of weights
+      }
+
+      // Process species and map weights
+      speciesData.forEach((s, i) => {
+        // Case 2: If species name contains weight in parentheses (like "ribbon.fish(200)")
+        const match = s.match(/([A-Za-z\s.]+)\((\d+)\)/); // Match species with weight in parentheses
+        let speciesName = s.trim().toLowerCase();
+        let catchWeight = null;
+
+        // If the species string contains a weight in parentheses, extract it
         if (match) {
+          speciesName = match[1].trim().toLowerCase(); // Get species name
+          catchWeight = parseInt(match[2].trim()); // Get catch weight
+        } else if (catchWeights[i] !== undefined) {
+          // If there’s no weight in parentheses, use the weight from TOTAL_CATCH
+          catchWeight = catchWeights[i];
+        }
+
+        // Add species if not already added
+        if (!speciesSet.has(speciesName)) {
           species.push({
-            name: match[1].trim().toLowerCase(),
-            catch_weight: parseInt(match[2].trim()),
+            name: speciesName,
+            catch_weight: catchWeight, // Set the catch weight
           });
-        } else {
-          species.push({
-            name: s.trim().toLowerCase(),
-            catch_weight: null,
-          });
+          speciesSet.add(speciesName); // Add to the set to avoid duplicates
         }
       });
     }
 
-    // Normalize depth values by removing non-numeric characters
-    const depth = item.DEPTH
-      ? parseFloat(item.DEPTH.split("-")[0].trim()) // Take the first part before the "-"
-      : null;
+    // Normalize depth values (handle ranges, e.g., "75-80m")
+    let depth = null;
+    if (item.DEPTH) {
+      if (typeof item.DEPTH === "string") {
+        const depthValue = item.DEPTH.split("-")[0]
+          .trim()
+          .replace(/[^\d.]/g, ""); // Extract lower range value if it's a range
+        depth = parseFloat(depthValue);
+      } else if (typeof item.DEPTH === "number") {
+        depth = item.DEPTH; // Already numeric, no conversion needed
+      }
+    }
 
-    // Categorize by sea and state
-    const latitude = parseFloat(item.SHOOT_LAT);
-    const longitude = parseFloat(item.SHOOT_LONG);
-    const { sea, state } = categorizeLocation(latitude, longitude);
+    // Categorize location by latitude and longitude (Assuming you have the categorizeLocation function)
+    const latitude = parseFloat(item.LATITUDE);
+    const longitude = parseFloat(item.LONGITUDE);
+    const { sea, state ,region } = categorizeLocation(latitude, longitude); // This assumes you have a function that categorizes location
 
-    // Convert Excel date or handle as string date
+    // Parse date (you can define parseExcelDate and parseDate as needed)
     const dateValue = item["FISHING Date"];
     const date =
       typeof dateValue === "number"
-        ? parseExcelDate(dateValue) // Excel serial number
-        : parseDate(dateValue); // Regular date string
+        ? parseExcelDate(dateValue) // Handle Excel serial number date
+        : parseDate(dateValue); // Handle regular date string
 
-    // Get the zone value or default to an empty string
-    const zone = item.TYPE ? item.TYPE.trim() : "";
-
+    // Calculate total weight of the catch
+    const totalWeight = !flag
+      ? parseFloat(item.TOTAL_CATCH)
+      : species.reduce((sum, sp) => sum + (sp.catch_weight || 0), 0); // Sum of all catch weights
+    flag = false;
     return {
-      date, // Use the parsed date
+      date,
       latitude,
       longitude,
       depth,
@@ -118,10 +256,13 @@ const cleanData = (data, userId, id, dataType) => {
       state,
       userId,
       dataId: id,
+      region,
       dataType,
       verified: false,
-      total_weight: parseFloat(item.TOTAL_CATCH),
-      zoneType: zone, // Include the zone value
+      total_weight: totalWeight,
+      zoneType: item.TYPE ? item.TYPE.trim() : "",
+      landingName: item.LANDINGNAM || null,
+      gearType: item["Gear type"] || null,
     };
   });
 };
@@ -209,6 +350,7 @@ export const uploadCSV = async (req, res) => {
       });
     }
 
+    // return res.status(200).json(data);
     // Comment out database insertion for debugging or re-enable as needed
     try {
       await Catch.insertMany(data);
