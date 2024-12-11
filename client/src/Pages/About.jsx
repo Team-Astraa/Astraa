@@ -7,10 +7,10 @@ const About = () => {
     >
       <div className="w-[90%] h-[90%] bg-white rounded-lg p-12 shadow">
         <h1 className="text-5xl font-extrabold font-serif text-center text-blue-600  mb-8">
-          About Aquacd DB
+          About AquaDB
         </h1>
         <p className="text-gray-800 text-lg leading-relaxed text-center mb-10">
-          Welcome to <span className="font-semibold">Aqua DB</span>, a cutting-edge data platform crafted by <span className="font-semibold">Team Astraa</span>. It empowers stakeholders (marine and fisheries researchers) by providing tools to analyze, share, and collaborate on aquatic data efficiently and securely.
+          Welcome to <span className="font-semibold">AquaDB</span>, a cutting-edge data platform crafted by <span className="font-semibold">Team Astraa</span>. It empowers stakeholders (marine and fisheries researchers) by providing tools to analyze, share, and collaborate on aquatic data efficiently and securely.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

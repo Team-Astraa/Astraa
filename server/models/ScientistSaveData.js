@@ -13,6 +13,10 @@ const scientistSaveData = new mongoose.Schema(
       type: String,
       required: true,
     },
+    filters: { type: Map, of: String },
+    name: {
+      type: String
+    },
     createdAt: { type: Date, default: Date.now },
   },
   {

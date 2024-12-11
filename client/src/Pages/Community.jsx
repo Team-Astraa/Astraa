@@ -19,24 +19,26 @@ const Community = () => {
     let [userId, setUserId] = useState("")
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchCommunities = async () => {
-            const userInSession = localStorage.getItem("aquaUser");
-            const { userId } = JSON.parse(userInSession);
-            try {
-                const response = await axios.post("http://localhost:5000/scientist/fetch-communities", {
-                    creatorId: userId,
-                });
-                if (Array.isArray(response.data)) {
-                    setCommunities(response.data);
-                } else {
-                    setError("Data format is incorrect");
-                }
-            } catch (error) {
-                setError("Error fetching communities");
+    const fetchCommunities = async () => {
+        const userInSession = localStorage.getItem("aquaUser");
+        const { userId } = JSON.parse(userInSession);
+        try {
+            const response = await axios.post("http://localhost:5000/scientist/fetch-communities", {
+                creatorId: userId,
+            });
+            if (Array.isArray(response.data)) {
+                setCommunities(response.data);
+            } else {
+                setError("Data format is incorrect");
             }
-            setAnimateTable(true);
-        };
+        } catch (error) {
+            setError("Error fetching communities");
+        }
+        setAnimateTable(true);
+    };
+
+    useEffect(() => {
+      
         fetchCommunities();
     }, []);
 
@@ -87,6 +89,7 @@ const Community = () => {
                 userId,
             });
             setShowCreateCommunityModal(false); // Close the create community modal
+            fetchCommunities()
         } catch (error) {
             setError("Error creating community");
         }

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CatchItemDetail from "../Components/Scientist/Community-data";
 import { Button, Modal } from "flowbite-react";
+import toast from "react-hot-toast";
 
 const Communitydetail = () => {
   const [data, setData] = useState([]); // To store the community data
@@ -12,7 +13,9 @@ const Communitydetail = () => {
   const { communityId } = useParams(); // Get the communityId from the URL params
   const [openModal, setOpenModal] = useState(false);
   const [openModalTwo, setOpenModalTwo] = useState(false); // Modal visibility state
-  const [id, setId] = useState(false);
+  const [id1, setId] = useState(false);
+
+  let navigate = useNavigate();
 
   useEffect(() => {
     // Fetch community data
@@ -22,11 +25,21 @@ const Communitydetail = () => {
           "http://localhost:5000/scientist/fetch-community-with-data",
           { communityId }
         );
-        setData(response.data); // Set the fetched community data
-        setLoading(false);
+
+        if (response.status === 400) {
+          toast.error("Community is Empty...");
+          return navigate(-1);
+        }
+
+        if (response.data && response.data.length === 0) {
+          setError("No data available for this community.");
+        } else {
+          setData(response.data); // Set the fetched community data
+        }
       } catch (err) {
         console.error("Error fetching community data:", err);
         setError("Failed to fetch data. Please try again later.");
+      } finally {
         setLoading(false);
       }
     };
@@ -46,16 +59,16 @@ const Communitydetail = () => {
     setOpenModal(true); // Open the modal
   };
 
-  const generateUrl = (id, type) => {
+  const generateUrl = (type) => {
     const baseUrl = "http://localhost:5173/scientist/community/share";
 
-    if (!id) {
+    if (!id1) {
       console.error("id is required to generate the URL.");
       return;
     }
 
     // Encode the communityId with Base64
-    const encodedId = btoa(`${id}-${type}`);
+    const encodedId = btoa(`${id1}-${type}`);
     const url = `${baseUrl}/${encodedId}`;
 
     // Copy the generated URL to the clipboard
@@ -95,9 +108,9 @@ const Communitydetail = () => {
       </Modal>
 
       {/* Main Community Details */}
-      <div className="min-h-screen bg-gray-100 p-4">
+      <div className="min-h-screen text-white bg-gray-100 p-4">
         <h1 className="text-2xl font-bold mb-4">Community Details</h1>
-        {data.length > 0 ? (
+        {data && data.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.map((community, i) => (
               <div key={i} className="bg-white rounded-lg shadow-md p-4">
@@ -112,14 +125,14 @@ const Communitydetail = () => {
                     className="bg-blue-600 text-white px-4 py-2 mt-4 rounded-md"
                     onClick={() => setOpenModalTwo(true)}
                   >
-                    <i class="fa-solid fa-eye"></i>
+                    <i className="fa-solid fa-eye"></i>
                   </button>
 
                   <button
                     className="bg-green-600 text-white px-4 py-2 mt-4 rounded-md"
                     onClick={() => handleShareClick(community._id)}
                   >
-                    <i class="fa-solid fa-share-nodes"></i>
+                    <i className="fa-solid fa-share-nodes"></i>
                   </button>
                 </div>
                 {/* Modal to show community details */}

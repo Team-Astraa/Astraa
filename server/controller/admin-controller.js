@@ -643,7 +643,6 @@ export const rejectDataLog = async (req, res) => {
   }
 };
 
-
 export const getMostCommonSpecies = async (req, res) => {
   try {
     const mostCommonSpecies = await ValidatedCatch.aggregate([

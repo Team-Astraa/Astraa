@@ -107,7 +107,7 @@ const FishCatchGraphs = ({ data , fileLoader , setfileLoader }) => {
                             This graph shows the total weight of fish caught on different dates, allowing for analysis of trends over time.
                         </p>
                         <LineChart
-                            width={500}
+                            width={450}
                             height={300}
                             data={chartData.byDate}
                             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -127,7 +127,7 @@ const FishCatchGraphs = ({ data , fileLoader , setfileLoader }) => {
                         <p className="text-sm text-gray-600 mb-4">
                             This graph highlights the weight of fish caught for each species, enabling comparisons across different species.
                         </p>
-                        <ScatterChart width={500} height={300}>
+                        <ScatterChart width={450} height={300}>
                             <CartesianGrid />
                             <XAxis type="category" dataKey="species" name="Species" />
                             <YAxis type="number" dataKey="catch_weight" name="Catch Weight" />
@@ -168,7 +168,7 @@ const FishCatchGraphs = ({ data , fileLoader , setfileLoader }) => {
                             This bar chart provides insights into fish catch weights across different states.
                         </p>
                         <BarChart
-                            width={500}
+                            width={450}
                             height={300}
                             data={chartData.byState}
                             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -188,7 +188,7 @@ const FishCatchGraphs = ({ data , fileLoader , setfileLoader }) => {
                         <p className="text-sm text-gray-600 mb-4">
                             This scatter plot visualizes the relationship between depth and the total weight of fish caught.
                         </p>
-                        <ScatterChart width={500} height={300}>
+                        <ScatterChart width={450} height={250}>
                             <CartesianGrid />
                             <XAxis type="number" dataKey="depth" name="Depth" />
                             <YAxis type="number" dataKey="total_weight" name="Total Weight" />

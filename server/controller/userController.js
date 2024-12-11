@@ -117,11 +117,10 @@ const cleanData = (data, userId, id, dataType) => {
       dataType,
       verified: false,
       total_weight: parseFloat(item.TOTAL_CATCH),
-      zoneType:zone, // Include the zone value
+      zoneType: zone, // Include the zone value
     };
   });
 };
-
 
 function generateRandomId() {
   const date = new Date();
@@ -375,18 +374,17 @@ export const getLogsByDataType = async (req, res) => {
   }
 };
 
-
 export const getUniqueSpeciesNames = async (req, res) => {
   try {
     // Aggregate to flatten the species array and get unique species names
     const uniqueSpecies = await Catch.aggregate([
       { $unwind: "$species" }, // Unwind the species array to make it a flat list
       { $group: { _id: "$species.name" } }, // Group by the species name and get unique names
-      { $project: { _id: 0, name: "$_id" } } // Format the output to show just the species names
+      { $project: { _id: 0, name: "$_id" } }, // Format the output to show just the species names
     ]);
 
     // Extract species names into an array
-    const speciesNames = uniqueSpecies.map(species => species.name);
+    const speciesNames = uniqueSpecies.map((species) => species.name);
 
     // Return the unique species names as a response
     res.status(200).json({
@@ -399,5 +397,34 @@ export const getUniqueSpeciesNames = async (req, res) => {
       success: false,
       message: "Server Error",
     });
+  }
+};
+
+// Required Imports
+
+// Controller to get logs for a specific user
+export const getDataStatus = async (req, res) => {
+  const { userId } = req.params;
+  console.log("userId", userId);
+  try {
+    // Find all logs associated with the userId
+    const logs = await Log.find({ userId });
+
+    if (!logs.length) {
+      return res.status(404).json({ message: "No logs found for this user" });
+    }
+
+    // Map the logs to extract necessary fields (dataId, dataStatus, and uploadTimestamp)
+    const result = logs.map((log) => ({
+      dataId: log.dataId,
+      dataStatus: log.dataStatus,
+      uploadedAt: log.uploadTimestamp, // Included uploaded date and time
+    }));
+
+    // Send the result back to the client
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error", error });
   }
 };
