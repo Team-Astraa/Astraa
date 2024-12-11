@@ -27,7 +27,7 @@ const DataTable = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4  bg-white w-full h-screen">
             <h1 className="text-2xl font-bold mb-4">Datasets</h1>
             <table className="table-auto w-full border-collapse border border-gray-300">
                 <thead>

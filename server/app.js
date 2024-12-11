@@ -119,8 +119,8 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-    "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    // "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -201,7 +201,7 @@ app.post("/admin/getFishermanData", getFishermanData);
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
 app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
-app.get("/user/getUserLogs/:userId", getDataStatus);
+app.get("/user/getUserLogs", getDataStatus);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);
