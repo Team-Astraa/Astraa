@@ -18,6 +18,7 @@ const FilterForm = () => {
   const [error, setError] = useState(null);
   let [fileLoader, setfileLoader] = useState(false)
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  let [majorDataType, setMajorDataType] = useState("PFZ/NON-PFZ")
   const [filters, setFilters] = useState({
     lat: "",
     long: "",
@@ -93,7 +94,10 @@ const FilterForm = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/scientist/filter-data", requestData);
+      const response = await axios.post("http://localhost:5000/scientist/filter-data", {
+        filter: requestData,
+        majorDataType: majorDataType
+      });
       setData(response.data);
       setOpenModal(false)
       setLoading(false);
@@ -736,6 +740,12 @@ const FilterForm = () => {
   }
 
 
+  const tabs2 = [
+    { label: "PFZ/NON_PFZ", value: "PFZ/NON_PFZ" },
+    { label: "Landing Village", value: "Landing Village" },
+    { label: "GEO-REF", value: "GEO-REF" },
+    { label: "All", value: "All" },
+  ];
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
@@ -771,18 +781,31 @@ const FilterForm = () => {
 
 
               <div className="w-[60%] h-auto shadow-lg bg-white rounded-md">
+              <div className="w-full h-12 shadow-sm bg-gray-100 flex items-center justify-between px-4 rounded-lg">
+      {tabs2.map((tab) => (
+        <div
+          key={tab.value}
+          onClick={() => setActiveTab(tab.value)}
+          className={`px-4 py-2 cursor-pointer rounded-md transition-all duration-300 hover:bg-gray-200 ${
+            activeTab === tab.value ? "bg-green-500 text-white" : "text-gray-700"
+          }`}
+        >
+          {tab.label}
+        </div>
+      ))}
+    </div>
                 <div className="w-full flex">
                   <div
                     className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'data' ? 'bg-green-500' : ''}`}
                     onClick={() => handleTabClick('data')}
                   >
-                    <h1 className="text-xl font-bold">DATA</h1>
+                    <h1 className="text-xl font-bold">{activeTab}</h1>
                   </div>
                   <div
                     className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'graphs' ? 'bg-green-500' : ''}`}
                     onClick={() => handleTabClick('graphs')}
                   >
-                    <h1 className="text-xl font-bold">VISUAliZE</h1>
+                    <h1 className="text-xl font-bold">Visualization</h1>
                   </div>
                 </div>
                 {
@@ -940,7 +963,7 @@ const FilterForm = () => {
                 { label: "Abundance", type: "dataType", value: "abundance" },
                 { label: "Occurrence", type: "dataType", value: "occurrence" },
                 { label: "PFZ", type: "zoneType", value: "PFZ" },
-                { label: "NON-PFZ", type: "zoneType", value: "NON_PFZ" },
+                { label: "NON-PFZ", type: "zoneType", value: "NON-PFZ" },
               ].map(({ label, type, value }) => (
                 <label
                   key={value}

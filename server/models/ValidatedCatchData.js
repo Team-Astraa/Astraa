@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 const speciesSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true, // Species name is mandatory
     trim: true, // Ensures any leading/trailing spaces are removed
   },
   catch_weight: {
@@ -58,7 +57,7 @@ const ValidatedCatchSchema = new mongoose.Schema(
     },
     dataType: {
       type: String,
-      enum: ["abundance", "occurrence","other"], // Defines if data is of type "abundance" or "occurrence"
+      enum: ["abundance", "occurrence","other" , "PFZ/NON-PFZ"], // Defines if data is of type "abundance" or "occurrence"
       required: true, // Indicates the type of data
     },
     timestamp: {

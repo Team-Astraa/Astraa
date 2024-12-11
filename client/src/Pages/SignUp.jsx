@@ -27,11 +27,11 @@ const SignUp = () => {
     let user = localStorage.getItem("aquaUser");
     let userInses = JSON.parse(user)
     if (user) {
-      if (userInses.userType == "admin") {
-        return navigate("/admin/home");
-      } else if (userInses.userType == "scientist") {
-        return navigate("/scientist/home");
-      }
+      // if (userInses.userType == "admin") {
+      //   return navigate("/admin/home");
+      // } else if (userInses.userType == "scientist") {
+      //   return navigate("/scientist/home");
+      // }
       return navigate("/")
 
     }
