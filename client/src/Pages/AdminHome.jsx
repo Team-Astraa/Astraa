@@ -30,7 +30,6 @@ const AdminHome = () => {
         </h1>
         <p className="text-gray-500 mt-2">Manage users and monitor activity</p>
       </div>
-
       {/* Admin Upper Strip */}
       <div className="mb-8">
         <AdminUpperStrip />
