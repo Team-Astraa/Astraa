@@ -43,8 +43,12 @@ export const downloadFile = (req, res) => {
   // Check for the file type and define the file path
   if (type === "abundance") {
     filePath = path.join(__dirname, "..", "Files", "Abundance.xlsx"); // Adjust path accordingly
-  } else if (type === "occurrence") {
-    filePath = path.join(__dirname, "..", "Files", "Occurence.xlsx"); // Adjust path accordingly
+  } else if (type === "pfz") {
+    filePath = path.join(__dirname, "..", "Files", "Pfz.xlsx"); // Adjust path accordingly
+  }else if (type === "landingVillage") {
+    filePath = path.join(__dirname, "..", "Files", "LandingVillage.xlsx"); // Adjust path accordingly
+  }else if (type === "geo") {
+    filePath = path.join(__dirname, "..", "Files", "GeoReference.xlsx"); // Adjust path accordingly
   } else {
     return res.status(404).send("File not found");
   }
