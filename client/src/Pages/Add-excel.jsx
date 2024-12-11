@@ -427,7 +427,7 @@ const Addexcel = () => {
       <p>Abundance includes both the presence and the quantity (e.g., count or weight) of that species in the area.</p>
       <strong className="pt-3">Click the button below to view detailed instructions on how to upload</strong>
       <button
-        className="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
+        className="px-2 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
         onClick={() => handleDownload("abundance")}
       >
         Download Abundance
@@ -441,7 +441,7 @@ const Addexcel = () => {
       <p>Occurrence refers to the presence or absence of a species in a specific area</p>
       <strong className="pt-4">Click the button below to view detailed instructions on how to upload</strong>
       <button
-        className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
+        className="px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
         onClick={() => handleDownload("occurrence")}
       >
         Download Occurrence
@@ -580,16 +580,20 @@ const Addexcel = () => {
                 <option value="" disabled>
                   -- Choose an option --
                 </option>
+                <option value="pfz/non-pfz">PFZ/Non PFZ</option>
+                <option value="landing-village">Landing Village </option>
+                <option value="geo-referenced-data">Geo Referenced Data</option>
                 <option value="abundance">Data Abundance</option>
                 <option value="occurrence">Data Occurrence</option>
+                <option value="others">Others</option>
               </select>
               {/* <h1 onClick={openForm}>other</h1> */}
-              <button
+              {/* <button
                 onClick={openForm}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 Others / Disorganized Data
-              </button>
+              </button> */}
             </div>
             {/* <div className="flex items-center gap-20 ">
                 <select

@@ -109,6 +109,19 @@ function App() {
             path="/dashboard"
             element={<PrivateRoute element={<Dashboard />} />}
           />
+          <Route
+            path="/industry-collaborators/home"
+            element={<PrivateRoute element={<Dashboard />} />}
+          />
+          <Route
+            path="/research_cruises/home"
+            element={<PrivateRoute element={<Dashboard />} />}
+          />
+          <Route
+            path="/research_institute/home"
+            element={<PrivateRoute element={<Dashboard />} />}
+          />
+          
           <Route path="/about" element={<PrivateRoute element={<About />} />} />
           <Route
             path="/map-box"

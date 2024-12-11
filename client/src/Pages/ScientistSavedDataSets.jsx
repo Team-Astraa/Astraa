@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Modal } from "flowbite-react";
 import * as XLSX from "xlsx";
+import { Datepicker } from "flowbite-react";
 
 const ScientistSavedDataSets = () => {
     const [groupedData, setGroupedData] = useState([]);
@@ -76,6 +77,7 @@ const ScientistSavedDataSets = () => {
     return (
         <div className="w-full h-full bg-gray-200 p-5 items-center">
             <h1 className="text-black text-3xl w-full text-center font-bold mb-4">Scientist Datasets</h1>
+            <Datepicker/>
 
             {error && <p className="text-red-500">{error}</p>}
 
