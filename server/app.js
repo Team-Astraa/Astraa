@@ -105,6 +105,7 @@ import {
   getDateTotalWeightData,
   getLatitudeDepthData,
 } from "./controller/graphs.controller.js";
+import { getFishermanData, uploadAppData } from "./controller/fisherman-controller.js";
 
 dotenv.config();
 const app = express();
@@ -146,6 +147,11 @@ if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
 }
 
+const fishImage = "./fishImages";
+if (!fs.existsSync(fishImage)) {
+  fs.mkdirSync(fishImage);
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory); // Save files in the 'uploads' folder
@@ -155,8 +161,10 @@ const storage = multer.diskStorage({
   },
 });
 
+
 // Create multer instance with the storage configuration
 const upload = multer({ storage: storage });
+
 // Routes
 
 // User Authentication Routes
@@ -181,7 +189,7 @@ app.post("/admin/autoCheck-fishing-data", autoCheckData);
 app.post("/admin/saveValidatedData", saveValidatedData);
 app.post("/admin/get-other-log", getLogsByDataType);
 app.post("/admin/get-manual-data-by-id", getDataByDataId);
-
+app.post("/admin/getFishermanData", getFishermanData);
 // User Update Details Routes
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
@@ -231,6 +239,9 @@ app.post("/scientist/sendEmail", upload.single("file"), sendEmailWithExcel);
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes
 // app.post("/upload", upload.single("file"), uploadCSV2);
+
+app.post("/uploadAppData", uploadAppData)
+// app.post("/uploadAppData", uploadAppData)
 
 // Route to fetch users by tag
 app.get("/admin/users-by-tag/:tag", getUsersByTag);
