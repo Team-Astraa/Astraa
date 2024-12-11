@@ -43,7 +43,8 @@ export const getFilteredCatches = async (req, res) => {
       total_weight,
       dataType, // Filter: abundance or occurrence
       zoneType, // Filter: PFZ or NON-PFZ
-    } = req.body;
+    } = req.body.filter;
+    let {majorDataType} = req.body
     console.log(req.body);
 
     // Build the query object dynamically
@@ -124,7 +125,12 @@ export const getFilteredCatches = async (req, res) => {
         catchItem.species = catchItem.species.filter(
           (species) => species.catch_weight !== null
         );
-
+      if (dataType === "PFZ/NON-PFZ") {
+        // Filter species to include only those with non-null catch_weight
+        catchItem.species = catchItem.species.filter(
+          (species) => species.dataType == "PFZ/NON-PFZ"
+        );
+      }
         // Exclude the catch if all species are filtered out
         if (catchItem.species.length === 0) return false;
       } else if (dataType === "occurrence") {
