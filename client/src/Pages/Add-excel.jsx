@@ -14,8 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Autocomplete } from '@mui/material'
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Autocomplete } from "@mui/material";
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,7 +63,6 @@ const Addexcel = () => {
       species: updatedSpecies,
     }));
   };
-
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
@@ -209,6 +208,7 @@ const Addexcel = () => {
 
   // Handle download
   const handleDownload = (type) => {
+    console.log(type)
     setDownloadType(type); // Set the download type (either "abundance" or "occurrence")
     setOpenModal(true); // Open the modal with instructions
   };
@@ -272,9 +272,9 @@ const Addexcel = () => {
 
             <h2>Add New Catch Record</h2>
 
-            <form onSubmit={handleSubmit}>
+            {/* manual form */}
+            {/* <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
-                {/* Date */}
                 <TextField
                   label="Date"
                   type="date"
@@ -286,7 +286,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Latitude */}
                 <TextField
                   label="Latitude"
                   type="number"
@@ -298,7 +297,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Longitude */}
                 <TextField
                   label="Longitude"
                   type="number"
@@ -310,7 +308,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Depth */}
                 <TextField
                   label="Depth"
                   type="number"
@@ -322,7 +319,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Species */}
               {catchData.species.map((species, index) => (
                 <div key={index} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -364,7 +360,6 @@ const Addexcel = () => {
               </Button>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Sea */}
                 <TextField
                   label="Sea"
                   name="sea"
@@ -374,7 +369,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* State */}
                 <TextField
                   label="State"
                   name="state"
@@ -386,7 +380,6 @@ const Addexcel = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Total Weight */}
                 <TextField
                   label="Total Weight"
                   name="total_weight"
@@ -398,7 +391,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 variant="contained"
@@ -407,7 +399,7 @@ const Addexcel = () => {
               >
                 Submit
               </Button>
-            </form>
+            </form> */}
           </Box>
         </Modal>
       )}
@@ -427,7 +419,7 @@ const Addexcel = () => {
   </p>
   <button
     className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 custom-pulse"
-    onClick={() => handleDownload("PFZ/NON-PFZ")}
+    onClick={() => handleDownload("pfz")}
     style={{
       width: "auto", // Adjust to content
     }}
@@ -481,7 +473,7 @@ const Addexcel = () => {
         Information linked to specific locations on the Earth's surface using geographic coordinates.
       </p>
       <button
-        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300"
+        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 custom-pulse"
         onClick={() => handleDownload("GEO-REF")}
         style={{
           width: "auto", // Adjust to content
@@ -508,8 +500,11 @@ const Addexcel = () => {
         Data abundance is the volume of data available, while data occurrence is the recording of specific events or fish presence.
       </p>
       <button
-        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 opacity-100"
-        onClick={() => handleDownload("ABUNDANCE/OCCURRENCE")}
+        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 opacity-100 "
+        onClick={() => handleDownload("AbuOcu")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
       >
         Download Abundance/Occurrence
       </button>
