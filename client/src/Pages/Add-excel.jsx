@@ -414,38 +414,116 @@ const Addexcel = () => {
 
 <div className="flex space-x-8">
   {/* Download Card */}
-  <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] border-2 flex flex-col space-y-6">
+  <div className="bg-white shadow-xl rounded-xl p-6 w-[600px] border-2 flex flex-col space-y-4">
     {/* Title */}
-    <h2 className="text-4xl font-bold text-gray-800 text-center">
+    <h2 className="text-3xl font-bold text-gray-800 text-center">
       Download Templates
     </h2>
-    {/* Abundance Section */}
-    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
-      <h3 className="text-2xl font-semibold text-gray-700">
-        Abundance
-      </h3>
-      <p>Abundance includes both the presence and the quantity (e.g., count or weight) of that species in the area.</p>
-      <strong className="pt-3">Click the button below to view detailed instructions on how to upload</strong>
+    {/* PFZ Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-200">
+  <h3 className="text-xl font-semibold text-gray-700">PFZ/Non PFZ</h3>
+  <p className="text-sm text-center">
+    PFZ refers to areas identified as rich in fish due to favorable conditions, while non-PFZ denotes areas outside these zones.
+  </p>
+  <button
+    className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 custom-pulse"
+    onClick={() => handleDownload("PFZ/NON-PFZ")}
+    style={{
+      width: "auto", // Adjust to content
+    }}
+  >
+    Download PFZ/Non PFZ
+  </button>
+  <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
+</div>
+
+    {/* Landing Village Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-200">
+      <h3 className="text-xl font-semibold text-gray-700">Landing Village</h3>
+      <p className="text-sm text-center">
+        A landing village is a designated area where fishers bring their catch to shore.
+      </p>
       <button
-        className="px-2 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
-        onClick={() => handleDownload("abundance")}
+        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+        onClick={() => handleDownload("Landing-Village")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
       >
-        Download Abundance
+        Download Landing Village
       </button>
+      <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
     </div>
-    {/* Occurrence Section */}
-    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
-      <h3 className="text-2xl font-semibold text-gray-700">
-        Occurrence
-      </h3>
-      <p>Occurrence refers to the presence or absence of a species in a specific area</p>
-      <strong className="pt-4">Click the button below to view detailed instructions on how to upload</strong>
+    {/* Geo Referenced Data Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-200 custom-pulse">
+      <h3 className="text-xl font-semibold text-gray-700">Geo Referenced Data</h3>
+      <p className="text-sm text-center">
+        Information linked to specific locations on the Earth's surface using geographic coordinates.
+      </p>
       <button
-        className="px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
-        onClick={() => handleDownload("occurrence")}
+        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300"
+        onClick={() => handleDownload("GEO-REF")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
       >
-        Download Occurrence
+        Download Geo Referenced Data
       </button>
+      <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
+    </div>
+    {/* Abundance/Occurrence Section */}
+    <div className="bg-gray-50 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-200 custom-pulse">
+      <h3 className="text-xl font-semibold text-gray-700">Data Abundance/Occurrence</h3>
+      <p className="text-sm text-center">
+        Data abundance is the volume of data available, while data occurrence is the recording of specific events or fish presence.
+      </p>
+      <button
+        className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md shadow hover:bg-purple-600 transition-all duration-300 opacity-100"
+        onClick={() => handleDownload("ABUNDANCE/OCCURRENCE")}
+      >
+        Download Abundance/Occurrence
+      </button>
+      <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
     </div>
   </div>
   
@@ -563,30 +641,30 @@ const Addexcel = () => {
             Upload Data
           </h2>
           {/* Dropdown for Data Type Selection */}
-          <div className=" w-full mb-6 pb-9">
-            <label
-              htmlFor="dataType"
-              className="block text-gray-600 font-medium mt-5"
-            >
-              Select Data Type:
-            </label>
-            <div className="flex flex-col items-start">
-              <select
-                id="dataType"
-                className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
-                onChange={(e) => setDownloadType(e.target.value)}
-                value={downloadType}
-              >
-                <option value="" disabled>
-                  -- Choose an option --
-                </option>
-                <option value="pfz/non-pfz">PFZ/Non PFZ</option>
-                <option value="landing-village">Landing Village </option>
-                <option value="geo-referenced-data">Geo Referenced Data</option>
-                <option value="abundance">Data Abundance</option>
-                <option value="occurrence">Data Occurrence</option>
-                <option value="others">Others</option>
-              </select>
+          <div className="w-full mb-6 pb-9">
+  <label
+    htmlFor="dataType"
+    className="block text-gray-600 font-medium mt-5"
+  >
+    Select Data Type:
+  </label>
+  <div className="flex flex-col items-start">
+    <select
+      id="dataType"
+      className="w-auto px-6 py-3 text-lg border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+      onChange={(e) => setDownloadType(e.target.value)}
+      value={downloadType}
+    >
+      <option value="" disabled>
+        -- Choose an option --
+      </option>
+      <option value="pfz/non-pfz">PFZ/Non PFZ</option>
+      <option value="landing-village">Landing Village</option>
+      <option value="geo-referenced-data">Geo Referenced Data</option>
+      <option value="abundance">Data Abundance</option>
+      <option value="occurrence">Data Occurrence</option>
+      <option value="others">Others</option>
+    </select>
               {/* <h1 onClick={openForm}>other</h1> */}
               {/* <button
                 onClick={openForm}
