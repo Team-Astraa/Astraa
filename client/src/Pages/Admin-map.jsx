@@ -10,8 +10,6 @@ const MapboxVisualization = ({ catchData, props }) => {
 
 console.log(catchData);
 
-  
-
   let heatmapData;
   if(props.oneLat && props.oneLong) {
     heatmapData = {

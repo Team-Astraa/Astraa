@@ -201,7 +201,7 @@ app.post("/admin/getFishermanData", getFishermanData);
 app.put("/user-update/:userType/:userId", updateUser);
 app.get("/download/:type", downloadFile);
 app.post("/user/get-log-data-by-id", getLogsByUserIdWithUser);
-app.get("/user/getUserLogs/:userId", getDataStatus);
+app.get("/user/getUserLogs", getDataStatus);
 
 // Password Update Route
 app.put("/user/Password-update", changePassword);

@@ -34,6 +34,7 @@
     "file-saver": "^2.0.5",
     "flowbite-react": "^0.10.2",
     "framer-motion": "^11.13.1",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "mapbox-gl": "^3.8.0",
     "react": "^18.3.1",

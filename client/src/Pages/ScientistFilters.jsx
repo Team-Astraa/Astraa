@@ -11,6 +11,7 @@ import ScientistLoader from "../Components/Scientist/ScientistLoader";
 import toast from "react-hot-toast";
 import FishCatchGraphs from "../Components/Scientist/FilterDataGraphs";
 import FilterMap from "../Components/Scientist/FilterMap";
+import MapboxVisualization from "./Admin-map";
 
 
 const FilterForm = () => {
@@ -105,6 +106,7 @@ const FilterForm = () => {
         majorDataType: activeTab
       });
       setData(response.data);
+      console.log(response.data);
       setOpenModal(false)
       setLoading(false);
       toast.success("Data Loaded Successfully");
@@ -1036,7 +1038,13 @@ const FilterForm = () => {
 
               <div className="w-[20%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
 
-                <FilterMap catchData={data} props={{ type: "markers", showButton: true }} />
+            {data !== null && <FilterMap catchData={data} props={{ type: "markers", showButton: true }} /> }
+                
+
+            {/* <MapboxVisualization
+              catchData={data}
+              props={{ type: "markers", showButton: true }} /> */}
+
                 <div className="w-full h-fit ml-2 m-4 shadow-md bg-gradient-to-r from-gray-50 via-white to-gray-50 p-6 rounded-lg border border-gray-200">
                   <div className="mb-4">
                     <h1 className="text-xl font-semibold text-gray-800 mb-2 border-b pb-2">

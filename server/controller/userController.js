@@ -875,8 +875,36 @@ export const getUniqueSpeciesNames = async (req, res) => {
 // Required Imports
 
 // Controller to get logs for a specific user
+// export const getDataStatus = async (req, res) => {
+//   console.log('Controler coming here')
+//   const { userId } = req.body;
+//   console.log("userId", userId);
+//   try {
+//     // Find all logs associated with the userId
+//     const logs = await Log.find({ userId });
+
+//     if (!logs.length) {
+//       return res.status(404).json({ message: "No logs found for this user" });
+//     }
+
+//     // Map the logs to extract necessary fields (dataId, dataStatus, and uploadTimestamp)
+//     const result = logs.map((log) => ({
+//       dataId: log.dataId,
+//       dataStatus: log.dataStatus,
+//       uploadedAt: log.uploadTimestamp, // Included uploaded date and time
+//     }));
+
+//     // Send the result back to the client
+//     return res.status(200).json(result);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal server error", error });
+//   }
+// };
+
 export const getDataStatus = async (req, res) => {
-  const { userId } = req.params;
+  console.log('Controller reached');
+  const { userId } = req.query; // Extract userId from query parameters
   console.log("userId", userId);
   try {
     // Find all logs associated with the userId
@@ -886,11 +914,11 @@ export const getDataStatus = async (req, res) => {
       return res.status(404).json({ message: "No logs found for this user" });
     }
 
-    // Map the logs to extract necessary fields (dataId, dataStatus, and uploadTimestamp)
+    // Map the logs to extract necessary fields
     const result = logs.map((log) => ({
       dataId: log.dataId,
       dataStatus: log.dataStatus,
-      uploadedAt: log.uploadTimestamp, // Included uploaded date and time
+      uploadedAt: log.uploadTimestamp,
     }));
 
     // Send the result back to the client
