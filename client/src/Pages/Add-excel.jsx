@@ -14,8 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Autocomplete } from '@mui/material'
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Autocomplete } from "@mui/material";
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,7 +63,6 @@ const Addexcel = () => {
       species: updatedSpecies,
     }));
   };
-
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
@@ -209,6 +208,7 @@ const Addexcel = () => {
 
   // Handle download
   const handleDownload = (type) => {
+    console.log(type)
     setDownloadType(type); // Set the download type (either "abundance" or "occurrence")
     setOpenModal(true); // Open the modal with instructions
   };
@@ -272,9 +272,9 @@ const Addexcel = () => {
 
             <h2>Add New Catch Record</h2>
 
-            <form onSubmit={handleSubmit}>
+            {/* manual form */}
+            {/* <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
-                {/* Date */}
                 <TextField
                   label="Date"
                   type="date"
@@ -286,7 +286,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Latitude */}
                 <TextField
                   label="Latitude"
                   type="number"
@@ -298,7 +297,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Longitude */}
                 <TextField
                   label="Longitude"
                   type="number"
@@ -310,7 +308,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Depth */}
                 <TextField
                   label="Depth"
                   type="number"
@@ -322,7 +319,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Species */}
               {catchData.species.map((species, index) => (
                 <div key={index} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -364,7 +360,6 @@ const Addexcel = () => {
               </Button>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Sea */}
                 <TextField
                   label="Sea"
                   name="sea"
@@ -374,7 +369,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* State */}
                 <TextField
                   label="State"
                   name="state"
@@ -386,7 +380,6 @@ const Addexcel = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Total Weight */}
                 <TextField
                   label="Total Weight"
                   name="total_weight"
@@ -398,7 +391,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 variant="contained"
@@ -407,45 +399,114 @@ const Addexcel = () => {
               >
                 Submit
               </Button>
-            </form>
+            </form> */}
           </Box>
         </Modal>
       )}
 
 <div className="flex space-x-8">
   {/* Download Card */}
-  <div className="bg-white shadow-xl rounded-xl p-8 w-[700px] border-2 flex flex-col space-y-6">
+  <div className="bg-white shadow-xl rounded-xl p-6 w-[600px] border-2 flex flex-col space-y-4">
     {/* Title */}
-    <h2 className="text-4xl font-bold text-gray-800 text-center">
+    <h2 className="text-3xl font-bold text-gray-800 text-center">
       Download Templates
     </h2>
-    {/* Abundance Section */}
-    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
-      <h3 className="text-2xl font-semibold text-gray-700">
-        Abundance
-      </h3>
-      <p>Abundance includes both the presence and the quantity (e.g., count or weight) of that species in the area.</p>
-      <strong className="pt-3">Click the button below to view detailed instructions on how to upload</strong>
+    {/* PFZ Section */}
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+  <h3 className="text-xl font-semibold text-gray-700">PFZ/Non PFZ</h3>
+  <button
+    className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+    onClick={() => handleDownload("pfz")}
+    style={{
+      width: "auto", // Adjust to content
+    }}
+  >
+    Download PFZ/Non PFZ
+  </button>
+  <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
+</div>
+
+    {/* Landing Village Section */}
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+      <h3 className="text-xl font-semibold text-gray-700">Landing Village</h3>
       <button
-        className="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all duration-500 opacity-100 animate-pulse"
-        onClick={() => handleDownload("abundance")}
+        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+        onClick={() => handleDownload("Landing-Village")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
       >
-        Download Abundance
+        Download Landing Village
       </button>
+      <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
     </div>
-    {/* Occurrence Section */}
-    <div className="bg-gray-50 shadow-sm rounded-lg p-6 flex flex-col items-center space-y-6 border-4 border-black-100">
-      <h3 className="text-2xl font-semibold text-gray-700">
-        Occurrence
-      </h3>
-      <p>Occurrence refers to the presence or absence of a species in a specific area</p>
-      <strong className="pt-4">Click the button below to view detailed instructions on how to upload</strong>
+    {/* Geo Referenced Data Section */}
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+      <h3 className="text-xl font-semibold text-gray-700">Geo Referenced Data</h3>
       <button
-        className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all duration-500 opacity-100 animate-pulse"
-        onClick={() => handleDownload("occurrence")}
+        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+        onClick={() => handleDownload("GEO-REF")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
       >
-        Download Occurrence
+        Download Geo Referenced Data
       </button>
+      <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
+    </div>
+    {/* Abundance/Occurrence Section */}
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+      <h3 className="text-xl font-semibold text-gray-700">Data Abundance/Occurrence</h3>
+      <button
+        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 opacity-100 custom-pulse"
+        onClick={() => handleDownload("AbuOcu")}
+        style={{
+          width: "auto", // Adjust to content
+        }}
+      >
+        Download Abundance/Occurrence
+      </button>
+      <style>
+    {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+  </style>
     </div>
   </div>
   
@@ -472,77 +533,115 @@ const Addexcel = () => {
             </IconButton>
             {/* <Typography variant="h6">Instructions for {downloadType}</Typography> */}
             <Typography variant="body1" className=" mt-4 text-gray-700">
-              {downloadType === "abundance" ? (
-                <div>
-                  <p className="text-lg font-semibold">
-                    Abundance Module Instructions
-                  </p>
-                  <p className="mt-2">
-                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the
-                    fishing date (e.g., 2024-12-02).
-                  </p>
-                  <p className="mt-2">
-                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal
-                    degrees (e.g., 15.6789).
-                  </p>
-                  <p className="mt-2">
-                    <strong>SHOOT_LONG:</strong> Provide the longitude in
-                    decimal degrees (e.g., -74.1234).
-                  </p>
-                  <p className="mt-2">
-                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth
-                    value in meters (e.g., 25). Avoid ranges like 25-30 m.
-                  </p>
-                  <p className="mt-2">
-                    <strong>
-                      MAJOR_SPECIES WITH INDIVIDUAL WEIGHTS IN KGS:
-                    </strong>{" "}
-                    Enter species and their weights in the format:
-                    <em>SpeciesName(Weight)</em> (e.g., Pomfret(400),
-                    Ponyfish(100)).
-                  </p>
-                  <p className="mt-2">
-                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Provide the
-                    combined weight for all species (e.g., 500).
-                  </p>
-                  <p className="mt-4 text-center font-semibold text-blue-600">
-                    Click the download button below to retrieve the file.
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-lg font-semibold">
-                    Occurrence Module Instructions
-                  </p>
-                  <p className="mt-2">
-                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the
-                    fishing date (e.g., 2024-12-02).
-                  </p>
-                  <p className="mt-2">
-                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal
-                    degrees (e.g., 15.6789).
-                  </p>
-                  <p className="mt-2">
-                    <strong>SHOOT_LONG:</strong> Provide the longitude in
-                    decimal degrees (e.g., -74.1234).
-                  </p>
-                  <p className="mt-2">
-                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth
-                    value in meters (e.g., 25). Avoid ranges like 25-30 m.
-                  </p>
-                  <p className="mt-2">
-                    <strong>MAJOR_SPECIES:</strong> List the observed species
-                    (e.g., Pomfret, Ponyfish).
-                  </p>
-                  <p className="mt-2">
-                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field
-                    for total catch weight (e.g., 200).
-                  </p>
-                  <p className="mt-4 text-center font-semibold text-blue-600">
-                    Click the download button below to retrieve the file.
-                  </p>
-                </div>
-              )}
+            {downloadType === "AbuOcu" ? (
+  <div>
+    <p className="text-lg font-semibold">
+      Abundance/Occurrence Module Instructions
+    </p>
+    <p className="mt-2">
+      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+    </p>
+    <p className="mt-2">
+      <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+    </p>
+    <p className="mt-2">
+      <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+    </p>
+    <p className="mt-2">
+      <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+    </p>
+    <p className="mt-2">
+      <strong>SPECIES_NAME:</strong> Enter species name in the format: <em>SpeciesName(Weight)</em> (e.g., Pomfret(400), Ponyfish(100)).
+    </p>
+    <p className="mt-2">
+      <strong>TOTAL_CATCH [IN KGS]:</strong> Provide the combined weight for all species (e.g., 500).
+    </p>
+    <p className="mt-4 text-center font-semibold text-blue-600">
+      Click the download button below to retrieve the file.
+    </p>
+  </div>
+) : downloadType === "Landing-Village" ? (
+  <div>
+    <p className="text-lg font-semibold">
+      Landing Village Module Instructions
+    </p>
+    <p className="mt-2">
+      <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+    </p>
+    <p className="mt-2">
+      <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+    </p>
+    <p className="mt-2">
+      <strong>VILLAGE NAME:</strong> Provide the village name.
+    </p>
+    <p className="mt-2">
+      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+    </p>
+    <p className="mt-2">
+      <strong>CATCH_WEIGHT:</strong> Enter the Catch Weight for each Species (e.g., Pomfret (10kg), Ponyfish(20kg)).
+    </p>
+    <p className="mt-4 text-center font-semibold text-blue-600">
+      Click the download button below to retrieve the file.
+    </p>
+  </div>
+) : downloadType === "GEO-REF" ? (
+  <div>
+    <p className="text-lg font-semibold">
+      Geo Referenced Data Module Instructions
+    </p>
+    <p className="mt-2">
+      <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+    </p>
+    <p className="mt-2">
+      <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+    </p>
+    <p className="mt-2">
+      <strong>SPECIES_NAME:</strong> List the observed species (e.g., Pomfret, Ponyfish).
+    </p>
+    <p className="mt-2">
+      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+    </p>
+    <p className="mt-2">
+      <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Field for total catch weight (e.g., 200).
+    </p>
+    <p className="mt-2">
+      <strong>LANDING NAME:</strong> Field for Landing Center Name.
+    </p>
+    <p className="mt-2">
+      <strong>GEAR TYPE:</strong> Field for Gear Type (e.g., Hooks and Lines).
+    </p>
+    <p className="mt-4 text-center font-semibold text-blue-600">
+      Click the download button below to retrieve the file.
+    </p>
+  </div>
+) : downloadType === "pfz" ? (
+  <div>
+    <p className="text-lg font-semibold">
+      PFZ/Non PFZ Module Instructions
+    </p>
+    <p className="mt-2">
+      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+    </p>
+    <p className="mt-2">
+      <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+    </p>
+    <p className="mt-2">
+      <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+    </p>
+    <p className="mt-2">
+      <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+    </p>
+    <p className="mt-2">
+      <strong>MAJOR_SPECIES:</strong> List the observed species (e.g., Pomfret, Ponyfish).
+    </p>
+    <p className="mt-2">
+      <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field for total catch weight (e.g., 200).
+    </p>
+    <p className="mt-4 text-center font-semibold text-blue-600">
+      Click the download button below to retrieve the file.
+    </p>
+  </div>
+) : null}
             </Typography>
 
             <Button
@@ -558,38 +657,42 @@ const Addexcel = () => {
         </Modal>
 
         {/* Upload Card */}
-        <div className="bg-white shadow-xl rounded-xl p-8 pt-1 w-[700px] flex flex-col items-center justify-center border-2">
-          <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">
+        <div className="bg-white shadow-xl rounded-xl p-6 pt-1 w-[700px] flex flex-col items-center justify-center border-2 space-y-4">
+          <h2 className="text-3xl font-bold text-gray-800 p-6 text-center">
             Upload Data
           </h2>
           {/* Dropdown for Data Type Selection */}
-          <div className=" w-full mb-6 pb-9">
-            <label
-              htmlFor="dataType"
-              className="block text-gray-600 font-medium mt-5"
-            >
-              Select Data Type:
-            </label>
-            <div className="flex flex-col items-start">
-              <select
-                id="dataType"
-                className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
-                onChange={(e) => setDownloadType(e.target.value)}
-                value={downloadType}
-              >
-                <option value="" disabled>
-                  -- Choose an option --
-                </option>
-                <option value="abundance">Data Abundance</option>
-                <option value="occurrence">Data Occurrence</option>
-              </select>
+          <div className="w-full mb-6 pb-9 flex flex-col items-center">
+  <label
+    htmlFor="dataType"
+    className="block text-gray-600 font-medium p-3"
+  >
+    Select Data Type:
+  </label>
+  <div className="flex flex-col items-start">
+    <select
+      id="dataType"
+      className="w-auto px-6 py-3 text-lg border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+      onChange={(e) => setDownloadType(e.target.value)}
+      value={downloadType}
+    >
+      <option value="" disabled>
+        -- Choose an option --
+      </option>
+      <option value="pfz/non-pfz">PFZ/Non PFZ</option>
+      <option value="landing-village">Landing Village</option>
+      <option value="geo-referenced-data">Geo Referenced Data</option>
+      <option value="abundance">Data Abundance</option>
+      <option value="occurrence">Data Occurrence</option>
+      <option value="others">Others</option>
+    </select>
               {/* <h1 onClick={openForm}>other</h1> */}
-              <button
+              {/* <button
                 onClick={openForm}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 Others / Disorganized Data
-              </button>
+              </button> */}
             </div>
             {/* <div className="flex items-center gap-20 ">
                 <select
@@ -622,7 +725,7 @@ const Addexcel = () => {
     ${
       isDragActive
         ? "border-purple-500 bg-purple-100"
-        : "border-gray-300 bg-gray-50 hover:shadow-xl hover:border-purple-500"
+        : "border-gray-100 bg-gray-100 hover:shadow-xl hover:border-purple-500"
     }`}
           >
             <input {...getInputProps()} disabled={isLoading} />

@@ -78,7 +78,7 @@ const LoginForm = () => {
   };
 
   const navigateBasedOnUserType = (userType) => {
-    if (userType === "scientist") {
+  if (userType === "scientist") {
       navigate("/scientist/home");
     } else if (userType === "admin") {
       navigate("/admin/home");
@@ -143,11 +143,11 @@ const LoginForm = () => {
     const user = localStorage.getItem("aquaUser");
     const userInses = JSON.parse(user);
     if (user) {
-      if (userInses.userType === "admin") {
-        return navigate("/admin/home");
-      } else if (userInses.userType === "scientist") {
-        return navigate("/scientist/home");
-      }
+      // if (userInses.userType === "admin") {
+      //   return navigate("/admin/home");
+      // } else if (userInses.userType === "scientist") {
+      //   return navigate("/scientist/home");
+      // }
       return navigate("/");
     }
   }, []);
@@ -180,7 +180,7 @@ const LoginForm = () => {
           {userType !== "Admin" && (
             <p className="text-center text-lg text-gray-600 mb-12">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-blue-500 font-semibold">
+              <Link to="/" className="text-blue-500 font-semibold">
                 Sign Up
               </Link>
             </p>
@@ -240,7 +240,6 @@ const LoginForm = () => {
             backgroundImage: "url(../../sea_bg.jpg)",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
-            borderRadius: "4rem 0 0 4rem",
           }}
         >
           {/* <div className="text-center22 px-8">

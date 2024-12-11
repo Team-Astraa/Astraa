@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import astraaLogo from "../assets/astraa_logo.jpg";
 import profImage from "../assets/prof_img.png";
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineDashboardCustomize } from "react-icons/md"
+import { MdOutlineDashboardCustomize } from "react-icons/md";
 import {
   FaTachometerAlt,
   FaCloudUploadAlt,
@@ -50,7 +50,7 @@ const SidebarNew = () => {
   const adminNavLinks = [
     {
       to: "/admin/home",
-      icon: <MdOutlineDashboardCustomize  className="mt-1 text-2xl"/>,
+      icon: <MdOutlineDashboardCustomize className="mt-1 text-2xl" />,
       label: "Dashboard",
     },
     {
@@ -89,6 +89,7 @@ const SidebarNew = () => {
       icon: <FaCloudUploadAlt size={20} />,
       label: "Upload",
     },
+    { to: "/getStatusLogs", icon: <FaInfoCircle size={20} />, label: "Satus Tab" },
     { to: "/about", icon: <FaInfoCircle size={20} />, label: "About" },
     { to: "/profile", icon: <FaSignInAlt size={20} />, label: "Profile" },
   ];
@@ -171,9 +172,12 @@ const SidebarNew = () => {
             <h1 className="text-xl font-semibold">
               {loggedUser?.username || "Guest"}
             </h1>
-            <p className="text-md font-large text-opacity-50">
+            {/* <p className="text-md font-large text-opacity-50">
               {loggedUser?.userType || "N/A"}
-            </p>
+            </p> */}
+            {
+              loggedUser?.userType=="research_institute" 
+            }
           </div>
         </div>
 

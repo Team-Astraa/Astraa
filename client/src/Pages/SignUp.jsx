@@ -27,11 +27,11 @@ const SignUp = () => {
     let user = localStorage.getItem("aquaUser");
     let userInses = JSON.parse(user)
     if (user) {
-      if (userInses.userType == "admin") {
-        return navigate("/admin/home");
-      } else if (userInses.userType == "scientist") {
-        return navigate("/scientist/home");
-      }
+      // if (userInses.userType == "admin") {
+      //   return navigate("/admin/home");
+      // } else if (userInses.userType == "scientist") {
+      //   return navigate("/scientist/home");
+      // }
       return navigate("/")
 
     }
@@ -43,7 +43,7 @@ const SignUp = () => {
       {/* Left Section */}
       <div className="bg-white">
       <div className="w-full lg:w-[40vw] bg-gradient-to-br from-blue-500 to-blue-900 text-white overflow-y-auto h-screen"
-      style={{backgroundImage: "url(../../public/sea_bg.jpg)", backgroundRepeat: "no-repeat", backgroundSize: "cover", borderRadius: "0 4rem 4rem 0"}}>
+      style={{backgroundImage: "url(../../public/sea_bg.jpg)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
         <div className="flex flex-col justify-center h-full p-16">
           <h1 className="text-7xl text-left font-bold">Welcome to</h1>
           <h1 className="text-8xl text-left font-bold mb-6">AquaDB</h1>

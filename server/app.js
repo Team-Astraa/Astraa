@@ -9,6 +9,8 @@ import { nanoid } from "nanoid";
 import fs from "fs";
 import path from "path";
 
+import { uploadSpeciesData } from "./controller/userController.js";
+
 // Controllers
 import {
   getusername,
@@ -117,8 +119,8 @@ app.use(bodyParser.json());
 // MongoDB Connection
 mongoose
   .connect(
-    // "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
-    "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
+    "mongodb+srv://varad:varad6862@cluster0.0suvvd6.mongodb.net/SIH"
+    // "mongodb+srv://deshmusn:sneha2812@cluster0.x960yiu.mongodb.net/SIH"
   )
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("MongoDB connection error:", error));
@@ -167,6 +169,11 @@ const upload = multer({ storage: storage });
 
 // Routes
 
+// Setup file upload configuration for species
+const memoryStorage = multer.memoryStorage();
+const SpeciesUpload = multer({ storage: memoryStorage }).single("file");
+
+// Route to handle file upload
 // User Authentication Routes
 app.post("/signup", signUp);
 app.post("/login", login);
@@ -235,6 +242,7 @@ app.get("/get-upload-url", async (req, res) => {
 // CSV Upload Route
 app.post("/upload", upload.single("file"), uploadCSV);
 app.post("/scientist/sendEmail", upload.single("file"), sendEmailWithExcel);
+app.post("/uploadSpecies", SpeciesUpload, uploadSpeciesData);
 
 ///new code aaded from here wjil other codes are preserved
 //new upload csv routes
