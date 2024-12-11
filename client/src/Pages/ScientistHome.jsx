@@ -1191,7 +1191,7 @@ const ScientistHome = () => {
           ].map((feature, index) => (
             <div
               key={index}
-              className={`bg-white rounded-xl p-4 text-white h-full ${
+              className={`rounded-xl p-4 text-white h-full ${
                 selectedFeature.includes(feature) ? "bg-blue-200" : "bg-white"
               }`}
               onClick={() => handleFeatureSelection(feature)}
