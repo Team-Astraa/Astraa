@@ -39,10 +39,10 @@ const Logs = () => {
   };
 
   return (
-    <div className="container mx-auto my-1 p-6 rounded-lg shadow-lg bg-white">
-      <h2 className="text-xl font-bold text-blue-900 mb-6 text-center">
+    <div className="container mx-auto my-1 rounded-lg shadow-lg bg-white">
+      {/* <h2 className="text-xl font-bold text-blue-900 mb-6 text-center">
         Recent abundance/occurrence Uploads
-      </h2>
+      </h2> */}
 
       {loading ? (
         <div className="text-center text-lg text-blue-600">Loading...</div>
@@ -66,7 +66,7 @@ const Logs = () => {
               </tr>
             </thead>
             <tbody>
-              {logs.slice(0, 3).map((log) => (
+              {logs.slice(0, 10).map((log) => (
                 <tr key={log.userId} className="transition-all">
                   <td className="px-6 py-4 text-sm text-gray-800 border-b">
                     {log.username}
@@ -93,7 +93,7 @@ const Logs = () => {
       )}
 
       <Button
-        className="mt-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-md shadow-lg hover:from-blue-700 hover:to-blue-950 hover:shadow-xl transition-all"
+        className="mt-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 m-2 rounded-md shadow-lg hover:from-blue-700 hover:to-blue-950 hover:shadow-xl transition-all"
         onClick={() => navigate("/admin/get-data-upload-user")}
       >
         See All Users
