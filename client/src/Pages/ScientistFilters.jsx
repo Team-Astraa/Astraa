@@ -10,6 +10,7 @@ import Loader from "../Components/Loader";
 import ScientistLoader from "../Components/Scientist/ScientistLoader";
 import toast from "react-hot-toast";
 import FishCatchGraphs from "../Components/Scientist/FilterDataGraphs";
+import FilterMap from "../Components/Scientist/FilterMap";
 
 
 const FilterForm = () => {
@@ -18,6 +19,7 @@ const FilterForm = () => {
   const [error, setError] = useState(null);
   let [fileLoader, setfileLoader] = useState(false)
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  let [majorDataType, setMajorDataType] = useState("")
   const [filters, setFilters] = useState({
     lat: "",
     long: "",
@@ -34,6 +36,7 @@ const FilterForm = () => {
     totalWeightMax: "",
     dataType: null,
     zoneType: null,
+    AbundanceOrAccurance: ""
   });
 
   let [msg, setMsg] = useState("confirm please")
@@ -42,7 +45,8 @@ const FilterForm = () => {
   const [openModal, setOpenModal] = useState(false);
   let [message, setMessage] = useState("")
   let [Visualize, setVisualize] = useState(false);
-  const [activeTab, setActiveTab] = useState('data'); // 'data' as the initial active tab
+  const [activeTab, setActiveTab] = useState('PFZ/NON-PFZ'); // 'data' as the initial active tab
+  let [tag, setTag] = useState("data");
 
 
   const handleChange = (e) => {
@@ -61,6 +65,9 @@ const FilterForm = () => {
   };
 
   const submit = async () => {
+
+
+
     setMessage("Loading Data.. Please Wait")
     setOpenModal(false)
     const requestData = {};
@@ -93,14 +100,18 @@ const FilterForm = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/scientist/filter-data", requestData);
+      const response = await axios.post("http://localhost:5000/scientist/filter-data", {
+        filter: requestData,
+        majorDataType: activeTab
+      });
       setData(response.data);
       setOpenModal(false)
       setLoading(false);
       toast.success("Data Loaded Successfully");
     } catch (error) {
-      toast.error("Error Occured")
-      toast.error("Error Occured")
+      setData(null)
+      toast.error(error.response.data.message || "No data available");
+
       console.error("Error fetching filtered data:", error);
     } finally {
       setLoading(false);
@@ -723,11 +734,11 @@ const FilterForm = () => {
     setVisualize(true);
   }
 
-  const handleTabClick = (tab) => {
+  const handleTabClick = (t) => {
     if (!data) {
       return toast.error("Please Apply the filters first...")
     }
-    setActiveTab(tab);
+    setTag(t);
   };
 
   let openNameModel = () => {
@@ -735,7 +746,25 @@ const FilterForm = () => {
 
   }
 
+  let handleTab = (tab) => {
+    setActiveTab(tab);
+    setData([])
+    setFilters({ ...filters, dataType: tab });
 
+
+
+
+
+
+  }
+
+
+  const tabs2 = [
+    { label: "PFZ/NON-PFZ", value: "PFZ/NON-PFZ" },
+    { label: "Landing Village", value: "Landing-Village" },
+    { label: "GEO-REF", value: "GEO-REF" },
+    { label: "All", value: "All" },
+  ];
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
@@ -750,202 +779,233 @@ const FilterForm = () => {
           :
           <>
             <div className="min-h-screen flex gap-4">
-              <div className="w-[10%] h-fit ml-2 shadow-lg bg-white p-4 rounded-lg">
-                <div><h1 className="text-lg font-bold mb-2">Your Filters</h1></div>
-                <div>
-                  <ul className="list-none list-disc list-inside space-y-1">
-                    {Object.entries(filters).map(([key, value], index) => {
-                      // Check if the value exists (is not empty, null, or undefined)
-                      if (value) {
-                        return (
-                          <li key={index} className="text-sm text-gray-700">
-                            {key} : {value}
-                          </li>
-                        );
-                      }
-                      return null; // Skip rendering if value doesn't exist
-                    })}
-                  </ul>
+
+
+
+              <div className="w-[70%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
+                <div className="w-full h-12 bg-gray-100 flex items-center justify-between px-6 shadow-sm rounded-t-lg">
+                  {tabs2.map((tab) => (
+                    <div
+                      key={tab.value}
+                      onClick={() => { handleTab(tab.value) }}
+                      className={`px-6 py-2 cursor-pointer rounded-md transition duration-300 ${activeTab === tab.value
+                        ? "bg-green-600 text-white shadow-md"
+                        : "text-gray-700 hover:bg-gray-200"
+                        }`}
+                    >
+                      {tab.label}
+                    </div>
+                  ))}
                 </div>
-              </div>
 
-
-              <div className="w-[60%] h-auto shadow-lg bg-white rounded-md">
-                <div className="w-full flex">
+                <div className="w-full flex border-b">
                   <div
-                    className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'data' ? 'bg-green-500' : ''}`}
-                    onClick={() => handleTabClick('data')}
+                    onClick={() => handleTabClick("data")}
+                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 border-r  cursor-pointer hover:bg-gray-200"
                   >
-                    <h1 className="text-xl font-bold">DATA</h1>
+                    {activeTab}
                   </div>
                   <div
-                    className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${activeTab === 'graphs' ? 'bg-green-500' : ''}`}
-                    onClick={() => handleTabClick('graphs')}
+                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleTabClick("graphs")}
                   >
-                    <h1 className="text-xl font-bold">VISUALIZE</h1>
+                    Visualization
                   </div>
                 </div>
-                {
 
-                  activeTab == 'graphs' ? <FishCatchGraphs data={data} fileLoader={fileLoader} setfileLoader={setfileLoader} /> :
-                    <>
+                {tag === "graphs" ? (
+                  <FishCatchGraphs
+                    data={data}
+                    fileLoader={fileLoader}
+                    setfileLoader={setfileLoader}
+                  />
+                ) : data && tag == "data" ? (
+                  <>
+                    <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
+                      <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
+                      <div className="flex gap-4">
+                        {[
+                          {
+                            onClick: () => downloadExcelWithCharts("xlsx"),
+                            icon: "fa-file-excel",
+                            bg: "bg-green-600",
+                            hoverBg: "hover:bg-green-700",
+                          },
+                          {
+                            onClick: () => downloadExcelWithCharts("csv"),
+                            icon: "fa-file-csv",
+                            bg: "bg-green-500",
+                            hoverBg: "hover:bg-green-600",
+                          },
+                          {
+                            onClick: openNameModel,
+                            icon: "fa-floppy-disk",
+                            bg: "bg-blue-500",
+                            hoverBg: "hover:bg-blue-600",
+                          },
+                          {
+                            onClick: shareToCommunity,
+                            icon: "fa-share",
+                            bg: "bg-purple-600",
+                            hoverBg: "hover:bg-purple-700",
+                          },
+                          {
+                            onClick: emailModel,
+                            icon: "fa-envelope",
+                            bg: "bg-red-600",
+                            hoverBg: "hover:bg-red-700",
+                          },
+                        ].map(({ onClick, icon, bg, hoverBg }, idx) => (
+                          <button
+                            key={idx}
+                            onClick={onClick}
+                            className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
+                          >
+                            <i className={`fa-solid ${icon} text-xl`}></i>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                      {data ? (
-                        <>
-                          <div className="flex items-center justify-between w-full p-4 shadow-md">
-                            <h1 className="text-2xl font-bold">Your Data</h1>
-                            <div className="flex flex-col gap-2">
-                            <div className="flex gap-6 items-center justify-evenly">
-  <button
-    onClick={() => downloadExcelWithCharts("xlsx")}
-    className="flex flex-col items-center p-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-300"
-  >
-    <i className="fa-solid fa-file-excel text-2xl mb-1"></i>
-  </button>
-  <button
-    onClick={() => downloadExcelWithCharts("csv")}
-    className="flex flex-col items-center p-3 bg-green-400 text-white rounded-lg shadow-md hover:bg-gren-500 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300"
-  >
-    <i className="fa-solid fa-file-csv text-2xl mb-1"></i>
-  </button>
-  <button
-    onClick={openNameModel}
-    className="flex flex-col items-center p-3 bg-blue-400 text-black rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300 transition-all duration-300"
-  >
-    <i className="fa-solid fa-floppy-disk text-2xl mb-1"></i>
-  </button>
-  <button
-    onClick={shareToCommunity}
-    className="flex flex-col items-center p-3 bg-purple-500 text-white rounded-lg shadow-md hover:bg-purple-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300"
-  >
-    <i className="fa-solid fa-share text-2xl mb-1"></i>
-  </button>
-  <button
-    onClick={emailModel}
-    className="flex flex-col items-center p-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
-  >
-    <i className="fa-solid fa-envelope text-2xl mb-1"></i>
-  </button>
-</div>
-                              <p className="font-bold text-black flex">total Row:<p className="text-green-600 ml-2">{data.length}</p></p></div>
-                          </div>
-                          <div className="grid grid-cols-9 gap-2 p-4 border-t">
-  {[
-    "Species Name",
-    "Latitude",
-    "Longitude",
-    "Depth",
-    "Total Weight (kg)",
-    "Sea",
-    "State",
-    "Zone Type",
-    "Date",
-  ].map((header) => (
-    <div
-      key={header}
-      className="font-bold text-sm uppercase bg-gray-200 p-2 border rounded-lg text-center shadow-md"
-    >
-      {header}
-    </div>
-  ))}
-</div>
-
-{data.map((item, index) => (
-  <div
-    key={index}
-    className={`grid grid-cols-9 gap-2 p-4 rounded-lg shadow hover:bg-gray-50 transition-colors duration-300 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
-  >
-    {/* Species with the eye icon */}
-    <div className="p-2 flex items-center justify-center cursor-pointer hover:text-blue-500">
-      <i onClick={() => openModal2(item.species)} className="fa-solid fa-eye text-2xl"></i>
-    </div>
-
-    {/* Data Cells */}
-    <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
-      {truncateDecimals(item.latitude, 2)}
-    </div>
-
-    <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
-      {truncateDecimals(item.longitude, 2)}
-    </div>
-
-    <div className="p-2 text-center border border-purple-200 break-words">{item.depth}</div>
-    <div className="p-2 text-center border border-purple-200 break-words">{item.total_weight}</div>
-    <div className="p-2 text-center border border-purple-200 break-words">{item.sea}</div>
-    <div className="p-2 text-center border border-purple-200 break-words">{item.state}</div>
-    <div className="p-2 text-center border border-purple-200 break-words">{item.zoneType}</div>
-    <div className="p-2 text-center border border-purple-200 font-medium text-gray-600">
-      {new Date(item.date).toLocaleDateString()}
-    </div>
-  </div>
-))}
-                        </>
-                      ) : (
-                        <div className="flex items-center justify-center mt-24">
-                          <h1 className="text-3xl font-bold">Please Apply The Filters</h1>
+                    <div className="grid grid-cols-9 gap-4 p-4 border-t bg-gray-50">
+                      {[
+                        "Species Name",
+                        "Latitude",
+                        "Longitude",
+                        "Depth",
+                        "Total Weight (kg)",
+                        "Sea",
+                        "State",
+                        "Zone Type",
+                        "Date",
+                      ].map((header, idx) => (
+                        <div
+                          key={idx}
+                          className="text-center font-semibold text-sm uppercase bg-gray-200 p-2 border rounded shadow-sm"
+                        >
+                          {header}
                         </div>
-                      )}
+                      ))}
+                    </div>
 
-                      {/* Modal */}
-{isModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg w-1/2 p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Species Details</h2>
-        <button
-          className="text-gray-600 hover:text-gray-800"
-          onClick={closeModal}
-        >
-          ✖
-        </button>
-      </div>
+                    {data.map((item, index) => (
+                      <div
+                        key={index}
+                        className={`grid grid-cols-9 gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                          }`}
+                      >
+                        <div className="text-center cursor-pointer hover:text-blue-500">
+                          <i
+                            onClick={() => openModal2(item.species)}
+                            className="fa-solid fa-eye text-xl"
+                          ></i>
+                        </div>
+                        <div className="text-center text-gray-700 font-medium">
+                          {truncateDecimals(item.latitude, 2)}
+                        </div>
+                        <div className="text-center text-gray-700 font-medium">
+                          {truncateDecimals(item.longitude, 2)}
+                        </div>
+                        <div className="text-center">{item.depth}</div>
+                        <div className="text-center">{item.total_weight}</div>
+                        <div className="text-center">{item.sea}</div>
+                        <div className="text-center">{item.state}</div>
+                        <div className="text-center">{item.zoneType}</div>
+                        <div className="text-center text-gray-600">
+                          {new Date(item.date).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center mt-24">
+                    <h1 className="text-3xl font-bold text-gray-600">Please Apply The Filters</h1>
+                  </div>
+                )}
 
-      {/* Table to Display Species Data */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="py-2 px-4 border-b text-left font-medium">Species Name</th>
-              <th className="py-2 px-4 border-b text-left font-medium">Catch Weight (kg)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {modalData.map((species, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-t text-gray-800">{species.name}</td>
-                <td className="py-2 px-4 border-t text-gray-600">
-                  {species.catch_weight || "N/A"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                {isModalOpen && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg w-1/2 p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold text-gray-800">Species Details</h2>
+                        <button
+                          className="text-gray-600 hover:text-gray-800"
+                          onClick={closeModal}
+                        >
+                          ✖
+                        </button>
+                      </div>
 
-      <div className="mt-6 text-right">
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={closeModal}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-                    </>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full table-auto border-collapse">
+                          <thead className="bg-gray-100">
+                            <tr>
+                              <th className="py-2 px-4 border-b text-left font-medium">
+                                Species Name
+                              </th>
+                              <th className="py-2 px-4 border-b text-left font-medium">
+                                Catch Weight (kg)
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {modalData.map((species, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="py-2 px-4 border-t">{species.name}</td>
+                                <td className="py-2 px-4 border-t">
+                                  {species.catch_weight || "N/A"}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
 
-                }
+                      <div className="mt-6 text-right">
+                        <button
+                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          onClick={closeModal}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="w-[30%] h-auto shadow-lg bg-white rounded-md">
 
-                {/* {
-            data && <MapboxVisualization2
-              catchData={data}
-              props={{ type: "markers", showButton: true }}
-            />
-          } */}
+              <div className="w-[30%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
+
+                <FilterMap catchData={data} props={{ type: "markers", showButton: true }} />
+                <div className="w-full h-fit ml-2 m-4 shadow-md bg-gradient-to-r from-gray-50 via-white to-gray-50 p-6 rounded-lg border border-gray-200">
+                  <div className="mb-4">
+                    <h1 className="text-xl font-semibold text-gray-800 mb-2 border-b pb-2">
+                      Your Filters
+                    </h1>
+                  </div>
+                  <div>
+                    <ul className="list-none list-inside space-y-2">
+                      {Object.entries(filters).map(([key, value], index) => {
+                        if (value) {
+                          return (
+                            <li
+                              key={index}
+                              className="flex items-center text-sm text-gray-700 gap-2"
+                            >
+                              <span className="font-medium text-gray-600 capitalize">{key}:</span>
+                              <span className="text-gray-800 bg-gray-100 px-2 py-1 rounded-md">
+                                {value}
+                              </span>
+                            </li>
+                          );
+                        }
+                        return null;
+                      })}
+                    </ul>
+                  </div>
+                </div>
+
 
               </div>
             </div>
@@ -962,10 +1022,10 @@ const FilterForm = () => {
             {/* Checkbox Filters */}
             <div className="flex gap-4 mb-6">
               {[
-                { label: "Abundance", type: "dataType", value: "abundance" },
-                { label: "Occurrence", type: "dataType", value: "occurrence" },
+                { label: "Abundance", type: "majorDataType", value: "abundance" },
+                { label: "Occurrence", type: "majorDataType", value: "occurrence" },
                 { label: "PFZ", type: "zoneType", value: "PFZ" },
-                { label: "NON-PFZ", type: "zoneType", value: "NON_PFZ" },
+                { label: "NON-PFZ", type: "zoneType", value: "NON-PFZ" },
               ].map(({ label, type, value }) => (
                 <label
                   key={value}

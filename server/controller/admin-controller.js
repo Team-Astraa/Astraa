@@ -26,7 +26,7 @@ export const getUnverifiedUser = async (req, res) => {
   }
 
   try {
-    // Fetch unverified users by userType
+    // Fetch unverified users by userType 
     const users = await User.find({ userType, isVerifed: false });
 
     if (!users.length) {
@@ -176,9 +176,27 @@ export const getDetailsData = async (req, res) => {
   }
 };
 
+const format = (data) => {
+  return data.map(group => {
+      return {
+          ...group,
+          catches: group.catches.map(catchEntry => {
+              return {
+                  ...catchEntry,
+                  latitude: parseFloat(catchEntry.latitude),
+                  longitude: parseFloat(catchEntry.longitude)
+              };
+          })
+      };
+  });
+}
+
+// Example usage:
+// const processedCatches = format(catches);
+// console.log(processedCatches);
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId,DataId } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
@@ -203,6 +221,9 @@ export const getCatchDataGroupedByUser = async (req, res) => {
       },
     ]);
 
+    let data = format(catchData)
+    
+
     // Check if any data was found
     if (catchData.length === 0) {
       return res
@@ -213,7 +234,7 @@ export const getCatchDataGroupedByUser = async (req, res) => {
     // Return the grouped data
     return res.status(200).json({
       message: "Catch data fetched successfully",
-      data: catchData,
+      data: data,
     });
   } catch (error) {
     console.error("Error fetching catch data: ", error);

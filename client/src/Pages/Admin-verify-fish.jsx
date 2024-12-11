@@ -325,22 +325,55 @@ const Adminverifyfish = () => {
   // When the user clicks 'Cancel' in the modal, close it without doing anything
   const handleSubmit = async () => {
     // Transform the data to the format expected by the backend
+    // const transformedData = catchData.flatMap((userData) =>
+    //   userData.catches.map((fishData) => ({
+    //     dataId: fishData?.dataId || "", // Ensure dataId is never null, fallback to empty string if missing
+    //     date: fishData?.date?.split("T")[0] || "", // Format date, fallback to empty string if missing
+    //     latitude: fishData?.latitude || 0, // Ensure latitude is never null, fallback to 0 if missing
+    //     longitude: fishData?.longitude || 0, // Ensure longitude is never null, fallback to 0 if missing
+    //     depth: fishData?.depth || "", // Fallback to empty string if depth is missing
+    //     species: Array.isArray(fishData?.species)
+    //       ? fishData.species.map((speciesItem) => ({
+    //           name: speciesItem?.name || "", // Fallback to empty string if name is missing
+    //           catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
+    //         }))
+    //       : [],
+    //     sea: fishData?.sea,
+    //     state: fishData?.state,
+    //     total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+    //     dataType: fishData?.dataType || "", // Ensure tag is never null, fallback to empty string if missing
+    //     userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
+    //   }))
+    // );
+
     const transformedData = catchData.flatMap((userData) =>
       userData.catches.map((fishData) => ({
         dataId: fishData?.dataId || "", // Ensure dataId is never null, fallback to empty string if missing
         date: fishData?.date?.split("T")[0] || "", // Format date, fallback to empty string if missing
-        latitude: fishData?.latitude || 0, // Ensure latitude is never null, fallback to 0 if missing
-        longitude: fishData?.longitude || 0, // Ensure longitude is never null, fallback to 0 if missing
+        latitude:
+          fishData?.latitude === null
+            ? null
+            : parseFloat(fishData.latitude) || 0, // Convert to number or keep as null
+        longitude:
+          fishData?.longitude === null
+            ? null
+            : parseFloat(fishData.longitude) || 0, // Convert to number or keep as null
         depth: fishData?.depth || "", // Fallback to empty string if depth is missing
         species: Array.isArray(fishData?.species)
           ? fishData.species.map((speciesItem) => ({
               name: speciesItem?.name || "", // Fallback to empty string if name is missing
-              catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
+              catch_weight:
+                speciesItem?.catch_weight === null
+                  ? null
+                  : parseFloat(speciesItem.catch_weight) || 0, // Convert to number or keep as null
             }))
           : [],
         sea: fishData?.sea,
         state: fishData?.state,
-        total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+        total_weight:
+          fishData?.total_weight === null
+            ? null
+            : parseFloat(fishData.total_weight) || 0, // Convert to number or keep as null
         dataType: fishData?.dataType || "", // Ensure tag is never null, fallback to empty string if missing
         userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
       }))
@@ -660,33 +693,33 @@ const Adminverifyfish = () => {
                     </button>
                     <button
                       onClick={handleSaveClick}
-                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-green-500  hover:bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Save
                     </button>
 
                     <button
                       onClick={acceptData}
-                      className="bg-teal-500 hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
+                      className="bg-teal-500 hidden hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
                     >
                       Accept
                     </button>
                     <button
                       onClick={rejectdata}
-                      className="bg-red-500 hover:bg-red-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-red-500 hidden hover:bg-red-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Reject
                     </button>
                     <button
                       onClick={handleValidateCatch} // Validate button
                       // onClick={handleValidate}
-                      className="bg-yellow-500 hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-yellow-500 hidden hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Validate
                     </button>
                     <button
                       onClick={toggleViewMode}
-                      className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                      className="bg-red-600 hidden text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       {viewMode === "table" ? "Card View" : "Table View"}
                     </button>

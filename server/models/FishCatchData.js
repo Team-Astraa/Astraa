@@ -3,11 +3,10 @@ import mongoose from "mongoose";
 const SpeciesSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true, // Species name is mandatory
     trim: true,
   },
   catch_weight: {
-    type: Number,
+    type: String,
     default: null, // Default to null if catch weight is not provided
   },
 });
@@ -22,11 +21,11 @@ const CatchSchema = new mongoose.Schema(
       required: true, // Date of the fishing activity is mandatory
     },
     latitude: {
-      type: Number,
+      type: String,
       required: true, // Latitude of fishing location is mandatory
     },
     longitude: {
-      type: Number,
+      type: String,
       required: true, // Longitude of fishing location is mandatory
     },
     depth: {
@@ -60,13 +59,22 @@ const CatchSchema = new mongoose.Schema(
       type: String,
     },
     total_weight: {
-      type: Number,
+      type: String,
       default: 0,
     },
     dataId: {
       type: String,
       required: true, // Unique identifier for each catch data record
     },
+    LANDINGNAM: {
+      type: String,
+    },
+    Gear_type: {
+      type: String,
+    },
+    region:{
+      type: String,
+    }
   },
   {
     timestamps: true, // Automatically include createdAt and updatedAt fields
