@@ -89,9 +89,8 @@ const HomePage = () => {
           {isLoggedIn ? (
             <div className="w-full my-10">
               <button
-                variant="danger"
                 onClick={handleNavigate}
-                className="rounded-lg h-fit border-4 border-green-600 bg-green-300 hover:bg-green-400 hover:text-white px-5 py-3 font-bold text-xl text-white transition-all"
+                className="rounded-lg h-fit text-black border-4 border-blue-600 bg-blue-300 hover:bg-blue-400 hover:text-white px-5 py-3 font-bold text-xl transition-all"
               >
               GO TO DASHBOARD
               </button>
