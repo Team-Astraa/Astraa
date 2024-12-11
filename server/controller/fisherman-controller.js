@@ -113,7 +113,7 @@ export const getFishermanData = async (req, res) => {
         }
 
         // Respond with the fetched data
-        res.status(200).json(catches.slice(0, 10));
+        res.status(200).json(catches.slice(0, 4));
         console.log(catches.slice(0, 1))
     } catch (error) {
         console.error("Error fetching validated catches:", error);
