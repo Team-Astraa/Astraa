@@ -14,8 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Autocomplete } from '@mui/material'
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Autocomplete } from "@mui/material";
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 const Addexcel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,7 +63,6 @@ const Addexcel = () => {
       species: updatedSpecies,
     }));
   };
-
 
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
@@ -273,9 +272,9 @@ const Addexcel = () => {
 
             <h2>Add New Catch Record</h2>
 
-            <form onSubmit={handleSubmit}>
+            {/* manual form */}
+            {/* <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
-                {/* Date */}
                 <TextField
                   label="Date"
                   type="date"
@@ -287,7 +286,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Latitude */}
                 <TextField
                   label="Latitude"
                   type="number"
@@ -299,7 +297,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Longitude */}
                 <TextField
                   label="Longitude"
                   type="number"
@@ -311,7 +308,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* Depth */}
                 <TextField
                   label="Depth"
                   type="number"
@@ -323,7 +319,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Species */}
               {catchData.species.map((species, index) => (
                 <div key={index} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -365,7 +360,6 @@ const Addexcel = () => {
               </Button>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Sea */}
                 <TextField
                   label="Sea"
                   name="sea"
@@ -375,7 +369,6 @@ const Addexcel = () => {
                   sx={{ mb: 2 }}
                 />
 
-                {/* State */}
                 <TextField
                   label="State"
                   name="state"
@@ -387,7 +380,6 @@ const Addexcel = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Total Weight */}
                 <TextField
                   label="Total Weight"
                   name="total_weight"
@@ -399,7 +391,6 @@ const Addexcel = () => {
                 />
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 variant="contained"
@@ -408,7 +399,7 @@ const Addexcel = () => {
               >
                 Submit
               </Button>
-            </form>
+            </form> */}
           </Box>
         </Modal>
       )}

@@ -28,6 +28,154 @@ export const getUnique = async (req, res) => {
   }
 };
 
+// export const getFilteredCatches = async (req, res) => {
+//   try {
+//     const {
+//       lat,
+//       long,
+//       radius,
+//       from,
+//       to,
+//       speciesName,
+//       depth, // Can be an exact value or a range (min and max)
+//       sea,
+//       state,
+//       total_weight,
+//       dataType, // Filter: abundance or occurrence
+//       zoneType,
+//       majorDataType // Filter: PFZ or NON-PFZ
+//     } = req.body.filter;
+
+//     // Build the query object dynamically
+//     const query = {};
+
+//     // Date range filter
+//     if (from || to) {
+//       query.date = {};
+//       if (from) query.date.$gte = new Date(from); // From date
+//       if (to) query.date.$lte = new Date(to); // To date
+//     }
+
+//     // Depth filter
+//     if (depth) {
+//       if (typeof depth === "object") {
+//         // Depth range
+//         query.depth = {};
+//         if (depth.min !== undefined) query.depth.$gte = depth.min; // Minimum depth
+//         if (depth.max !== undefined) query.depth.$lte = depth.max; // Maximum depth
+//       } else {
+//         // Exact depth
+//         query.depth = depth;
+//       }
+//     }
+
+//     // Sea filter
+//     if (sea) {
+//       query.sea = { $regex: new RegExp(sea, "i") }; // Case-insensitive match
+//     }
+
+//     // State filter
+//     if (state) {
+//       query.state = { $regex: new RegExp(state, "i") }; // Case-insensitive match
+//     }
+
+//     // Total weight filter
+//     if (total_weight) {
+//       if (typeof total_weight === "object") {
+//         query.total_weight = {};
+//         if (total_weight.min !== undefined)
+//           query.total_weight.$gte = total_weight.min; // Minimum weight
+//         if (total_weight.max !== undefined)
+//           query.total_weight.$lte = total_weight.max; // Maximum weight
+//       } else {
+//         query.total_weight = total_weight; // Exact weight if no range is provided
+//       }
+//     }
+
+//     // Zone type filter
+//     if (zoneType) {
+//       query.zoneType = zoneType.toUpperCase(); // PFZ or NON-PFZ
+//     }
+
+//     // Fetch and sort catches matching the query
+//     const catches = await Catch.find(query).sort({ createdAt: -1 }); // Sort by createdAt in descending order
+
+//     // Apply additional filters in-memory if required
+//     const filteredCatches = catches.filter((catchItem) => {
+//       // Species filter (speciesName filter)
+//       if (speciesName) {
+//         // Create a case-insensitive regex pattern for the species name
+//         const speciesRegex = new RegExp(`^${speciesName}$`, "i");
+
+//         // Filter the species array to only include those that match the regex
+//         catchItem.species = catchItem.species.filter((species) =>
+//           species.name.match(speciesRegex)
+//         );
+
+//         // If after filtering, species array is empty, you can handle it if needed
+//         if (catchItem.species.length === 0) {
+//           return false; // Optionally exclude this item if no species match
+//         }
+//       }
+
+//       // Handle dataType-specific logic (abundance or occurrence)
+//       if (majorDataType === "abundance") {
+//         // Filter species to include only those with non-null catch_weight
+//         catchItem.species = catchItem.species.filter(
+//           (species) => species.catch_weight !== null
+//         );
+
+//         if (dataType !== "ALL") {
+//           catchItem.species = catchItem.species.filter((species) => {
+//             switch (dataType) {
+//               case "PFZ/NON-PFZ":
+//                 return species.dataType === "PFZ/NON-PFZ";
+//               case "Landing-Village":
+//                 return species.dataType === "Landing-Village";
+//               case "GEO-REF":
+//                 return species.dataType === "GEO-REF";
+//               default:
+//                 return true; // This will catch unexpected cases
+//             }
+//           });
+//         }
+
+//         // Exclude the catch if all species are filtered out
+//         if (catchItem.species.length === 0) return false;
+//       } else if (majorDataType === "occurrence") {
+//         // Include all species, even if catch_weight is null
+//         // No filtering is needed here, so do not alter species array
+//       }
+
+//       // Geographical filter
+//       if (lat && long && radius) {
+//         const distance = geolib.getDistance(
+//           { latitude: lat, longitude: long },
+//           { latitude: catchItem.latitude, longitude: catchItem.longitude }
+//         );
+
+//         // Convert radius from km to meters for geolib
+//         const radiusInMeters = radius * 1000;
+//         if (distance > radiusInMeters) {
+//           return false; // Outside the radius
+//         }
+//       }
+
+//       return true; // Keep this catch if all filters passed
+//     });
+
+//     console.log(`Filtered Catches Count: ${filteredCatches.length}`);
+
+//     // Return the filtered catches
+//     return res.status(200).json(filteredCatches);
+//   } catch (error) {
+//     console.error("Error filtering catches:", error);
+//     return res
+//       .status(500)
+//       .json({ message: "An error occurred while filtering the catches." });
+//   }
+// };
+
 export const getFilteredCatches = async (req, res) => {
   try {
     const {
@@ -42,10 +190,9 @@ export const getFilteredCatches = async (req, res) => {
       state,
       total_weight,
       dataType, // Filter: abundance or occurrence
-      zoneType, // Filter: PFZ or NON-PFZ
+      zoneType,
+      majorDataType, // Filter: PFZ or NON-PFZ
     } = req.body.filter;
-    let {majorDataType} = req.body
-    console.log(req.body);
 
     // Build the query object dynamically
     const query = {};
@@ -75,6 +222,12 @@ export const getFilteredCatches = async (req, res) => {
       query.sea = { $regex: new RegExp(sea, "i") }; // Case-insensitive match
     }
 
+    if (dataType != "ALL") {
+      if (dataType) {
+        query.dataType = dataType; // Case-insensitive match
+      }
+    }
+
     // State filter
     if (state) {
       query.state = { $regex: new RegExp(state, "i") }; // Case-insensitive match
@@ -102,6 +255,7 @@ export const getFilteredCatches = async (req, res) => {
     const catches = await Catch.find(query).sort({ createdAt: -1 }); // Sort by createdAt in descending order
 
     // Apply additional filters in-memory if required
+    // Apply additional filters in-memory if required
     const filteredCatches = catches.filter((catchItem) => {
       // Species filter (speciesName filter)
       if (speciesName) {
@@ -120,20 +274,30 @@ export const getFilteredCatches = async (req, res) => {
       }
 
       // Handle dataType-specific logic (abundance or occurrence)
-      if (dataType === "abundance") {
+      if (majorDataType === "abundance") {
         // Filter species to include only those with non-null catch_weight
         catchItem.species = catchItem.species.filter(
           (species) => species.catch_weight !== null
         );
-      if (dataType === "PFZ/NON-PFZ") {
-        // Filter species to include only those with non-null catch_weight
-        catchItem.species = catchItem.species.filter(
-          (species) => species.dataType == "PFZ/NON-PFZ"
-        );
-      }
+
+        // if (dataType !== "ALL") {
+        //   catchItem.species = catchItem.species.filter((species) => {
+        //     switch (dataType) {
+        //       case "PFZ/NON-PFZ":
+        //         return species.dataType === "PFZ/NON-PFZ";
+        //       case "Landing-Village":
+        //         return species.dataType === "Landing-Village";
+        //       case "GEO-REF":
+        //         return species.dataType === "GEO-REF";
+        //       default:
+        //         return true; // This will catch unexpected cases
+        //     }
+        //   });
+        // }
+
         // Exclude the catch if all species are filtered out
         if (catchItem.species.length === 0) return false;
-      } else if (dataType === "occurrence") {
+      } else if (majorDataType === "occurrence") {
         // Include all species, even if catch_weight is null
         // No filtering is needed here, so do not alter species array
       }
@@ -154,6 +318,12 @@ export const getFilteredCatches = async (req, res) => {
 
       return true; // Keep this catch if all filters passed
     });
+
+    if (filteredCatches.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No catches found matching the filters." });
+    }
 
     console.log(`Filtered Catches Count: ${filteredCatches.length}`);
 
@@ -653,7 +823,6 @@ export const getScientistSaveDataByUser = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
-
 
 export let sendEmailWithExcel = async (req, res) => {
   try {
