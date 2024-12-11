@@ -17,10 +17,9 @@ const Adminverifyfish = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showRows, setshowRows] = useState(17);
   const [errorRows, setErrorRows] = useState([]);
-  const [errorMessage, seterrorMessage] = useState([])
-  
-  const [hoveredRow, setHoveredRow] = useState(null);
+  const [errorMessage, seterrorMessage] = useState([]);
 
+  const [hoveredRow, setHoveredRow] = useState(null);
 
   let { userId, dataId } = useParams();
   // console.log("USER ID in frontend", userId);
@@ -213,7 +212,8 @@ const Adminverifyfish = () => {
                 name: speciesItem?.name, // Default to "Unknown" if name is missing
                 catch_weight: speciesItem?.catch_weight, // Default weight to 0
               }))
-            : [], // Default to empty array if species is undefined
+            : [],
+          // Default to empty array if species is undefined
           total_weight: fishData?.total_weight, // Default to 0 if total_weight is missing
         }))
       );
@@ -251,8 +251,6 @@ const Adminverifyfish = () => {
       const errorRows = response.data.errors.map((error) => error.row);
       // console.log("Errors are: " + errorRows);
       setErrorRows(errorRows);
-
-    
     } catch (error) {
       console.error("Error validating catch data:", error);
       toast.error(
@@ -324,56 +322,12 @@ const Adminverifyfish = () => {
     setIsModalOpen(true); // Open the modal to confirm save
   };
 
-  // const handleSubmit = async () => {
-  //   setIsLoading(true); // Show loading state
-
-  //   // Transform the data to the format expected by the backend
-  //   const transformedData = catchData.flatMap((userData) =>
-  //     userData.catches.map((fishData) => ({
-  //       dataId: fishData?._id, // Ensure dataId is never null, fallback to empty string if missing
-  //       date: fishData?.date?.split("T")[0], // Format date, fallback to empty string if missing
-  //       latitude: fishData?.latitude, // Ensure latitude is never null, fallback to 0 if missing
-  //       longitude: fishData?.longitude, // Ensure longitude is never null, fallback to 0 if missing
-  //       depth: fishData?.depth || "", // Fallback to empty string if depth is missing
-  //       species: Array.isArray(fishData?.species)
-  //         ? fishData.species.map((speciesItem) => ({
-  //             name: speciesItem?.name || "", // Fallback to empty string if name is missing
-  //             catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
-  //           }))
-  //         : [],
-  //       total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
-  //       tag: fishData?.tag || "", // Ensure tag is never null, fallback to empty string if missing
-  //       userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
-  //     }))
-  //   );
-
-  //   console.log("transformedData", transformedData);
-  //   try {
-  //     // Send transformed data to the backend to save
-  //     const response = await axios.post(
-  //       "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
-  //       { data: transformedData } // Send data as "data", not "validatedData"
-  //     );
-  //     console.log("response afetr saving data", response);
-  //     if (response.status === 200) {
-  //       console.log("Data saved and verified successfully");
-
-  //       // You can handle success feedback here
-  //     }
-  //   } catch (error) {
-  //     console.error("Error saving data", error);
-  //   }
-
-  //   setIsLoading(false); // Stop loading state
-  //   setIsModalOpen(false); // Close the modal
-  // };
-
   // When the user clicks 'Cancel' in the modal, close it without doing anything
   const handleSubmit = async () => {
     // Transform the data to the format expected by the backend
     const transformedData = catchData.flatMap((userData) =>
       userData.catches.map((fishData) => ({
-        dataId: fishData?._id || "", // Ensure dataId is never null, fallback to empty string if missing
+        dataId: fishData?.dataId || "", // Ensure dataId is never null, fallback to empty string if missing
         date: fishData?.date?.split("T")[0] || "", // Format date, fallback to empty string if missing
         latitude: fishData?.latitude || 0, // Ensure latitude is never null, fallback to 0 if missing
         longitude: fishData?.longitude || 0, // Ensure longitude is never null, fallback to 0 if missing
@@ -384,6 +338,8 @@ const Adminverifyfish = () => {
               catch_weight: speciesItem?.catch_weight || 0, // Fallback to 0 if catch_weight is missing
             }))
           : [],
+        sea: fishData?.sea,
+        state: fishData?.state,
         total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
         dataType: fishData?.dataType || "", // Ensure tag is never null, fallback to empty string if missing
         userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
@@ -698,26 +654,39 @@ const Adminverifyfish = () => {
                   <div>
                     <button
                       onClick={() => setEditMode(!editMode)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-md mb-6 text-xs"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-6 text-base font-semibold"
                     >
                       {editMode ? "Disable Edit Mode" : "Enable Edit Mode"}
                     </button>
                     <button
                       onClick={handleSaveClick}
-                      className="bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Save
+                    </button>
+
+                    <button
+                      onClick={acceptData}
+                      className="bg-teal-500 hover:hover:bg-teal-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold "
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={rejectdata}
+                      className="bg-red-500 hover:bg-red-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
+                    >
+                      Reject
                     </button>
                     <button
                       onClick={handleValidateCatch} // Validate button
                       // onClick={handleValidate}
-                      className="bg-orange-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                      className="bg-yellow-500 hover:bg-yellow-600  text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       Validate
                     </button>
                     <button
                       onClick={toggleViewMode}
-                      className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-xs"
+                      className="bg-red-600 text-white px-4 py-2 rounded-md mb-6 ml-2 text-base font-semibold"
                     >
                       {viewMode === "table" ? "Card View" : "Table View"}
                     </button>
@@ -730,7 +699,7 @@ const Adminverifyfish = () => {
                       {/* <th className="text-xs text-gray-400 border border-gray-200">
                           Catch ID
                         </th> */}
-                        <th className="p-2 text-xs text-black">Actions</th>
+                      <th className="p-2 text-xs text-black">Actions</th>
                       <th className="p-2 text-xs text-black">Date</th>
                       <th className="p-2 text-xs text-black">
                         Latitude: (Float)
@@ -743,63 +712,69 @@ const Adminverifyfish = () => {
                       </th>
                       <th className="p-2 text-xs text-black">Species</th>
                       <th className="p-2 text-xs text-black">Total Weight</th>
-
-                      
                     </tr>
                   </thead>
                   <tbody>
                     {catchData.map((data) =>
-                      data.catches.slice(0, showRows).map((catchItem, index) => (
-
-                        <tr
-                          key={catchItem._id}
-                          className={`border-b border-gray-200
+                      data.catches
+                        .slice(0, showRows)
+                        .map((catchItem, index) => (
+                          <tr
+                            key={catchItem._id}
+                            className={`border-b border-gray-200
                             ${errorRows.includes(index) ? " bg-red-100" : ""} `}
-                          onMouseEnter={() => setHoveredRow(index) }
-                          onMouseLeave={() => setHoveredRow(null)} >
-                          {/* <td className="p-2 text-xs text-gray-400 border border-gray-200">
+                            onMouseEnter={() => setHoveredRow(index)}
+                            onMouseLeave={() => setHoveredRow(null)}
+                          >
+                            {/* <td className="p-2 text-xs text-gray-400 border border-gray-200">
                               {catchItem._id}
                             </td> */}
 
-                          <td className="text-xs text-gray-300 border-gray-200">
-                            {editMode === true ? (
-                              <button
-                                className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
-                                onClick={() => handleDeleteRow(catchItem._id)}
-                              >
-                                "Delete"
-                              </button>
-                            ) : (hoveredRow === index && errorRows?.includes(index)) ? (
-                              <div className="absolute">
-                                <div className="bg-white border rounded shadow-md text-xs text-red-500 p-2 top-full mt-1 left-0 top-0 z-10">
-                                  <div className="flex items-center space-x-2">
-
-                                  <span>
-                                    {errorMessage
-                                      .filter((err) => err.row === hoveredRow) // Filter errors for the hovered row
-                                      .map((err, idx) => ( // Map over the filtered errors
-                                        <div key={idx}>{err.message}</div> // Render each error message
-                                      ))}
-                                  </span>
+                            <td className="text-xs text-gray-300 border-gray-200">
+                              {editMode === true ? (
+                                <button
+                                  className="bg-red-600 text-white px-3 py-1 rounded-md text-xs"
+                                  onClick={() => handleDeleteRow(catchItem._id)}
+                                >
+                                  "Delete"
+                                </button>
+                              ) : hoveredRow === index &&
+                                errorRows?.includes(index) ? (
+                                <div className="absolute">
+                                  <div className="bg-white border rounded shadow-md text-xs text-red-500 p-2 top-full mt-1 left-0 top-0 z-10">
+                                    <div className="flex items-center space-x-2">
+                                      <span>
+                                        {errorMessage
+                                          .filter(
+                                            (err) => err.row === hoveredRow
+                                          ) // Filter errors for the hovered row
+                                          .map(
+                                            (
+                                              err,
+                                              idx // Map over the filtered errors
+                                            ) => (
+                                              <div key={idx}>{err.message}</div> // Render each error message
+                                            )
+                                          )}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div> ) :
-                            
-                            errorRows.includes(index) ? (
-                              <button
-                                style={{
-                                  width: "20px",
-                                  height: "20px",
-                                  color: "blue",  
-                                }}
-                                // onClick={() =>
-                                //   handleViewRow({
-                                //     lat: catchItem.latitude.toFixed(3),
-                                //     long: catchItem.longitude.toFixed(3),
-                                //   })
-                                // }
-                              >
-                                <svg
+                              ) : errorRows.includes(index) ? (
+                                <button
+                                  style={{
+                                    width: "20px",
+                                    height: "20px",
+                                    color: "blue",
+                                  }}
+                                  // onClick={() =>
+                                  //   handleViewRow({
+                                  //     lat: catchItem.latitude.toFixed(3),
+                                  //     long: catchItem.longitude.toFixed(3),
+                                  //   })
+                                  // }
+                                >
+                                  <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
                                     fill="currentColor"
@@ -811,166 +786,160 @@ const Adminverifyfish = () => {
                                       clip-rule="evenodd"
                                     />
                                   </svg>
+                                </button>
+                              ) : (
+                                <button
+                                  style={{
+                                    width: "20px",
+                                    height: "20px",
+                                    color: "blue",
+                                  }}
+                                  onClick={() =>
+                                    handleViewRow({
+                                      lat: catchItem.latitude.toFixed(3),
+                                      long: catchItem.longitude.toFixed(3),
+                                    })
+                                  }
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 576 512"
+                                    fill="currentColor"
+                                  >
+                                    <path d="M572.52 241.4C518.78 135.6 404.78 64 288 64S57.22 135.6 3.48 241.4a48.16 48.16 0 0 0 0 29.2C57.22 376.4 171.22 448 288 448s230.78-71.6 284.52-177.4a48.16 48.16 0 0 0 0-29.2zM288 400c-70.58 0-128-57.42-128-128s57.42-128 128-128 128 57.42 128 128-57.42 128-128 128zm0-208a80 80 0 1 0 80 80 80.09 80.09 0 0 0-80-80z" />
+                                  </svg>
+                                </button>
+                              )}
+                            </td>
 
-                              </button>
-                            ) : (
-                              <button
-                                style={{
-                                  width: "20px",
-                                  height: "20px",
-                                  color: "blue",
-                                }}
-                                onClick={() =>
-                                  handleViewRow({
-                                    lat: catchItem.latitude.toFixed(3),
-                                    long: catchItem.longitude.toFixed(3),
+                            <td className="text-xs text-gray-400 p-0">
+                              <input
+                                type="date"
+                                value={
+                                  new Date(catchItem.date)
+                                    .toISOString()
+                                    .split("T")[0]
+                                }
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    date: e.target.value,
                                   })
                                 }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                                style={{
+                                  border: "none",
+                                  margin: 0,
+                                  background: "transparent",
+                                }}
+                              />
+                            </td>
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                                style={{
+                                  border: "none",
+                                  background: "transparent",
+                                }}
+                                type="number"
+                                value={catchItem.latitude.toFixed(3)}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    latitude: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                                style={{
+                                  border: "none",
+                                  background: "transparent",
+                                }}
+                                type="number"
+                                value={catchItem.longitude.toFixed(3)}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    longitude: parseFloat(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                                style={{
+                                  border: "none",
+                                  background: "transparent",
+                                }}
+                                type="number"
+                                value={catchItem.depth || ""}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    depth: parseInt(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            <td className=" text-xs text-gray-400 border-b border-gray-200">
+                              <select
+                                style={{
+                                  border: "none",
+                                  background: "transparent",
+                                }}
+                                value={
+                                  catchItem.species.find((s) => s.selected)
+                                    ?._id || ""
+                                }
+                                onChange={(e) => {
+                                  const selectedSpeciesId = e.target.value;
+                                  const updatedSpecies = catchItem.species.map(
+                                    (species) =>
+                                      species._id === selectedSpeciesId
+                                        ? { ...species, selected: true }
+                                        : { ...species, selected: false }
+                                  );
+                                  handleEditCatch(catchItem._id, {
+                                    species: updatedSpecies,
+                                  });
+                                }}
+                                className="text-black w-full text-xs"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 576 512"
-                                  fill="currentColor"
-                                >
-                                  <path d="M572.52 241.4C518.78 135.6 404.78 64 288 64S57.22 135.6 3.48 241.4a48.16 48.16 0 0 0 0 29.2C57.22 376.4 171.22 448 288 448s230.78-71.6 284.52-177.4a48.16 48.16 0 0 0 0-29.2zM288 400c-70.58 0-128-57.42-128-128s57.42-128 128-128 128 57.42 128 128-57.42 128-128 128zm0-208a80 80 0 1 0 80 80 80.09 80.09 0 0 0-80-80z" />
-                                </svg>
-                              </button>
-                            )}
-                          </td>
-
-                            
-                          <td className="text-xs text-gray-400 p-0">
-                            <input
-                              type="date"
-                              value={
-                                new Date(catchItem.date)
-                                  .toISOString()
-                                  .split("T")[0]
-                              }
-                              onChange={(e) =>
-                                handleEditCatch(catchItem._id, {
-                                  date: e.target.value,
-                                })
-                              }
-                              readOnly={!editMode}
-                              className="text-black w-full text-xs"
-                              style={{
-                                border: "none",
-                                margin: 0,
-                                background: "transparent",
-                              }}
-                            />
-                          </td>
-                          <td className="text-xs text-gray-400 border-b border-gray-200">
-                            <input
-                              style={{
-                                border: "none",
-                                background: "transparent",
-                              }}
-                              type="number"
-                              value={catchItem.latitude.toFixed(3)}
-                              onChange={(e) =>
-                                handleEditCatch(catchItem._id, {
-                                  latitude: parseFloat(e.target.value),
-                                })
-                              }
-                              readOnly={!editMode}
-                              className="text-black w-full text-xs"
-                            />
-                          </td>
-                          <td className="text-xs text-gray-400 border-b border-gray-200">
-                            <input
-                              style={{
-                                border: "none",
-                                background: "transparent",
-                              }}
-                              type="number"
-                              value={catchItem.longitude.toFixed(3)}
-                              onChange={(e) =>
-                                handleEditCatch(catchItem._id, {
-                                  longitude: parseFloat(e.target.value),
-                                })
-                              }
-                              readOnly={!editMode}
-                              className="text-black w-full text-xs"
-                            />
-                          </td>
-                          <td className="text-xs text-gray-400 border-b border-gray-200">
-                            <input
-                              style={{
-                                border: "none",
-                                background: "transparent",
-                              }}
-                              type="number"
-                              value={catchItem.depth || ""}
-                              onChange={(e) =>
-                                handleEditCatch(catchItem._id, {
-                                  depth: parseInt(e.target.value),
-                                })
-                              }
-                              readOnly={!editMode}
-                              className="text-black w-full text-xs"
-                            />
-                          </td>
-                          <td className=" text-xs text-gray-400 border-b border-gray-200">
-                            <select
-                              style={{
-                                border: "none",
-                                background: "transparent",
-                              }}
-                              value={
-                                catchItem.species.find((s) => s.selected)
-                                  ?._id || ""
-                              }
-                              onChange={(e) => {
-                                const selectedSpeciesId = e.target.value;
-                                const updatedSpecies = catchItem.species.map(
-                                  (species) =>
-                                    species._id === selectedSpeciesId
-                                      ? { ...species, selected: true }
-                                      : { ...species, selected: false }
-                                );
-                                handleEditCatch(catchItem._id, {
-                                  species: updatedSpecies,
-                                });
-                              }}
-                              className="text-black w-full text-xs"
-                            >
-                              <option value="" disabled>
-                                Name
-                              </option>
-                              {catchItem.species.map((species) => (
-                                <option key={species._id} value={species._id}>
-                                  {species.name} ({species.catch_weight})
+                                <option value="" disabled>
+                                  Name
                                 </option>
-                              ))}
-                            </select>
-                          </td>
+                                {catchItem.species.map((species) => (
+                                  <option key={species._id} value={species._id}>
+                                    {species.name} ({species.catch_weight})
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
 
-                          <td className="text-xs text-gray-400 border-b border-gray-200">
-                            <input
-                              style={{
-                                border: "none",
-                                background: "transparent",
-                              }}
-                              type="number"
-                              value={catchItem.total_weight}
-                              onChange={(e) =>
-                                handleEditCatch(catchItem._id, {
-                                  total_weight: parseInt(e.target.value),
-                                })
-                              }
-                              readOnly={!editMode}
-                              className="text-black w-full text-xs"
-                            />
-                          </td>
-                          {/* Actions column with border (Delete button) */}
-
-                          
-
-
-                        </tr>
-                      ))
+                            <td className="text-xs text-gray-400 border-b border-gray-200">
+                              <input
+                                style={{
+                                  border: "none",
+                                  background: "transparent",
+                                }}
+                                type="number"
+                                value={catchItem.total_weight}
+                                onChange={(e) =>
+                                  handleEditCatch(catchItem._id, {
+                                    total_weight: parseInt(e.target.value),
+                                  })
+                                }
+                                readOnly={!editMode}
+                                className="text-black w-full text-xs"
+                              />
+                            </td>
+                            {/* Actions column with border (Delete button) */}
+                          </tr>
+                        ))
                     )}
                   </tbody>
                 </table>

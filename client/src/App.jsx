@@ -12,6 +12,7 @@ import HomePage from "./Pages/HomePage";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
+import About from "./Pages/About";
 import AdminHome from "./Pages/AdminHome";
 import Adminverifyuser from "./Pages/Admin-verify-user";
 import Adminverifyfish from "./Pages/Admin-verify-fish";
@@ -36,6 +37,8 @@ import Filters from "./Pages/ScientistFilters";
 import FilterForm from "./Pages/ScientistFilters";
 import Profile from "./Pages/Profile";
 import SidebarNew from "./Components/SidebarNew";
+import ScientistSavedDataSets from "./Pages/ScientistSavedDataSets";
+import StatusPanel from "./Pages/StatusPanel";
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -84,7 +87,7 @@ function AppLayout({ children }) {
 }
 
 function App() {
-  let [fistData, setFishData] = useState([]);
+  // let [fistData, setFishData] = useState([]);
   return (
     <Router>
       <AppLayout>
@@ -98,7 +101,7 @@ function App() {
           <Route path="/graphs" element={<CustomizableChart />} />
           <Route path="/scientist/home" element={<ScientistHome />} />
           <Route path="/ScientistCharts" element={<ScientistCharts />} />
-          
+          <Route path="/getStatusLogs" element={<StatusPanel />} />
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
@@ -106,6 +109,7 @@ function App() {
             path="/dashboard"
             element={<PrivateRoute element={<Dashboard />} />}
           />
+          <Route path="/about" element={<PrivateRoute element={<About />} />} />
           <Route
             path="/map-box"
             element={<PrivateRoute element={<MapComponent />} />}
@@ -138,7 +142,11 @@ function App() {
           />
           <Route
             path="/scientist/community/share/:shareURL"
-            element={<Filters />}
+            element={<FishingData />}
+          />
+          <Route
+            path="/scientist/datasets"
+            element={<ScientistSavedDataSets />}
           />
         </Routes>
       </AppLayout>

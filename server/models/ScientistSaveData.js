@@ -9,7 +9,15 @@ const scientistSaveData = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    createdAt: { type: Date, default: Date.now }
+    dataId: {
+      type: String,
+      required: true,
+    },
+    filters: { type: Map, of: String },
+    name: {
+      type: String
+    },
+    createdAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true, // Automatically include createdAt and updatedAt fields
