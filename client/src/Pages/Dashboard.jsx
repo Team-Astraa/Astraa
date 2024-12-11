@@ -1,37 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import  upload from "../assets/upload.png";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(null);
-  const [fishCount, setFishCount] = useState(null);
-  const [commonSpecies, setCommonSpecies] = useState(null);
 
   useEffect(() => {
-    // Fetch the user role from localStorage
     const userInSession = localStorage.getItem("aquaUser");
     if (userInSession) {
       try {
         const { userType } = JSON.parse(userInSession);
-        console.log("Fetched user type:", userType); // Debugging log
         setUserRole(userType);
-
-        // Simulate API data fetch or initialize states
-        setFishCount(120); // Replace with actual API call
-        setCommonSpecies("Tuna, Salmon"); // Replace with actual API call
       } catch (error) {
         console.error("Error parsing user data:", error);
         navigate("/signin");
       }
     } else {
-      console.warn("No user session found. Redirecting to sign-in.");
       navigate("/signin");
     }
   }, [navigate]);
 
   if (!userRole) {
-    return <p>Loading...</p>; // Loading message while user type is fetched
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <p className="text-xl font-semibold text-gray-700">Loading...</p>
+      </div>
+    );
   }
 
   if (
@@ -39,194 +35,106 @@ const Dashboard = () => {
       userRole
     )
   ) {
-    return <p>Error: Invalid user type</p>; // Fallback for invalid user roles
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <p className="text-xl font-semibold text-red-600">Error: Invalid user type</p>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full h-full p-5 bg-white rounded-2xl flex flex-col gap-4">
+    <div className="w-full h-screen p-8 bg-white flex flex-col gap-8">
       {/* Header */}
-      <header className="w-full">
-        <Typography variant="h4" gutterBottom>
-          {userRole === "research_cruises" && "Research Cruises Dashboard"}
-          {userRole === "research_institute" && "Research Institute Dashboard"}
-          {userRole === "industry_collaborators" && "Industry Collaborators Dashboard"}
-          {userRole === "admin" && "Admin Panel"}
+      <header className="bg-[#ccb8ff] p-6 rounded-lg shadow-md flex justify-between items-center">
+        <Typography variant="h4" className="font-bold text-gray-800">
+          {userRole === "research_cruises" && <strong>Research Cruises Dashboard</strong>}
+          {userRole === "research_institute" && <strong>Research Institute Dashboard</strong>}
+          {userRole === "industry_collaborators" && <strong>Industry Collaborators Dashboard</strong>}
+          {userRole === "admin" && <strong>Admin Panel</strong>}
         </Typography>
       </header>
 
-      {/* Conditional Rendering Based on User Role */}
-      {userRole === "research_cruises" && (
-        <div className="w-full h-full p-5 bg-white rounded-2xl flex flex-col gap-4">
-          {/* Dashboard Sections */}
-          <div className="w-full h-full flex flex-wrap gap-4">
-            {/* First and Second Sections Side-by-Side */}
-            <div className="flex w-full gap-4">
-              {/* Section 1: Species Details (4 Cards) */}
-              <div className="w-1/2 h-auto grid grid-cols-2 grid-rows-2 gap-4">
-                <div className="h-full bg-red-500 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">
-                    {fishCount ? fishCount : "Loading Count"}
-                  </h2>
-                  <h2 className="text-center text-white text-2xl  font-bold">
-                    Species Count
-                  </h2>
-                </div>
-                <div className="h-full bg-yellow-400 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">
-                    {commonSpecies ? commonSpecies : "Loading species"}
-                  </h2>
-                </div>
-                <div className="h-full bg-purple-300 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">Other 1</h2>
-                </div>
-                <div className="h-full bg-purple-200 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">Other 2</h2>
-                </div>
-              </div>
-
-              {/* Section 2: Map Component */}
-              <div className="w-1/2 h-auto rounded-xl p-3 border border-purple-500">
-                <Typography variant="h6" color="textPrimary">
-                  Map Component
-                </Typography>
-              </div>
+      {/* Dashboard Main Content */}
+      <div className="flex flex-col h-full gap-8">
+        {/* Top Section: File Info and Profile */}
+        <div className="h-1/2 flex gap-8">
+          {/* File Info Section */}
+          <div className="grid grid-cols-2 grid-rows-2 gap-4 w-3/5">
+            <div className="row-span-2 bg-[#19073d] text-white rounded-lg p-6 flex flex-col items-center justify-center shadow-md hover:shadow-lg transition">
+              <h2 className="text-2xl ">Total Files Uploaded</h2>
+              <p className="text-4xl font-bold p-5">100</p>
             </div>
+            <div className="bg-yellow-400 text-white rounded-lg p-6 flex flex-col items-center justify-center shadow-md hover:shadow-lg transition">
+              <h2 className="text-2xl">Files Verified</h2>
+              <p className="text-4xl font-bold p-5">50</p>
+            </div>
+            <div className="bg-blue-600 text-white rounded-lg p-6 flex flex-col items-center justify-center shadow-md hover:shadow-lg transition">
+              <h2 className="text-2xl">Pending Verification</h2>
+              <p className="text-4xl font-bold p-5">50</p>
+            </div>
+          </div>
 
-            {/* Third and Fourth Sections Below */}
-            <div className="flex w-full gap-4">
-              {/* Section 3: Linear Graph */}
-              <div className="w-4/5 rounded-xl p-3 border border-purple-500">
-                <Typography variant="h6" color="textSecondary">
-                  Linear Graph
-                </Typography>
+          {/* Enhanced Profile Section */}
+          <div className="w-2/5 bg-white rounded-lg p-6 shadow-md flex flex-col justify-between">
+            <Typography variant="h5" className="font-semibold text-gray-800 mb-4">
+              <strong>Your Profile</strong>
+            </Typography>
+
+            <div className="flex h-full items-center">
+              {/* Profile Info */}
+              <div className="w-1/2 pr-4">
+                <p className="mb-4 text-lg"><strong>Full Name:</strong> John Doe</p>
+                <p className="mb-4 text-lg"><strong>User Name:</strong> johndoe</p>
+                <p className="mb-4 text-lg"><strong>Phone Number:</strong> +123456789</p>
+                <p className="mb-4 text-lg"><strong>Email ID:</strong> john.doe@example.com</p>
+                <p className="mb-4 text-lg"><strong>Bio:</strong> Enthusiastic researcher in marine studies.</p>
               </div>
 
-              {/* Section 4: Filter Options */}
-              <div className="w-1/5 rounded-xl p-3 border border-purple-500">
-                <Typography variant="h6" color="textSecondary">
-                  Filter Options
-                </Typography>
+              {/* Profile Image */}
+              <div className="w-1/2 flex flex-col items-center justify-center">
+                <div className="bg-purple-500 text-white w-24 h-24 rounded-full flex items-center justify-center shadow-md mb-4">
+                  <i className="fa-solid fa-user text-3xl"></i>
+                </div>
+
+                {/* Edit Button */}
+                <button
+                  onClick={() => navigate("/edit-profile")}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
+                >
+                  Edit Profile
+                </button>
               </div>
             </div>
           </div>
         </div>
-      )}
 
-      {userRole === "research_institute" && (
-        <div className="w-full h-full p-5 bg-white rounded-2xl flex flex-col gap-4">
-        {/* Dashboard Sections */}
-        <div className="w-full h-full flex flex-wrap gap-4">
-          {/* First and Second Sections Side-by-Side */}
-          <div className="flex w-full gap-4">
-            {/* Section 1: Species Details (4 Cards) */}
-            <div className="w-1/2 h-auto grid grid-cols-2 grid-rows-2 gap-4">
-              <div className="h-full bg-red-500 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                <h2 className="text-center text-white text-2xl font-bold">
-                  {fishCount ? fishCount : "Loading Count"}
-                </h2>
-                <h2 className="text-center text-white text-2xl  font-bold">
-                  Species Count
-                </h2>
-              </div>
-              <div className="h-full bg-yellow-400 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                <h2 className="text-center text-white text-2xl font-bold">
-                  {commonSpecies ? commonSpecies : "Loading species"}
-                </h2>
-              </div>
-              <div className="h-full bg-purple-300 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                <h2 className="text-center text-white text-2xl font-bold">Other 1</h2>
-              </div>
-              <div className="h-full bg-purple-200 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                <h2 className="text-center text-white text-2xl font-bold">Other 2</h2>
-              </div>
-            </div>
-
-            {/* Section 2: Map Component */}
-            <div className="w-1/2 h-auto rounded-xl p-3 border border-purple-500">
-              <Typography variant="h6" color="textPrimary">
-                Map Component
-              </Typography>
-            </div>
+        {/* Bottom Section: Logs and Contribution */}
+        <div className="h-1/2 flex gap-8">
+          {/* User Logs */}
+          <div className="flex-1 bg-gray-200 rounded-lg p-6 shadow-md shadow-lg transition">
+            <Typography variant="h6" className="font-semibold text-gray-800 mb-4">
+              <strong>User Logs</strong>
+            </Typography>
+            <p className="text-gray-600">No recent logs available.</p>
           </div>
 
-          {/* Third and Fourth Sections Below */}
-          <div className="flex w-full gap-4">
-            {/* Section 3: Linear Graph */}
-            <div className="w-4/5 rounded-xl p-3 border border-purple-500">
-              <Typography variant="h6" color="textSecondary">
-                Linear Graph
-              </Typography>
-            </div>
-
-            {/* Section 4: Filter Options */}
-            <div className="w-1/5 rounded-xl p-3 border border-purple-500">
-              <Typography variant="h6" color="textSecondary">
-                Filter Options
-              </Typography>
-            </div>
+          {/* Contribute More */}
+          <div className="w-1/4 bg-white border-3 border-blue-900 rounded-lg p-6 shadow-md flex flex-col items-center justify-center shadow-lg transition">
+            <Typography variant="h6" className="font-semibold text-gray-800 mb-4">
+              <strong>Contribute More</strong>
+            </Typography>
+            <button className="bg-gray-900 text-white rounded-full shadow-md hover:bg-purple-700 transition">
+            <div className="text-white w-20 h-20 rounded-full flex items-center justify-center shadow-md ">
+          <img
+                src={upload}  // Replace with your image path
+                alt="upload_logo"
+                className="w-24 h-24 bg-white"
+            />
+         </div>  
+            </button>
           </div>
         </div>
       </div>
-      )}
-
-      {userRole === "industry_collaborators" && (
-        <div className="w-full h-full p-5 bg-white rounded-2xl flex flex-col gap-4">
-         <div className="w-full h-full p-5 bg-white rounded-2xl flex flex-col gap-4">
-          {/* Dashboard Sections */}
-          <div className="w-full h-full flex flex-wrap gap-4">
-            {/* First and Second Sections Side-by-Side */}
-            <div className="flex w-full gap-4">
-              {/* Section 1: Species Details (4 Cards) */}
-              <div className="w-1/2 h-auto grid grid-cols-2 grid-rows-2 gap-4">
-                <div className="h-full bg-red-500 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">
-                    {fishCount ? fishCount : "Loading Count"}
-                  </h2>
-                  <h2 className="text-center text-white text-2xl  font-bold">
-                    Species Count
-                  </h2>
-                </div>
-                <div className="h-full bg-yellow-400 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">
-                    {commonSpecies ? commonSpecies : "Loading species"}
-                  </h2>
-                </div>
-                <div className="h-full bg-purple-300 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">Other 1</h2>
-                </div>
-                <div className="h-full bg-purple-200 rounded-xl p-3 border border-purple-500 justify-center items-center text-center">
-                  <h2 className="text-center text-white text-2xl font-bold">Other 2</h2>
-                </div>
-              </div>
-
-              {/* Section 2: Map Component */}
-              <div className="w-1/2 h-auto rounded-xl p-3 border border-purple-500">
-                <Typography variant="h6" color="textPrimary">
-                  Map Component
-                </Typography>
-              </div>
-            </div>
-
-            {/* Third and Fourth Sections Below */}
-            <div className="flex w-full gap-4">
-              {/* Section 3: Linear Graph */}
-              <div className="w-4/5 rounded-xl p-3 border border-purple-500">
-                <Typography variant="h6" color="textSecondary">
-                  Linear Graph
-                </Typography>
-              </div>
-
-              {/* Section 4: Filter Options */}
-              <div className="w-1/5 rounded-xl p-3 border border-purple-500">
-                <Typography variant="h6" color="textSecondary">
-                  Filter Options
-                </Typography>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-      )}
     </div>
   );
 };
