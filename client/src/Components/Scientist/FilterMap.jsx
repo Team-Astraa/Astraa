@@ -7,51 +7,21 @@ const FilterMap = ({ catchData, props }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState(props.type); // 'markers', 'heatmap', 'clusters'
 
-  let heatmapData;
+  console.log(catchData);
 
-  // Validate catchData before using it
-  if (props.oneLat && props.oneLong) {
-    heatmapData = {
+  const heatmapData = {
       type: "FeatureCollection",
-      features: [
-        {
+      features: catchData.map((catchDetail) => ({
           type: "Feature",
           geometry: {
             type: "Point",
-            coordinates: [parseFloat(props.oneLong), parseFloat(props.oneLat)],
+            coordinates: [catchDetail.longitude, catchDetail.latitude],
           },
-        },
-      ],
-    };
-  } else if (catchData && Array.isArray(catchData)) {
-    // Parse the catchData into the required format
-    heatmapData = {
-      type: "FeatureCollection",
-      features: catchData.flatMap((data) =>
-        Array.isArray(data.species)
-          ? data.species.map((catchDetail) => ({
-              type: "Feature",
-              geometry: {
-                type: "Point",
-                coordinates: [
-                  parseFloat(data.longitude),  // Access longitude from catch data
-                  parseFloat(data.latitude),   // Access latitude from catch data
-                ],
-              },
-              properties: {
-                depth: data.depth,
-                weight: data.total_weight,
-                species: catchDetail.name,  // Add species name to properties
-              },
-            }))
-          : []
-      ),
-    };
-  } else {
-    heatmapData = {
-      type: "FeatureCollection",
-      features: [],
-    };
+          properties: {
+            depth: catchDetail.depth,
+            weight: catchDetail.totalCatchWeight,
+          },
+        }))
   }
 
   const heatmapLayer = {
@@ -141,13 +111,7 @@ const FilterMap = ({ catchData, props }) => {
   return (
     <div>
       {props.showButton && (
-        <div
-          style={{
-            position: "absolute",
-            zIndex: 20,
-            paddingLeft: "2rem",
-          }}
-        >
+        <div style={{ position: "absolute", zIndex: 20, paddingLeft: "2rem" }}>
           <div className="flex flex-col gap-4 mt-8">
             <button
               onClick={() => setViewMode("markers")}
@@ -194,8 +158,8 @@ const FilterMap = ({ catchData, props }) => {
 
       <Map
         initialViewState={{
-          latitude: props.oneLat ? parseFloat(props.oneLat) : 18.45,
-          longitude: props.oneLong ? parseFloat(props.oneLong) : 84.431,
+          latitude: 18.45,
+          longitude: 84.431,
           zoom: 7,
         }}
         style={{
@@ -205,29 +169,32 @@ const FilterMap = ({ catchData, props }) => {
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
       >
-        {props.oneLat && props.oneLong && viewMode === "markers" && (
-          <Marker
-            longitude={parseFloat(props.oneLong)}
-            latitude={parseFloat(props.oneLat)}
-            anchor="bottom"
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              setPopupInfo(props); // Add the catch data here for popup details
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "rgba(255, 0, 0, 0.8)",
-                border: "2px solid white",
-                borderRadius: "50%",
-                width: "12px",
-                height: "12px",
-                boxShadow: "0 0 10px rgba(255, 0, 0, 0.5)",
-                cursor: "pointer",
-              }}
-            ></div>
-          </Marker>
-        )}
+
+        {!props.oneLat && !props.oneLong && viewMode === "markers" &&
+          catchData.map((catchDetail) => (
+              <Marker
+                key={catchDetail._id}
+                longitude={catchDetail.longitude}
+                latitude={catchDetail.latitude}
+                anchor="bottom"
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  setPopupInfo(catchDetail);
+                }} >
+                <div
+                  style={{
+                    backgroundColor: "rgba(255, 0, 0, 0.8)",
+                    border: "2px solid white",
+                    borderRadius: "50%",
+                    width: "12px",
+                    height: "12px",
+                    boxShadow: "0 0 10px rgba(255, 0, 0, 0.5)",
+                    cursor: "pointer",
+                  }}
+                ></div>
+              </Marker>
+            ))
+          }
 
         {viewMode === "heatmap" && (
           <Source id="heatmap" type="geojson" data={heatmapData}>
@@ -252,8 +219,8 @@ const FilterMap = ({ catchData, props }) => {
 
         {popupInfo && (
           <Popup
-            longitude={parseFloat(popupInfo.longitude)}
-            latitude={parseFloat(popupInfo.latitude)}
+            longitude={popupInfo.longitude}
+            latitude={popupInfo.latitude}
             anchor="top"
             onClose={() => setPopupInfo(null)}
             style={{
@@ -266,13 +233,19 @@ const FilterMap = ({ catchData, props }) => {
             <div style={{ fontFamily: "'Roboto', sans-serif" }}>
               <h3 style={{ margin: "0 0 10px 0", color: "#333" }}>Details</h3>
               <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Species:</strong> {popupInfo.species.join(", ")}
+                <strong>Latitude:</strong> {popupInfo.latitude}
+              </p>
+              <p style={{ margin: "0 0 5px 0", color: "#555" }}>
+                <strong>Longitude:</strong> {popupInfo.longitude}
               </p>
               <p style={{ margin: "0 0 5px 0", color: "#555" }}>
                 <strong>Depth:</strong> {popupInfo.depth} meters
               </p>
               <p style={{ margin: "0 0 5px 0", color: "#555" }}>
-                <strong>Total Weight:</strong> {popupInfo.total_weight} kg
+                <strong>Weight:</strong> {popupInfo.totalCatchWeight} kg
+              </p>
+              <p style={{ margin: "0", color: "#555" }}>
+                <strong>Species:</strong> {popupInfo.species}
               </p>
             </div>
           </Popup>

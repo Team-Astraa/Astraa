@@ -1,100 +1,4 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { FaHourglassStart, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-// // import { get } from "mongoose";
 
-// const StatusPanel = ({ userId }) => {
-//   const [logs, setLogs] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const user = localStorage.getItem("aquaUser");
-
-//   // Check if the user object exists and is valid
-//   if (user) {
-//     const parsedUser = JSON.parse(user); // Parse the JSON string into an object
-//     const userId = parsedUser.userId; // Access the userId property
-//     console.log(userId); // Log or use the userId as needed
-//   } else {
-//     console.log("No user found in localStorage");
-//   }
-
-//   // Fetch user logs when the component mounts
-//   useEffect(() => {
-//     const fetchUserLogs = async () => {
-//       try {
-//         const response = await axios.get(
-//           `http://localhost:5000/user/getUserLogs/${userId}`
-//         );
-//         setLogs(response.data);
-//         setLoading(false);
-//       } catch (err) {
-//         setError("Failed to fetch logs");
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchUserLogs();
-//   }, [userId]);
-
-//   // Sort logs by status (pending, accepted, rejected)
-//   const sortedLogs = logs.sort((a, b) => {
-//     const statusOrder = { pending: 1, accepted: 2, rejected: 3 };
-//     return statusOrder[a.dataStatus] - statusOrder[b.dataStatus];
-//   });
-
-//   // Function to determine icon based on status
-//   const getStatusIcon = (status) => {
-//     switch (status) {
-//       case "pending":
-//         return <FaHourglassStart className="text-yellow-500" />;
-//       case "accepted":
-//         return <FaCheckCircle className="text-green-500" />;
-//       case "rejected":
-//         return <FaTimesCircle className="text-red-500" />;
-//       default:
-//         return null;
-//     }
-//   };
-
-//   return (
-//     <div className="p-6 space-y-4">
-//       {loading && <div>Loading...</div>}
-//       {error && <div className="text-red-500">{error}</div>}
-//       <div className="space-y-4">
-//         {sortedLogs.map((log) => (
-//           <div
-//             key={log.dataId}
-//             className="flex items-center p-4 border border-gray-300 rounded-lg shadow-sm space-x-4"
-//           >
-//             <div className="flex-1">
-//               <h3 className="text-lg font-semibold">{log.dataId}</h3>
-//               <p className="text-sm text-gray-500">
-//                 Uploaded on: {new Date(log.uploadedAt).toLocaleDateString()} at{" "}
-//                 {new Date(log.uploadedAt).toLocaleTimeString()}
-//               </p>
-//             </div>
-//             <div className="flex items-center">
-//               <span className="mr-2">{getStatusIcon(log.dataStatus)}</span>
-//               <span
-//                 className={`font-semibold ${
-//                   log.dataStatus === "pending"
-//                     ? "text-yellow-500"
-//                     : log.dataStatus === "accepted"
-//                     ? "text-green-500"
-//                     : "text-red-500"
-//                 }`}
-//               >
-//                 {log.dataStatus}
-//               </span>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default StatusPanel;
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -111,6 +15,7 @@ const StatusPanel = () => {
   if (user) {
     const parsedUser = JSON.parse(user);
     userId = parsedUser.userId; // Access the userId property
+    console.log("userId",userId);
   } else {
     console.log("No user found in localStorage");
   }
@@ -125,8 +30,11 @@ const StatusPanel = () => {
       }
       try {
         const response = await axios.get(
-          `http://localhost:5000/user/getUserLogs/6750497185d3aac2d1b94eb0`
+          `http://localhost:5000/user/getUserLogs`,
+          { params: { userId } }
         );
+        console.log(response);
+      
         setLogs(response.data);
         setLoading(false);
       } catch (err) {
@@ -161,6 +69,7 @@ const StatusPanel = () => {
   };
 
   return (
+    <div className="w-[95%] h-[85%] bg-white mx-auto mt-14 border-2 border-gray-300 rounded-md">
     <div className="p-6 space-y-6 bg-white">
       {loading && <div>Loading...</div>}
       {error && <div className="text-red-500">{error}</div>}
@@ -171,10 +80,13 @@ const StatusPanel = () => {
           {sortedLogs.slice(0, Math.ceil(sortedLogs.length / 2)).map((log) => (
             <div
               key={log.dataId}
-              className="flex items-center p-4 bg-white border border-gray-300 rounded-xl shadow-md space-x-4 hover:bg-gray-50 transition duration-300 ease-in-out"
+              className="flex items-center p-4 bg-white border-2 border-gray-300 rounded-xl shadow-md space-x-4 hover:bg-gray-50 transition duration-300 ease-in-out mb-4"
             >
+              
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold">Data Id</h3>
+
                   {log.dataId}
                 </h3>
                 <p className="text-sm text-gray-500">
@@ -183,17 +95,18 @@ const StatusPanel = () => {
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <span>{getStatusIcon(log.dataStatus)}</span>
-                <span
-                  className={`font-semibold ${
+              <div className="flex flex-col items-center space-x-2 space-y-2">
+              <h3 className="text-lg font-semibold">Status</h3>
+              <span
+                  className={`font-semibold p-2 w-[150px] text-center border-4 border-dotted  rounded-md flex justify-center items-center gap-2 ${
                     log.dataStatus === "pending"
-                      ? "text-yellow-500"
+                      ? "text-yellow-500 border-yellow-300 bg-yellow-100"
                       : log.dataStatus === "accepted"
-                      ? "text-green-500"
-                      : "text-red-500"
+                      ? "text-green-500 border-green-300 bg-green-100"
+                      : "text-red-500 border-red-300 bg-red-100"
                   }`}
                 >
+                  {getStatusIcon(log.dataStatus)}
                   {log.dataStatus}
                 </span>
               </div>
@@ -209,7 +122,9 @@ const StatusPanel = () => {
               className="flex items-center p-4 bg-white border border-gray-300 rounded-xl shadow-md space-x-4 hover:bg-gray-50 transition duration-300 ease-in-out"
             >
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold">Data Id</h3>
+
                   {log.dataId}
                 </h3>
                 <p className="text-sm text-gray-500">
@@ -218,17 +133,18 @@ const StatusPanel = () => {
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <span>{getStatusIcon(log.dataStatus)}</span>
+              <div className="flex flex-col items-center space-x-2 space-y-2">
+              <h3 className="text-lg font-semibold ">Status</h3>
                 <span
-                  className={`font-semibold ${
+                  className={`font-semibold p-2 w-[150px] text-center border-4 border-dotted  rounded-md flex justify-center items-center gap-2 ${
                     log.dataStatus === "pending"
-                      ? "text-yellow-500"
+                      ? "text-yellow-500 border-yellow-300 bg-yellow-100"
                       : log.dataStatus === "accepted"
-                      ? "text-green-500"
-                      : "text-red-500"
+                      ? "text-green-500 border-green-300 bg-green-100"
+                      : "text-red-500 border-red-300 bg-red-100"
                   }`}
                 >
+                  {getStatusIcon(log.dataStatus)}
                   {log.dataStatus}
                 </span>
               </div>
@@ -236,6 +152,7 @@ const StatusPanel = () => {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 };

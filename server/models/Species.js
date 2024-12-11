@@ -23,6 +23,20 @@ const speciesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed, // This allows for flexible data like 'cat.fish' keys
     default: {},
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  dataType: {
+    type: String,
+  },
+  validate:{
+    type:Boolean,
+    default:false
+  },
+  dataId:{
+    type: String,
+  }
 });
 
 // Create the model for the schema

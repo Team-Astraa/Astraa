@@ -162,7 +162,7 @@ const Adminverifyuser = () => {
   
   return (
     <>
-        <AnimationWrapper className="bg-gray-100 w-full min-h-screen">
+        <AnimationWrapper className="bg-purple-100 w-full min-h-screen">
           <h1 className="text-bold text-5xl text-center text-gray-900 font-bold p-5">
            New Users Verification
           </h1>
@@ -171,7 +171,7 @@ const Adminverifyuser = () => {
             <Button.Group>
               {[
                 { label: "All Categories", value: "all" },
-                { label: "Fisherman", value: "fisherman" },
+                //{ label: "Fisherman", value: "fisherman" },
                 {
                   label: "Industry Collaborators",
                   value: "industry-collaborators",
@@ -196,13 +196,13 @@ const Adminverifyuser = () => {
           <div className="h-screen w-full">
             <div className="overflow-x-auto ">
               {users.length ? (
-                <div className="flex justify-center">
-                  <div className="bg-white flex flex-col gap-2 w-4/5 border text-center font-bold border-gray-300 rounded-lg overflow-hidden">
+                <div className="w-full flex justify-center">
+                  <div className="bg-white flex flex-col gap-2 w-4/5 border text-center font-bold border-gray-300 rounded-xl shadow overflow-hidden">
                   <div className="flex">
-                  <div className="w-10 h-10 my-3 ml-2">
+                  <div className="w-10 h-10 mt-4 ml-4">
                   <img
                       src={unveryfiedusers}
-                      className="w-full rounded-full"
+                      className="w-4/5 rounded-full opacity-50"
                       alt="Unverified User"
                   />
                   </div>
@@ -212,15 +212,22 @@ const Adminverifyuser = () => {
                   </div>
                     {/* Table Header */}
                     <div className="flex bg-purple-300 text-gray-700 font-semibold text-sm">
-                    <div className="w-1/3 py-2 px-4">User Type</div>
-                      <div className="w-1/3 py-2 px-4">Email</div>
-                      <div className="w-1/3 py-2 px-4 text-center">
-                        See Details
-                      </div>
-                      <div className="w-1/3 py-2 px-4 text-center">
-                        Verification Action
-                      </div>
-                    </div>
+  {/* User Type */}
+  <div className="w-1/4 py-2 text-center">User Type</div>
+
+  {/* Email */}
+  <div className="w-1/4 py-2 text-center">Email</div>
+
+  {/* See Details */}
+  <div className="w-1/4 flex justify-center items-center  py-2 text-center">See Details</div>
+
+  {/* Accept/Reject */}
+  <div className="w-1/4 flex justify-center gap-12 ">
+    <div className=" w-1/5 ml-[1px] py-2 text-center">Accept</div>
+    <div className=" w-1/5 py-2 text-center">Reject</div>
+  </div>
+</div>
+
 
                     {/* Table Body */}
                     {users.map((user, i) => (
@@ -261,15 +268,15 @@ const Adminverifyuser = () => {
                                 onClick={() => verifyUser(user._id)} // Action for Accept
                                 className="mx-10 text-3xl rounded-lg flex items-center gap-2 hover:scale-150 transition transform duration-200"
                               >
-                                ✔️
+                               <i class="fa-solid fa-circle-check" style={{"color": "#00FF00"}}></i>
                               </button>
                               {/* Reject Button */}
                               <button
                                 onClick={() => rejectUser(user._id)} // Action for Reject
-                                className= "mx-10 text-2xl rounded-lg flex items-center gap-2 hover:scale-150 transition transform duration-200"
+                                className= "mx-10 text-3xl rounded-lg flex items-center gap-2 hover:scale-150 transition transform duration-200"
                               >
-                                ❌
-                              </button>
+                                <i class="fa-solid fa-circle-xmark" style={{"color": "#FF0000"}}></i>
+                              </button> 
                             </div>
                           </div>
                       </div>
