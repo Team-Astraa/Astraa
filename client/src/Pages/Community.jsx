@@ -147,22 +147,22 @@ const Community = () => {
     };
 
     return (
-        <div className="bg-purple-100 min-h-screen text-gray-900 p-6">
-            <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <div className="bg-purple-50 min-h-screen text-gray-900 p-6">
+            <div className="max-w-7xl mx-auto bg-white p-8 rounded-xl shadow-lg">
                 {/* Top Section */}
                 <div className="flex justify-between items-center mb-6">
                     {/* Top Buttons */}
-                    <h2 className="text-3xl font-semibold text-black-700">Communities</h2>
+                    <h2 className="text-3xl font-semibold text-black">Communities</h2>
                     <div className="flex space-x-4">
                         <button
                             onClick={() => handleShowInvitationModal(invitations[0])}
-                            className="bg-blue-500 text-white py-2 px-6 rounded-md font-medium shadow-md hover:bg-blue-700 transition duration-300"
+                            className="bg-blue-600 text-white py-2 px-6 rounded-md font-medium shadow-md hover:bg-blue-700 transition duration-300"
                         >
                             View Invitations
                         </button>
                         <button
                             onClick={handleCreateCommunityClick}
-                            className="bg-green-500 text-white py-2 px-6 rounded-md font-semibold shadow-md hover:bg-green-700 transition duration-300"
+                            className="bg-green-600 text-white py-2 px-6 rounded-md font-semibold shadow-md hover:bg-green-700 transition duration-300"
                         >
                             Create New Community
                         </button>
@@ -176,13 +176,13 @@ const Community = () => {
                         animateTable ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"
                     }`}
                 >
-                    <table className="w-full table-auto text-sm text-gray-800 border-collapse">
-                        <thead>
-                            <tr className="bg-purple-200">
-                                <th className="px-4 py-2 text-left">Community Name</th>
-                                <th className="px-4 py-2 text-left">Purpose</th>
-                                <th className="px-4 py-2 text-left">Role</th>
-                                <th className="px-4 py-2 text-center">Actions</th>
+                    <table className="w-full table-auto text-md text-gray-800 rounded-md overflow-hidden">
+                    <thead>
+                            <tr className="bg-purple-300 text-center">
+                                <th className="px-6 py-3">Community Name</th>
+                                <th className="px-6 py-3">Purpose</th>
+                                <th className="px-6 py-3">Role</th>
+                                <th className="px-6 py-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -193,15 +193,17 @@ const Community = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                communities.map((community) => (
+                                communities.map((community, index) => (
                                     <tr
                                         key={community._id}
-                                        className="border-b border-gray-200"
+                                        className={`border-b border-gray-200 ${
+                                            index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                                        }`}
                                     >
-                                        <td className="px-4 py-2">{community.name}</td>
-                                        <td className="px-4 py-2">{community.purpose}</td>
-                                        <td className="px-4 py-2">{community.role}</td>
-                                        <td className="px-4 py-2 flex justify-center space-x-4">
+                                        <td className="px-6 py-3 text-center">{community.name}</td>
+                                        <td className="px-6 py-3 text-center ">{community.purpose}</td>
+                                        <td className="px-6 py-3 text-center ">{community.role}</td>
+                                        <td className="px-6 py-3 flex justify-center space-x-4">
                                             {community.role === "owner" && (
                                                 <button
                                                     onClick={() => handleShowAddMemberModal(community._id)}
@@ -217,7 +219,7 @@ const Community = () => {
     <img 
         src="https://media.istockphoto.com/id/845329690/vector/eye-icon-vector-illustration.jpg?s=612x612&w=0&k=20&c=1SnGiyGCXd83V7m2hX0EsghFSqtmApJ6Qyy2b8Y3L1k=" 
         alt="Eye Icon" 
-        className="h-7 w-7"
+        className="h-9 w-9"
     />
 </button>
 
@@ -310,8 +312,8 @@ const Community = () => {
             {/* Invitation Modal */}
             {showInvitationModal && (
                 <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50">
-                    <div className="bg-white p-8 rounded-xl max-w-2xl w-full">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Invitations</h3>
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
+                    <h3 className="text-2xl font-semibold text-gray-800 mb-6">Invitations</h3>
                         {invitations.length === 0 ? (
                             <p className="text-gray-500">No invitations available.</p>
                         ) : (
