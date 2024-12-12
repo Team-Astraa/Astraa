@@ -57,13 +57,29 @@ const ValidatedCatchSchema = new mongoose.Schema(
     },
     dataType: {
       type: String,
-      enum: ["abundance", "occurrence","other" , "PFZ/NON-PFZ"], // Defines if data is of type "abundance" or "occurrence"
+      enum: ["abundance", "occurrence","other" , "PFZ/NON-PFZ","Landing_vilage","Geo_refrence_data"], // Defines if data is of type "abundance" or "occurrence"
       required: true, // Indicates the type of data
     },
-    timestamp: {
-      type: Date,
-      default: Date.now, // Automatically set the timestamp to current date
+    
+    
+    LANDINGNAM: {
+      type: String,
     },
+    Gear_type: {
+      type: String,
+    },
+    region:{
+      type: String,
+    },zoneType: {
+      type: String,
+    },
+    meanlength:{
+      type:Number
+    },
+    stage:{
+      type:String
+    }
+    
   },
   {
     timestamps: true, // Automatically includes createdAt and updatedAt fields

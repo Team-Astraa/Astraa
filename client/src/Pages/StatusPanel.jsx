@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaHourglassStart, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-
+import Loader from "../Components/Loader";
 const StatusPanel = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,8 +71,8 @@ const StatusPanel = () => {
   return (
     <div className="w-[95%] h-[85%] bg-white mx-auto mt-14 border-2 border-gray-300 rounded-md">
     <div className="p-6 space-y-6 bg-white">
-      {loading && <div>Loading...</div>}
-      {error && <div className="text-red-500">{error}</div>}
+      {loading && <Loader/>}
+      {error && <div className="text-red-500 text-4xl text-semibold text-center  ">{error}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left column */}

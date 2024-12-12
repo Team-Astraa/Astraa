@@ -192,65 +192,144 @@ const Adminverifyfish = () => {
 
   // Handle validation of catch data
 
+  // const handleValidateCatch = async () => {
+  //   console.log("handleValidateCatch Reaching Here");
+  //   const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
+  //   try {
+  //     console.log("Catch Data before validation:", catchData);
+  //     let tag;
+  //     // Transforming catch data to match the required format
+  //     const transformedData = catchData.flatMap((userData) =>
+  //       userData.catches.map((fishData) => ({
+  //         tag: fishData.Type,
+  //         _id: fishData?._id,
+  //         date: fishData?.date.split("T")[0] || null, // Ensure valid date or default to null
+  //         latitude: fishData?.latitude, // Extract latitude
+  //         longitude: fishData?.longitude, // Extract longitude
+  //         depth: fishData?.depth?.toString(), // Convert depth to string, default to "null"
+  //         species: Array.isArray(fishData.species)
+  //           ? fishData.species.map((speciesItem) => ({
+  //               name: speciesItem?.name, // Default to "Unknown" if name is missing
+  //               catch_weight: speciesItem?.catch_weight, // Default weight to 0
+  //             }))
+  //           : [],
+  //         // Default to empty array if species is undefined
+  //         total_weight: fishData?.total_weight, // Default to 0 if total_weight is missing
+  //       }))
+  //     );
+
+  //     const payload = {
+  //       dataType: tag,
+  //       data: transformedData,
+  //     };
+
+  //     console.log("Transformed Payload:", payload);
+
+  //     // Sending transformed data for validation
+  //     const response = await axios.post(
+  //       "http://localhost:5000/admin/autoCheck-fishing-data",
+  //       payload
+  //     );
+
+  //     // Dismiss loading toast once request is complete
+  //     toast.dismiss(loadingToast);
+
+  //     if (response.status === 201) {
+  //       toast.success("Catch data validated successfully!"); // Success toast
+  //     } else if (response.status === 200) {
+  //       toast.success("Data Already Validated");
+  //     } else if (response.status === 202) {
+  //       toast.success("Errors Arre hain jaise chaye hain vaise");
+  //     } else {
+  //       toast.error("Validation failed. Please try again."); // Error toast for non-200 responses
+  //     }
+
+  //     console.log("Validation Response:", response.data);
+  //     console.log("Dekhte hai", response.data.errors);
+  //     seterrorMessage(response.data.errors);
+
+  //     const errorRows = response.data.errors.map((error) => error.row);
+  //     // console.log("Errors are: " + errorRows);
+  //     setErrorRows(errorRows);
+  //   } catch (error) {
+  //     console.error("Error validating catch data:", error);
+  //     toast.error(
+  //       "Error validating catch data. Please check the console for details."
+  //     ); // Error toast
+  //     toast.dismiss(loadingToast);
+  //   }
+  // };
+
+
+
   const handleValidateCatch = async () => {
     console.log("handleValidateCatch Reaching Here");
     const loadingToast = toast.loading("Validating catch data..."); // Show loading toast
     try {
       console.log("Catch Data before validation:", catchData);
-      let tag;
+      let tag; // Ensure you set this based on your logic
+  
       // Transforming catch data to match the required format
       const transformedData = catchData.flatMap((userData) =>
         userData.catches.map((fishData) => ({
-          tag: fishData.Type,
+          tag: fishData.Type, // Assuming Type is still a valid field
           _id: fishData?._id,
-          date: fishData?.date.split("T")[0] || null, // Ensure valid date or default to null
+          date: fishData?.date ? fishData.date.split("T")[0] : null, // Ensure valid date or default to null
           latitude: fishData?.latitude, // Extract latitude
           longitude: fishData?.longitude, // Extract longitude
-          depth: fishData?.depth?.toString(), // Convert depth to string, default to "null"
+          depth: fishData?.depth ? fishData.depth.toString() : null, // Convert depth to string, default to null
           species: Array.isArray(fishData.species)
             ? fishData.species.map((speciesItem) => ({
-                name: speciesItem?.name, // Default to "Unknown" if name is missing
-                catch_weight: speciesItem?.catch_weight, // Default weight to 0
+                name: speciesItem?.name || "Unknown", // Default to "Unknown" if name is missing
+                catch_weight: speciesItem?.catch_weight || 0, // Default weight to 0 if missing
               }))
             : [],
-          // Default to empty array if species is undefined
-          total_weight: fishData?.total_weight, // Default to 0 if total_weight is missing
+          total_weight: fishData?.total_weight || 0, // Default to 0 if total_weight is missing
+          Gear_type: fishData?.Gear_type || null, // Extract Gear_type or default to null
+          meanlength: fishData?.meanlength || null, // Extract meanlength or default to null
+          stage: fishData?.stage || null, // Extract stage or default to null
         }))
       );
-
+  
       const payload = {
         dataType: tag,
         data: transformedData,
       };
-
+  
       console.log("Transformed Payload:", payload);
-
+  
       // Sending transformed data for validation
       const response = await axios.post(
         "http://localhost:5000/admin/autoCheck-fishing-data",
         payload
       );
-
+  
       // Dismiss loading toast once request is complete
       toast.dismiss(loadingToast);
-
+  
       if (response.status === 201) {
         toast.success("Catch data validated successfully!"); // Success toast
       } else if (response.status === 200) {
         toast.success("Data Already Validated");
       } else if (response.status === 202) {
-        toast.success("Errors Arre hain jaise chaye hain vaise");
+        toast.success("Errors found in the data."); // Updated message for clarity
       } else {
         toast.error("Validation failed. Please try again."); // Error toast for non-200 responses
       }
-
+  
       console.log("Validation Response:", response.data);
-      console.log("Dekhte hai", response.data.errors);
-      seterrorMessage(response.data.errors);
-
-      const errorRows = response.data.errors.map((error) => error.row);
-      // console.log("Errors are: " + errorRows);
-      setErrorRows(errorRows);
+      
+      if (response.data.errors && response.data.errors.length > 0) {
+        console.log("Errors:", response.data.errors);
+        seterrorMessage(response.data.errors); // Set error messages for display
+  
+        const errorRows = response.data.errors.map((error) => error.row);
+        setErrorRows(errorRows); // Set error rows for highlighting in UI
+      } else {
+        seterrorMessage([]); // Clear error messages if none found
+        setErrorRows([]); // Clear error rows if none found
+      }
+      
     } catch (error) {
       console.error("Error validating catch data:", error);
       toast.error(
@@ -259,6 +338,7 @@ const Adminverifyfish = () => {
       toast.dismiss(loadingToast);
     }
   };
+  
 
   const toggleViewMode = () => {
     setViewMode((preMode) => (preMode === "card" ? "table" : "card"));
@@ -363,7 +443,7 @@ const Adminverifyfish = () => {
           ? fishData.species.map((speciesItem) => ({
               name: speciesItem?.name || "", // Fallback to empty string if name is missing
               catch_weight:
-                speciesItem?.catch_weight === null
+                speciesItem?.catch_weight === null ||"NaN"
                   ? null
                   : parseFloat(speciesItem.catch_weight) || 0, // Convert to number or keep as null
             }))
@@ -376,6 +456,11 @@ const Adminverifyfish = () => {
             : parseFloat(fishData.total_weight) || 0, // Convert to number or keep as null
         dataType: fishData?.dataType || "", // Ensure tag is never null, fallback to empty string if missing
         userId: fishData?.userId || "", // Ensure userId is never null, fallback to empty string if missing
+        zoneType:fishData?.zonetype||"",
+        LANDINGNAM:fishData?.LANDINGNAM||"",
+        Gear_type:fishData?.Gear_type || "",
+        region:fishData?.region||"",
+
       }))
     );
 
