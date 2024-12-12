@@ -1,18 +1,17 @@
 import React from "react";
 
 const CatchItemDetail = ({ catchItem }) => {
-  console.log("catchItem", catchItem);
+  console.log("Catch Item Details:", catchItem);
+
   return (
     <div className="bg-gray-100 rounded-lg p-6 mt-6 shadow-lg">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-black">
-          Catch ID: {catchItem._id}
+          Catch ID: {catchItem._id || "N/A"}
         </h3>
         <span className="text-sm text-black">
-          {" "}
-          Date:
-          {new Date(catchItem.date).toLocaleDateString()}
+          Date: {catchItem.date ? new Date(catchItem.date).toLocaleDateString() : "N/A"}
         </span>
       </div>
 
@@ -34,7 +33,7 @@ const CatchItemDetail = ({ catchItem }) => {
               Latitude
             </td>
             <td className="py-3 px-4 text-center border border-gray-300">
-              {catchItem.latitude}
+              {catchItem.latitude || "N/A"}
             </td>
           </tr>
           <tr className="border border-gray-300">
@@ -42,7 +41,7 @@ const CatchItemDetail = ({ catchItem }) => {
               Longitude
             </td>
             <td className="py-3 px-4 text-center border border-gray-300">
-              {catchItem.longitude}
+              {catchItem.longitude || "N/A"}
             </td>
           </tr>
           <tr className="border border-gray-300">
@@ -66,7 +65,7 @@ const CatchItemDetail = ({ catchItem }) => {
               Total Weight
             </td>
             <td className="py-3 px-4 text-center border border-gray-300">
-              {catchItem.total_weight}
+              {catchItem.total_weight || "N/A"}
             </td>
           </tr>
         </tbody>
@@ -87,19 +86,30 @@ const CatchItemDetail = ({ catchItem }) => {
             </tr>
           </thead>
           <tbody>
-            {catchItem.species.map((species) => (
-              <tr
-                key={species._id}
-                className="border-b border-gray-300 hover:bg-purple-50 transition duration-300"
-              >
-                <td className="py-3 px-4 text-center border border-gray-300">
-                  {species.name}
-                </td>
-                <td className="py-3 px-4 text-center border border-gray-300">
-                  {species.catch_weight}
+            {catchItem.species && Array.isArray(catchItem.species) && catchItem.species.length > 0 ? (
+              catchItem.species.map((species) => (
+                <tr
+                  key={species._id}
+                  className="border-b border-gray-300 hover:bg-purple-50 transition duration-300"
+                >
+                  <td className="py-3 px-4 text-center border border-gray-300">
+                    {species.name || "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-center border border-gray-300">
+                    {species.catch_weight || "N/A"}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="2"
+                  className="py-3 px-4 text-center border border-gray-300 text-gray-500"
+                >
+                  No species data available.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

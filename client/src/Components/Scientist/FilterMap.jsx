@@ -10,34 +10,26 @@ const FilterMap = ({ catchData, props }) => {
   console.log(catchData);
 
   const heatmapData = {
-    type: "FeatureCollection",
-    features: catchData.map((catchDetail) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [catchDetail.longitude, catchDetail.latitude],
-      },
-      properties: {
-        depth: catchDetail.depth,
-        weight: catchDetail.totalCatchWeight,
-      },
-    })),
-  };
+      type: "FeatureCollection",
+      features: catchData.map((catchDetail) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [catchDetail.longitude, catchDetail.latitude],
+          },
+          properties: {
+            depth: catchDetail.depth,
+            weight: catchDetail.totalCatchWeight,
+          },
+        }))
+  }
 
   const heatmapLayer = {
     id: "heatmap-layer",
     type: "heatmap",
     source: "heatmap",
     paint: {
-      "heatmap-weight": [
-        "interpolate",
-        ["linear"],
-        ["get", "weight"],
-        0,
-        0,
-        10,
-        1,
-      ],
+      "heatmap-weight": ["interpolate", ["linear"], ["get", "weight"], 0, 0, 10, 1],
       "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 3],
       "heatmap-color": [
         "interpolate",
@@ -116,6 +108,8 @@ const FilterMap = ({ catchData, props }) => {
     },
   };
 
+  
+
   return (
     <div>
       {props.showButton && (
@@ -124,7 +118,7 @@ const FilterMap = ({ catchData, props }) => {
             <button
               onClick={() => setViewMode("markers")}
               style={{
-                padding: "10px 15px",
+                padding: "3px 8px",
                 background: viewMode === "markers" ? "#007bff" : "#ccc",
                 color: viewMode === "markers" ? "#fff" : "#000",
                 border: "none",
@@ -132,12 +126,12 @@ const FilterMap = ({ catchData, props }) => {
                 cursor: "pointer",
               }}
             >
-              Show Markers
+        Markers
             </button>
             <button
               onClick={() => setViewMode("heatmap")}
               style={{
-                padding: "10px 15px",
+                padding: "3px 8px",
                 background: viewMode === "heatmap" ? "#007bff" : "#ccc",
                 color: viewMode === "heatmap" ? "#fff" : "#000",
                 border: "none",
@@ -145,12 +139,12 @@ const FilterMap = ({ catchData, props }) => {
                 cursor: "pointer",
               }}
             >
-              Show Heatmap
+               Heatmap
             </button>
             <button
               onClick={() => setViewMode("clusters")}
               style={{
-                padding: "10px 15px",
+                padding: "3px 8px",
                 background: viewMode === "clusters" ? "#007bff" : "#ccc",
                 color: viewMode === "clusters" ? "#fff" : "#000",
                 border: "none",
@@ -158,7 +152,7 @@ const FilterMap = ({ catchData, props }) => {
                 cursor: "pointer",
               }}
             >
-              Show Clusters
+              Clusters
             </button>
           </div>
         </div>
@@ -177,33 +171,37 @@ const FilterMap = ({ catchData, props }) => {
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken="pk.eyJ1Ijoic25laGFkMjgiLCJhIjoiY2x0czZid3AzMG42YzJqcGNmdzYzZmd2NSJ9.BuBkmVXS61pvHErosbGCGA"
       >
-        {!props.oneLat &&
-          !props.oneLong &&
-          viewMode === "markers" &&
-          catchData.map((catchDetail) => (
-            <Marker
-              key={catchDetail._id}
-              longitude={catchDetail.longitude}
-              latitude={catchDetail.latitude}
-              anchor="bottom"
-              onClick={(e) => {
-                e.originalEvent.stopPropagation();
-                setPopupInfo(catchDetail);
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: "rgba(255, 0, 0, 0.8)",
-                  border: "2px solid white",
-                  borderRadius: "50%",
-                  width: "12px",
-                  height: "12px",
-                  boxShadow: "0 0 10px rgba(255, 0, 0, 0.5)",
-                  cursor: "pointer",
-                }}
-              ></div>
-            </Marker>
-          ))}
+
+   `{!props.oneLat && !props.oneLong && viewMode === "markers" &&
+  catchData.map((catchDetail) => (
+    !isNaN(catchDetail.latitude) &&
+    !isNaN(catchDetail.longitude) && (
+      <Marker
+        key={catchDetail._id}
+        longitude={catchDetail.longitude}
+        latitude={catchDetail.latitude}
+        anchor="bottom"
+        onClick={(e) => {
+          e.originalEvent.stopPropagation();
+          setPopupInfo(catchDetail);
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(255, 0, 0, 0.8)",
+            border: "2px solid white",
+            borderRadius: "50%",
+            width: "12px",
+            height: "12px",
+            boxShadow: "0 0 10px rgba(255, 0, 0, 0.5)",
+            cursor: "pointer",
+          }}
+        ></div>
+      </Marker>
+    )
+  ))
+}
+`
 
         {viewMode === "heatmap" && (
           <Source id="heatmap" type="geojson" data={heatmapData}>
