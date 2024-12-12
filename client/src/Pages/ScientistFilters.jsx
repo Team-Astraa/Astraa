@@ -14,6 +14,7 @@ import FilterMap from "../Components/Scientist/FilterMap";
 import MapboxVisualization from "./Admin-map";
 import DataTable2 from "./VillageData";
 import MapComponent from "./GetLatLong";
+import { Typography } from "@mui/material";
 
 
 const FilterForm = () => {
@@ -56,7 +57,12 @@ const FilterForm = () => {
   let [Visualize, setVisualize] = useState(false);
   const [activeTab, setActiveTab] = useState('PFZ/NON-PFZ'); // 'data' as the initial active tab
   let [tag, setTag] = useState("data");
+  const [showExportButtons, setShowExportButtons] = useState(false);
 
+
+  const toggleExportButtons = () => {
+    setShowExportButtons((prev) => !prev);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -905,9 +911,11 @@ const FilterForm = () => {
 
 
   return (
-    <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
-      <nav className="w-full mb-4 px-12 flex items-center justify-between p-4 shadow-lg bg-white">
-        <h1 className="text-3xl font-bold ">Apply Filters</h1>
+    <div className="min-h-screen bg-white">
+      <nav className="w-full px-12 flex items-center justify-between p-4 bg-white">
+      <Typography variant="h4" gutterBottom>
+        Your Data
+      </Typography>
         <Button onClick={() => setOpenModal(true)}>Apply Filters</Button>
 
       </nav>
@@ -916,18 +924,16 @@ const FilterForm = () => {
         fileLoader ? <ScientistFileDownload /> : loading ? <ScientistLoader message={message} />
           :
           <>
-            <div className="min-h-screen flex gap-4">
+            <div className="min-h-screen flex gap-4 px-6">
 
-
-
-              <div className="w-[80%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
-                <div className="w-full h-12 bg-gray-100 flex items-center justify-between px-6 shadow-sm rounded-t-lg">
+              <div className="w-[80%] p-4 h-auto bg-white rounded-lg overflow-hidden">
+                <div className="w-full h-12 flex items-center rounded-t-lg gap-3">
                   {tabs2.map((tab) => (
                     <div
                       key={tab.value}
                       onClick={() => { handleTab(tab.value) }}
-                      className={`px-6 py-2 cursor-pointer rounded-md transition duration-300 ${activeTab === tab.value
-                        ? "bg-green-600 text-white shadow-md"
+                      className={`px-6 py-2 cursor-pointer transition duration-300 ${activeTab === tab.value
+                        ? "bg-purple-200 text-purple-600 shadow-md font-medium"
                         : "text-gray-700 hover:bg-gray-200"
                         }`}
                     >
@@ -936,81 +942,126 @@ const FilterForm = () => {
                   ))}
                 </div>
 
-                <div className={"w-full border-b " + (activeTab === "Landing-Village" ? "hidden" : "flex")}>
-
-                  <div
-                    onClick={() => handleTabClick("data")}
-                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 border-r  cursor-pointer hover:bg-gray-200"
-                  >
-                    {activeTab}
+                  <div>
+                    <p className="mt-10 mb-2">Filters:</p>
+                    <ul className="list-none list-inside  flex gap-6  mb-5">
+                      {Object.entries(filters).map(([key, value], index) => {
+                        if (value) {
+                          return (
+                            <li
+                              key={index}
+                              className="flex items-center text-sm text-gray-700 gap-2 bg-gray-100 px-8 py-4 rounded-sm"
+                            >
+                              <span className="font-medium text-gray-600 capitalize">{key}:</span>
+                              <span className="text-gray-800  rounded-md">
+                                {value}
+                              </span>
+                            </li>
+                          );
+                        }
+                        return null;
+                      })}
+                    </ul>
                   </div>
-                  <div
-                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 cursor-pointer hover:bg-gray-200"
-                    onClick={() => handleTabClick("graphs")}
-                  >
-                    Visualization
-                  </div>
-                </div>
 
+                  <div className="relative flex justify-between w-full items-center">
+                    {/* Left Tabs */}
+                    <div
+                      className={
+                        "w-auto " + (activeTab === "Landing-Village" ? "hidden" : "flex")
+                      }
+                    >
+                      <div
+                        onClick={() => handleTabClick("data")}
+                        className="bg-white text-lg font-semibold border border-sm text-gray-800 py-4 px-12 cursor-pointer hover:bg-gray-200"
+                      >
+                        Table
+                      </div>
+                      <div
+                        className="bg-white text-lg font-semibold text-gray-800 py-4 px-12 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleTabClick("graphs")}
+                      >
+                        Graphs
+                      </div>
+                    </div>
+
+                      {/* Export Button */}
+                      <div className="absolute top-0 right-0" style={{ zIndex: 10 }}>
+                        <button
+                          onClick={toggleExportButtons}
+                          className="flex items-center justify-center h-12 bg-purple-700 text-white rounded shadow-lg hover:bg-purple-800 transition-transform transform hover:scale-105 p-5"
+                        >
+                          <i className="fa-solid fa-file-export text-xl mr-2"></i> Export
+                        </button>
+                      </div>
+
+                      {/* Export Options */}
+                      {showExportButtons && (
+                        <div
+                          className="flex gap-4 w-auto absolute top-14 right-20"
+                          style={{ zIndex: 10 }}
+                        >
+                          {[
+                            {
+                              onClick: () => downloadExcelWithCharts("xlsx"),
+                              icon: "fa-file-excel",
+                              bg: "bg-green-600",
+                              hoverBg: "hover:bg-green-700",
+                            },
+                            {
+                              onClick: () => downloadExcelWithCharts("csv"),
+                              icon: "fa-file-csv",
+                              bg: "bg-green-500",
+                              hoverBg: "hover:bg-green-600",
+                            },
+                            {
+                              onClick: openNameModel,
+                              icon: "fa-floppy-disk",
+                              bg: "bg-blue-500",
+                              hoverBg: "hover:bg-blue-600",
+                            },
+                            {
+                              onClick: shareToCommunity,
+                              icon: "fa-share",
+                              bg: "bg-purple-600",
+                              hoverBg: "hover:bg-purple-700",
+                            },
+                            {
+                              onClick: emailModel,
+                              icon: "fa-envelope",
+                              bg: "bg-red-600",
+                              hoverBg: "hover:bg-red-700",
+                            },
+                          ].map(({ onClick, icon, bg, hoverBg }, idx) => (
+                            <button
+                              key={idx}
+                              onClick={onClick}
+                              className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
+                            >
+                              <i className={`fa-solid ${icon} text-xl`}></i>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                 {
                   activeTab === "Landing-Village" ?
                     <DataTable2 filters={vf} loading={loading} setLoading={setLoading} /> :
                     <>
 
                       <>
-                        <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
+                        <div className="relative flex items-center justify-between w-full p-6 bg-gray-50">
                           <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
-                          <div className="flex gap-4">
-                            {[
-                              {
-                                onClick: () => downloadExcelWithCharts("xlsx"),
-                                icon: "fa-file-excel",
-                                bg: "bg-green-600",
-                                hoverBg: "hover:bg-green-700",
-                              },
-                              {
-                                onClick: () => downloadExcelWithCharts("csv"),
-                                icon: "fa-file-csv",
-                                bg: "bg-green-500",
-                                hoverBg: "hover:bg-green-600",
-                              },
-                              {
-                                onClick: openNameModel,
-                                icon: "fa-floppy-disk",
-                                bg: "bg-blue-500",
-                                hoverBg: "hover:bg-blue-600",
-                              },
-                              {
-                                onClick: shareToCommunity,
-                                icon: "fa-share",
-                                bg: "bg-purple-600",
-                                hoverBg: "hover:bg-purple-700",
-                              },
-                              {
-                                onClick: emailModel,
-                                icon: "fa-envelope",
-                                bg: "bg-red-600",
-                                hoverBg: "hover:bg-red-700",
-                              },
-                            ].map(({ onClick, icon, bg, hoverBg }, idx) => (
-                              <button
-                                key={idx}
-                                onClick={onClick}
-                                className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
-                              >
-                                <i className={`fa-solid ${icon} text-xl`}></i>
-                              </button>
-                            ))}
-                          </div>
+                          
                         </div>
 
                         <div
-                          className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-50`}
+                          className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-200`}
                         >
                           {filteredHeaders.map((item, idx) => (
                             <div
                               key={idx}
-                              className="text-center font-semibold text-sm uppercase bg-gray-200 p-2 border rounded shadow-sm"
+                              className="text-center font-semibold text-sm uppercase"
                             >
                               {item.header}
                             </div>
@@ -1021,7 +1072,7 @@ const FilterForm = () => {
                         {data && data.map((item, index) => (
                           <div
                             key={index}
-                            className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                            className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-white" : "bg-gray-100"
                               }`}
                           >
                             {filteredHeaders.map((field, idx) => (
@@ -1105,36 +1156,13 @@ const FilterForm = () => {
                 {data !== null && <FilterMap catchData={data} props={{ type: "markers", showButton: true }} />}
 
 
-                {/* <MapboxVisualization
-              catchData={data}
-              props={{ type: "markers", showButton: true }} /> */}
-
                 <div className="w-full h-fit ml-2 m-4 shadow-md bg-gradient-to-r from-gray-50 via-white to-gray-50 p-6 rounded-lg border border-gray-200">
                   <div className="mb-4">
                     <h1 className="text-xl font-semibold text-gray-800 mb-2 border-b pb-2">
                       Your Filters
                     </h1>
                   </div>
-                  <div>
-                    <ul className="list-none list-inside space-y-2">
-                      {Object.entries(filters).map(([key, value], index) => {
-                        if (value) {
-                          return (
-                            <li
-                              key={index}
-                              className="flex items-center text-sm text-gray-700 gap-2"
-                            >
-                              <span className="font-medium text-gray-600 capitalize">{key}:</span>
-                              <span className="text-gray-800 bg-gray-100 px-2 py-1 rounded-md">
-                                {value}
-                              </span>
-                            </li>
-                          );
-                        }
-                        return null;
-                      })}
-                    </ul>
-                  </div>
+                  
                 </div>
 
 
