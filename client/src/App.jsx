@@ -134,7 +134,7 @@ function App() {
             element={<Admindatauploadusers />}
           />
           <Route
-            path="/admin/unverify-fish-data/:userId/:dataId"
+            path="/admin/unverify-fish-data/:userId/:dataId/:table"
             element={<Adminverifyfish />}
           />
           <Route path="/map" element={<FishingMap />} />
