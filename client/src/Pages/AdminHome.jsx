@@ -12,8 +12,8 @@ const AdminHome = () => {
     "PFZ/NON-PFZ": ["Date", "Status", "Data Id", "Username", "Species"],
     "Landing-Village": ["Species name", "Date", "Catch (kg)", "Landing Name", "Gear type"],
     "GEO-REF": ["Latitude", "Longitude", "Species", "Depth", "Total Weight"],
-    // "abundance": ["Date", "Latitude", "Longitude", "Depth", "Species", "Total Weight"],
-    // "occurrence": ["Species", "Date", "Location", "Total Catch"],
+    "abundance": ["Date", "Latitude", "Longitude", "Depth", "Species", "Total Weight"],
+    "occurrence": ["Species", "Date", "Location", "Total Catch"],
   };
 
   const navigate = useNavigate();
@@ -55,6 +55,7 @@ const AdminHome = () => {
       navigate("/signin");
       return;
     }
+    fetchUsersType(selectedTab)
     fetchLogsData(selectedTab);
   }, [navigate, selectedTab]);
 
