@@ -57,7 +57,7 @@ const UserTypeCount = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 border-b">
                     {/* {item.totalUsers} */}
-                    45
+                    13
                   </td>
                 </tr>
                 <tr className=" transition-all">
@@ -67,7 +67,7 @@ const UserTypeCount = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 border-b">
                     {/* {item.totalUsers} */}
-                    45
+                    11
                   </td>
                 </tr>
                 <tr className=" transition-all">
@@ -77,7 +77,7 @@ const UserTypeCount = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 border-b">
                     {/* {item.totalUsers} */}
-                    45
+                    32
                   </td>
                 </tr>
                 <tr className=" transition-all">
@@ -87,7 +87,7 @@ const UserTypeCount = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 border-b">
                     {/* {item.totalUsers} */}
-                    45
+                    27
                   </td>
                 </tr>
                 <tr className=" transition-all">
@@ -97,7 +97,7 @@ const UserTypeCount = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 border-b">
                     {/* {item.totalUsers} */}
-                    45
+                    4
                   </td>
                 </tr>
               

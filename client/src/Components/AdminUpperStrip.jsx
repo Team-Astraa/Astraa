@@ -222,11 +222,11 @@ const chartData = convertUserDataToChartFormat(userData);
 
           <div className="flex items-center mb-2 mx-auto flex justify-center">
             <div className="bg-green-600 w-8 h-4 mr-3 rounded-xl"></div>
-            <p>Verified Users 45</p>
+            <p>Verified Users 5</p>
           </div>
           <div className="flex items-center mb-2 mx-auto flex justify-center">
             <div className="bg-red-600 w-8 h-4 mr-3 rounded-xl"></div>
-            <p>Unverified Users 15</p>
+            <p>Unverified Users 10</p>
           </div>
 
       </div>
