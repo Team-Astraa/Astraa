@@ -51,6 +51,8 @@ const AdminHome = () => {
   
 
   const handleTab = (type) => {
+    console.log(type);
+    
     setselectedTab(type);
   }
 
@@ -127,25 +129,25 @@ const AdminHome = () => {
                       onClick={() => handleTab("PFZ/NON-PFZ")}>PFZ/NON PFZ</button>
                   </li>
                   <li class="">
-                      <button className={`inline-block p-4 rounded-t-lg ${selectedTab == "landing-village" ? "bg-blue-300 text-blue-600" : ""}`}
+                      <button className={`inline-block p-4 rounded-t-lg ${selectedTab == "Landing-Village" ? "bg-blue-300 text-blue-600" : ""}`}
                       onClick={() => handleTab("landing-village")}>Landing Village</button>
                   </li>
                   <li class="">
                       <button className={`inline-block p-4 rounded-t-lg ${selectedTab == "GEO-REF" ? "bg-blue-300 text-blue-600" : ""}`}
                       onClick={() => handleTab("GEO-REF")}>Geo Referenced Data</button>
                   </li>
-                  <li class="">
+                  {/* <li class="">
                       <button className={`inline-block p-4 rounded-t-lg ${selectedTab == "abundance" ? "bg-blue-300 text-blue-600" : ""}`}
                       onClick={() => handleTab("abundance")}>Abundance</button>
-                  </li>
-                  <li class="">
+                  </li> */}
+                  {/* <li class="">
                       <button className={`inline-block p-4 rounded-t-lg ${selectedTab == "occurrence" ? "bg-blue-300 text-blue-600" : ""}`}
                       onClick={() => handleTab("occurrence")}>Occurrence</button>
                   </li>
                   <li class="">
                       <button className={`inline-block p-4 rounded-t-lg ${selectedTab == "other" ? "bg-blue-300 text-blue-600" : ""}`}
                       onClick={() => handleTab("other")}>Others</button>
-                  </li>
+                  </li> */}
               </ul>
 
 

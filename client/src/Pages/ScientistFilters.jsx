@@ -958,52 +958,55 @@ const FilterForm = () => {
                     <>
 
                       <>
-                        <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
-                          <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
-                          <div className="flex gap-4">
-                            {[
-                              {
-                                onClick: () => downloadExcelWithCharts("xlsx"),
-                                icon: "fa-file-excel",
-                                bg: "bg-green-600",
-                                hoverBg: "hover:bg-green-700",
-                              },
-                              {
-                                onClick: () => downloadExcelWithCharts("csv"),
-                                icon: "fa-file-csv",
-                                bg: "bg-green-500",
-                                hoverBg: "hover:bg-green-600",
-                              },
-                              {
-                                onClick: openNameModel,
-                                icon: "fa-floppy-disk",
-                                bg: "bg-blue-500",
-                                hoverBg: "hover:bg-blue-600",
-                              },
-                              {
-                                onClick: shareToCommunity,
-                                icon: "fa-share",
-                                bg: "bg-purple-600",
-                                hoverBg: "hover:bg-purple-700",
-                              },
-                              {
-                                onClick: emailModel,
-                                icon: "fa-envelope",
-                                bg: "bg-red-600",
-                                hoverBg: "hover:bg-red-700",
-                              },
-                            ].map(({ onClick, icon, bg, hoverBg }, idx) => (
-                              <button
-                                key={idx}
-                                onClick={onClick}
-                                className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
-                              >
-                                <i className={`fa-solid ${icon} text-xl`}></i>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
+                        {
+                          data && tag == "data" ?
+                            <>
+                              <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
+                                <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
+                                <div className="flex gap-4">
+                                  {[
+                                    {
+                                      onClick: () => downloadExcelWithCharts("xlsx"),
+                                      icon: "fa-file-excel",
+                                      bg: "bg-green-600",
+                                      hoverBg: "hover:bg-green-700",
+                                    },
+                                    {
+                                      onClick: () => downloadExcelWithCharts("csv"),
+                                      icon: "fa-file-csv",
+                                      bg: "bg-green-500",
+                                      hoverBg: "hover:bg-green-600",
+                                    },
+                                    {
+                                      onClick: openNameModel,
+                                      icon: "fa-floppy-disk",
+                                      bg: "bg-blue-500",
+                                      hoverBg: "hover:bg-blue-600",
+                                    },
+                                    {
+                                      onClick: shareToCommunity,
+                                      icon: "fa-share",
+                                      bg: "bg-purple-600",
+                                      hoverBg: "hover:bg-purple-700",
+                                    },
+                                    {
+                                      onClick: emailModel,
+                                      icon: "fa-envelope",
+                                      bg: "bg-red-600",
+                                      hoverBg: "hover:bg-red-700",
+                                    },
+                                  ].map(({ onClick, icon, bg, hoverBg }, idx) => (
+                                    <button
+                                      key={idx}
+                                      onClick={onClick}
+                                      className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
+                                    >
+                                      <i className={`fa-solid ${icon} text-xl`}></i>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                         
                         <div
                           className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-50`}
                         >
@@ -1042,6 +1045,9 @@ const FilterForm = () => {
                             ))}
                           </div>
                         ))}
+                           </> : data && tag=="graphs" &&  <FishCatchGraphs data={data}  fileLoader={fileLoader}  setfileLoader={setfileLoader}/>
+                        }
+
 
                       </>
 

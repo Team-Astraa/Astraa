@@ -32,7 +32,7 @@ const FishCatchGraphs = ({ data , fileLoader , setfileLoader }) => {
 
     useEffect(() => {
         const processData = () => {
-            const byDate = data.map((record) => ({
+            const byDate = data && data.map((record) => ({
                 date: new Date(record.date).toLocaleDateString(),
                 total_weight: record.total_weight,
             }));
@@ -61,7 +61,7 @@ const FishCatchGraphs = ({ data , fileLoader , setfileLoader }) => {
                 return acc;
             }, []);
 
-            const byDepth = data.map((record) => ({
+            const byDepth = data &&  data.map((record) => ({
                 depth: record.depth,
                 total_weight: record.total_weight,
             }));
