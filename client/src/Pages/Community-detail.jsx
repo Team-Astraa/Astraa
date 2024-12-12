@@ -142,8 +142,8 @@ const Communitydetail = () => {
                   size="7xl"
                 >
                   <Modal.Header>Community Details</Modal.Header>
-                  <Modal.Body>
-                    {community.data.length > 0 ? (
+                  {/* //<Modal.Body> */}
+                    {/* {community.data.length > 0 ? (
                       community.data.map((catchItem) => (
                         <CatchItemDetail
                           key={catchItem._id}
@@ -152,8 +152,18 @@ const Communitydetail = () => {
                       ))
                     ) : (
                       <div>No data available for this community.</div>
-                    )}
-                  </Modal.Body>
+                    )} */}
+
+<Modal.Body>
+  {community.data && community.data.length > 0 ? (
+    community.data.map((catchItem) => (
+      <CatchItemDetail key={catchItem._id} catchItem={catchItem} />
+    ))
+  ) : (
+    <div>No data available for this community.</div>
+  )}
+</Modal.Body>
+
                   <Modal.Footer>
                     <button
                       className="bg-red-600 text-white px-4 py-2 rounded-md"
