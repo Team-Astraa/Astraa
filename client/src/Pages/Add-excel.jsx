@@ -37,7 +37,7 @@ const Addexcel = () => {
     userId: "", // Assuming userId is passed as a prop
     dataType: "",
     total_weight: 0,
-   
+
   });
 
   const handleChange = (e) => {
@@ -83,11 +83,11 @@ const Addexcel = () => {
 
     let loading = toast.loading("Please wait...");
     e.preventDefault();
-  
+
     // Retrieve user data from localStorage
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
-  
+
     // Prepare the data object to send
     const requestData = {
       date: catchData.date,
@@ -105,7 +105,7 @@ const Addexcel = () => {
         catch_weight: species.catch_weight,
       })),
     };
-  
+
     try {
       // Make the API request to save data
       const response = await axios.post(
@@ -117,7 +117,7 @@ const Addexcel = () => {
           },
         }
       );
-  
+
       if (response.status == 200) {
         toast.dismiss(loading);
         toast.success("Data successfully added!");
@@ -169,12 +169,13 @@ const Addexcel = () => {
     // formData.append("tag", downloadType);
 
     const uploadToastId = toast.loading("Uploading...");
+    let url = downloadType != "Landing-Village" ? "http://localhost:5000/upload" : "http://localhost:5000/uploadSpecies";
     try {
       setIsLoading(true);
       setUploadProgress(0);
       // Send the file to the backend
       const response = await axios.post(
-        "http://localhost:5000/upload",
+        url,
         formData,
         {
           headers: {
@@ -250,266 +251,266 @@ const Addexcel = () => {
 
   return (
     <AnimationWrapper className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-    {
-  downloadType === "other" &&
-  <Modal open={openform} onClose={() => setopenform(false)}>
-    <Box
-      className="p-6 bg-white rounded-md shadow-lg"
-      style={{
-        width: "400px",
-        margin: "100px auto",
-        textAlign: "center",
-        position: "relative",
-      }}
-    >
-      <IconButton
-        onClick={() => setopenform(false)}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-        }}
-      >
-        <Close />
-      </IconButton>
+      {
+        downloadType === "other" &&
+        <Modal open={openform} onClose={() => setopenform(false)}>
+          <Box
+            className="p-6 bg-white rounded-md shadow-lg"
+            style={{
+              width: "400px",
+              margin: "100px auto",
+              textAlign: "center",
+              position: "relative",
+            }}
+          >
+            <IconButton
+              onClick={() => setopenform(false)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+              }}
+            >
+              <Close />
+            </IconButton>
 
-      <h2>Add New Catch Record</h2>
+            <h2>Add New Catch Record</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Date */}
-          <TextField
-            label="Date"
-            type="date"
-            name="date"
-            value={catchData.date}
-            onChange={handleChange}
-            required
-            fullWidth
-            sx={{ mb: 2 }}
-          />
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Date */}
+                <TextField
+                  label="Date"
+                  type="date"
+                  name="date"
+                  value={catchData.date}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
 
-          {/* Latitude */}
-          <TextField
-            label="Latitude"
-            type="number"
-            name="latitude"
-            value={catchData.latitude}
-            onChange={handleChange}
-            required
-            fullWidth
-            sx={{ mb: 2 }}
-          />
+                {/* Latitude */}
+                <TextField
+                  label="Latitude"
+                  type="number"
+                  name="latitude"
+                  value={catchData.latitude}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
 
-          {/* Longitude */}
-          <TextField
-            label="Longitude"
-            type="number"
-            name="longitude"
-            value={catchData.longitude}
-            onChange={handleChange}
-            required
-            fullWidth
-            sx={{ mb: 2 }}
-          />
+                {/* Longitude */}
+                <TextField
+                  label="Longitude"
+                  type="number"
+                  name="longitude"
+                  value={catchData.longitude}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
 
-          {/* Depth */}
-          <TextField
-            label="Depth"
-            type="number"
-            name="depth"
-            value={catchData.depth}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-        </div>
+                {/* Depth */}
+                <TextField
+                  label="Depth"
+                  type="number"
+                  name="depth"
+                  value={catchData.depth}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </div>
 
-        {/* Species */}
-        {catchData.species.map((species, index) => (
-          <div key={index} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <TextField
-                label={`Species Name ${index + 1}`}
-                name="name"
-                value={species.name}
-                onChange={(e) => handleSpeciesChange(index, e)}
-                required
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label={`Catch Weight ${index + 1}`}
-                name="catch_weight"
-                type="number"
-                value={species.catch_weight}
-                onChange={(e) => handleSpeciesChange(index, e)}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-            </div>
-            <Button onClick={() => handleRemoveSpecies(index)} color="error" fullWidth>
-              Remove Species
-            </Button>
+              {/* Species */}
+              {catchData.species.map((species, index) => (
+                <div key={index} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <TextField
+                      label={`Species Name ${index + 1}`}
+                      name="name"
+                      value={species.name}
+                      onChange={(e) => handleSpeciesChange(index, e)}
+                      required
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
+                    <TextField
+                      label={`Catch Weight ${index + 1}`}
+                      name="catch_weight"
+                      type="number"
+                      value={species.catch_weight}
+                      onChange={(e) => handleSpeciesChange(index, e)}
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
+                  </div>
+                  <Button onClick={() => handleRemoveSpecies(index)} color="error" fullWidth>
+                    Remove Species
+                  </Button>
+                </div>
+              ))}
+              <Button onClick={handleAddSpecies} variant="contained" fullWidth sx={{ mb: 2 }}>
+                Add Species
+              </Button>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Sea */}
+                <TextField
+                  label="Sea"
+                  name="sea"
+                  value={catchData.sea}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+
+                {/* State */}
+                <TextField
+                  label="State"
+                  name="state"
+                  value={catchData.state}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Total Weight */}
+                <TextField
+                  label="Total Weight"
+                  name="total_weight"
+                  type="number"
+                  value={catchData.total_weight}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+
+
+              </div>
+
+
+              {/* Submit Button */}
+              <Button type="submit" variant="contained" fullWidth sx={{ mb: 2 }}>
+                Submit
+              </Button>
+            </form>
+          </Box>
+        </Modal>
+      }
+
+      <div className="flex space-x-8">
+        {/* Download Card */}
+        <div className="bg-white shadow-xl rounded-xl p-6 w-[600px] border-2 flex flex-col space-y-4">
+          {/* Title */}
+          <h2 className="text-3xl font-bold text-gray-800 text-center">
+            Download Templates
+          </h2>
+          {/* PFZ Section */}
+          <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+            <h3 className="text-xl font-semibold text-gray-700">PFZ/Non PFZ</h3>
+            <button
+              className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+              onClick={() => handleDownload("pfz")}
+              style={{
+                width: "auto", // Adjust to content
+              }}
+            >
+              Download PFZ/Non PFZ
+            </button>
+            <style>
+              {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+            </style>
           </div>
-        ))}
-        <Button onClick={handleAddSpecies} variant="contained" fullWidth sx={{ mb: 2 }}>
-          Add Species
-        </Button>
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* Sea */}
-          <TextField
-            label="Sea"
-            name="sea"
-            value={catchData.sea}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-
-          {/* State */}
-          <TextField
-            label="State"
-            name="state"
-            value={catchData.state}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
+          {/* Landing Village Section */}
+          <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+            <h3 className="text-xl font-semibold text-gray-700">Landing Village</h3>
+            <button
+              className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+              onClick={() => handleDownload("Landing-Village")}
+              style={{
+                width: "auto", // Adjust to content
+              }}
+            >
+              Download Landing Village
+            </button>
+            <style>
+              {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+            </style>
+          </div>
+          {/* Geo Referenced Data Section */}
+          <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+            <h3 className="text-xl font-semibold text-gray-700">Geo Referenced Data</h3>
+            <button
+              className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+              onClick={() => handleDownload("GEO-REF")}
+              style={{
+                width: "auto", // Adjust to content
+              }}
+            >
+              Download Geo Referenced Data
+            </button>
+            <style>
+              {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+            </style>
+          </div>
+          {/* Abundance/Occurrence Section */}
+          <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+            <h3 className="text-xl font-semibold text-gray-700">Data Abundance/Occurrence</h3>
+            <button
+              className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 opacity-100 custom-pulse"
+              onClick={() => handleDownload("AbuOcu")}
+              style={{
+                width: "auto", // Adjust to content
+              }}
+            >
+              Download Abundance/Occurrence
+            </button>
+            <style>
+              {`
+      @keyframes customPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .custom-pulse {
+        animation: customPulse 2s infinite;
+      }
+    `}
+            </style>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* Total Weight */}
-          <TextField
-            label="Total Weight"
-            name="total_weight"
-            type="number"
-            value={catchData.total_weight}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-
-         
-        </div>
-
-       
-        {/* Submit Button */}
-        <Button type="submit" variant="contained" fullWidth sx={{ mb: 2 }}>
-          Submit
-        </Button>
-      </form>
-    </Box>
-  </Modal>
-}
-
-<div className="flex space-x-8">
-  {/* Download Card */}
-  <div className="bg-white shadow-xl rounded-xl p-6 w-[600px] border-2 flex flex-col space-y-4">
-    {/* Title */}
-    <h2 className="text-3xl font-bold text-gray-800 text-center">
-      Download Templates
-    </h2>
-    {/* PFZ Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
-  <h3 className="text-xl font-semibold text-gray-700">PFZ/Non PFZ</h3>
-  <button
-    className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
-    onClick={() => handleDownload("pfz")}
-    style={{
-      width: "auto", // Adjust to content
-    }}
-  >
-    Download PFZ/Non PFZ
-  </button>
-  <style>
-    {`
-      @keyframes customPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      .custom-pulse {
-        animation: customPulse 2s infinite;
-      }
-    `}
-  </style>
-</div>
-
-    {/* Landing Village Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
-      <h3 className="text-xl font-semibold text-gray-700">Landing Village</h3>
-      <button
-        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
-        onClick={() => handleDownload("Landing-Village")}
-        style={{
-          width: "auto", // Adjust to content
-        }}
-      >
-        Download Landing Village
-      </button>
-      <style>
-    {`
-      @keyframes customPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      .custom-pulse {
-        animation: customPulse 2s infinite;
-      }
-    `}
-  </style>
-    </div>
-    {/* Geo Referenced Data Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
-      <h3 className="text-xl font-semibold text-gray-700">Geo Referenced Data</h3>
-      <button
-        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
-        onClick={() => handleDownload("GEO-REF")}
-        style={{
-          width: "auto", // Adjust to content
-        }}
-      >
-        Download Geo Referenced Data
-      </button>
-      <style>
-    {`
-      @keyframes customPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      .custom-pulse {
-        animation: customPulse 2s infinite;
-      }
-    `}
-  </style>
-    </div>
-    {/* Abundance/Occurrence Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
-      <h3 className="text-xl font-semibold text-gray-700">Data Abundance/Occurrence</h3>
-      <button
-        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 opacity-100 custom-pulse"
-        onClick={() => handleDownload("AbuOcu")}
-        style={{
-          width: "auto", // Adjust to content
-        }}
-      >
-        Download Abundance/Occurrence
-      </button>
-      <style>
-    {`
-      @keyframes customPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      .custom-pulse {
-        animation: customPulse 2s infinite;
-      }
-    `}
-  </style>
-    </div>
-  </div>
-  
         {/* Modal for Download Instructions */}
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
           <Box
@@ -533,115 +534,115 @@ const Addexcel = () => {
             </IconButton>
             {/* <Typography variant="h6">Instructions for {downloadType}</Typography> */}
             <Typography variant="body1" className=" mt-4 text-gray-700">
-            {downloadType === "AbuOcu" ? (
-  <div>
-    <p className="text-lg font-semibold">
-      Abundance/Occurrence Module Instructions
-    </p>
-    <p className="mt-2">
-      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
-    </p>
-    <p className="mt-2">
-      <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
-    </p>
-    <p className="mt-2">
-      <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
-    </p>
-    <p className="mt-2">
-      <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
-    </p>
-    <p className="mt-2">
-      <strong>SPECIES_NAME:</strong> Enter species name in the format: <em>SpeciesName(Weight)</em> (e.g., Pomfret(400), Ponyfish(100)).
-    </p>
-    <p className="mt-2">
-      <strong>TOTAL_CATCH [IN KGS]:</strong> Provide the combined weight for all species (e.g., 500).
-    </p>
-    <p className="mt-4 text-center font-semibold text-blue-600">
-      Click the download button below to retrieve the file.
-    </p>
-  </div>
-) : downloadType === "Landing-Village" ? (
-  <div>
-    <p className="text-lg font-semibold">
-      Landing Village Module Instructions
-    </p>
-    <p className="mt-2">
-      <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
-    </p>
-    <p className="mt-2">
-      <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
-    </p>
-    <p className="mt-2">
-      <strong>VILLAGE NAME:</strong> Provide the village name.
-    </p>
-    <p className="mt-2">
-      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
-    </p>
-    <p className="mt-2">
-      <strong>CATCH_WEIGHT:</strong> Enter the Catch Weight for each Species (e.g., Pomfret (10kg), Ponyfish(20kg)).
-    </p>
-    <p className="mt-4 text-center font-semibold text-blue-600">
-      Click the download button below to retrieve the file.
-    </p>
-  </div>
-) : downloadType === "GEO-REF" ? (
-  <div>
-    <p className="text-lg font-semibold">
-      Geo Referenced Data Module Instructions
-    </p>
-    <p className="mt-2">
-      <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
-    </p>
-    <p className="mt-2">
-      <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
-    </p>
-    <p className="mt-2">
-      <strong>SPECIES_NAME:</strong> List the observed species (e.g., Pomfret, Ponyfish).
-    </p>
-    <p className="mt-2">
-      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
-    </p>
-    <p className="mt-2">
-      <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Field for total catch weight (e.g., 200).
-    </p>
-    <p className="mt-2">
-      <strong>LANDING NAME:</strong> Field for Landing Center Name.
-    </p>
-    <p className="mt-2">
-      <strong>GEAR TYPE:</strong> Field for Gear Type (e.g., Hooks and Lines).
-    </p>
-    <p className="mt-4 text-center font-semibold text-blue-600">
-      Click the download button below to retrieve the file.
-    </p>
-  </div>
-) : downloadType === "pfz" ? (
-  <div>
-    <p className="text-lg font-semibold">
-      PFZ/Non PFZ Module Instructions
-    </p>
-    <p className="mt-2">
-      <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
-    </p>
-    <p className="mt-2">
-      <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
-    </p>
-    <p className="mt-2">
-      <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
-    </p>
-    <p className="mt-2">
-      <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
-    </p>
-    <p className="mt-2">
-      <strong>MAJOR_SPECIES:</strong> List the observed species (e.g., Pomfret, Ponyfish).
-    </p>
-    <p className="mt-2">
-      <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field for total catch weight (e.g., 200).
-    </p>
-    <p className="mt-4 text-center font-semibold text-blue-600">
-      Click the download button below to retrieve the file.
-    </p>
-  </div>
-) : null}
+              {downloadType === "AbuOcu" ? (
+                <div>
+                  <p className="text-lg font-semibold">
+                    Abundance/Occurrence Module Instructions
+                  </p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                  </p>
+                  <p className="mt-2">
+                    <strong>SPECIES_NAME:</strong> Enter species name in the format: <em>SpeciesName(Weight)</em> (e.g., Pomfret(400), Ponyfish(100)).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH [IN KGS]:</strong> Provide the combined weight for all species (e.g., 500).
+                  </p>
+                  <p className="mt-4 text-center font-semibold text-blue-600">
+                    Click the download button below to retrieve the file.
+                  </p>
+                </div>
+              ) : downloadType === "Landing-Village" ? (
+                <div>
+                  <p className="text-lg font-semibold">
+                    Landing Village Module Instructions
+                  </p>
+                  <p className="mt-2">
+                    <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>VILLAGE NAME:</strong> Provide the village name.
+                  </p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>CATCH_WEIGHT:</strong> Enter the Catch Weight for each Species (e.g., Pomfret (10kg), Ponyfish(20kg)).
+                  </p>
+                  <p className="mt-4 text-center font-semibold text-blue-600">
+                    Click the download button below to retrieve the file.
+                  </p>
+                </div>
+              ) : downloadType === "GEO-REF" ? (
+                <div>
+                  <p className="text-lg font-semibold">
+                    Geo Referenced Data Module Instructions
+                  </p>
+                  <p className="mt-2">
+                    <strong>LATITUDE:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>LONGITUDE:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SPECIES_NAME:</strong> List the observed species (e.g., Pomfret, Ponyfish).
+                  </p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Field for total catch weight (e.g., 200).
+                  </p>
+                  <p className="mt-2">
+                    <strong>LANDING NAME:</strong> Field for Landing Center Name.
+                  </p>
+                  <p className="mt-2">
+                    <strong>GEAR TYPE:</strong> Field for Gear Type (e.g., Hooks and Lines).
+                  </p>
+                  <p className="mt-4 text-center font-semibold text-blue-600">
+                    Click the download button below to retrieve the file.
+                  </p>
+                </div>
+              ) : downloadType === "pfz" ? (
+                <div>
+                  <p className="text-lg font-semibold">
+                    PFZ/Non PFZ Module Instructions
+                  </p>
+                  <p className="mt-2">
+                    <strong>FISHING_DATE [YYYY-MM-DD]:</strong> Enter the fishing date (e.g., 2024-12-02).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LAT:</strong> Provide the latitude in decimal degrees (e.g., 15.6789).
+                  </p>
+                  <p className="mt-2">
+                    <strong>SHOOT_LONG:</strong> Provide the longitude in decimal degrees (e.g., -74.1234).
+                  </p>
+                  <p className="mt-2">
+                    <strong>DEPTH [IN METRES (M)]:</strong> Enter a single depth value in meters (e.g., 25). Avoid ranges like 25-30 m.
+                  </p>
+                  <p className="mt-2">
+                    <strong>MAJOR_SPECIES:</strong> List the observed species (e.g., Pomfret, Ponyfish).
+                  </p>
+                  <p className="mt-2">
+                    <strong>TOTAL_CATCH WEIGHT [IN KGS]:</strong> Optional field for total catch weight (e.g., 200).
+                  </p>
+                  <p className="mt-4 text-center font-semibold text-blue-600">
+                    Click the download button below to retrieve the file.
+                  </p>
+                </div>
+              ) : null}
             </Typography>
 
             <Button
@@ -663,28 +664,28 @@ const Addexcel = () => {
           </h2>
           {/* Dropdown for Data Type Selection */}
           <div className="w-full mb-6 pb-9 flex flex-col items-center">
-  <label
-    htmlFor="dataType"
-    className="block text-gray-600 font-medium p-3"
-  >
-    Select Data Type:
-  </label>
-  <div className="flex flex-col items-start">
-    <select
-      id="dataType"
-      className="w-auto px-6 py-3 text-lg border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
-      onChange={(e) => setDownloadType(e.target.value)}
-      value={downloadType}
-    >
-      <option value="" disabled>
-        -- Choose an option --
-      </option>
-      <option value="PFZ/NON-PFZ">PFZ/Non-PFZ</option>
-      <option value="Landing-Village">Landing Village</option>
-      <option value="GEO-REF">Geo Referenced Data</option>
-      <option value="obundance/accurrence">Data Occurrence/accurrence</option>
-      <option value="others">Others</option>
-    </select>
+            <label
+              htmlFor="dataType"
+              className="block text-gray-600 font-medium p-3"
+            >
+              Select Data Type:
+            </label>
+            <div className="flex flex-col items-start">
+              <select
+                id="dataType"
+                className="w-auto px-6 py-3 text-lg border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
+                onChange={(e) => setDownloadType(e.target.value)}
+                value={downloadType}
+              >
+                <option value="" disabled>
+                  -- Choose an option --
+                </option>
+                <option value="PFZ/NON-PFZ">PFZ/Non-PFZ</option>
+                <option value="Landing-Village">Landing Village</option>
+                <option value="GEO-REF">Geo Referenced Data</option>
+                <option value="obundance/accurrence">Data Occurrence/accurrence</option>
+                <option value="others">Others</option>
+              </select>
               {/* <h1 onClick={openForm}>other</h1> */}
               <button
                 onClick={openForm}
@@ -692,9 +693,9 @@ const Addexcel = () => {
               >
                 Others / Disorganized Data
               </button>
-            {/* </div> */}
-            {/* {/* <div className="flex items-center gap-20 "> */}
-                {/* <select
+              {/* </div> */}
+              {/* {/* <div className="flex items-center gap-20 "> */}
+              {/* <select
                   id="dataType"
                   className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
                   onChange={(e) => setDownloadType(e.target.value)}
@@ -706,14 +707,14 @@ const Addexcel = () => {
                   <option value="abundance">Data Abundance</option>
                   <option value="occurrence">Data Occurrence</option>
                 </select> */}
-              
-                {/* <button
+
+              {/* <button
                   onClick={openForm}
                  className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
                   Others / Disorganized Data
                 </button> */}
-              </div>
+            </div>
           </div>
           <p className="text-gray-500 text-md text-center mb-3 -mt-2">
             Upload a CSV or Excel File
@@ -721,11 +722,10 @@ const Addexcel = () => {
           <div
             {...getRootProps()}
             className={`w-full max-w-xl h-64 flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all 
-    ${
-      isDragActive
-        ? "border-purple-500 bg-purple-100"
-        : "border-gray-100 bg-gray-100 hover:shadow-xl hover:border-purple-500"
-    }`}
+    ${isDragActive
+                ? "border-purple-500 bg-purple-100"
+                : "border-gray-100 bg-gray-100 hover:shadow-xl hover:border-purple-500"
+              }`}
           >
             <input {...getInputProps()} disabled={isLoading} />
             <div className="relative w-20 h-20 mx-auto mb-2">
@@ -788,11 +788,10 @@ const Addexcel = () => {
           <button
             onClick={handleUpload}
             className={`mt-6 px-6 py-3 mb-5 text-white font-semibold rounded-lg shadow-md transition-all 
-            ${
-              isLoading
+            ${isLoading
                 ? "bg-blue-300 cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-600"
-            }`}
+              }`}
             disabled={isLoading}
           >
             {isLoading ? "Uploading..." : "Upload File"}

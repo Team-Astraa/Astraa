@@ -8,6 +8,7 @@ import CommunityData from "../models/CommunityData.js";
 import ScientistSaveData from "../models/ScientistSaveData.js";
 import mongoose from "mongoose";
 import transporter from "../Config/transporter.js";
+import SpeciesData from "../models/Species.js"
 
 export const getUnique = async (req, res) => {
   try {
@@ -187,6 +188,7 @@ export const getFilteredCatches = async (req, res) => {
       speciesName,
       depth, // Can be an exact value or a range (min and max)
       sea,
+      region,
       state,
       total_weight,
       dataType, // Filter: abundance or occurrence
@@ -252,6 +254,9 @@ console.log(req.body.filter);
     // Zone type filter
     if (zoneType) {
       query.zoneType = zoneType.toUpperCase(); // PFZ or NON-PFZ
+    }
+    if (region) {
+      query.region = region; // PFZ or NON-PFZ
     }
 
     if(gearType){
@@ -879,5 +884,40 @@ export let sendEmailWithExcel = async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to send emails.", error: error.message });
+  }
+};
+
+
+export const getFilteredSpeciesData = async (req, res) => {
+  try {
+    const { latitude, longitude, fromDate, toDate, village, species } = req.body;
+    console.log(req.body);
+    
+
+    // Build the filter object dynamically
+    let filter = {};
+
+    if (latitude) {
+      filter.latitude = Number(latitude);
+    }
+    if (longitude) {
+      filter.longitude = Number(longitude);
+    }
+    if (fromDate && toDate) {
+      filter.date = { $gte: new Date(fromDate), $lte: new Date(toDate) };
+    }
+    if (village) {
+      filter.village = village;
+    }
+    if (species) {
+      filter.species = species;
+    }
+
+    // Query the database
+    const data = await SpeciesData.find(filter); // No need to populate here if user details are not needed
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

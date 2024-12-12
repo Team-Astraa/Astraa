@@ -76,6 +76,7 @@ import {
   fetchInvitation,
   getCommunitiesByCreator,
   getFilteredCatches,
+  getFilteredSpeciesData,
   getScientistSaveDataByUser,
   getUnique,
   graphdata,
@@ -211,6 +212,7 @@ app.post("/user/getUniqueSpeciesNames", getUniqueSpeciesNames);
 // Scientist Routes
 app.get("/scientist/unique-species", getUnique);
 app.post("/scientist/filter-data", getFilteredCatches);
+app.post("/scientist/filter-data-by-species", getFilteredSpeciesData);
 app.post("/scientist/create-community", createCommunity);
 app.post("/scientist/fetch-communities", getCommunitiesByCreator);
 app.post("/scientist/fetch-scientists", fetchAllScientists);

@@ -3,7 +3,7 @@ import Map, { Marker, Popup, Source, Layer } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Typography } from "@mui/material";
 
-const FilterMap = ({ catchData, props }) => {
+const FilterMap = ({ catchData, props  }) => {
   const [popupInfo, setPopupInfo] = useState(null);
   const [viewMode, setViewMode] = useState(props.type); // 'markers', 'heatmap', 'clusters'
 

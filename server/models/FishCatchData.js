@@ -6,7 +6,7 @@ const SpeciesSchema = new mongoose.Schema({
     trim: true,
   },
   catch_weight: {
-    type: String,
+    type: Number,
     default: null, // Default to null if catch weight is not provided
   },
 });
@@ -21,11 +21,11 @@ const CatchSchema = new mongoose.Schema(
       // Date of the fishing activity is mandatory
     },
     latitude: {
-      type: String,
+      type: Number,
       required: true, // Latitude of fishing location is mandatory
     },
     longitude: {
-      type: String,
+      type: Number,
       required: true, // Longitude of fishing location is mandatory
     },
     depth: {
@@ -59,7 +59,7 @@ const CatchSchema = new mongoose.Schema(
       type: String,
     },
     total_weight: {
-      type: String,
+      type: Number,
       default: 0,
     },
     dataId: {

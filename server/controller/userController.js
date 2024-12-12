@@ -190,8 +190,8 @@ const cleanData = (data, userId, id, dataType) => {
       if (item.TOTAL_CATCH && typeof item.TOTAL_CATCH === "string") {
         flag = true;
         catchWeights = item.TOTAL_CATCH.split(",").map((w) =>
-          parseFloat(w.trim())
-        ); // Map TOTAL_CATCH to an array of weights
+          parseFloat(w.trim()) || 0
+        ); // Map TOTAL_CATCH to an array of weights, fallback to 0
       }
 
       // Process species and map weights
@@ -204,7 +204,7 @@ const cleanData = (data, userId, id, dataType) => {
         // If the species string contains a weight in parentheses, extract it
         if (match) {
           speciesName = match[1].trim().toLowerCase(); // Get species name
-          catchWeight = parseInt(match[2].trim()); // Get catch weight
+          catchWeight = parseInt(match[2].trim(), 10) || 0; // Get catch weight, fallback to 0
         } else if (catchWeights[i] !== undefined) {
           // If there’s no weight in parentheses, use the weight from TOTAL_CATCH
           catchWeight = catchWeights[i];
@@ -228,15 +228,15 @@ const cleanData = (data, userId, id, dataType) => {
         const depthValue = item.DEPTH.split("-")[0]
           .trim()
           .replace(/[^\d.]/g, ""); // Extract lower range value if it's a range
-        depth = parseFloat(depthValue);
+        depth = parseFloat(depthValue) || 0; // Fallback to 0
       } else if (typeof item.DEPTH === "number") {
         depth = item.DEPTH; // Already numeric, no conversion needed
       }
     }
 
-    // Categorize location by latitude and longitude (Assuming you have the categorizeLocation function)
-    const latitude = parseFloat(item.LATITUDE);
-    const longitude = parseFloat(item.LONGITUDE);
+    // Categorize location by latitude and longitude
+    const latitude = parseFloat(item.LATITUDE) || 0;
+    const longitude = parseFloat(item.LONGITUDE) || 0;
     const { sea, state, region } = categorizeLocation(latitude, longitude); // This assumes you have a function that categorizes location
 
     // Parse date (you can define parseExcelDate and parseDate as needed)
@@ -248,9 +248,10 @@ const cleanData = (data, userId, id, dataType) => {
 
     // Calculate total weight of the catch
     const totalWeight = !flag
-      ? parseFloat(item.TOTAL_CATCH)
+      ? parseFloat(item.TOTAL_CATCH) || 0
       : species.reduce((sum, sp) => sum + (sp.catch_weight || 0), 0); // Sum of all catch weights
     flag = false;
+
     return {
       date,
       latitude,
@@ -264,7 +265,7 @@ const cleanData = (data, userId, id, dataType) => {
       region,
       dataType,
       verified: false,
-      total_weight: totalWeight,
+      total_weight: isNaN(totalWeight) ? 0 : totalWeight,
       zoneType: item.TYPE ? item.TYPE.trim() : "",
       LANDINGNAME: item.LANDINGNAM || null,
       Gear_type: item["Gear type"] || null,
@@ -319,6 +320,7 @@ export const uploadCSV = async (req, res) => {
 
       // Clean and normalize data
       data = cleanData(rawData, userId, id, dataType);
+
     } else if (file.mimetype === "text/csv") {
       // Parse CSV file
       const results = [];
@@ -638,6 +640,7 @@ export const uploadSpeciesData = async (req, res) => {
     const file = req.file;
     console.log(req.file);
     const fileType = file.mimetype;
+    
 
     // Parse the file based on extension
     let data;

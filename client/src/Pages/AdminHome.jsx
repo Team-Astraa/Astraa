@@ -9,12 +9,15 @@ import axios from "axios";
 
 const AdminHome = () => {
   const tables = {
-    "PFZ/NON-PFZ": ["Date", "Status", "Data Id", "Username", "Species"],
-    "Landing-Village": ["Species name", "Date", "Catch (kg)", "Landing Name", "Gear type"],
-    "GEO-REF": ["Latitude", "Longitude", "Species", "Depth", "Total Weight"],
-    "abundance": ["Date", "Latitude", "Longitude", "Depth", "Species", "Total Weight"],
-    "occurrence": ["Species", "Date", "Location", "Total Catch"],
-  };
+    "PFZ/NON-PFZ": ["Date", "Status", "Data Id", "Username", "type"],
+    "Landing-Village": ["Date", "Status", "Data Id", "Username", "type"],
+    "GEO-REF": ["Date", "Status", "Data Id", "Username", "type"],
+    "abundance/occurrence": ["Date", "Status", "Data Id", "Username", "type"]  };
+  // const tables = {
+  //   "PFZ/NON-PFZ": ["Date", "Status", "Data Id", "Username", "type"],
+  //   "Landing-Village": ["Species name", "Date", "Catch (kg)", "Landing Name", "Gear type"],
+  //   "GEO-REF": ["Latitude", "Longitude", "Species", "Depth", "Total Weight"],
+  //   "abundance/occurrence": ["Date", "Latitude", "Longitude", "Depth", "Species", "Total Weight"]  };
 
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState("PFZ/NON-PFZ");

@@ -99,7 +99,7 @@ export let  totalCatchWeightBySpecies = async(req , res)=>{
         {
           $group: {
             _id: '$species.name',
-            totalCatchWeight: { $sum: '$species.catch_weight' },
+            totalCatchWeight: Number({ $sum: '$species.catch_weight' }),
           },
         },
         {
