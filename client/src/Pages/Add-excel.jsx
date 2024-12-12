@@ -412,10 +412,10 @@ const Addexcel = () => {
       Download Templates
     </h2>
     {/* PFZ Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border h-1/5 border-gray-300">
   <h3 className="text-xl font-semibold text-gray-700">PFZ/Non PFZ</h3>
   <button
-    className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+    className="px-3 py-2 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
     onClick={() => handleDownload("pfz")}
     style={{
       width: "auto", // Adjust to content
@@ -437,10 +437,10 @@ const Addexcel = () => {
 </div>
 
     {/* Landing Village Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border h-1/5 border-gray-300">
       <h3 className="text-xl font-semibold text-gray-700">Landing Village</h3>
       <button
-        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+        className="px-3 py-2 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
         onClick={() => handleDownload("Landing-Village")}
         style={{
           width: "auto", // Adjust to content
@@ -461,10 +461,10 @@ const Addexcel = () => {
   </style>
     </div>
     {/* Geo Referenced Data Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border h-1/5 border-gray-300">
       <h3 className="text-xl font-semibold text-gray-700">Geo Referenced Data</h3>
       <button
-        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
+        className="px-3 py-2 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 custom-pulse"
         onClick={() => handleDownload("GEO-REF")}
         style={{
           width: "auto", // Adjust to content
@@ -485,10 +485,10 @@ const Addexcel = () => {
   </style>
     </div>
     {/* Abundance/Occurrence Section */}
-    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border border-gray-300">
+    <div className="bg-gray-100 shadow-sm rounded-lg p-4 flex flex-col items-center space-y-4 border h-1/5 border-gray-300">
       <h3 className="text-xl font-semibold text-gray-700">Data Abundance/Occurrence</h3>
       <button
-        className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 opacity-100 custom-pulse"
+        className="px-3 py-2 bg-blue-500 text-white text-sm rounded-md shadow hover:bg-blue-600 transition-all duration-300 opacity-100 custom-pulse"
         onClick={() => handleDownload("AbuOcu")}
         style={{
           width: "auto", // Adjust to content
@@ -661,6 +661,13 @@ const Addexcel = () => {
           <h2 className="text-3xl font-bold text-gray-800 p-6 text-center">
             Upload Data
           </h2>
+        <button
+                onClick={openForm}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                Others / Disorganized Data
+      </button> 
+        <strong>OR</strong>
           {/* Dropdown for Data Type Selection */}
           <div className="w-full mb-6 pb-9 flex flex-col items-center">
   <label
@@ -676,6 +683,7 @@ const Addexcel = () => {
       onChange={(e) => setDownloadType(e.target.value)}
       value={downloadType}
     >
+
       <option value="" disabled>
         -- Choose an option --
       </option>
@@ -686,12 +694,7 @@ const Addexcel = () => {
       <option value="others">Others</option>
     </select>
               {/* <h1 onClick={openForm}>other</h1> */}
-              <button
-                onClick={openForm}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              >
-                Others / Disorganized Data
-              </button>
+              
             {/* </div> */}
             {/* {/* <div className="flex items-center gap-20 "> */}
                 {/* <select
