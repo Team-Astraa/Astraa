@@ -12,14 +12,16 @@ import toast from "react-hot-toast";
 import FishCatchGraphs from "../Components/Scientist/FilterDataGraphs";
 import FilterMap from "../Components/Scientist/FilterMap";
 import MapboxVisualization from "./Admin-map";
+import DataTable2 from "./VillageData";
+import MapComponent from "./GetLatLong";
 
 
 const FilterForm = () => {
-
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
-  let [fileLoader, setfileLoader] = useState(false)
+  let [fileLoader, setfileLoader] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  const [isModalOpen4, setIsModalOpen4] = useState(false);
   let [majorDataType, setMajorDataType] = useState("")
   const [filters, setFilters] = useState({
     lat: "",
@@ -40,11 +42,16 @@ const FilterForm = () => {
     AbundanceOrAccurance: ""
   });
 
+
+  let handleMap = () => {
+    setIsModalOpen4(true)
+  }
+
   let [msg, setMsg] = useState("confirm please")
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  let [message, setMessage] = useState("")
+  let [message, setMessage] = useState("");
   let [Visualize, setVisualize] = useState(false);
   const [activeTab, setActiveTab] = useState('PFZ/NON-PFZ'); // 'data' as the initial active tab
   let [tag, setTag] = useState("data");
@@ -65,9 +72,64 @@ const FilterForm = () => {
     }));
   };
 
+
+
+  const [filters2, setFilters2] = useState({ date: "", latitude: "", longitude: "" });
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters2((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  let [vf, svf] = useState({})
+
   const submit = async () => {
 
 
+    if (activeTab == "Landing-Village") {
+      svf(filters2)
+      setOpenModal(false)
+      return
+    } {
+      isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-3/4 max-w-3xl overflow-auto max-h-[80vh]">
+            <h2 className="text-xl font-bold text-gray-700 mb-4">Species Data</h2>
+            <div className="overflow-auto">
+              <table className="table-auto w-full border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border border-gray-300 px-4 py-2 text-left">Species</th>
+                    <th className="border border-gray-300 px-4 py-2 text-right">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(modalContent).map(([key, value], idx) => (
+                    <tr
+                      key={key}
+                      className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                    >
+                      <td className="border border-gray-300 px-4 py-2 text-left capitalize">
+                        {key.replace(/\./g, " ")}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-right">
+                        {value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button
+              onClick={closeModal}
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )
+    }
 
     setMessage("Loading Data.. Please Wait")
     setOpenModal(false)
@@ -92,9 +154,12 @@ const FilterForm = () => {
         } else if (key === "dataType" || key === "zoneType") {
           requestData[key] = value;
         } else {
-          requestData[key] = key.includes("lat") || key.includes("long") || key.includes("radius")
-            ? parseFloat(value)
-            : value;
+          requestData[key] =
+            key.includes("lat") ||
+            key.includes("long") ||
+            key.includes("radius")
+              ? parseFloat(value)
+              : value;
         }
       }
     }
@@ -118,7 +183,7 @@ const FilterForm = () => {
     } finally {
       setLoading(false);
 
-      setOpenModal(false)
+      setOpenModal(false);
     }
   };
 
@@ -145,9 +210,8 @@ const FilterForm = () => {
     return Number(value).toFixed(decimals);
   };
 
-
   const downloadExcelWithCharts = async (fileType) => {
-    setfileLoader(true)
+    setfileLoader(true);
     try {
       // Check if data is valid
       if (!Array.isArray(data) || data.length === 0) {
@@ -167,10 +231,12 @@ const FilterForm = () => {
         item.species.forEach(({ name, catch_weight }) => {
           speciesCounts[name] = (speciesCounts[name] || 0) + catch_weight;
           seaSpeciesCounts[item.sea] = seaSpeciesCounts[item.sea] || {};
-          seaSpeciesCounts[item.sea][name] = (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
+          seaSpeciesCounts[item.sea][name] =
+            (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
 
           stateSpeciesCounts[item.state] = stateSpeciesCounts[item.state] || {};
-          stateSpeciesCounts[item.state][name] = (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
+          stateSpeciesCounts[item.state][name] =
+            (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
         });
       });
 
@@ -186,7 +252,9 @@ const FilterForm = () => {
       // Populate Data Sheet
       const flattenedData = data.map((item) => {
         const speciesNames = item.species.map((s) => s.name).join(", ");
-        const speciesWeights = item.species.map((s) => s.catch_weight).join(", ");
+        const speciesWeights = item.species
+          .map((s) => s.catch_weight)
+          .join(", ");
         return {
           ...item,
           species_names: speciesNames,
@@ -204,7 +272,13 @@ const FilterForm = () => {
       });
 
       // Generate Charts
-      const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+      const generateChart = async (
+        type,
+        labels,
+        dataset,
+        chartTitle,
+        colors
+      ) => {
         const chartCanvas = document.createElement("canvas");
         chartCanvas.width = 800;
         chartCanvas.height = 400;
@@ -264,14 +338,24 @@ const FilterForm = () => {
         await generateChart(
           "bar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by State",
           colorSchemes[1]
         ),
         await generateChart(
           "bar",
           seaNames,
-          seaNames.map((sea) => Object.values(seaSpeciesCounts[sea] || {}).reduce((a, b) => a + b, 0)),
+          seaNames.map((sea) =>
+            Object.values(seaSpeciesCounts[sea] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by Sea",
           colorSchemes[2]
         ),
@@ -292,7 +376,12 @@ const FilterForm = () => {
         await generateChart(
           "radar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "State Comparison Radar",
           colorSchemes[5]
         ),
@@ -300,8 +389,15 @@ const FilterForm = () => {
 
       // Style Chart Sheet Header
       chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
-      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
-      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.getCell("A1").font = {
+        bold: true,
+        size: 16,
+        color: { argb: "FF5A5A" },
+      };
+      chartSheet.getCell("A1").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
       chartSheet.mergeCells("A1:M2");
 
       // Add Charts in Grid Layout
@@ -337,28 +433,24 @@ const FilterForm = () => {
       link.download = `filtered_data_with_multiple_charts.${fileType}`;
       link.click();
       URL.revokeObjectURL(link.href);
-      setfileLoader(false)
+      setfileLoader(false);
     } catch (error) {
-      setfileLoader(false)
+      setfileLoader(false);
       console.error("Error generating Excel file:", error);
     }
   };
 
-
-  let [openModale, setOpenModale] = useState(false)
+  let [openModale, setOpenModale] = useState(false);
 
   const [emails, setEmails] = useState([]);
 
-
   let emailModel = () => {
-    setOpenModale(true)
-
-  }
+    setOpenModale(true);
+  };
 
   const downloadExcelWithCharts2 = async () => {
-    setLoading(true)
-    setOpenModale(false)
-
+    setLoading(true);
+    setOpenModale(false);
 
     try {
       // Check if data is valid
@@ -379,10 +471,12 @@ const FilterForm = () => {
         item.species.forEach(({ name, catch_weight }) => {
           speciesCounts[name] = (speciesCounts[name] || 0) + catch_weight;
           seaSpeciesCounts[item.sea] = seaSpeciesCounts[item.sea] || {};
-          seaSpeciesCounts[item.sea][name] = (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
+          seaSpeciesCounts[item.sea][name] =
+            (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
 
           stateSpeciesCounts[item.state] = stateSpeciesCounts[item.state] || {};
-          stateSpeciesCounts[item.state][name] = (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
+          stateSpeciesCounts[item.state][name] =
+            (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
         });
       });
 
@@ -398,7 +492,9 @@ const FilterForm = () => {
       // Populate Data Sheet
       const flattenedData = data.map((item) => {
         const speciesNames = item.species.map((s) => s.name).join(", ");
-        const speciesWeights = item.species.map((s) => s.catch_weight).join(", ");
+        const speciesWeights = item.species
+          .map((s) => s.catch_weight)
+          .join(", ");
         return {
           ...item,
           species_names: speciesNames,
@@ -420,7 +516,14 @@ const FilterForm = () => {
       // Simulate creating Excel file
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual Excel creation logic
 
-      setMessage("Adding Charts in Excel file..."); const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+      setMessage("Adding Charts in Excel file...");
+      const generateChart = async (
+        type,
+        labels,
+        dataset,
+        chartTitle,
+        colors
+      ) => {
         const chartCanvas = document.createElement("canvas");
         chartCanvas.width = 800;
         chartCanvas.height = 400;
@@ -480,14 +583,24 @@ const FilterForm = () => {
         await generateChart(
           "bar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by State",
           colorSchemes[1]
         ),
         await generateChart(
           "bar",
           seaNames,
-          seaNames.map((sea) => Object.values(seaSpeciesCounts[sea] || {}).reduce((a, b) => a + b, 0)),
+          seaNames.map((sea) =>
+            Object.values(seaSpeciesCounts[sea] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by Sea",
           colorSchemes[2]
         ),
@@ -508,7 +621,12 @@ const FilterForm = () => {
         await generateChart(
           "radar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "State Comparison Radar",
           colorSchemes[5]
         ),
@@ -516,8 +634,15 @@ const FilterForm = () => {
 
       // Style Chart Sheet Header
       chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
-      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
-      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.getCell("A1").font = {
+        bold: true,
+        size: 16,
+        color: { argb: "FF5A5A" },
+      };
+      chartSheet.getCell("A1").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
       chartSheet.mergeCells("A1:M2");
 
       // Add Charts in Grid Layout
@@ -554,50 +679,45 @@ const FilterForm = () => {
       // link.click();
       // URL.revokeObjectURL(link.href);
 
-      setMessage("sending Email...")
+      setMessage("sending Email...");
       const formData = new FormData();
       formData.append("file", blob, "filtered_data_with_multiple_charts.xlsx");
-
 
       emails.forEach((email) => formData.append("emails[]", email));
 
       try {
-        await axios.post("http://localhost:5000/scientist/sendEmail", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axios.post(
+          "http://localhost:5000/scientist/sendEmail",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
         toast.success("Excel file and email sent successfully!");
       } catch (error) {
         console.error("Error sending email:", error);
         toast.error("Failed to send email. Check console for details.");
       }
 
-
-      setLoading(false)
-      setMessage("")
+      setLoading(false);
+      setMessage("");
     } catch (error) {
-      setfileLoader(false)
+      setfileLoader(false);
       console.error("Error generating Excel file:", error);
     }
   };
-
 
   const handleModalClose = () => {
     setIsModalOpen3(false);
   };
 
-
-
-
   const handleSaveData = async () => {
-
-
-
     if (!name) {
-      toast.error("Please enter name first")
+      toast.error("Please enter name first");
       return;
     }
 
-    setOpenModaln(false)
+    setOpenModaln(false);
 
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
@@ -621,20 +741,16 @@ const FilterForm = () => {
       return;
     }
 
-
     // Proceed with the API call
     const dataToSend = {
       uploadedBy: userId,
       data: data,
       filters,
-      name
+      name,
     };
 
-    setMessage("Wait Saving Your Filtered Data")
+    setMessage("Wait Saving Your Filtered Data");
     setLoading(true);
-
-
-
 
     setError(null);
     setResponseMessage("");
@@ -651,20 +767,17 @@ const FilterForm = () => {
       );
 
       setResponseMessage(response.data.message || "Data saved successfully!");
-      toast.success(response.data.message)
+      toast.success(response.data.message);
       setLoading(false);
     } catch (err) {
       console.error("Error saving data:", err);
       setLoading(false);
     } finally {
-      setMessage("")
-
+      setMessage("");
     }
   };
 
-
-  const [onConfirm, setOnConfirm] = useState(() => () => { });
-
+  const [onConfirm, setOnConfirm] = useState(() => () => {});
 
   const handleEmailChange = (e) => {
     const input = e.target.value;
@@ -674,8 +787,7 @@ const FilterForm = () => {
     setEmails(emailArray);
   };
 
-
-  let [openModalc, setOpenModalc] = useState(false)
+  let [openModalc, setOpenModalc] = useState(false);
   const [communities, setCommunities] = useState([]);
   let shareToCommunity = async () => {
     console.log("varad");
@@ -687,7 +799,6 @@ const FilterForm = () => {
       console.error(error);
     }
   };
-
 
   const fetchCommunities = async () => {
     const userInSession = localStorage.getItem("aquaUser");
@@ -706,7 +817,6 @@ const FilterForm = () => {
       console.log("Error fetching communities");
     }
   };
-
 
   const sendDataForCommunity = async (id) => {
     const userInSession = localStorage.getItem("aquaUser");
@@ -731,14 +841,13 @@ const FilterForm = () => {
     }
   };
 
-
   const handleVisualize = async () => {
     setVisualize(true);
-  }
+  };
 
   const handleTabClick = (t) => {
     if (!data) {
-      return toast.error("Please Apply the filters first...")
+      return toast.error("Please Apply the filters first...");
     }
     setTag(t);
   };
@@ -765,15 +874,87 @@ const FilterForm = () => {
     { label: "PFZ/NON-PFZ", value: "PFZ/NON-PFZ" },
     { label: "Landing Village", value: "Landing-Village" },
     { label: "GEO-REF", value: "GEO-REF" },
-    { label: "All", value: "All" },
+    { label: "ALL", value: "ALL" },
   ];
+
+
+  const headers = [
+    {
+      header: "Species Name",
+      key: "species",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Latitude",
+      key: "latitude",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Longitude",
+      key: "longitude",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Depth",
+      key: "depth",
+      showIn: ["ALL", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Total Weight (kg)",
+      key: "total_weight",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Sea",
+      key: "sea",
+      showIn: ["GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "State",
+      key: "state",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Zone Type",
+      key: "zoneType",
+      showIn: ["ALL", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Gear_type",
+      key: "Gear_type",
+      showIn: ["ALL", "GEO-REF"],
+    },
+    {
+      header: "LANDINGNAME",
+      key: "LANDINGNAME",
+      showIn: ["GEO-REF"],
+    },
+    {
+      header: "Date",
+      key: "date",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+  ];
+
+
+
+  // Filter headers based on activeTab
+  const filteredHeaders = headers.filter((header) =>
+    header.showIn.includes(activeTab)
+
+
+  );
+
+
+
+
+
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
       <nav className="w-full mb-4 px-12 flex items-center justify-between p-4 shadow-lg bg-white">
         <h1 className="text-3xl font-bold ">Apply Filters</h1>
         <Button onClick={() => setOpenModal(true)}>Apply Filters</Button>
-
       </nav>
 
       {
@@ -784,7 +965,7 @@ const FilterForm = () => {
 
 
 
-              <div className="w-[70%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
+              <div className="w-[80%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
                 <div className="w-full h-12 bg-gray-100 flex items-center justify-between px-6 shadow-sm rounded-t-lg">
                   {tabs2.map((tab) => (
                     <div
@@ -800,7 +981,8 @@ const FilterForm = () => {
                   ))}
                 </div>
 
-                <div className="w-full flex border-b">
+                <div className={"w-full border-b " + (activeTab === "Landing-Village" ? "hidden" : "flex")}>
+
                   <div
                     onClick={() => handleTabClick("data")}
                     className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 border-r  cursor-pointer hover:bg-gray-200"
@@ -815,115 +997,107 @@ const FilterForm = () => {
                   </div>
                 </div>
 
-                {tag === "graphs" ? (
-                  <FishCatchGraphs
-                    data={data}
-                    fileLoader={fileLoader}
-                    setfileLoader={setfileLoader}
-                  />
-                ) : data && tag == "data" ? (
-                  <>
-                    <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
-                      <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
-                      <div className="flex gap-4">
-                        {[
-                          {
-                            onClick: () => downloadExcelWithCharts("xlsx"),
-                            icon: "fa-file-excel",
-                            bg: "bg-green-600",
-                            hoverBg: "hover:bg-green-700",
-                          },
-                          {
-                            onClick: () => downloadExcelWithCharts("csv"),
-                            icon: "fa-file-csv",
-                            bg: "bg-green-500",
-                            hoverBg: "hover:bg-green-600",
-                          },
-                          {
-                            onClick: openNameModel,
-                            icon: "fa-floppy-disk",
-                            bg: "bg-blue-500",
-                            hoverBg: "hover:bg-blue-600",
-                          },
-                          {
-                            onClick: shareToCommunity,
-                            icon: "fa-share",
-                            bg: "bg-purple-600",
-                            hoverBg: "hover:bg-purple-700",
-                          },
-                          {
-                            onClick: emailModel,
-                            icon: "fa-envelope",
-                            bg: "bg-red-600",
-                            hoverBg: "hover:bg-red-700",
-                          },
-                        ].map(({ onClick, icon, bg, hoverBg }, idx) => (
-                          <button
-                            key={idx}
-                            onClick={onClick}
-                            className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
-                          >
-                            <i className={`fa-solid ${icon} text-xl`}></i>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                {
+                  activeTab === "Landing-Village" ?
+                    <DataTable2 filters={vf} loading={loading} setLoading={setLoading} /> :
+                    <>
 
-                    <div className="grid grid-cols-9 gap-4 p-4 border-t bg-gray-50">
-                      {[
-                        "Species Name",
-                        "Latitude",
-                        "Longitude",
-                        "Depth",
-                        "Total Weight (kg)",
-                        "Sea",
-                        "State",
-                        "Zone Type",
-                        "Date",
-                      ].map((header, idx) => (
+                      <>
+                        {
+                          data && tag == "data" ?
+                            <>
+                              <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
+                                <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
+                                <div className="flex gap-4">
+                                  {[
+                                    {
+                                      onClick: () => downloadExcelWithCharts("xlsx"),
+                                      icon: "fa-file-excel",
+                                      bg: "bg-green-600",
+                                      hoverBg: "hover:bg-green-700",
+                                    },
+                                    {
+                                      onClick: () => downloadExcelWithCharts("csv"),
+                                      icon: "fa-file-csv",
+                                      bg: "bg-green-500",
+                                      hoverBg: "hover:bg-green-600",
+                                    },
+                                    {
+                                      onClick: openNameModel,
+                                      icon: "fa-floppy-disk",
+                                      bg: "bg-blue-500",
+                                      hoverBg: "hover:bg-blue-600",
+                                    },
+                                    {
+                                      onClick: shareToCommunity,
+                                      icon: "fa-share",
+                                      bg: "bg-purple-600",
+                                      hoverBg: "hover:bg-purple-700",
+                                    },
+                                    {
+                                      onClick: emailModel,
+                                      icon: "fa-envelope",
+                                      bg: "bg-red-600",
+                                      hoverBg: "hover:bg-red-700",
+                                    },
+                                  ].map(({ onClick, icon, bg, hoverBg }, idx) => (
+                                    <button
+                                      key={idx}
+                                      onClick={onClick}
+                                      className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
+                                    >
+                                      <i className={`fa-solid ${icon} text-xl`}></i>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                         
                         <div
-                          key={idx}
-                          className="text-center font-semibold text-sm uppercase bg-gray-200 p-2 border rounded shadow-sm"
+                          className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-50`}
                         >
-                          {header}
+                          {filteredHeaders.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="text-center font-semibold text-sm uppercase bg-gray-200 p-2 border rounded shadow-sm"
+                            >
+                              {item.header}
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
 
-                    {data.map((item, index) => (
-                      <div
-                        key={index}
-                        className={`grid grid-cols-9 gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                          }`}
-                      >
-                        <div className="text-center cursor-pointer hover:text-blue-500">
-                          <i
-                            onClick={() => openModal2(item.species)}
-                            className="fa-solid fa-eye text-xl"
-                          ></i>
-                        </div>
-                        <div className="text-center text-gray-700 font-medium">
-                          {truncateDecimals(item.latitude, 2)}
-                        </div>
-                        <div className="text-center text-gray-700 font-medium">
-                          {truncateDecimals(item.longitude, 2)}
-                        </div>
-                        <div className="text-center">{item.depth}</div>
-                        <div className="text-center">{item.total_weight}</div>
-                        <div className="text-center">{item.sea}</div>
-                        <div className="text-center">{item.state}</div>
-                        <div className="text-center">{item.zoneType}</div>
-                        <div className="text-center text-gray-600">
-                          {new Date(item.date).toLocaleDateString()}
-                        </div>
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <div className="flex items-center justify-center mt-24">
-                    <h1 className="text-3xl font-bold text-gray-600">Please Apply The Filters</h1>
-                  </div>
-                )}
+                        {/* Render Data Rows */}
+                        {data && data.map((item, index) => (
+                          <div
+                            key={index}
+                            className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                              }`}
+                          >
+                            {filteredHeaders.map((field, idx) => (
+                              <div key={idx} className="text-center text-gray-700 font-medium">
+                                {field.key === "date"
+                                  ? new Date(item[field.key]).toLocaleDateString()
+                                  : field.key === "latitude" || field.key === "longitude"
+                                    ? truncateDecimals(item[field.key], 2)
+                                    : field.key === "species"
+                                      ? (
+                                        <i
+                                          onClick={() => openModal2(item[field.key])}
+                                          className="fa-solid fa-eye text-xl cursor-pointer hover:text-blue-500"
+                                        ></i>
+                                      )
+                                      : item[field.key]}
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                           </> : data && tag=="graphs" &&  <FishCatchGraphs data={data}  fileLoader={fileLoader}  setfileLoader={setfileLoader}/>
+                        }
+
+
+                      </>
+
+                    </>
+                }
 
                 {isModalOpen && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -977,12 +1151,12 @@ const FilterForm = () => {
               </div>
 
 
-              <div className="w-[30%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
+              <div className="w-[20%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
 
-            {data !== null && <FilterMap catchData={data} props={{ type: "markers", showButton: true }} /> }
-                
+                {data !== null && <FilterMap catchData={data} props={{ type: "markers", showButton: true }} />}
 
-            {/* <MapboxVisualization
+
+                {/* <MapboxVisualization
               catchData={data}
               props={{ type: "markers", showButton: true }} /> */}
 
@@ -1022,68 +1196,125 @@ const FilterForm = () => {
       }
 
       <>
-
-        <Modal className="p-4" show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal
+          className="p-4"
+          show={openModal}
+          onClose={() => setOpenModal(false)}
+        >
           <Modal.Header>Apply Your Filters</Modal.Header>
           <Modal.Body>
             {/* Input Fields */}
             {/* Checkbox Filters */}
-            <div className="flex gap-4 mb-6">
-              {[
-                { label: "Abundance", type: "majorDataType", value: "abundance" },
-                { label: "Occurrence", type: "majorDataType", value: "occurrence" },
-                { label: "PFZ", type: "zoneType", value: "PFZ" },
-                { label: "NON-PFZ", type: "zoneType", value: "NON-PFZ" },
-              ].map(({ label, type, value }) => (
-                <label
-                  key={value}
-                  className="flex items-center gap-2 text-gray-700 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={filters[type] === value}
-                    onChange={() => handleCheckboxChange(type, value)}
-                    className="accent-blue-600"
-                  />
-                  {label}
-                </label>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[
-                { label: "Latitude", name: "lat", type: "number" },
-                { label: "Longitude", name: "long", type: "number" },
-                { label: "Radius (km)", name: "radius", type: "number" },
-                { label: "Species Name", name: "speciesName", type: "text" },
-                { label: "Depth Min", name: "depthMin", type: "number" },
-                { label: "Depth Max", name: "depthMax", type: "number" },
-                { label: "From Date", name: "from", type: "date" },
-                { label: "To Date", name: "to", type: "date" },
-                { label: "Sea", name: "sea", type: "text" },
-                { label: "State", name: "state", type: "text" },
-                { label: "Wt. Min (kg)", name: "totalWeightMin", type: "number" },
-                { label: "Wt. Max (kg)", name: "totalWeightMax", type: "number" },
-              ].map(({ label, name, type }, index) => (
-                <div key={index} className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-600">{label}</label>
-                  <input
-                    type={type}
-                    name={name}
-                    value={filters[name]}
-                    onChange={handleChange}
-                    className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                </div>
-              ))}
-            </div>
+            {
+              activeTab === "Landing-Village" ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                      { label: "From Date", name: "from", type: "date" },
+                      { label: "To date", name: "to", type: "date" },
+                      { label: "Latitude", name: "latitude", type: "number" },
+                      { label: "Longitude", name: "longitude", type: "number" },
+                      { label: "Village", name: "village", type: "text" },
+                    ].map(({ label, name, type }, index) => (
+                      <div key={index} className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-600">{label}</label>
+                        <input
+                          type={type}
+                          name={name}
+                          value={filters2[name]}
+                          onChange={handleFilterChange}
+                          className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-4 mb-6">
+                    <button onClick={handleMap} className="flex items-center p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300">
+                      <i className="fa-solid p-2 rounded-full bg-blue-500 text-red-500 fa-map-pin"></i>
+                      <span className="ml-2">GET CO-ORDINATES</span>
+                    </button>
+
+                    {[
+                      { label: "Abundance", type: "majorDataType", value: "abundance" },
+                      { label: "Occurrence", type: "majorDataType", value: "occurrence" },
+                      { label: "PFZ", type: "zoneType", value: "PFZ" },
+                      { label: "NON-PFZ", type: "zoneType", value: "NON-PFZ" },
+                    ].map(({ label, type, value }) => (
+                      <label
+                        key={value}
+                        className="flex items-center gap-2 text-gray-700 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={filters[type] === value}
+                          onChange={() => handleCheckboxChange(type, value)}
+                          className="accent-blue-600"
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                      { label: "Latitude", name: "lat", type: "number" },
+                      { label: "Longitude", name: "long", type: "number" },
+                      { label: "Radius (km)", name: "radius", type: "number" },
+                      { label: "Species Name", name: "speciesName", type: "text" },
+                      { label: "Depth Min", name: "depthMin", type: "number" },
+                      { label: "Depth Max", name: "depthMax", type: "number" },
+                      { label: "From Date", name: "from", type: "date" },
+                      { label: "To Date", name: "to", type: "date" },
+                      { label: "Sea", name: "sea", type: "text" },
+                      { label: "State", name: "state", type: "text" },
+                      { label: "Wt. Min (kg)", name: "totalWeightMin", type: "number" },
+                      { label: "Wt. Max (kg)", name: "totalWeightMax", type: "number" },
+                      ...(activeTab === "ALL" || activeTab === "GEO-REF"
+                        ? [
+                          { label: "LANDINGNAME", name: "LANDINGNAME", type: "text" },
+                          { label: "Gear Type", name: "gearType", type: "dropdown" },
+                        ]
+                        : []),
+                    ].map(({ label, name, type }, index) => (
+                      <div key={index} className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-600">{label}</label>
+                        {type === "dropdown" ? (
+                          <select
+                            name={name}
+                            value={filters[name]}
+                            onChange={handleChange}
+                            className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          >
+                            <option value="">Select</option>
+                            <option value="Hook and Line">Hook and Line</option>
+                            <option value="Gill Net">Gill Net</option>
+                            <option value="Bottom Trawling">Bottom Trawling</option>
+                            <option value="Ring Net">Ring Net</option>
+                            <option value="Trawler">Trawler</option>
+                            <option value="Seine nets">Seine nets</option>
+                            <option value="Fyke nets">Fyke nets</option>
+                          </select>
+                        ) : (
+                          <input
+                            type={type}
+                            name={name}
+                            value={filters[name]}
+                            onChange={handleChange}
+                            className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )
+            }
+
             {/* Submit Button */}
-
-
-
           </Modal.Body>
-
           <Modal.Footer>
-
             <Button onClick={submit} disabled={loading}>
               {loading ? "Loading..." : "Apply Filters"}
             </Button>
@@ -1129,7 +1360,9 @@ const FilterForm = () => {
                     onClick={() => sendDataForCommunity(community._id)}
                     className="flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer shadow-md transition duration-300"
                   >
-                    <span className="text-lg font-medium">{community.name}</span>
+                    <span className="text-lg font-medium">
+                      {community.name}
+                    </span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 text-green-500"
@@ -1231,6 +1464,38 @@ const FilterForm = () => {
             </Button>
             <Button
               onClick={() => setOpenModaln(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={isModalOpen4}
+          onClose={() => setIsModalOpen4(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">Enter Co-ordinates</h2>
+          </Modal.Header>
+
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <MapComponent setFilters={setFilters} />
+
+          </Modal.Body>
+
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              onClick={() => setIsModalOpen4(false)}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Submit
+            </Button>
+            <Button
+              onClick={() => setIsModalOpen4(false)}
               className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
             >
               Decline

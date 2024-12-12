@@ -39,6 +39,9 @@ import Profile from "./Pages/Profile";
 import SidebarNew from "./Components/SidebarNew";
 import ScientistSavedDataSets from "./Pages/ScientistSavedDataSets";
 import StatusPanel from "./Pages/StatusPanel";
+import DataTable2 from "./Pages/VillageData";
+import Bot from "./Pages/Bot";
+
 // function AppLayout({ children }) {
 //   const location = useLocation();
 //   const [login, setlogin] = useState(false);
@@ -102,6 +105,7 @@ function App() {
           <Route path="/scientist/home" element={<ScientistHome />} />
           <Route path="/ScientistCharts" element={<ScientistCharts />} />
           <Route path="/getStatusLogs" element={<StatusPanel />} />
+          <Route path="/bot" element={<Bot />} />
 
           {/* Protected Routes */}
           {/* <Route path="/" element={<PrivateRoute element={<HomePage />} />} /> */}
@@ -134,7 +138,7 @@ function App() {
             element={<Admindatauploadusers />}
           />
           <Route
-            path="/admin/unverify-fish-data/:userId/:dataId"
+            path="/admin/unverify-fish-data/:userId/:dataId/:table"
             element={<Adminverifyfish />}
           />
           <Route path="/map" element={<FishingMap />} />
@@ -152,6 +156,10 @@ function App() {
           <Route
             path="/scientist/community/:communityId"
             element={<Communitydetail />}
+          />
+          <Route
+            path="/village"
+            element={<DataTable2 />}
           />
           <Route
             path="/scientist/community/share/:shareURL"

@@ -132,7 +132,7 @@ const ScientistHome = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/scientist/filter-data",
-        requestData
+       { filter: requestData}
       );
       setData(response.data);
     } catch (error) {

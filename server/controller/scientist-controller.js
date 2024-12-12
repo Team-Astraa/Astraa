@@ -191,8 +191,11 @@ export const getFilteredCatches = async (req, res) => {
       total_weight,
       dataType, // Filter: abundance or occurrence
       zoneType,
+      gearType,
+      LANDINGNAME,
       majorDataType, // Filter: PFZ or NON-PFZ
     } = req.body.filter;
+console.log(req.body.filter);
 
     // Build the query object dynamically
     const query = {};
@@ -251,6 +254,16 @@ export const getFilteredCatches = async (req, res) => {
       query.zoneType = zoneType.toUpperCase(); // PFZ or NON-PFZ
     }
 
+    if(gearType){
+      query.Gear_type = gearType; // Trawl or Longline
+    }
+    if(gearType){
+      query.Gear_type = gearType; // Trawl or Longline
+    }
+    if(LANDINGNAME){
+      query.LANDINGNAME = LANDINGNAME; // Trawl or Longline
+    }
+
     // Fetch and sort catches matching the query
     const catches = await Catch.find(query).sort({ createdAt: -1 }); // Sort by createdAt in descending order
 
@@ -267,6 +280,7 @@ export const getFilteredCatches = async (req, res) => {
           species.name.match(speciesRegex)
         );
 
+        
         // If after filtering, species array is empty, you can handle it if needed
         if (catchItem.species.length === 0) {
           return false; // Optionally exclude this item if no species match

@@ -272,8 +272,8 @@ const Addexcel = () => {
 
             <h2>Add New Catch Record</h2>
 
-            {/* manual form */}
-            {/* <form onSubmit={handleSubmit}>
+            manual form 
+              <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
                 <TextField
                   label="Date"
@@ -399,10 +399,10 @@ const Addexcel = () => {
               >
                 Submit
               </Button>
-            </form> */}
+            </form>
           </Box>
         </Modal>
-      )}
+      )} 
 
 <div className="flex space-x-8">
   {/* Download Card */}
@@ -679,23 +679,22 @@ const Addexcel = () => {
       <option value="" disabled>
         -- Choose an option --
       </option>
-      <option value="pfz/non-pfz">PFZ/Non PFZ</option>
-      <option value="landing-village">Landing Village</option>
-      <option value="geo-referenced-data">Geo Referenced Data</option>
-      <option value="abundance">Data Abundance</option>
-      <option value="occurrence">Data Occurrence</option>
-      <option value="others">Others</option>
+      <option value="PFZ/NON-PFZ">PFZ/Non-PFZ</option>
+      <option value="Landing-Village">Landing Village</option>
+      <option value="GEO-REF">Geo Referenced Data</option>
+      {/* <option value="obundance/accurrence">Data Occurrence/accurrence</option>
+      <option value="others">Others</option> */}
     </select>
               {/* <h1 onClick={openForm}>other</h1> */}
-              {/* <button
+              <button
                 onClick={openForm}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 Others / Disorganized Data
-              </button> */}
-            </div>
-            {/* <div className="flex items-center gap-20 ">
-                <select
+              </button>
+            {/* </div> */}
+            {/* {/* <div className="flex items-center gap-20 "> */}
+                {/* <select
                   id="dataType"
                   className="w-auto px-4 py-2 border border-[#C5AEDC] rounded-lg shadow-sm focus:ring-[#5E3D99] focus:border-[#5E3D99]"
                   onChange={(e) => setDownloadType(e.target.value)}
@@ -706,15 +705,15 @@ const Addexcel = () => {
                   </option>
                   <option value="abundance">Data Abundance</option>
                   <option value="occurrence">Data Occurrence</option>
-                </select>
+                </select> */}
               
-                <button
+                {/* <button
                   onClick={openForm}
                  className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
                   Others / Disorganized Data
-                </button>
-              </div> */}
+                </button> */}
+              </div>
           </div>
           <p className="text-gray-500 text-md text-center mb-3 -mt-2">
             Upload a CSV or Excel File

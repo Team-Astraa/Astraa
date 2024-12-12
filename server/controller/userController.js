@@ -11,6 +11,7 @@ import CatchData from "../models/FishcatchDataNew.js";
 import SpeciesData from "../models/Species.js"; // Import the schema
 
 import path from "path"; // To handle file paths
+import mongoose from "mongoose";
 const stateBoundaries = {
   Gujarat: { latitude: 22.2587, longitude: 71.1924 },
   Maharashtra: { latitude: 19.7515, longitude: 75.7139 },
@@ -30,7 +31,12 @@ const categorizeLocation = (latitude, longitude) => {
   // Determine the sea region
   if (latitude >= 8 && latitude <= 23 && longitude >= 68 && longitude <= 75) {
     sea = "Arabian Sea";
-  } else if (latitude >= 10 && latitude <= 23 && longitude >= 80 && longitude <= 90) {
+  } else if (
+    latitude >= 10 &&
+    latitude <= 23 &&
+    longitude >= 80 &&
+    longitude <= 90
+  ) {
     sea = "Bay of Bengal";
   } else if (latitude < 8) {
     sea = "Indian Ocean";
@@ -72,7 +78,6 @@ const categorizeLocation = (latitude, longitude) => {
 
   return { sea, state: closestState, region };
 };
-
 
 // Main cleanData function
 // Function to handle Excel date serial numbers
@@ -232,7 +237,7 @@ const cleanData = (data, userId, id, dataType) => {
     // Categorize location by latitude and longitude (Assuming you have the categorizeLocation function)
     const latitude = parseFloat(item.LATITUDE);
     const longitude = parseFloat(item.LONGITUDE);
-    const { sea, state ,region } = categorizeLocation(latitude, longitude); // This assumes you have a function that categorizes location
+    const { sea, state, region } = categorizeLocation(latitude, longitude); // This assumes you have a function that categorizes location
 
     // Parse date (you can define parseExcelDate and parseDate as needed)
     const dateValue = item["FISHING Date"];
@@ -261,8 +266,8 @@ const cleanData = (data, userId, id, dataType) => {
       verified: false,
       total_weight: totalWeight,
       zoneType: item.TYPE ? item.TYPE.trim() : "",
-      landingName: item.LANDINGNAM || null,
-      gearType: item["Gear type"] || null,
+      LANDINGNAME: item.LANDINGNAM || null,
+      Gear_type: item["Gear type"] || null,
     };
   });
 };
@@ -626,9 +631,13 @@ const parseDate = (dateValue) => {
 
 export const uploadSpeciesData = async (req, res) => {
   try {
+    let { userId, dataType } = req.body;
+
+    let id = generateRandomId();
     // Get the file from the request
     const file = req.file;
     console.log(req.file);
+    const fileType = file.mimetype;
 
     // Parse the file based on extension
     let data;
@@ -651,7 +660,7 @@ export const uploadSpeciesData = async (req, res) => {
 
     // Transform data
     const transformedData = data.map((row) => {
-      const { Longitude, Latitude, Date, Village, ...speciesData } = row;
+      const { Longitude, Latitude, Date, Villege, ...speciesData } = row;
 
       const parsedDate = parseDate(Date); // Parse the date using the updated function
       if (!parsedDate) {
@@ -662,10 +671,22 @@ export const uploadSpeciesData = async (req, res) => {
         longitude: parseFloat(Longitude), // Parse Longitude to float
         latitude: parseFloat(Latitude), // Parse Latitude to float
         date: parsedDate || new Date(), // Use parsed date or the current date if invalid
-        village: Village || null, // Set to null if Village is missing
-        species: speciesData, // Directly store species data as an object (Mixed type)
+        village: Villege || null, // Set to null if Village is missing
+        species: speciesData,
+        userId,
+        dataType,
+        dataId: id, // Directly store species data as an object (Mixed type)
       };
     });
+
+    const logData = {
+      userId,
+      dataType,
+      fileType,
+      dataId: id, // Include fileType here
+    };
+
+    await Log.create(logData);
 
     // Save the transformed data to the database
     await SpeciesData.insertMany(transformedData);
@@ -882,7 +903,7 @@ export const getUniqueSpeciesNames = async (req, res) => {
 // };
 
 export const getDataStatus = async (req, res) => {
-  console.log('Controller reached');
+  console.log("Controller reached");
   const { userId } = req.query; // Extract userId from query parameters
   console.log("userId", userId);
   try {
@@ -907,3 +928,80 @@ export const getDataStatus = async (req, res) => {
     return res.status(500).json({ message: "Internal server error", error });
   }
 };
+
+export const getSpeciesDataByUserId = async (req, res) => {
+  const { userId } = req.body; // Extract userId from request params
+
+  // Validate userId
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid userId format" });
+  }
+
+  try {
+    // Query the database to find all species data for the given userId
+    const speciesData = await SpeciesData.find({ userId });
+
+    // Check if data exists
+    if (!speciesData || speciesData.length === 0) {
+      return res.status(404).json({ message: "No data found for this user." });
+    }
+
+    // Send response
+    res.status(200).json({
+      success: true,
+      count: speciesData.length,
+      data: speciesData,
+    });
+  } catch (error) {
+    // Handle any errors during the query
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export let villagefilter = async (req, res) => {
+  try {
+    console.log("Request Body:", req.body);
+    const { from, to, longitude, latitude, village } = req.body.filters;
+    console.log(village);
+    
+    let query = {};
+
+    // Add date range filter if provided
+    if (from || to) {
+      query.date = {};
+      if (from) query.date.$gte = new Date(from);
+      if (to) query.date.$lte = new Date(to);
+    }
+
+    // Validate and add longitude filter if provided
+    if (longitude !== undefined && longitude !== null) {
+      const parsedLongitude = parseFloat(longitude);
+      if (!isNaN(parsedLongitude)) {
+        query.longitude = parsedLongitude;
+      }
+    }
+
+    // Validate and add latitude filter if provided
+    if (latitude !== undefined && latitude !== null) {
+      const parsedLatitude = parseFloat(latitude);
+      if (!isNaN(parsedLatitude)) {
+        query.latitude = parsedLatitude;
+      }
+    }
+
+    // Add village filter if provided
+    if (village) {
+      query.village = { $regex: new RegExp(village, 'i') }; // Case-insensitive regex for partial match
+    }
+
+    console.log("Query:", query);
+
+    const data = await SpeciesData.find(query); // Replace `SpeciesData` with your actual model
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+};
+
+
