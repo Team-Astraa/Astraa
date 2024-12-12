@@ -10,13 +10,19 @@ import Loader from "../Components/Loader";
 import ScientistLoader from "../Components/Scientist/ScientistLoader";
 import toast from "react-hot-toast";
 import FishCatchGraphs from "../Components/Scientist/FilterDataGraphs";
+import FilterMap from "../Components/Scientist/FilterMap";
+import MapboxVisualization from "./Admin-map";
+import DataTable2 from "./VillageData";
+import MapComponent from "./GetLatLong";
+
 
 const FilterForm = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
   let [fileLoader, setfileLoader] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
-  let [majorDataType, setMajorDataType] = useState("PFZ/NON-PFZ");
+  const [isModalOpen4, setIsModalOpen4] = useState(false);
+  let [majorDataType, setMajorDataType] = useState("")
   const [filters, setFilters] = useState({
     lat: "",
     long: "",
@@ -33,15 +39,23 @@ const FilterForm = () => {
     totalWeightMax: "",
     dataType: null,
     zoneType: null,
+    AbundanceOrAccurance: ""
   });
 
-  let [msg, setMsg] = useState("confirm please");
+
+  let handleMap = () => {
+    setIsModalOpen4(true)
+  }
+
+  let [msg, setMsg] = useState("confirm please")
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   let [message, setMessage] = useState("");
   let [Visualize, setVisualize] = useState(false);
-  const [activeTab, setActiveTab] = useState("data"); // 'data' as the initial active tab
+  const [activeTab, setActiveTab] = useState('PFZ/NON-PFZ'); // 'data' as the initial active tab
+  let [tag, setTag] = useState("data");
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,9 +72,67 @@ const FilterForm = () => {
     }));
   };
 
+
+
+  const [filters2, setFilters2] = useState({ date: "", latitude: "", longitude: "" });
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters2((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  let [vf, svf] = useState({})
+
   const submit = async () => {
-    setMessage("Loading Data.. Please Wait");
-    setOpenModal(false);
+
+
+    if (activeTab == "Landing-Village") {
+      svf(filters2)
+      setOpenModal(false)
+      return
+    } {
+      isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-3/4 max-w-3xl overflow-auto max-h-[80vh]">
+            <h2 className="text-xl font-bold text-gray-700 mb-4">Species Data</h2>
+            <div className="overflow-auto">
+              <table className="table-auto w-full border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border border-gray-300 px-4 py-2 text-left">Species</th>
+                    <th className="border border-gray-300 px-4 py-2 text-right">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(modalContent).map(([key, value], idx) => (
+                    <tr
+                      key={key}
+                      className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                    >
+                      <td className="border border-gray-300 px-4 py-2 text-left capitalize">
+                        {key.replace(/\./g, " ")}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-right">
+                        {value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button
+              onClick={closeModal}
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    setMessage("Loading Data.. Please Wait")
+    setOpenModal(false)
     const requestData = {};
 
     for (const [key, value] of Object.entries(filters)) {
@@ -94,20 +166,19 @@ const FilterForm = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:5000/scientist/filter-data",
-        {
-          filter: requestData,
-          majorDataType: majorDataType,
-        }
-      );
+      const response = await axios.post("http://localhost:5000/scientist/filter-data", {
+        filter: requestData,
+        majorDataType: activeTab
+      });
       setData(response.data);
-      setOpenModal(false);
+      console.log(response.data);
+      setOpenModal(false)
       setLoading(false);
       toast.success("Data Loaded Successfully");
     } catch (error) {
-      toast.error("Error Occured");
-      toast.error("Error Occured");
+      setData(null)
+      toast.error(error.response.data.message || "No data available");
+
       console.error("Error fetching filtered data:", error);
     } finally {
       setLoading(false);
@@ -774,23 +845,110 @@ const FilterForm = () => {
     setVisualize(true);
   };
 
-  const handleTabClick = (tab) => {
+  const handleTabClick = (t) => {
     if (!data) {
       return toast.error("Please Apply the filters first...");
     }
-    setActiveTab(tab);
+    setTag(t);
   };
 
   let openNameModel = () => {
-    setOpenModaln(true);
-  };
+    setOpenModaln(true)
+
+  }
+
+  let handleTab = (tab) => {
+    setActiveTab(tab);
+    setData([])
+    setFilters({ ...filters, dataType: tab });
+
+
+
+
+
+
+  }
+
 
   const tabs2 = [
-    { label: "PFZ/NON_PFZ", value: "PFZ/NON_PFZ" },
-    { label: "Landing Village", value: "Landing Village" },
+    { label: "PFZ/NON-PFZ", value: "PFZ/NON-PFZ" },
+    { label: "Landing Village", value: "Landing-Village" },
     { label: "GEO-REF", value: "GEO-REF" },
-    { label: "All", value: "All" },
+    { label: "ALL", value: "ALL" },
   ];
+
+
+  const headers = [
+    {
+      header: "Species Name",
+      key: "species",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Latitude",
+      key: "latitude",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Longitude",
+      key: "longitude",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Depth",
+      key: "depth",
+      showIn: ["ALL", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Total Weight (kg)",
+      key: "total_weight",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Sea",
+      key: "sea",
+      showIn: ["GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "State",
+      key: "state",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Zone Type",
+      key: "zoneType",
+      showIn: ["ALL", "PFZ/NON-PFZ"],
+    },
+    {
+      header: "Gear_type",
+      key: "Gear_type",
+      showIn: ["ALL", "GEO-REF"],
+    },
+    {
+      header: "LANDINGNAME",
+      key: "LANDINGNAME",
+      showIn: ["GEO-REF"],
+    },
+    {
+      header: "Date",
+      key: "date",
+      showIn: ["ALL", "GEO-REF", "PFZ/NON-PFZ"],
+    },
+  ];
+
+
+
+  // Filter headers based on activeTab
+  const filteredHeaders = headers.filter((header) =>
+    header.showIn.includes(activeTab)
+
+
+  );
+
+
+
+
+
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
@@ -799,261 +957,237 @@ const FilterForm = () => {
         <Button onClick={() => setOpenModal(true)}>Apply Filters</Button>
       </nav>
 
-      {fileLoader ? (
-        <ScientistFileDownload />
-      ) : loading ? (
-        <ScientistLoader message={message} />
-      ) : (
-        <>
-          <div className="min-h-screen flex gap-4">
-            <div className="w-[10%] h-fit ml-2 shadow-lg bg-white p-4 rounded-lg">
-              <div>
-                <h1 className="text-lg font-bold mb-2">Your Filters</h1>
-              </div>
-              <div>
-                <ul className="list-none list-disc list-inside space-y-1">
-                  {Object.entries(filters).map(([key, value], index) => {
-                    // Check if the value exists (is not empty, null, or undefined)
-                    if (value) {
-                      return (
-                        <li key={index} className="text-sm text-gray-700">
-                          {key} : {value}
-                        </li>
-                      );
-                    }
-                    return null; // Skip rendering if value doesn't exist
-                  })}
-                </ul>
-              </div>
-            </div>
+      {
+        fileLoader ? <ScientistFileDownload /> : loading ? <ScientistLoader message={message} />
+          :
+          <>
+            <div className="min-h-screen flex gap-4">
 
-            <div className="w-[60%] h-auto shadow-lg bg-white rounded-md">
-              <div className="w-full h-12 shadow-sm bg-gray-100 flex items-center justify-between px-4 rounded-lg">
-                {tabs2.map((tab) => (
+
+
+              <div className="w-[80%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
+                <div className="w-full h-12 bg-gray-100 flex items-center justify-between px-6 shadow-sm rounded-t-lg">
+                  {tabs2.map((tab) => (
+                    <div
+                      key={tab.value}
+                      onClick={() => { handleTab(tab.value) }}
+                      className={`px-6 py-2 cursor-pointer rounded-md transition duration-300 ${activeTab === tab.value
+                        ? "bg-green-600 text-white shadow-md"
+                        : "text-gray-700 hover:bg-gray-200"
+                        }`}
+                    >
+                      {tab.label}
+                    </div>
+                  ))}
+                </div>
+
+                <div className={"w-full border-b " + (activeTab === "Landing-Village" ? "hidden" : "flex")}>
+
                   <div
-                    key={tab.value}
-                    onClick={() => setActiveTab(tab.value)}
-                    className={`px-4 py-2 cursor-pointer rounded-md transition-all duration-300 hover:bg-gray-200 ${
-                      activeTab === tab.value
-                        ? "bg-green-500 text-white"
-                        : "text-gray-700"
-                    }`}
+                    onClick={() => handleTabClick("data")}
+                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 border-r  cursor-pointer hover:bg-gray-200"
                   >
-                    {tab.label}
+                    {activeTab}
                   </div>
-                ))}
-              </div>
-              <div className="w-full flex">
-                <div
-                  className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${
-                    activeTab === "data" ? "bg-green-500" : ""
-                  }`}
-                  onClick={() => handleTabClick("data")}
-                >
-                  <h1 className="text-xl font-bold">{activeTab}</h1>
+                  <div
+                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleTabClick("graphs")}
+                  >
+                    Visualization
+                  </div>
                 </div>
-                <div
-                  className={`w-[50%] flex items-center justify-center h-12 shadow-sm ${
-                    activeTab === "graphs" ? "bg-green-500" : ""
-                  }`}
-                  onClick={() => handleTabClick("graphs")}
-                >
-                  <h1 className="text-xl font-bold">Visualization</h1>
-                </div>
-              </div>
-              {activeTab == "graphs" ? (
-                <FishCatchGraphs
-                  data={data}
-                  fileLoader={fileLoader}
-                  setfileLoader={setfileLoader}
-                />
-              ) : (
-                <>
-                  {data ? (
+
+                {
+                  activeTab === "Landing-Village" ?
+                    <DataTable2 filters={vf} loading={loading} setLoading={setLoading} /> :
                     <>
-                      <div className="flex items-center justify-between w-full p-4 shadow-md">
-                        <h1 className="text-2xl font-bold">Your Data</h1>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex gap-6 items-center justify-evenly">
-                            <button
-                              onClick={() => downloadExcelWithCharts("xlsx")}
-                              className="flex flex-col items-center p-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-300"
-                            >
-                              <i className="fa-solid fa-file-excel text-2xl mb-1"></i>
-                            </button>
-                            <button
-                              onClick={() => downloadExcelWithCharts("csv")}
-                              className="flex flex-col items-center p-3 bg-green-400 text-white rounded-lg shadow-md hover:bg-gren-500 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300"
-                            >
-                              <i className="fa-solid fa-file-csv text-2xl mb-1"></i>
-                            </button>
-                            <button
-                              onClick={openNameModel}
-                              className="flex flex-col items-center p-3 bg-blue-400 text-black rounded-lg shadow-md hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300 transition-all duration-300"
-                            >
-                              <i className="fa-solid fa-floppy-disk text-2xl mb-1"></i>
-                            </button>
-                            <button
-                              onClick={shareToCommunity}
-                              className="flex flex-col items-center p-3 bg-purple-500 text-white rounded-lg shadow-md hover:bg-purple-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300"
-                            >
-                              <i className="fa-solid fa-share text-2xl mb-1"></i>
-                            </button>
-                            <button
-                              onClick={emailModel}
-                              className="flex flex-col items-center p-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
-                            >
-                              <i className="fa-solid fa-envelope text-2xl mb-1"></i>
-                            </button>
+
+                      <>
+                        <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
+                          <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
+                          <div className="flex gap-4">
+                            {[
+                              {
+                                onClick: () => downloadExcelWithCharts("xlsx"),
+                                icon: "fa-file-excel",
+                                bg: "bg-green-600",
+                                hoverBg: "hover:bg-green-700",
+                              },
+                              {
+                                onClick: () => downloadExcelWithCharts("csv"),
+                                icon: "fa-file-csv",
+                                bg: "bg-green-500",
+                                hoverBg: "hover:bg-green-600",
+                              },
+                              {
+                                onClick: openNameModel,
+                                icon: "fa-floppy-disk",
+                                bg: "bg-blue-500",
+                                hoverBg: "hover:bg-blue-600",
+                              },
+                              {
+                                onClick: shareToCommunity,
+                                icon: "fa-share",
+                                bg: "bg-purple-600",
+                                hoverBg: "hover:bg-purple-700",
+                              },
+                              {
+                                onClick: emailModel,
+                                icon: "fa-envelope",
+                                bg: "bg-red-600",
+                                hoverBg: "hover:bg-red-700",
+                              },
+                            ].map(({ onClick, icon, bg, hoverBg }, idx) => (
+                              <button
+                                key={idx}
+                                onClick={onClick}
+                                className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
+                              >
+                                <i className={`fa-solid ${icon} text-xl`}></i>
+                              </button>
+                            ))}
                           </div>
-                          <p className="font-bold text-black flex">
-                            total Row:
-                            <p className="text-green-600 ml-2">{data.length}</p>
-                          </p>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-9 gap-2 p-4 border-t">
-                        {[
-                          "Species Name",
-                          "Latitude",
-                          "Longitude",
-                          "Depth",
-                          "Total Weight (kg)",
-                          "Sea",
-                          "State",
-                          "Zone Type",
-                          "Date",
-                        ].map((header) => (
+
+                        <div
+                          className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-50`}
+                        >
+                          {filteredHeaders.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="text-center font-semibold text-sm uppercase bg-gray-200 p-2 border rounded shadow-sm"
+                            >
+                              {item.header}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Render Data Rows */}
+                        {data && data.map((item, index) => (
                           <div
-                            key={header}
-                            className="font-bold text-sm uppercase bg-gray-200 p-2 border rounded-lg text-center shadow-md"
+                            key={index}
+                            className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 rounded-lg shadow ${index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                              }`}
                           >
-                            {header}
+                            {filteredHeaders.map((field, idx) => (
+                              <div key={idx} className="text-center text-gray-700 font-medium">
+                                {field.key === "date"
+                                  ? new Date(item[field.key]).toLocaleDateString()
+                                  : field.key === "latitude" || field.key === "longitude"
+                                    ? truncateDecimals(item[field.key], 2)
+                                    : field.key === "species"
+                                      ? (
+                                        <i
+                                          onClick={() => openModal2(item[field.key])}
+                                          className="fa-solid fa-eye text-xl cursor-pointer hover:text-blue-500"
+                                        ></i>
+                                      )
+                                      : item[field.key]}
+                              </div>
+                            ))}
                           </div>
                         ))}
-                      </div>
 
-                      {data.map((item, index) => (
-                        <div
-                          key={index}
-                          className={`grid grid-cols-9 gap-2 p-4 rounded-lg shadow hover:bg-gray-50 transition-colors duration-300 ${
-                            index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                          }`}
-                        >
-                          {/* Species with the eye icon */}
-                          <div className="p-2 flex items-center justify-center cursor-pointer hover:text-blue-500">
-                            <i
-                              onClick={() => openModal2(item.species)}
-                              className="fa-solid fa-eye text-2xl"
-                            ></i>
-                          </div>
+                      </>
 
-                          {/* Data Cells */}
-                          <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
-                            {truncateDecimals(item.latitude, 2)}
-                          </div>
-
-                          <div className="p-2 text-center font-medium text-gray-700 border border-purple-200">
-                            {truncateDecimals(item.longitude, 2)}
-                          </div>
-
-                          <div className="p-2 text-center border border-purple-200 break-words">
-                            {item.depth}
-                          </div>
-                          <div className="p-2 text-center border border-purple-200 break-words">
-                            {item.total_weight}
-                          </div>
-                          <div className="p-2 text-center border border-purple-200 break-words">
-                            {item.sea}
-                          </div>
-                          <div className="p-2 text-center border border-purple-200 break-words">
-                            {item.state}
-                          </div>
-                          <div className="p-2 text-center border border-purple-200 break-words">
-                            {item.zoneType}
-                          </div>
-                          <div className="p-2 text-center border border-purple-200 font-medium text-gray-600">
-                            {new Date(item.date).toLocaleDateString()}
-                          </div>
-                        </div>
-                      ))}
                     </>
-                  ) : (
-                    <div className="flex items-center justify-center mt-24">
-                      <h1 className="text-3xl font-bold">
-                        Please Apply The Filters
-                      </h1>
-                    </div>
-                  )}
+                }
 
-                  {/* Modal */}
-                  {isModalOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                      <div className="bg-white rounded-lg w-1/2 p-6">
-                        <div className="flex justify-between items-center mb-4">
-                          <h2 className="text-xl font-bold">Species Details</h2>
-                          <button
-                            className="text-gray-600 hover:text-gray-800"
-                            onClick={closeModal}
-                          >
-                            ✖
-                          </button>
-                        </div>
+                {isModalOpen && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg w-1/2 p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold text-gray-800">Species Details</h2>
+                        <button
+                          className="text-gray-600 hover:text-gray-800"
+                          onClick={closeModal}
+                        >
+                          ✖
+                        </button>
+                      </div>
 
-                        {/* Table to Display Species Data */}
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full table-auto border-collapse">
-                            <thead className="bg-gray-100">
-                              <tr>
-                                <th className="py-2 px-4 border-b text-left font-medium">
-                                  Species Name
-                                </th>
-                                <th className="py-2 px-4 border-b text-left font-medium">
-                                  Catch Weight (kg)
-                                </th>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full table-auto border-collapse">
+                          <thead className="bg-gray-100">
+                            <tr>
+                              <th className="py-2 px-4 border-b text-left font-medium">
+                                Species Name
+                              </th>
+                              <th className="py-2 px-4 border-b text-left font-medium">
+                                Catch Weight (kg)
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {modalData.map((species, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="py-2 px-4 border-t">{species.name}</td>
+                                <td className="py-2 px-4 border-t">
+                                  {species.catch_weight || "N/A"}
+                                </td>
                               </tr>
-                            </thead>
-                            <tbody>
-                              {modalData.map((species, idx) => (
-                                <tr key={idx} className="hover:bg-gray-50">
-                                  <td className="py-2 px-4 border-t text-gray-800">
-                                    {species.name}
-                                  </td>
-                                  <td className="py-2 px-4 border-t text-gray-600">
-                                    {species.catch_weight || "N/A"}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
 
-                        <div className="mt-6 text-right">
-                          <button
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={closeModal}
-                          >
-                            Close
-                          </button>
-                        </div>
+                      <div className="mt-6 text-right">
+                        <button
+                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          onClick={closeModal}
+                        >
+                          Close
+                        </button>
                       </div>
                     </div>
-                  )}
-                </>
-              )}
+                  </div>
+                )}
+              </div>
+
+
+              <div className="w-[20%] p-4 flex flex-col h-auto shadow-lg bg-white rounded-md ">
+
+                {data !== null && <FilterMap catchData={data} props={{ type: "markers", showButton: true }} />}
+
+
+                {/* <MapboxVisualization
+              catchData={data}
+              props={{ type: "markers", showButton: true }} /> */}
+
+                <div className="w-full h-fit ml-2 m-4 shadow-md bg-gradient-to-r from-gray-50 via-white to-gray-50 p-6 rounded-lg border border-gray-200">
+                  <div className="mb-4">
+                    <h1 className="text-xl font-semibold text-gray-800 mb-2 border-b pb-2">
+                      Your Filters
+                    </h1>
+                  </div>
+                  <div>
+                    <ul className="list-none list-inside space-y-2">
+                      {Object.entries(filters).map(([key, value], index) => {
+                        if (value) {
+                          return (
+                            <li
+                              key={index}
+                              className="flex items-center text-sm text-gray-700 gap-2"
+                            >
+                              <span className="font-medium text-gray-600 capitalize">{key}:</span>
+                              <span className="text-gray-800 bg-gray-100 px-2 py-1 rounded-md">
+                                {value}
+                              </span>
+                            </li>
+                          );
+                        }
+                        return null;
+                      })}
+                    </ul>
+                  </div>
+                </div>
+
+
+              </div>
             </div>
 
-            <div className="w-[30%] h-auto shadow-lg bg-white rounded-md">
-              {/* {
-            data && <MapboxVisualization2
-              catchData={data}
-              props={{ type: "markers", showButton: true }}
-            />
-          } */}
-            </div>
-          </div>
-        </>
-      )}
+          </>
+      }
 
       <>
         <Modal
@@ -1065,67 +1199,115 @@ const FilterForm = () => {
           <Modal.Body>
             {/* Input Fields */}
             {/* Checkbox Filters */}
-            <div className="flex gap-4 mb-6">
-              {[
-                { label: "Abundance", type: "dataType", value: "abundance" },
-                { label: "Occurrence", type: "dataType", value: "occurrence" },
-                { label: "PFZ", type: "zoneType", value: "PFZ" },
-                { label: "NON-PFZ", type: "zoneType", value: "NON-PFZ" },
-              ].map(({ label, type, value }) => (
-                <label
-                  key={value}
-                  className="flex items-center gap-2 text-gray-700 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={filters[type] === value}
-                    onChange={() => handleCheckboxChange(type, value)}
-                    className="accent-blue-600"
-                  />
-                  {label}
-                </label>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[
-                { label: "Latitude", name: "lat", type: "number" },
-                { label: "Longitude", name: "long", type: "number" },
-                { label: "Radius (km)", name: "radius", type: "number" },
-                { label: "Species Name", name: "speciesName", type: "text" },
-                { label: "Depth Min", name: "depthMin", type: "number" },
-                { label: "Depth Max", name: "depthMax", type: "number" },
-                { label: "From Date", name: "from", type: "date" },
-                { label: "To Date", name: "to", type: "date" },
-                { label: "Sea", name: "sea", type: "text" },
-                { label: "State", name: "state", type: "text" },
-                {
-                  label: "Wt. Min (kg)",
-                  name: "totalWeightMin",
-                  type: "number",
-                },
-                {
-                  label: "Wt. Max (kg)",
-                  name: "totalWeightMax",
-                  type: "number",
-                },
-              ].map(({ label, name, type }, index) => (
-                <div key={index} className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-600">
-                    {label}
-                  </label>
-                  <input
-                    type={type}
-                    name={name}
-                    value={filters[name]}
-                    onChange={handleChange}
-                    className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                </div>
-              ))}
-            </div>
+            {
+              activeTab === "Landing-Village" ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                      { label: "From Date", name: "from", type: "date" },
+                      { label: "To date", name: "to", type: "date" },
+                      { label: "Latitude", name: "latitude", type: "number" },
+                      { label: "Longitude", name: "longitude", type: "number" },
+                      { label: "Village", name: "village", type: "text" },
+                    ].map(({ label, name, type }, index) => (
+                      <div key={index} className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-600">{label}</label>
+                        <input
+                          type={type}
+                          name={name}
+                          value={filters2[name]}
+                          onChange={handleFilterChange}
+                          className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-4 mb-6">
+                    <button onClick={handleMap} className="flex items-center p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300">
+                      <i className="fa-solid p-2 rounded-full bg-blue-500 text-red-500 fa-map-pin"></i>
+                      <span className="ml-2">GET CO-ORDINATES</span>
+                    </button>
+
+                    {[
+                      { label: "Abundance", type: "majorDataType", value: "abundance" },
+                      { label: "Occurrence", type: "majorDataType", value: "occurrence" },
+                      { label: "PFZ", type: "zoneType", value: "PFZ" },
+                      { label: "NON-PFZ", type: "zoneType", value: "NON-PFZ" },
+                    ].map(({ label, type, value }) => (
+                      <label
+                        key={value}
+                        className="flex items-center gap-2 text-gray-700 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={filters[type] === value}
+                          onChange={() => handleCheckboxChange(type, value)}
+                          className="accent-blue-600"
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                      { label: "Latitude", name: "lat", type: "number" },
+                      { label: "Longitude", name: "long", type: "number" },
+                      { label: "Radius (km)", name: "radius", type: "number" },
+                      { label: "Species Name", name: "speciesName", type: "text" },
+                      { label: "Depth Min", name: "depthMin", type: "number" },
+                      { label: "Depth Max", name: "depthMax", type: "number" },
+                      { label: "From Date", name: "from", type: "date" },
+                      { label: "To Date", name: "to", type: "date" },
+                      { label: "Sea", name: "sea", type: "text" },
+                      { label: "State", name: "state", type: "text" },
+                      { label: "Wt. Min (kg)", name: "totalWeightMin", type: "number" },
+                      { label: "Wt. Max (kg)", name: "totalWeightMax", type: "number" },
+                      ...(activeTab === "ALL" || activeTab === "GEO-REF"
+                        ? [
+                          { label: "LANDINGNAME", name: "LANDINGNAME", type: "text" },
+                          { label: "Gear Type", name: "gearType", type: "dropdown" },
+                        ]
+                        : []),
+                    ].map(({ label, name, type }, index) => (
+                      <div key={index} className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-600">{label}</label>
+                        {type === "dropdown" ? (
+                          <select
+                            name={name}
+                            value={filters[name]}
+                            onChange={handleChange}
+                            className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          >
+                            <option value="">Select</option>
+                            <option value="Hook and Line">Hook and Line</option>
+                            <option value="Gill Net">Gill Net</option>
+                            <option value="Bottom Trawling">Bottom Trawling</option>
+                            <option value="Ring Net">Ring Net</option>
+                            <option value="Trawler">Trawler</option>
+                            <option value="Seine nets">Seine nets</option>
+                            <option value="Fyke nets">Fyke nets</option>
+                          </select>
+                        ) : (
+                          <input
+                            type={type}
+                            name={name}
+                            value={filters[name]}
+                            onChange={handleChange}
+                            className="mt-1 p-2 shadow-lg rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )
+            }
+
             {/* Submit Button */}
           </Modal.Body>
-
           <Modal.Footer>
             <Button onClick={submit} disabled={loading}>
               {loading ? "Loading..." : "Apply Filters"}
@@ -1282,6 +1464,39 @@ const FilterForm = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+        <Modal
+          show={isModalOpen4}
+          onClose={() => setIsModalOpen4(false)}
+          className="bg-gray-900 text-white"
+        >
+          {/* Modal Header */}
+          <Modal.Header className="bg-gray-800 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-green-500">Enter Co-ordinates</h2>
+          </Modal.Header>
+
+          {/* Modal Body */}
+          <Modal.Body className="bg-gray-900">
+            <MapComponent setFilters={setFilters} />
+
+          </Modal.Body>
+
+          {/* Modal Footer */}
+          <Modal.Footer className="bg-gray-800 border-t border-gray-700">
+            <Button
+              onClick={() => setIsModalOpen4(false)}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Submit
+            </Button>
+            <Button
+              onClick={() => setIsModalOpen4(false)}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
       </>
     </div>
   );

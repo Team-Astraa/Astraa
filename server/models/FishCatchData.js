@@ -18,7 +18,7 @@ const CatchSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
-      required: true, // Date of the fishing activity is mandatory
+      // Date of the fishing activity is mandatory
     },
     latitude: {
       type: String,
@@ -66,7 +66,7 @@ const CatchSchema = new mongoose.Schema(
       type: String,
       required: true, // Unique identifier for each catch data record
     },
-    LANDINGNAM: {
+    LANDINGNAME: {
       type: String,
     },
     Gear_type: {
@@ -74,7 +74,8 @@ const CatchSchema = new mongoose.Schema(
     },
     region:{
       type: String,
-    }
+    },
+    
   },
   {
     timestamps: true, // Automatically include createdAt and updatedAt fields
