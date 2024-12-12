@@ -682,8 +682,8 @@ const Addexcel = () => {
       <option value="PFZ/NON-PFZ">PFZ/Non-PFZ</option>
       <option value="Landing-Village">Landing Village</option>
       <option value="GEO-REF">Geo Referenced Data</option>
-      {/* <option value="obundance/accurrence">Data Occurrence/accurrence</option>
-      <option value="others">Others</option> */}
+      <option value="obundance/accurrence">Data Occurrence/accurrence</option>
+      <option value="others">Others</option>
     </select>
               {/* <h1 onClick={openForm}>other</h1> */}
               {/* <button

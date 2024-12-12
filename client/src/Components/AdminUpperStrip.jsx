@@ -5,7 +5,7 @@ import { Chart as ChartJS, registerables, ArcElement, Tooltip, Legend } from "ch
 ChartJS.register(ArcElement, Tooltip, Legend, ...registerables);
 import { Typography } from "@mui/material";
 
-const AdminUpperStrip = () => {
+const AdminUpperStrip = ({userTypes}) => {
   const [speciesCount, setSpeciesCount] = useState(0); // To store the count
   const [loading, setLoading] = useState(true); // To control the loader visibility
   const [currentCount, setCurrentCount] = useState(0); // To animate the count
@@ -13,6 +13,73 @@ const AdminUpperStrip = () => {
   useEffect(() => {
     fetchSpeciesCount();
   }, []);
+
+  function convertUserDataToChartFormat(userData) {
+    // Define the mapping of user types to chart labels
+    const labelMapping = {
+        "research_cruises": "Cruises",
+        "industry-collaborators": "Industry",
+        "research_institute": "Collaborators",
+        "scientist": "Others"
+    };
+
+    // Initialize the data structure
+    const data = {
+        labels: [],
+        datasets: [
+            {
+                label: `Bubble Chart`,
+                data: [],
+                backgroundColor: [
+                    "#ccb8ff", // Light, delicate purple
+                    "#a78bfa", // Lighter variant
+                    "#8057e5", // Slightly muted, darker tone
+                    "#19073d", // Ultra-dark violet
+                    "#7b4bf4", // Rich, deep purple
+                    "#d8b4fe", // Much lighter, pastel purple
+                    "#5a27b4", // Much darker, deep violet
+                    "#c4a5fd", // Subtle, lighter lavender
+                    "#f3e8ff", // Extremely light lavender
+                ],
+            },
+        ],
+    };
+
+    // Aggregate the total users by label
+    const userCounts = {
+        Cruises: 0,
+        Industry: 0,
+        Collaborators: 0,
+        Others: 0,
+    };
+
+    userData.forEach(user => {
+        const label = labelMapping[user.userType];
+        if (label) {
+            userCounts[label] += user.totalUsers;
+        }
+    });
+
+    // Populate the labels and data arrays
+    for (const [label, count] of Object.entries(userCounts)) {
+        data.labels.push(label);
+        data.datasets[0].data.push(count);
+    }
+
+    return data;
+}
+
+// Example usage:
+const userData = [
+    { "totalUsers": 1, "userType": "admin" },
+    { "totalUsers": 3, "userType": "scientist" },
+    { "totalUsers": 5, "userType": "research_institute" },
+    { "totalUsers": 3, "userType": "research_cruises" },
+    { "totalUsers": 11, "userType": "industry-collaborators" }
+];
+
+const chartData = convertUserDataToChartFormat(userData);
+
 
   const fetchSpeciesCount = async () => {
     try {
@@ -42,28 +109,28 @@ const AdminUpperStrip = () => {
     }
   }, [loading, speciesCount, currentCount]);
 
-  const data = {
-    labels: ["Cruises", "Industry", "Collaborators", "Others"],
-    datasets: [
-      {
-        label: `Bubble Chart`,
-        data: [10, 20, 30, 40, 50],
-        backgroundColor: [
-          "#ccb8ff", // Light, delicate purple
-          "#a78bfa", // Lighter variant
+  // const data = {
+  //   labels: ["Cruises", "Industry", "Collaborators", "Others"],
+  //   datasets: [
+  //     {
+  //       label: `Bubble Chart`,
+  //       data: [10, 20, 30, 40, 50],
+  //       backgroundColor: [
+  //         "#ccb8ff", // Light, delicate purple
+  //         "#a78bfa", // Lighter variant
           
-          "#8057e5", // Slightly muted, darker tone
+  //         "#8057e5", // Slightly muted, darker tone
           
-          "#19073d", // Ultra-dark violet
-          "#7b4bf4", // Rich, deep purple
-          "#d8b4fe", // Much lighter, pastel purple
-          "#5a27b4", // Much darker, deep violet
-          "#c4a5fd", // Subtle, lighter lavender
-          "#f3e8ff", // Extremely light lavender
-        ],
-      },
-    ],
-  };
+  //         "#19073d", // Ultra-dark violet
+  //         "#7b4bf4", // Rich, deep purple
+  //         "#d8b4fe", // Much lighter, pastel purple
+  //         "#5a27b4", // Much darker, deep violet
+  //         "#c4a5fd", // Subtle, lighter lavender
+  //         "#f3e8ff", // Extremely light lavender
+  //       ],
+  //     },
+  //   ],
+  // };
 
   const options = {
     plugins: {
@@ -99,7 +166,7 @@ const AdminUpperStrip = () => {
               Total Contributions
             </Typography>
             {/* <div className="text-4xl font-bold">{currentCount}</div> */}
-            <Pie data={data} options={options} />
+            <Pie data={chartData} options={options} />
       </div>
 
       {/* Dummy Box for System Health */}
