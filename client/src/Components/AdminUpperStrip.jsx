@@ -84,7 +84,7 @@ const chartData = convertUserDataToChartFormat(userData);
   const fetchSpeciesCount = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/admin/get-unique-fish-count"
+        "https://aquadb.onrender.com/admin/get-unique-fish-count"
       );
       if (response.data.success) {
         setSpeciesCount(response.data.uniqueSpeciesCount); // Set the total species count

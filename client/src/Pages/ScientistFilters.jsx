@@ -176,7 +176,7 @@ const FilterForm = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/filter-data",
+        "https://aquadb.onrender.com/scientist/filter-data",
         {
           filter: requestData,
           majorDataType: activeTab,
@@ -699,7 +699,7 @@ const FilterForm = () => {
 
       try {
         await axios.post(
-          "http://localhost:5000/scientist/sendEmail",
+          "https://aquadb.onrender.com/scientist/sendEmail",
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -769,7 +769,7 @@ const FilterForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/saveScientistData",
+        "https://aquadb.onrender.com/scientist/saveScientistData",
         dataToSend,
         {
           headers: {
@@ -817,7 +817,7 @@ const FilterForm = () => {
     const { userId } = JSON.parse(userInSession);
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/fetch-communities",
+        "https://aquadb.onrender.com/scientist/fetch-communities",
         {
           creatorId: userId,
         }
@@ -836,7 +836,7 @@ const FilterForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/insert-community-data",
+        "https://aquadb.onrender.com/scientist/insert-community-data",
         {
           uploadedBy: userId,
           communityId: id,

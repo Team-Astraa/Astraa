@@ -9,7 +9,7 @@ const BubbleChart = ({ selectedOptionBub, fromDate, toDate }) => {
   const fetchChartData = async () => {
     try {
       // Construct the API endpoint dynamically using selectedOptionBub
-      const endpoint = `http://localhost:5000/${selectedOptionBub}`;
+      const endpoint = `https://aquadb.onrender.com/${selectedOptionBub}`;
 
       // Make the API request with fromDate, toDate
       const response = await axios.post(endpoint, {

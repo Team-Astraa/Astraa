@@ -28,7 +28,7 @@ const AdminHome = () => {
   const fetchLogsData = async (type) => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/admin/get-userType-Count");
+      const response = await axios.get("https://aquadb.onrender.com/admin/get-userType-Count");
       setUsersType(response.data|| []);
     } catch (error) {
       console.error("Error fetching logs:", error);
@@ -39,7 +39,7 @@ const AdminHome = () => {
   const fetchUsersType = async (type) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/admin/get-other-log", {
+      const response = await axios.post("https://aquadb.onrender.com/admin/get-other-log", {
         dataType: type,
       });
       setTableData(response.data.logs || []);

@@ -39,7 +39,7 @@ const navigate=useNavigate();
     const config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/signup",
+      url: "https://aquadb.onrender.com/signup",
       headers: {
         "Content-Type": "application/json",
       },

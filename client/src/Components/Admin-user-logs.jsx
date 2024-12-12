@@ -11,7 +11,7 @@ const Logs = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/admin/get-latest-logs")
+      .get("https://aquadb.onrender.com/admin/get-latest-logs")
       .then((response) => {
         console.log("get-latest-logs", response);
 

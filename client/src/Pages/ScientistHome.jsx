@@ -90,7 +90,7 @@ const ScientistHome = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/scientist/getFishCount", {
+      const response = await axios.post("https://aquadb.onrender.com/scientist/getFishCount", {
         fishName: selectedValue
       }) 
       setuniqueCount(response.data.count);
@@ -101,7 +101,7 @@ const ScientistHome = () => {
 
   const fetchWeight = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/scientist/getFishWeight", {
+      const response = await axios.post("https://aquadb.onrender.com/scientist/getFishWeight", {
         fishName: selectedWeight
       }) 
       setCatchWeight(response.data.totalCatchWeight);
@@ -136,7 +136,7 @@ const ScientistHome = () => {
 
   useEffect(() => {
     const getUniqueSpecies = async (req, res) => {
-      const response = await axios.get("http://localhost:5000/scientist/unique-species");
+      const response = await axios.get("https://aquadb.onrender.com/scientist/unique-species");
 
       setuniqueSpecies(response.data);
       console.log(response.data);
@@ -195,7 +195,7 @@ const ScientistHome = () => {
     setLoading(true); // Show loader while fetching data
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/filter-data",
+        "https://aquadb.onrender.com/scientist/filter-data",
        { filter: requestData}
       );
       setData(response.data);
@@ -479,7 +479,7 @@ const ScientistHome = () => {
     setLoading(true); // Show loader while fetching data
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/filter-data"
+        "https://aquadb.onrender.com/scientist/filter-data"
       );
 
       setData(response.data);
@@ -673,7 +673,7 @@ const ScientistHome = () => {
     const { userId } = JSON.parse(userInSession);
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/fetch-communities",
+        "https://aquadb.onrender.com/scientist/fetch-communities",
         {
           creatorId: userId,
         }
@@ -703,7 +703,7 @@ const ScientistHome = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/insert-community-data",
+        "https://aquadb.onrender.com/scientist/insert-community-data",
         {
           uploadedBy: userId,
           communityId: id,

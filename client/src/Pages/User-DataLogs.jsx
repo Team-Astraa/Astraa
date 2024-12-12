@@ -11,7 +11,7 @@ const DataTable = () => {
             let userid = JSON.parse(userInSession);
 
             axios
-                .post('http://localhost:5000/user/get-log-data-by-id', { userid: userid.userId })
+                .post('https://aquadb.onrender.com/user/get-log-data-by-id', { userid: userid.userId })
                 .then((response) => {
                     setDatasets(response.data.data);
                 })

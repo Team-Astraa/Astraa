@@ -12,7 +12,7 @@ const BarChart = ({toDate, fromDate,selectedOption ,filters }) => {
   // Function to fetch data based on the selected option and date range
   const fetchData = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/total-catch-weight-${selectedOption}`, {
+      const response = await axios.post(`https://aquadb.onrender.com/total-catch-weight-${selectedOption}`, {
         from: fromDate,
         to: toDate,
         filters

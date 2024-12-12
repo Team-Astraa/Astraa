@@ -42,7 +42,7 @@ const IndustryCollaboratorForm = ({ email }) => {
     try {
       const response = await apiConnector(
         "post",
-        "http://localhost:5000/signup",
+        "https://aquadb.onrender.com/signup",
         requestData,
         {
           "Content-Type": "application/json",

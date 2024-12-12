@@ -9,7 +9,7 @@ const ScatterChart = ({ selectedOptions, fromDate, toDate }) => {
   const fetchChartData = async () => {
     try {
       // Construct the API endpoint dynamically using selectedOptionp
-      const endpoint = `http://localhost:5000/${selectedOptions}`;
+      const endpoint = `https://aquadb.onrender.com/${selectedOptions}`;
 
       // Make the API request with fromDate, toDate
       const response = await axios.post(endpoint, {

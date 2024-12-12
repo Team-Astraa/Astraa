@@ -128,7 +128,7 @@ const Infographics = () => {
     setLoading(true); // Show loader while fetching data
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/filter-data",
+        "https://aquadb.onrender.com/scientist/filter-data",
         requestData
       );
       setData(response.data);
@@ -164,7 +164,7 @@ const Infographics = () => {
     setLoading(true); // Show loader while fetching data
     try {
       const response = await axios.post(
-        "http://localhost:5000/scientist/filter-data"
+        "https://aquadb.onrender.com/scientist/filter-data"
       );
       setData(response.data);
     } catch (error) {

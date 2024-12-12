@@ -23,7 +23,7 @@ const Community = () => {
         const userInSession = localStorage.getItem("aquaUser");
         const { userId } = JSON.parse(userInSession);
         try {
-            const response = await axios.post("http://localhost:5000/scientist/fetch-communities", {
+            const response = await axios.post("https://aquadb.onrender.com/scientist/fetch-communities", {
                 creatorId: userId,
             });
             if (Array.isArray(response.data)) {
@@ -48,7 +48,7 @@ const Community = () => {
             const { userId } = JSON.parse(userInSession);
             setUserId(userId);
             try {
-                const response = await axios.post("http://localhost:5000/scientist/fetch-scientists");
+                const response = await axios.post("https://aquadb.onrender.com/scientist/fetch-scientists");
                 if (Array.isArray(response.data)) {
                     setScientists(response.data);
                 } else {
@@ -67,7 +67,7 @@ const Community = () => {
             const { userId } = JSON.parse(userInSession);
             try {
                 setLoading(true); // Start loading
-                const response = await axios.post(`http://localhost:5000/scientist/fetch-invitations`, { receiverId: userId });
+                const response = await axios.post(`https://aquadb.onrender.com/scientist/fetch-invitations`, { receiverId: userId });
                 setInvitations(response.data);
                 setLoading(false); // Stop loading
             } catch (error) {
@@ -83,7 +83,7 @@ const Community = () => {
         const userInSession = localStorage.getItem("aquaUser");
         const { userId } = JSON.parse(userInSession);
         try {
-            await axios.post("http://localhost:5000/scientist/create-community", {
+            await axios.post("https://aquadb.onrender.com/scientist/create-community", {
                 name,
                 purpose,
                 userId,
@@ -103,7 +103,7 @@ const Community = () => {
         const userInSession = localStorage.getItem("aquaUser");
         const { userId } = JSON.parse(userInSession);
         try {
-            await axios.post("http://localhost:5000/scientist/send-invitation", {
+            await axios.post("https://aquadb.onrender.com/scientist/send-invitation", {
                 communityId: currentCommunityId,
                 receiverId,
                 userId
@@ -124,7 +124,7 @@ const Community = () => {
         let userInsession = localStorage.getItem("aquaUser")
         let { userId } = JSON.parse(userInsession)
         try {
-            await axios.post("http://localhost:5000/scientist/accept-or-reject-invitation", {
+            await axios.post("https://aquadb.onrender.com/scientist/accept-or-reject-invitation", {
                 invitationId,
                 action,
                 userId

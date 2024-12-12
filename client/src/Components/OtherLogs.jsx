@@ -11,7 +11,7 @@ const OtherLogs = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:5000/admin/get-other-log",{dataType:"other"})
+      .post("https://aquadb.onrender.com/admin/get-other-log",{dataType:"other"})
       .then((response) => {
         console.log("get-latest-logs", response);
 

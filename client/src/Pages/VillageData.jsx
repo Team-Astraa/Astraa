@@ -33,7 +33,7 @@ const DataTable2 = ({ filters }) => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.post("http://localhost:5000/villagefilter", { filters });
+            const response = await axios.post("https://aquadb.onrender.com/villagefilter", { filters });
             setData(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);

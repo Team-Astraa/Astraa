@@ -33,7 +33,7 @@ const LoginForm = () => {
 
     const config = {
       method: "post",
-      url: "http://localhost:5000/login",
+      url: "https://aquadb.onrender.com/login",
       headers: {
         "Content-Type": "application/json",
       },
@@ -90,7 +90,7 @@ const LoginForm = () => {
   // const handlePasswordChange = async (data) => {
   //   try {
   //     const response = await axios.put(
-  //       "http://localhost:5000/Password-update",
+  //       "https://aquadb.onrender.com/Password-update",
   //       {
   //         userId,
   //         newPassword: data.newPassword,
@@ -118,7 +118,7 @@ const LoginForm = () => {
       }
 
       const response = await axios.put(
-        "http://localhost:5000/user/Password-update",
+        "https://aquadb.onrender.com/user/Password-update",
         {
           userId,
           newPassword: data.newPassword,

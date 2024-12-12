@@ -78,7 +78,7 @@ const Adminverifyfish = () => {
     console.log("dataId", dataId);
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/get-fish-data",
+        "https://aquadb.onrender.com/admin/get-fish-data",
         { userId: userId, dataId: dataId }
       );
       console.log("CATCH DATA", response.data.data);
@@ -138,7 +138,7 @@ const Adminverifyfish = () => {
   // Handle deleting a particular row
   const handleDeleteRow = async (catchId) => {
     try {
-      await axios.delete("http://localhost:5000/admin/delete-catch", {
+      await axios.delete("https://aquadb.onrender.com/admin/delete-catch", {
         data: { catchId },
       });
       setCatchData((prevData) =>
@@ -228,7 +228,7 @@ const Adminverifyfish = () => {
 
   //     // Sending transformed data for validation
   //     const response = await axios.post(
-  //       "http://localhost:5000/admin/autoCheck-fishing-data",
+  //       "https://aquadb.onrender.com/admin/autoCheck-fishing-data",
   //       payload
   //     );
 
@@ -301,7 +301,7 @@ const Adminverifyfish = () => {
   
       // Sending transformed data for validation
       const response = await axios.post(
-        "http://localhost:5000/admin/autoCheck-fishing-data",
+        "https://aquadb.onrender.com/admin/autoCheck-fishing-data",
         payload
       );
   
@@ -367,7 +367,7 @@ const Adminverifyfish = () => {
     try {
       let loading = toast.loading("Loading...");
       const res = await axios.post(
-        "http://localhost:5000/admin/reject-log-data",
+        "https://aquadb.onrender.com/admin/reject-log-data",
         {
           dataId: dataId,
           status: "rejected",
@@ -386,7 +386,7 @@ const Adminverifyfish = () => {
     try {
       let loading = toast.loading("Loading...");
       const res = await axios.post(
-        "http://localhost:5000/admin/accept-log-data",
+        "https://aquadb.onrender.com/admin/accept-log-data",
         {
           dataId: dataId,
           status: "accepted",
@@ -473,7 +473,7 @@ const Adminverifyfish = () => {
 
       // Send transformed data to the backend to save
       const response = await axios.post(
-        "http://localhost:5000/admin/saveValidatedData", // Ensure the URL is correct
+        "https://aquadb.onrender.com/admin/saveValidatedData", // Ensure the URL is correct
         { data: transformedData } // Send data as "data", not "validatedData"
       );
 

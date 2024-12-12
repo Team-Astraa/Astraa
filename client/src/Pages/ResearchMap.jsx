@@ -10,7 +10,7 @@ const ResearchMap = () => {
     const fetchCatchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5000/admin/get-fish-data",
+          "https://aquadb.onrender.com/admin/get-fish-data",
           { userId: id }
         );
         setCatchData(response.data);

@@ -12,7 +12,7 @@ const UserTypeCount = () => {
     const fetchUserTypeCount = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/admin/get-userType-Count"
+          "https://aquadb.onrender.com/admin/get-userType-Count"
         );
         setUserTypeData(response.data);
       } catch (error) {

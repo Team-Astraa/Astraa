@@ -10,7 +10,7 @@ const PieChart = ({ selectedOptionp, fromDate, toDate }) => {
   const fetchChartData = async () => {
     try {
       // Construct the API endpoint dynamically using selectedOptionBub
-      const endpoint = `http://localhost:5000/${selectedOptionp}`;
+      const endpoint = `https://aquadb.onrender.com/${selectedOptionp}`;
 
       // Make the API request with fromDate, toDate
       const response = await axios.post(endpoint, {

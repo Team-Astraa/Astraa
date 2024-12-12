@@ -22,7 +22,7 @@ const Communitydetail = () => {
     const fetchCommunityData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5000/scientist/fetch-community-with-data",
+          "https://aquadb.onrender.com/scientist/fetch-community-with-data",
           { communityId }
         );
 

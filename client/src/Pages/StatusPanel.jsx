@@ -30,7 +30,7 @@ const StatusPanel = () => {
       }
       try {
         const response = await axios.get(
-          `http://localhost:5000/user/getUserLogs`,
+          `https://aquadb.onrender.com/user/getUserLogs`,
           { params: { userId } }
         );
         console.log(response);

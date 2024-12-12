@@ -109,7 +109,7 @@ const Addexcel = () => {
     try {
       // Make the API request to save data
       const response = await axios.post(
-        "http://localhost:5000/user/other-data-upload",
+        "https://aquadb.onrender.com/user/other-data-upload",
         requestData, // Send data as JSON
         {
           headers: {
@@ -174,7 +174,7 @@ const Addexcel = () => {
       setUploadProgress(0);
       // Send the file to the backend
       const response = await axios.post(
-        "http://localhost:5000/upload",
+        "https://aquadb.onrender.com/upload",
         formData,
         {
           headers: {
@@ -220,7 +220,7 @@ const Addexcel = () => {
     // console.log(first)
     try {
       const response = await axios.get(
-        `http://localhost:5000/download/${downloadType}`,
+        `https://aquadb.onrender.com/download/${downloadType}`,
         {
           responseType: "blob",
         }

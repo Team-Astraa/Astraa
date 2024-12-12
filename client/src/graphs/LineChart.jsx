@@ -12,7 +12,7 @@ const LineChart = ({ selectedOptionl, fromDate, toDate }) => {
   const fetchChartData = async () => {
     try {
       // Construct the API endpoint dynamically using selectedOptionl
-      const endpoint = `http://localhost:5000/${selectedOptionl}`;
+      const endpoint = `https://aquadb.onrender.com/${selectedOptionl}`;
 
       // Make the API request with fromDate, toDate
       const response = await axios.post(endpoint, {

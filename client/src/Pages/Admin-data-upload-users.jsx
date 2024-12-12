@@ -14,7 +14,7 @@ const Admindatauploadusers = () => {
       try {
         // Fetch the user data based on unique userIds from the Catch collection
         const response = await axios.get(
-          "http://localhost:5000/admin/get-data-upload-users"
+          "https://aquadb.onrender.com/admin/get-data-upload-users"
         );
         console.log("response data", response.data);
         setUsers(response.data);

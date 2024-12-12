@@ -23,7 +23,7 @@ const ScientistSavedDataSets = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/scientist/getScientistSaveDataByUser`,
+                `https://aquadb.onrender.com/scientist/getScientistSaveDataByUser`,
                 { userId }
             );
 

@@ -36,7 +36,7 @@ const Adminverifyuser = () => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/getUnverifiesUsers",
+      url: "https://aquadb.onrender.com/admin/getUnverifiesUsers",
       headers: {
         "Content-Type": "application/json",
       },
@@ -64,7 +64,7 @@ const Adminverifyuser = () => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/verifyUser",
+      url: "https://aquadb.onrender.com/admin/verifyUser",
       headers: {
         "Content-Type": "application/json",
       },
@@ -96,7 +96,7 @@ const Adminverifyuser = () => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/rejectUser", // Update the URL endpoint for rejecting
+      url: "https://aquadb.onrender.com/admin/rejectUser", // Update the URL endpoint for rejecting
       headers: {
         "Content-Type": "application/json",
       },
@@ -131,7 +131,7 @@ const Adminverifyuser = () => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/get-detail-data",
+      url: "https://aquadb.onrender.com/admin/get-detail-data",
       headers: {
         "Content-Type": "application/json",
       },

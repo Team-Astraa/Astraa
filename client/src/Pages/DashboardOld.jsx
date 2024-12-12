@@ -38,7 +38,7 @@ const Dashboard = () => {
     
     const getData = async () => {
     try {
-        const response = await axios.post('http://localhost:5000/scientist/filter-data');
+        const response = await axios.post('https://aquadb.onrender.com/scientist/filter-data');
         setData(response.data);
 
     } catch (error) {

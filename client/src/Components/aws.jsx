@@ -4,7 +4,7 @@ export const uploadImage = async (img) => {
     let imgUrl = null;
 
     await axios
-        .get("http://localhost:5000/get-upload-url")
+        .get("https://aquadb.onrender.com/get-upload-url")
         .then(async ({ data: { uploadUrl } }) => {
             await axios({
                 method: "PUT",

@@ -12,7 +12,7 @@ const DoughnutChart = ({ toDate, fromDate, selectedOptiond }) => {
     setError(null); // Clear any previous error
 
     try {
-      const endpoint = `http://localhost:5000/${selectedOptiond}`;
+      const endpoint = `https://aquadb.onrender.com/${selectedOptiond}`;
 
       const response = await axios.post(endpoint, {
         from: fromDate,

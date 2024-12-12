@@ -44,7 +44,7 @@ const ScientistForm = ({ email }) => {
         try {
             const response = await apiConnector(
                 "post",
-                "http://localhost:5000/signup", // Your signup API endpoint
+                "https://aquadb.onrender.com/signup", // Your signup API endpoint
                 requestData,
                 {
                     "Content-Type": "application/json",

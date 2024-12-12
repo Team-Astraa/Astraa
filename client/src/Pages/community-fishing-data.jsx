@@ -39,7 +39,7 @@ const FishingData = () => {
 
             try {
                 const response = await axios.post(
-                    "http://localhost:5000/scientist/fetch-community-Share-data",
+                    "https://aquadb.onrender.com/scientist/fetch-community-Share-data",
                     { communityDataId: communityId }
                 );
                 
