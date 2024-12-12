@@ -21,7 +21,8 @@ const Adminverifyfish = () => {
 
   const [hoveredRow, setHoveredRow] = useState(null);
 
-  let { userId, dataId } = useParams();
+  let { userId, dataId, table } = useParams();
+  console.log(table);
   // console.log("USER ID in frontend", userId);
   const [error, setError] = useState(null);
 
@@ -728,7 +729,60 @@ const Adminverifyfish = () => {
                 <table className="min-w-full table-auto text-left lg:table-fixed">
                   {/* check the table css lg:table fixed */}
                   <thead className="sticky top-0">
-                    <tr className="bg-gray-300">
+
+                    { table === "PFZ/NON-PFZ" && <tr className="bg-gray-300">
+                      {/* <th className="text-xs text-gray-400 border border-gray-200">
+                          Catch ID
+                        </th> */}
+                        <th className="p-2 text-xs text-black">Actions</th>
+                      <th className="p-2 text-xs text-black">Fishing Date</th>
+                      <th className="p-2 text-xs text-black">
+                        Latitude: (Float)
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Longitude: (Float)
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Depth (Integer)
+                      </th>
+                      <th className="p-2 text-xs text-black">Major Species</th>
+                    </tr> }
+
+                    { table === "Landing_Village" && <tr className="bg-gray-300">
+                      {/* <th className="text-xs text-gray-400 border border-gray-200">
+                          Catch ID
+                        </th> */}
+                        <th className="p-2 text-xs text-black">Actions</th>
+                      <th className="p-2 text-xs text-black">Longitude</th>
+                      <th className="p-2 text-xs text-black">Longitude</th>
+                      <th className="p-2 text-xs text-black">
+                        Village
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Date
+                      </th>
+                      <th className="p-2 text-xs text-black">Species</th>
+                    </tr> }
+
+                    { table === "GEO-REF" && <tr className="bg-gray-300">
+                      {/* <th className="text-xs text-gray-400 border border-gray-200">
+                          Catch ID
+                        </th> */}
+                      <th className="p-2 text-xs text-black">Actions</th>
+                      <th className="p-2 text-xs text-black">Date</th>
+                      <th className="p-2 text-xs text-black">
+                        Species Name
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Catch (kg)
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Landing Name
+                      </th>
+                      <th className="p-2 text-xs text-black">Gear type</th>
+                    </tr> }
+
+                    { table === "abundance" && <tr className="bg-gray-300">
                       {/* <th className="text-xs text-gray-400 border border-gray-200">
                           Catch ID
                         </th> */}
@@ -745,7 +799,26 @@ const Adminverifyfish = () => {
                       </th>
                       <th className="p-2 text-xs text-black">Species</th>
                       <th className="p-2 text-xs text-black">Total Weight</th>
-                    </tr>
+                    </tr> }
+
+                    { table === "occurrence" && <tr className="bg-gray-300">
+                      {/* <th className="text-xs text-gray-400 border border-gray-200">
+                          Catch ID
+                        </th> */}
+                      <th className="p-2 text-xs text-black">Actions</th>
+                      <th className="p-2 text-xs text-black">Date</th>
+                      <th className="p-2 text-xs text-black">
+                        Latitude: (Float)
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Longitude: (Float)
+                      </th>
+                      <th className="p-2 text-xs text-black">
+                        Depth (Integer)
+                      </th>
+                      <th className="p-2 text-xs text-black">Species</th>
+                    </tr> }
+
                   </thead>
                   <tbody>
                     {catchData.map((data) =>
