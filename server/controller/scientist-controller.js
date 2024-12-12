@@ -195,6 +195,7 @@ export const getFilteredCatches = async (req, res) => {
       LANDINGNAME,
       majorDataType, // Filter: PFZ or NON-PFZ
     } = req.body.filter;
+console.log(req.body.filter);
 
     // Build the query object dynamically
     const query = {};
