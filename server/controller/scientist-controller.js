@@ -8,6 +8,7 @@ import CommunityData from "../models/CommunityData.js";
 import ScientistSaveData from "../models/ScientistSaveData.js";
 import mongoose from "mongoose";
 import transporter from "../Config/transporter.js";
+import CatchDataSchema from "../models/FishCatchData.js";
 
 export const getUnique = async (req, res) => {
   try {
@@ -881,3 +882,57 @@ export let sendEmailWithExcel = async (req, res) => {
       .json({ message: "Failed to send emails.", error: error.message });
   }
 };
+
+export const getFishCountByName = async(req, res) => {
+  const { fishName } = req.body;
+
+  try {
+    // Count documents where the species array contains the fish name
+    const count = await Catch.countDocuments({
+      'species.name': fishName,
+    });
+
+    res.status(200).json({
+      count,
+    });
+  } catch (error) {
+    console.error('Error fetching fish count:', error);
+    res.status(500).json({
+      message: 'Error fetching fish count',
+    });
+  }
+}
+
+export const getFishWeightByName = async (req, res) => {
+  const { fishName } = req.body;
+
+  try {
+    const result = await Catch.aggregate([
+      {
+        $match: {
+          'species.name': fishName,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalCatchWeight: { $sum: '$total_weight' },
+        },
+      },
+    ]);
+
+    const totalCatchWeight = result.length > 0 ? result[0].totalCatchWeight : 0;
+
+    res.status(200).json({
+      fishName,
+      totalCatchWeight,
+    });
+  } catch (error) {
+    console.error('Error fetching total catch weight:', error);
+    res.status(500).json({
+      message: 'Error fetching total catch weight',
+    });
+  }
+};
+
+

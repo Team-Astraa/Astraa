@@ -76,6 +76,8 @@ import {
   fetchInvitation,
   getCommunitiesByCreator,
   getFilteredCatches,
+  getFishCountByName,
+  getFishWeightByName,
   getScientistSaveDataByUser,
   getUnique,
   graphdata,
@@ -222,6 +224,8 @@ app.post("/scientist/fetch-community-with-data", fetchCommunityWithData);
 app.post("/scientist/fetch-community-share-data", fetchCommunityShareData);
 app.post("/scientist/saveScientistData", saveScientistData);
 app.post("/scientist/getScientistSaveDataByUser", getScientistSaveDataByUser);
+app.post("/scientist/getFishCount", getFishCountByName);
+app.post("/scientist/getFishWeight", getFishWeightByName);
 app.post("/graph", graphdata);
 
 ///Data Visulaization

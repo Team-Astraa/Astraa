@@ -243,7 +243,7 @@ const format = (data) => {
 // console.log(processedCatches);
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, dataId } = req.body;
 console.log(userId);
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
@@ -259,7 +259,7 @@ console.log(userId);
 
     // Aggregate query to filter by userId and group the data by userId
     const catchData = await Catch.aggregate([
-      { $match: { userId: objectId } }, // Match the userId passed in the request
+      { $match: { userId: objectId , dataId} }, // Match the userId passed in the request
       {
         $group: {
           _id: "$userId", // Group by userId
