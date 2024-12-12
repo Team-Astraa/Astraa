@@ -77,8 +77,10 @@ const ScientistSavedDataSets = () => {
     return (
         <div className="w-full h-full bg-gray-200 p-5 items-center">
             <h1 className="text-black text-3xl w-full text-center font-bold mb-4">Scientist Datasets</h1>
-            <Datepicker/>
-
+            <div className="flex justify-center mb-5">
+                <Datepicker />
+            </div>
+            
             {error && <p className="text-red-500">{error}</p>}
 
             {/* Modal for viewing datasets */}
@@ -149,33 +151,42 @@ const ScientistSavedDataSets = () => {
                 </Modal.Footer>
             </Modal>
 
+            {/* Dataset Table */}
             {groupedData.length > 0 ? (
-                <div className="flex flex-col items-center gap-4 w-full">
-                    {groupedData.map((group) => (
-                        <div
-                            key={group._id}
-                            className="w-4/5 bg-white text-black p-4 rounded-md shadow-md flex justify-between items-center"
-                        >
-                            <div>
-                                <strong>Name:</strong> {group.name}
-                            </div>
-                            <div>
-                                <strong>Total Datasets:</strong> {group.datasets.length}
-                            </div>
-                            <button
-                                onClick={() => {
-                                    setSelectedGroup(group);
-                                    setOpenModal(true);
-                                }}
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                <i className="fa-solid fa-eye"></i>
-                            </button>
+                <div className="w-full flex justify-center items-center">
+                    <div className="w-full max-w-4xl bg-white shadow-lg rounded-md overflow-hidden">
+                        {/* Table Header */}
+                        <div className="grid grid-cols-3 bg-purple-400 font-semibold py-4 px-5 border rounded-md">
+                            <div className="text-center">Name</div>
+                            <div className="text-center">Total Datasets</div>
+                            <div className="text-right pr-[90px]">Actions</div>
                         </div>
-                    ))}
+
+                        {/* Table Rows */}
+                        {groupedData.map((group) => (
+                            <div
+                                key={group._id}
+                                className="grid grid-cols-3 items-center bg-white text-gray-900 py-3 px-4 border-b border-gray-300 hover:bg-gray-50"
+                            >
+                                <div className="text-center">{group.name}</div>
+                                <div className="text-center">{group.datasets.length}</div>
+                                <div className="text-right pr-20">
+                                    <button
+                                        onClick={() => {
+                                            setSelectedGroup(group);
+                                            setOpenModal(true);
+                                        }}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                                    >
+                                        <i className="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             ) : (
-                !error && <p className="text-gray-500">No datasets available.</p>
+                !error && <p className="text-gray-500 text-center">No datasets available.</p>
             )}
         </div>
     );
