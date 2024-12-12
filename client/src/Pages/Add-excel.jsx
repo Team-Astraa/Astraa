@@ -37,6 +37,7 @@ const Addexcel = () => {
     userId: "", // Assuming userId is passed as a prop
     dataType: "",
     total_weight: 0,
+   
   });
 
   const handleChange = (e) => {
@@ -45,31 +46,29 @@ const Addexcel = () => {
       ...prevState,
       [name]: value,
     }));
-  };
-
+  }
   const handleFileChange = (e) => {
     setCatchData((prevState) => ({
       ...prevState,
       file: e.target.files[0],
     }));
   };
-
-  const handleSpeciesChange = (index, fieldName, value) => {
+  const handleSpeciesChange = (index, e) => {
+    const { name, value } = e.target;
     const updatedSpecies = [...catchData.species];
-    updatedSpecies[index][fieldName] = value;
-
+    updatedSpecies[index][name] = value;
     setCatchData((prevState) => ({
       ...prevState,
       species: updatedSpecies,
     }));
   };
-
   const handleAddSpecies = () => {
     setCatchData((prevState) => ({
       ...prevState,
       species: [...prevState.species, { name: "", catch_weight: "" }],
     }));
   };
+
 
   const handleRemoveSpecies = (index) => {
     const updatedSpecies = [...catchData.species];
@@ -81,12 +80,14 @@ const Addexcel = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
 
+    let loading = toast.loading("Please wait...");
+    e.preventDefault();
+  
     // Retrieve user data from localStorage
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
-
+  
     // Prepare the data object to send
     const requestData = {
       date: catchData.date,
@@ -104,7 +105,7 @@ const Addexcel = () => {
         catch_weight: species.catch_weight,
       })),
     };
-
+  
     try {
       // Make the API request to save data
       const response = await axios.post(
@@ -116,8 +117,9 @@ const Addexcel = () => {
           },
         }
       );
-
-      if (response.data.success) {
+  
+      if (response.status == 200) {
+        toast.dismiss(loading);
         toast.success("Data successfully added!");
         setopenform(false); // Close the modal on success
       }
@@ -248,161 +250,159 @@ const Addexcel = () => {
 
   return (
     <AnimationWrapper className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {downloadType === "other" && (
-        <Modal open={openform} onClose={() => setopenform(false)}>
-          <Box
-            className="p-6 bg-white rounded-md shadow-lg"
-            style={{
-              width: "400px",
-              margin: "100px auto",
-              textAlign: "center",
-              position: "relative",
-            }}
-          >
-            <IconButton
-              onClick={() => setopenform(false)}
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-              }}
-            >
-              <Close />
-            </IconButton>
+    {
+  downloadType === "other" &&
+  <Modal open={openform} onClose={() => setopenform(false)}>
+    <Box
+      className="p-6 bg-white rounded-md shadow-lg"
+      style={{
+        width: "400px",
+        margin: "100px auto",
+        textAlign: "center",
+        position: "relative",
+      }}
+    >
+      <IconButton
+        onClick={() => setopenform(false)}
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+        }}
+      >
+        <Close />
+      </IconButton>
 
-            <h2>Add New Catch Record</h2>
+      <h2>Add New Catch Record</h2>
 
-            manual form 
-              <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
-                <TextField
-                  label="Date"
-                  type="date"
-                  name="date"
-                  value={catchData.date}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Date */}
+          <TextField
+            label="Date"
+            type="date"
+            name="date"
+            value={catchData.date}
+            onChange={handleChange}
+            required
+            fullWidth
+            sx={{ mb: 2 }}
+          />
 
-                <TextField
-                  label="Latitude"
-                  type="number"
-                  name="latitude"
-                  value={catchData.latitude}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
+          {/* Latitude */}
+          <TextField
+            label="Latitude"
+            type="number"
+            name="latitude"
+            value={catchData.latitude}
+            onChange={handleChange}
+            required
+            fullWidth
+            sx={{ mb: 2 }}
+          />
 
-                <TextField
-                  label="Longitude"
-                  type="number"
-                  name="longitude"
-                  value={catchData.longitude}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
+          {/* Longitude */}
+          <TextField
+            label="Longitude"
+            type="number"
+            name="longitude"
+            value={catchData.longitude}
+            onChange={handleChange}
+            required
+            fullWidth
+            sx={{ mb: 2 }}
+          />
 
-                <TextField
-                  label="Depth"
-                  type="number"
-                  name="depth"
-                  value={catchData.depth}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              </div>
+          {/* Depth */}
+          <TextField
+            label="Depth"
+            type="number"
+            name="depth"
+            value={catchData.depth}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+        </div>
 
-              {catchData.species.map((species, index) => (
-                <div key={index} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <TextField
-                      label={`Species Name ${index + 1}`}
-                      name="name"
-                      value={species.name}
-                      onChange={(e) => handleSpeciesChange(index, e)}
-                      required
-                      fullWidth
-                      sx={{ mb: 2 }}
-                    />
-                    <TextField
-                      label={`Catch Weight ${index + 1}`}
-                      name="catch_weight"
-                      type="number"
-                      value={species.catch_weight}
-                      onChange={(e) => handleSpeciesChange(index, e)}
-                      fullWidth
-                      sx={{ mb: 2 }}
-                    />
-                  </div>
-                  <Button
-                    onClick={() => handleRemoveSpecies(index)}
-                    color="error"
-                    fullWidth
-                  >
-                    Remove Species
-                  </Button>
-                </div>
-              ))}
-              <Button
-                onClick={handleAddSpecies}
-                variant="contained"
+        {/* Species */}
+        {catchData.species.map((species, index) => (
+          <div key={index} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                label={`Species Name ${index + 1}`}
+                name="name"
+                value={species.name}
+                onChange={(e) => handleSpeciesChange(index, e)}
+                required
                 fullWidth
                 sx={{ mb: 2 }}
-              >
-                Add Species
-              </Button>
-
-              <div className="grid grid-cols-2 gap-4">
-                <TextField
-                  label="Sea"
-                  name="sea"
-                  value={catchData.sea}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-
-                <TextField
-                  label="State"
-                  name="state"
-                  value={catchData.state}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <TextField
-                  label="Total Weight"
-                  name="total_weight"
-                  type="number"
-                  value={catchData.total_weight}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              </div>
-
-              <Button
-                type="submit"
-                variant="contained"
+              />
+              <TextField
+                label={`Catch Weight ${index + 1}`}
+                name="catch_weight"
+                type="number"
+                value={species.catch_weight}
+                onChange={(e) => handleSpeciesChange(index, e)}
                 fullWidth
                 sx={{ mb: 2 }}
-              >
-                Submit
-              </Button>
-            </form>
-          </Box>
-        </Modal>
-      )} 
+              />
+            </div>
+            <Button onClick={() => handleRemoveSpecies(index)} color="error" fullWidth>
+              Remove Species
+            </Button>
+          </div>
+        ))}
+        <Button onClick={handleAddSpecies} variant="contained" fullWidth sx={{ mb: 2 }}>
+          Add Species
+        </Button>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Sea */}
+          <TextField
+            label="Sea"
+            name="sea"
+            value={catchData.sea}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+
+          {/* State */}
+          <TextField
+            label="State"
+            name="state"
+            value={catchData.state}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Total Weight */}
+          <TextField
+            label="Total Weight"
+            name="total_weight"
+            type="number"
+            value={catchData.total_weight}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+
+         
+        </div>
+
+       
+        {/* Submit Button */}
+        <Button type="submit" variant="contained" fullWidth sx={{ mb: 2 }}>
+          Submit
+        </Button>
+      </form>
+    </Box>
+  </Modal>
+}
 
 <div className="flex space-x-8">
   {/* Download Card */}
