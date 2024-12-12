@@ -17,10 +17,9 @@ import MapComponent from "./GetLatLong";
 
 
 const FilterForm = () => {
-
   const [responseMessage, setResponseMessage] = useState("");
   const [error, setError] = useState(null);
-  let [fileLoader, setfileLoader] = useState(false)
+  let [fileLoader, setfileLoader] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
   const [isModalOpen4, setIsModalOpen4] = useState(false);
   let [majorDataType, setMajorDataType] = useState("")
@@ -52,7 +51,7 @@ const FilterForm = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  let [message, setMessage] = useState("")
+  let [message, setMessage] = useState("");
   let [Visualize, setVisualize] = useState(false);
   const [activeTab, setActiveTab] = useState('PFZ/NON-PFZ'); // 'data' as the initial active tab
   let [tag, setTag] = useState("data");
@@ -155,9 +154,12 @@ const FilterForm = () => {
         } else if (key === "dataType" || key === "zoneType") {
           requestData[key] = value;
         } else {
-          requestData[key] = key.includes("lat") || key.includes("long") || key.includes("radius")
-            ? parseFloat(value)
-            : value;
+          requestData[key] =
+            key.includes("lat") ||
+            key.includes("long") ||
+            key.includes("radius")
+              ? parseFloat(value)
+              : value;
         }
       }
     }
@@ -181,7 +183,7 @@ const FilterForm = () => {
     } finally {
       setLoading(false);
 
-      setOpenModal(false)
+      setOpenModal(false);
     }
   };
 
@@ -208,9 +210,8 @@ const FilterForm = () => {
     return Number(value).toFixed(decimals);
   };
 
-
   const downloadExcelWithCharts = async (fileType) => {
-    setfileLoader(true)
+    setfileLoader(true);
     try {
       // Check if data is valid
       if (!Array.isArray(data) || data.length === 0) {
@@ -230,10 +231,12 @@ const FilterForm = () => {
         item.species.forEach(({ name, catch_weight }) => {
           speciesCounts[name] = (speciesCounts[name] || 0) + catch_weight;
           seaSpeciesCounts[item.sea] = seaSpeciesCounts[item.sea] || {};
-          seaSpeciesCounts[item.sea][name] = (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
+          seaSpeciesCounts[item.sea][name] =
+            (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
 
           stateSpeciesCounts[item.state] = stateSpeciesCounts[item.state] || {};
-          stateSpeciesCounts[item.state][name] = (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
+          stateSpeciesCounts[item.state][name] =
+            (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
         });
       });
 
@@ -249,7 +252,9 @@ const FilterForm = () => {
       // Populate Data Sheet
       const flattenedData = data.map((item) => {
         const speciesNames = item.species.map((s) => s.name).join(", ");
-        const speciesWeights = item.species.map((s) => s.catch_weight).join(", ");
+        const speciesWeights = item.species
+          .map((s) => s.catch_weight)
+          .join(", ");
         return {
           ...item,
           species_names: speciesNames,
@@ -267,7 +272,13 @@ const FilterForm = () => {
       });
 
       // Generate Charts
-      const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+      const generateChart = async (
+        type,
+        labels,
+        dataset,
+        chartTitle,
+        colors
+      ) => {
         const chartCanvas = document.createElement("canvas");
         chartCanvas.width = 800;
         chartCanvas.height = 400;
@@ -327,14 +338,24 @@ const FilterForm = () => {
         await generateChart(
           "bar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by State",
           colorSchemes[1]
         ),
         await generateChart(
           "bar",
           seaNames,
-          seaNames.map((sea) => Object.values(seaSpeciesCounts[sea] || {}).reduce((a, b) => a + b, 0)),
+          seaNames.map((sea) =>
+            Object.values(seaSpeciesCounts[sea] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by Sea",
           colorSchemes[2]
         ),
@@ -355,7 +376,12 @@ const FilterForm = () => {
         await generateChart(
           "radar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "State Comparison Radar",
           colorSchemes[5]
         ),
@@ -363,8 +389,15 @@ const FilterForm = () => {
 
       // Style Chart Sheet Header
       chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
-      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
-      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.getCell("A1").font = {
+        bold: true,
+        size: 16,
+        color: { argb: "FF5A5A" },
+      };
+      chartSheet.getCell("A1").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
       chartSheet.mergeCells("A1:M2");
 
       // Add Charts in Grid Layout
@@ -400,28 +433,24 @@ const FilterForm = () => {
       link.download = `filtered_data_with_multiple_charts.${fileType}`;
       link.click();
       URL.revokeObjectURL(link.href);
-      setfileLoader(false)
+      setfileLoader(false);
     } catch (error) {
-      setfileLoader(false)
+      setfileLoader(false);
       console.error("Error generating Excel file:", error);
     }
   };
 
-
-  let [openModale, setOpenModale] = useState(false)
+  let [openModale, setOpenModale] = useState(false);
 
   const [emails, setEmails] = useState([]);
 
-
   let emailModel = () => {
-    setOpenModale(true)
-
-  }
+    setOpenModale(true);
+  };
 
   const downloadExcelWithCharts2 = async () => {
-    setLoading(true)
-    setOpenModale(false)
-
+    setLoading(true);
+    setOpenModale(false);
 
     try {
       // Check if data is valid
@@ -442,10 +471,12 @@ const FilterForm = () => {
         item.species.forEach(({ name, catch_weight }) => {
           speciesCounts[name] = (speciesCounts[name] || 0) + catch_weight;
           seaSpeciesCounts[item.sea] = seaSpeciesCounts[item.sea] || {};
-          seaSpeciesCounts[item.sea][name] = (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
+          seaSpeciesCounts[item.sea][name] =
+            (seaSpeciesCounts[item.sea][name] || 0) + catch_weight;
 
           stateSpeciesCounts[item.state] = stateSpeciesCounts[item.state] || {};
-          stateSpeciesCounts[item.state][name] = (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
+          stateSpeciesCounts[item.state][name] =
+            (stateSpeciesCounts[item.state][name] || 0) + catch_weight;
         });
       });
 
@@ -461,7 +492,9 @@ const FilterForm = () => {
       // Populate Data Sheet
       const flattenedData = data.map((item) => {
         const speciesNames = item.species.map((s) => s.name).join(", ");
-        const speciesWeights = item.species.map((s) => s.catch_weight).join(", ");
+        const speciesWeights = item.species
+          .map((s) => s.catch_weight)
+          .join(", ");
         return {
           ...item,
           species_names: speciesNames,
@@ -483,7 +516,14 @@ const FilterForm = () => {
       // Simulate creating Excel file
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual Excel creation logic
 
-      setMessage("Adding Charts in Excel file..."); const generateChart = async (type, labels, dataset, chartTitle, colors) => {
+      setMessage("Adding Charts in Excel file...");
+      const generateChart = async (
+        type,
+        labels,
+        dataset,
+        chartTitle,
+        colors
+      ) => {
         const chartCanvas = document.createElement("canvas");
         chartCanvas.width = 800;
         chartCanvas.height = 400;
@@ -543,14 +583,24 @@ const FilterForm = () => {
         await generateChart(
           "bar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by State",
           colorSchemes[1]
         ),
         await generateChart(
           "bar",
           seaNames,
-          seaNames.map((sea) => Object.values(seaSpeciesCounts[sea] || {}).reduce((a, b) => a + b, 0)),
+          seaNames.map((sea) =>
+            Object.values(seaSpeciesCounts[sea] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "Total Weight by Sea",
           colorSchemes[2]
         ),
@@ -571,7 +621,12 @@ const FilterForm = () => {
         await generateChart(
           "radar",
           stateNames,
-          stateNames.map((state) => Object.values(stateSpeciesCounts[state] || {}).reduce((a, b) => a + b, 0)),
+          stateNames.map((state) =>
+            Object.values(stateSpeciesCounts[state] || {}).reduce(
+              (a, b) => a + b,
+              0
+            )
+          ),
           "State Comparison Radar",
           colorSchemes[5]
         ),
@@ -579,8 +634,15 @@ const FilterForm = () => {
 
       // Style Chart Sheet Header
       chartSheet.getCell("A1").value = "Filtered Data Infographics (Summary)";
-      chartSheet.getCell("A1").font = { bold: true, size: 16, color: { argb: "FF5A5A" } };
-      chartSheet.getCell("A1").alignment = { vertical: "middle", horizontal: "center" };
+      chartSheet.getCell("A1").font = {
+        bold: true,
+        size: 16,
+        color: { argb: "FF5A5A" },
+      };
+      chartSheet.getCell("A1").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
       chartSheet.mergeCells("A1:M2");
 
       // Add Charts in Grid Layout
@@ -617,50 +679,45 @@ const FilterForm = () => {
       // link.click();
       // URL.revokeObjectURL(link.href);
 
-      setMessage("sending Email...")
+      setMessage("sending Email...");
       const formData = new FormData();
       formData.append("file", blob, "filtered_data_with_multiple_charts.xlsx");
-
 
       emails.forEach((email) => formData.append("emails[]", email));
 
       try {
-        await axios.post("http://localhost:5000/scientist/sendEmail", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axios.post(
+          "http://localhost:5000/scientist/sendEmail",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
         toast.success("Excel file and email sent successfully!");
       } catch (error) {
         console.error("Error sending email:", error);
         toast.error("Failed to send email. Check console for details.");
       }
 
-
-      setLoading(false)
-      setMessage("")
+      setLoading(false);
+      setMessage("");
     } catch (error) {
-      setfileLoader(false)
+      setfileLoader(false);
       console.error("Error generating Excel file:", error);
     }
   };
-
 
   const handleModalClose = () => {
     setIsModalOpen3(false);
   };
 
-
-
-
   const handleSaveData = async () => {
-
-
-
     if (!name) {
-      toast.error("Please enter name first")
+      toast.error("Please enter name first");
       return;
     }
 
-    setOpenModaln(false)
+    setOpenModaln(false);
 
     let userInSession = localStorage.getItem("aquaUser");
     let { userId } = JSON.parse(userInSession);
@@ -684,20 +741,16 @@ const FilterForm = () => {
       return;
     }
 
-
     // Proceed with the API call
     const dataToSend = {
       uploadedBy: userId,
       data: data,
       filters,
-      name
+      name,
     };
 
-    setMessage("Wait Saving Your Filtered Data")
+    setMessage("Wait Saving Your Filtered Data");
     setLoading(true);
-
-
-
 
     setError(null);
     setResponseMessage("");
@@ -714,20 +767,17 @@ const FilterForm = () => {
       );
 
       setResponseMessage(response.data.message || "Data saved successfully!");
-      toast.success(response.data.message)
+      toast.success(response.data.message);
       setLoading(false);
     } catch (err) {
       console.error("Error saving data:", err);
       setLoading(false);
     } finally {
-      setMessage("")
-
+      setMessage("");
     }
   };
 
-
-  const [onConfirm, setOnConfirm] = useState(() => () => { });
-
+  const [onConfirm, setOnConfirm] = useState(() => () => {});
 
   const handleEmailChange = (e) => {
     const input = e.target.value;
@@ -737,8 +787,7 @@ const FilterForm = () => {
     setEmails(emailArray);
   };
 
-
-  let [openModalc, setOpenModalc] = useState(false)
+  let [openModalc, setOpenModalc] = useState(false);
   const [communities, setCommunities] = useState([]);
   let shareToCommunity = async () => {
     console.log("varad");
@@ -750,7 +799,6 @@ const FilterForm = () => {
       console.error(error);
     }
   };
-
 
   const fetchCommunities = async () => {
     const userInSession = localStorage.getItem("aquaUser");
@@ -769,7 +817,6 @@ const FilterForm = () => {
       console.log("Error fetching communities");
     }
   };
-
 
   const sendDataForCommunity = async (id) => {
     const userInSession = localStorage.getItem("aquaUser");
@@ -794,14 +841,13 @@ const FilterForm = () => {
     }
   };
 
-
   const handleVisualize = async () => {
     setVisualize(true);
-  }
+  };
 
   const handleTabClick = (t) => {
     if (!data) {
-      return toast.error("Please Apply the filters first...")
+      return toast.error("Please Apply the filters first...");
     }
     setTag(t);
   };
@@ -909,7 +955,6 @@ const FilterForm = () => {
       <nav className="w-full mb-4 px-12 flex items-center justify-between p-4 shadow-lg bg-white">
         <h1 className="text-3xl font-bold ">Apply Filters</h1>
         <Button onClick={() => setOpenModal(true)}>Apply Filters</Button>
-
       </nav>
 
       {
@@ -958,52 +1003,55 @@ const FilterForm = () => {
                     <>
 
                       <>
-                        <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
-                          <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
-                          <div className="flex gap-4">
-                            {[
-                              {
-                                onClick: () => downloadExcelWithCharts("xlsx"),
-                                icon: "fa-file-excel",
-                                bg: "bg-green-600",
-                                hoverBg: "hover:bg-green-700",
-                              },
-                              {
-                                onClick: () => downloadExcelWithCharts("csv"),
-                                icon: "fa-file-csv",
-                                bg: "bg-green-500",
-                                hoverBg: "hover:bg-green-600",
-                              },
-                              {
-                                onClick: openNameModel,
-                                icon: "fa-floppy-disk",
-                                bg: "bg-blue-500",
-                                hoverBg: "hover:bg-blue-600",
-                              },
-                              {
-                                onClick: shareToCommunity,
-                                icon: "fa-share",
-                                bg: "bg-purple-600",
-                                hoverBg: "hover:bg-purple-700",
-                              },
-                              {
-                                onClick: emailModel,
-                                icon: "fa-envelope",
-                                bg: "bg-red-600",
-                                hoverBg: "hover:bg-red-700",
-                              },
-                            ].map(({ onClick, icon, bg, hoverBg }, idx) => (
-                              <button
-                                key={idx}
-                                onClick={onClick}
-                                className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
-                              >
-                                <i className={`fa-solid ${icon} text-xl`}></i>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
+                        {
+                          data && tag == "data" ?
+                            <>
+                              <div className="flex items-center justify-between w-full p-6 bg-gray-50 shadow">
+                                <h1 className="text-xl font-bold text-gray-800">Your Data</h1>
+                                <div className="flex gap-4">
+                                  {[
+                                    {
+                                      onClick: () => downloadExcelWithCharts("xlsx"),
+                                      icon: "fa-file-excel",
+                                      bg: "bg-green-600",
+                                      hoverBg: "hover:bg-green-700",
+                                    },
+                                    {
+                                      onClick: () => downloadExcelWithCharts("csv"),
+                                      icon: "fa-file-csv",
+                                      bg: "bg-green-500",
+                                      hoverBg: "hover:bg-green-600",
+                                    },
+                                    {
+                                      onClick: openNameModel,
+                                      icon: "fa-floppy-disk",
+                                      bg: "bg-blue-500",
+                                      hoverBg: "hover:bg-blue-600",
+                                    },
+                                    {
+                                      onClick: shareToCommunity,
+                                      icon: "fa-share",
+                                      bg: "bg-purple-600",
+                                      hoverBg: "hover:bg-purple-700",
+                                    },
+                                    {
+                                      onClick: emailModel,
+                                      icon: "fa-envelope",
+                                      bg: "bg-red-600",
+                                      hoverBg: "hover:bg-red-700",
+                                    },
+                                  ].map(({ onClick, icon, bg, hoverBg }, idx) => (
+                                    <button
+                                      key={idx}
+                                      onClick={onClick}
+                                      className={`flex items-center justify-center w-12 h-12 ${bg} text-white rounded-full shadow-lg ${hoverBg} transition-transform transform hover:scale-105`}
+                                    >
+                                      <i className={`fa-solid ${icon} text-xl`}></i>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                         
                         <div
                           className={`grid grid-cols-${filteredHeaders.length} gap-4 p-4 border-t bg-gray-50`}
                         >
@@ -1042,6 +1090,9 @@ const FilterForm = () => {
                             ))}
                           </div>
                         ))}
+                           </> : data && tag=="graphs" &&  <FishCatchGraphs data={data}  fileLoader={fileLoader}  setfileLoader={setfileLoader}/>
+                        }
+
 
                       </>
 
@@ -1145,8 +1196,11 @@ const FilterForm = () => {
       }
 
       <>
-
-        <Modal className="p-4" show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal
+          className="p-4"
+          show={openModal}
+          onClose={() => setOpenModal(false)}
+        >
           <Modal.Header>Apply Your Filters</Modal.Header>
           <Modal.Body>
             {/* Input Fields */}
@@ -1306,7 +1360,9 @@ const FilterForm = () => {
                     onClick={() => sendDataForCommunity(community._id)}
                     className="flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer shadow-md transition duration-300"
                   >
-                    <span className="text-lg font-medium">{community.name}</span>
+                    <span className="text-lg font-medium">
+                      {community.name}
+                    </span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 text-green-500"
