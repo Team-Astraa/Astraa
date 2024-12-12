@@ -243,8 +243,8 @@ const format = (data) => {
 // console.log(processedCatches);
 export const getCatchDataGroupedByUser = async (req, res) => {
   try {
-    const { userId,DataId } = req.body;
-
+    const { userId } = req.body;
+console.log(userId);
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
     }

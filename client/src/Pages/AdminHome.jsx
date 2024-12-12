@@ -20,8 +20,20 @@ const AdminHome = () => {
   const [selectedTab, setSelectedTab] = useState("PFZ/NON-PFZ");
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userTypes, setUsersType] = useState([]);
 
   const fetchLogsData = async (type) => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://localhost:5000/admin/get-userType-Count");
+      setUsersType(response.data|| []);
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchUsersType = async (type) => {
     try {
       setLoading(true);
       const response = await axios.post("http://localhost:5000/admin/get-other-log", {
@@ -43,6 +55,7 @@ const AdminHome = () => {
       navigate("/signin");
       return;
     }
+    fetchUsersType(selectedTab)
     fetchLogsData(selectedTab);
   }, [navigate, selectedTab]);
 
@@ -51,7 +64,7 @@ const AdminHome = () => {
   };
 
   const handleNavigate = (id, dataId, table) => {
-    navigate(`/admin/unverify-fish-data/${id}/${dataId}/${table}`);
+    navigate(`/admin/unverify-fish-data/${id}/${dataId}`);
   };  
 
   const renderTable = () => {
@@ -102,7 +115,7 @@ const AdminHome = () => {
         Admin Dashboard
       </Typography>
       <div className="mb-5">
-        <AdminUpperStrip />
+        <AdminUpperStrip userTypes={userTypes} />
       </div>
       <div className="flex gap-8 justify-between">
         <div className="w-[70%]">
