@@ -109,7 +109,7 @@ const Communitydetail = () => {
 
       {/* Main Community Details */}
       <div className="min-h-screen text-white bg-gray-100 p-4">
-        <h1 className="text-2xl font-bold mb-4">Community Details</h1>
+        <h1 className="text-2xl font-bold text-black mb-4">Community Details</h1>
         {data && data.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.map((community, i) => (
@@ -117,7 +117,7 @@ const Communitydetail = () => {
                 <h2 className="text-xl font-semibold text-black">
                   Community Name: {community.community.name}
                 </h2>
-                <h3 className="text-lg text-black-400">
+                <h3 className="text-lg text-black">
                   Uploaded By: {community.uploadedBy.username}
                 </h3>
                 <div className="flex gap-20">
