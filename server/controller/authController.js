@@ -5,6 +5,7 @@ import Fisherman from "../models/Fisherman.js";
 import IndustryCollaborator from "../models/IndustryCollaborator.js";
 import ResearchCruise from "../models/ResearchCruise.js";
 import ResearchInstitute from "../models/ResearchInstitute.js";
+import Scientist from "../models/Scientist.js";
 
 export const signUp = async (req, res) => {
   const { email, role, userType, additionalDetails } = req.body;
@@ -74,8 +75,8 @@ export const signUp = async (req, res) => {
         });
         await userDetails.save();
         break;
-      case "research_institute":
-        userDetails = new ResearchInstitute({
+      case "scientist":
+        userDetails = new Scientist({
           userId: newUser._id,
           ...additionalDetails, // Research-institute-specific details
         });

@@ -72,10 +72,10 @@ const AdminHome = () => {
 
   const renderTable = () => {
     if (loading) {
-      return <div>Loading...</div>;
+      return (<div>Loading...</div>)
     }
     if (tableData.length === 0) {
-      return <div>No data available</div>;
+      return (<div>No data available</div>)
     }
     return (
       <table className="w-full shadow-lg rounded-2xl">

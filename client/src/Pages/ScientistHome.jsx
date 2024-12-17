@@ -81,6 +81,70 @@ const ScientistHome = () => {
   const markers = useRef([]); // Store map markers for cleanup
   const heatmapLayerId = "heatmap-layer";
   const clusterLayerId = "clusters";
+  const [uniqueSpecies, setuniqueSpecies] = useState([]);
+  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedWeight, setSelectedWeight] = useState('');
+  const [uniqueCount, setuniqueCount] = useState(null);
+  const [catchWeight, setCatchWeight] = useState(null);
+
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/scientist/getFishCount", {
+        fishName: selectedValue
+      }) 
+      setuniqueCount(response.data.count);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const fetchWeight = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/scientist/getFishWeight", {
+        fishName: selectedWeight
+      }) 
+      setCatchWeight(response.data.totalCatchWeight);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  
+  
+  
+  const handleSelectChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+
+  const handleWeightChange = (event) => {
+    setSelectedWeight(event.target.value);
+  }
+
+  useEffect(() => {
+    if (selectedWeight) {
+      fetchWeight();
+    }
+  }, [selectedWeight]);
+
+
+  useEffect(() => {
+    if (selectedValue) {
+      fetchData();
+    }
+  }, [selectedValue]);
+
+  useEffect(() => {
+    const getUniqueSpecies = async (req, res) => {
+      const response = await axios.get("http://localhost:5000/scientist/unique-species");
+
+      setuniqueSpecies(response.data);
+      console.log(response.data);
+    }
+
+    getUniqueSpecies();
+  }, [])
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -683,18 +747,7 @@ const ScientistHome = () => {
             <h1 className="text-4xl font-bold">Dashboard / Overview</h1>
 
             <div className="flex">
-              <div className='flex items-center'>
-              <button
-                onClick={downloadExcelWithCharts}
-                className="text-[green] text-xl">
-                  <i class="fas fa-file-csv mx-3"></i>Download CSV
-              </button>
-              <span className='text-black text-xl mx-6' >/</span>
-              <button
-                className="text-[red] text-xl">
-                  <i class="fas fa-file-pdf mx-3"></i>Download PDF
-              </button>
-              </div>
+              
 
               <button
                 className="relative p-3 rounded-xl text-sm font-medium bg-red-500 text-white"
@@ -896,44 +949,55 @@ const ScientistHome = () => {
               </p>
             </div> }
 
-            { features.includes('feature7') && <div
-              className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
+            { features.includes('Unique Species Count') && <div
+              className="bg-white rounded-xl p-4 text-black "
               style={{
-                boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
-                backgroundImage: "url(../../public/sea3_bg.jpg)",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
+                boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px"
               }} >
 
               <Typography
                 variant="h4"
-                color="white"
                 style={{ fontSize: "1rem" }} >
-                Feature 7
+                Unique Species Count
               </Typography>
-              <p className="  text-4xl text-white font-bold">
-                Lorem ipsum dolor sit amet.
-              </p>
+              <div className="mt-4">
+                <label htmlFor="fish-dropdown">Search Fish:</label>
+                <select className="ml-2" value={selectedValue} onChange={handleSelectChange}> 
+                  {uniqueSpecies.species.map((fish, index) => (
+                    <option key={index} value={fish}>
+                      {fish}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              { uniqueCount && <h1 className="font-bold text-3xl text-black mt-5">Total number of <br/> Data points of {selectedValue} is {uniqueCount}</h1> }
             </div> }
 
-            { features.includes('feature8') && <div
-              className="bg-white rounded-xl p-4 text-white bg-gradient-to-br from-blue-500 to-blue-900 hover:from-blue-500 hover:to-blue-900 focus:ring-4 focus:ring-blue-300"
+            { features.includes('Catch Weight') && <div
+              className="bg-white rounded-xl p-4 text-black "
               style={{
                 boxShadow: "rgba(0, 0, 0, 0.1) 3px 1px 7px 0px",
-                backgroundImage: "url(../../public/sea3_bg.jpg)",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
               }} >
 
               <Typography
                 variant="h4"
-                color="white"
                 style={{ fontSize: "1rem" }} >
-                Feature 8
+                Catch Weight
               </Typography>
-              <p className="  text-4xl text-white font-bold">
-                Lorem ipsum dolor sit amet.
-              </p>
+              <div className="mt-4">
+                <label htmlFor="weight-dropdown">Search Fish:</label>
+                <select className="ml-2" value={selectedWeight} onChange={handleWeightChange}> 
+                  {uniqueSpecies.species.map((fish, index) => (
+                    <option key={index} value={fish}>
+                      {fish}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              { catchWeight && <h1 className="font-bold text-3xl text-black mt-5">Catch Weight of <br/> {selectedWeight} is {catchWeight} kg</h1> }
+
             </div> }
           </div>
 
@@ -1186,8 +1250,8 @@ const ScientistHome = () => {
             "clock",
             "average catch",
             "current location",
-            "feature7",
-            "feature8",
+            "Unique Species Count",
+            "Catch Weight",
           ].map((feature, index) => (
             <div
               key={index}

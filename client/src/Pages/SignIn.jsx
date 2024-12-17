@@ -180,7 +180,7 @@ const LoginForm = () => {
           {userType !== "Admin" && (
             <p className="text-center text-lg text-gray-600 mb-12">
               Don't have an account?{" "}
-              <Link to="/" className="text-blue-500 font-semibold">
+              <Link to="/signup" className="text-blue-500 font-semibold">
                 Sign Up
               </Link>
             </p>

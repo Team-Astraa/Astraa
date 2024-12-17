@@ -990,36 +990,42 @@ const FilterForm = () => {
 
 
               <div className="w-[80%] p-4 h-auto shadow-xl bg-white rounded-lg overflow-hidden">
-                <div className="w-full h-12 bg-gray-100 flex items-center justify-between px-6 shadow-sm rounded-t-lg">
-                  {tabs2.map((tab) => (
-                    <div
-                      key={tab.value}
-                      onClick={() => { handleTab(tab.value) }}
-                      className={`px-6 py-2 cursor-pointer rounded-md transition duration-300 ${activeTab === tab.value
-                        ? "bg-green-600 text-white shadow-md"
-                        : "text-gray-700 hover:bg-gray-200"
-                        }`}
-                    >
-                      {tab.label}
-                    </div>
-                  ))}
-                </div>
+              <div className="w-full bg-gray-50 flex items-center justify-between px-6 shadow-md rounded-t-lg border-b">
+  {tabs2.map((tab) => (
+    <div
+      key={tab.value}
+      onClick={() => handleTab(tab.value)}
+      className={`px-6 py-2 cursor-pointer rounded-md transition-all duration-300 ease-in-out
+        ${
+          activeTab === tab.value
+            ? "bg-green-600 text-white shadow-md scale-105"
+            : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+        }`}
+    >
+      {tab.label}
+    </div>
+  ))}
+</div>
 
-                <div className={"w-full border-b " + (activeTab === "Landing-Village" ? "hidden" : "flex")}>
+<div
+  className={`w-full border-b ${
+    activeTab === "Landing-Village" ? "hidden" : "flex"
+  }`}
+>
+  <div
+    onClick={() => handleTabClick("data")}
+    className="w-1/2 flex items-center justify-center h-12 bg-gray-50 text-lg font-medium text-gray-700 border-r cursor-pointer transition-all duration-300 hover:bg-green-100 hover:text-green-700"
+  >
+    Data
+  </div>
+  <div
+    onClick={() => handleTabClick("graphs")}
+    className="w-1/2 flex items-center justify-center h-12 bg-gray-50 text-lg font-medium text-gray-700 cursor-pointer transition-all duration-300 hover:bg-green-100 hover:text-green-700"
+  >
+    Visualization
+  </div>
+</div>
 
-                  <div
-                    onClick={() => handleTabClick("data")}
-                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 border-r  cursor-pointer hover:bg-gray-200"
-                  >
-                    {activeTab}
-                  </div>
-                  <div
-                    className="w-1/2 flex items-center justify-center h-12 bg-gray-100 text-lg font-semibold text-gray-800 cursor-pointer hover:bg-gray-200"
-                    onClick={() => handleTabClick("graphs")}
-                  >
-                    Visualization
-                  </div>
-                </div>
 
                 {
                   activeTab === "Landing-Village" ?

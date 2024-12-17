@@ -108,9 +108,9 @@ const Communitydetail = () => {
       </Modal>
 
       {/* Main Community Details */}
-      <div className="min-h-screen text-white bg-gray-100 p-4">
+      <div className="min-h-screen text-white bg-purple-100 p-4">
         <h1 className="text-2xl font-bold text-black mb-4">Community Details</h1>
-        {data && data.length > 0 ? (
+        {data.length && data.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.map((community, i) => (
               <div key={i} className="bg-white rounded-lg shadow-md p-4">
@@ -143,17 +143,15 @@ const Communitydetail = () => {
                 >
                   <Modal.Header>Community Details</Modal.Header>
                   <Modal.Body>
-                    {community.data.length > 0 ? (
+                    {community.data && community.data.length > 0 ? (
                       community.data.map((catchItem) => (
-                        <CatchItemDetail
-                          key={catchItem._id}
-                          catchItem={catchItem}
-                        />
+                        <CatchItemDetail key={catchItem._id} catchItem={catchItem} />
                       ))
                     ) : (
                       <div>No data available for this community.</div>
                     )}
                   </Modal.Body>
+
                   <Modal.Footer>
                     <button
                       className="bg-red-600 text-white px-4 py-2 rounded-md"

@@ -115,11 +115,11 @@ function App() {
             element={<PrivateRoute element={<Dashboard />} />}
           />
           <Route
-            path="/research_cruises/home"
+            path="/research-cruises/home"
             element={<PrivateRoute element={<Dashboard />} />}
           />
           <Route
-            path="/research_institute/home"
+            path="/research-institute/home"
             element={<PrivateRoute element={<Dashboard />} />}
           />
           
