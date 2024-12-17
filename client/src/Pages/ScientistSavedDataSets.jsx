@@ -38,7 +38,7 @@ const ScientistSavedDataSets = () => {
             setGroupedData(grouped || []);
         } catch (err) {
             console.error("Error fetching data:", err);
-            setError("Failed to fetch data. Please try again.");
+            setError("No Data Sets Available .");
         }
     };
 
@@ -77,9 +77,7 @@ const ScientistSavedDataSets = () => {
     return (
         <div className="w-full h-full bg-gray-200 p-5 items-center">
             <h1 className="text-black text-3xl w-full text-center font-bold mb-4">Scientist Datasets</h1>
-            <div className="flex justify-center mb-5">
-                <Datepicker />
-            </div>
+            
             
             {error && <p className="text-red-500">{error}</p>}
 

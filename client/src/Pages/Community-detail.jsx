@@ -31,14 +31,15 @@ const Communitydetail = () => {
           return navigate(-1);
         }
 
-        if (response.data && response.data.length === 0) {
+        // Handle empty response or no data
+        if (!response.data || response.data.length === 0) {
           setError("No data available for this community.");
         } else {
           setData(response.data); // Set the fetched community data
         }
       } catch (err) {
         console.error("Error fetching community data:", err);
-        setError("Failed to fetch data. Please try again later.");
+        setError("No data available for this community.");
       } finally {
         setLoading(false);
       }
@@ -84,8 +85,17 @@ const Communitydetail = () => {
     setOpenModal(false); // Close the modal
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  // Display loading spinner
+  if (loading) return <div className="text-center">Loading...</div>;
+
+  // Display error message
+  if (error) {
+    return (
+      <div className="text-center text-red-600 font-semibold">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -110,7 +120,7 @@ const Communitydetail = () => {
       {/* Main Community Details */}
       <div className="min-h-screen text-white bg-purple-100 p-4">
         <h1 className="text-2xl font-bold text-black mb-4">Community Details</h1>
-        {data.length && data.length > 0 ? (
+        {Array.isArray(data) && data.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.map((community, i) => (
               <div key={i} className="bg-white rounded-lg shadow-md p-4">
@@ -165,7 +175,9 @@ const Communitydetail = () => {
             ))}
           </div>
         ) : (
-          <div>No communities found.</div>
+          <div className="text-center text-gray-700 text-lg font-semibold">
+            No communities found. Please check back later.
+          </div>
         )}
       </div>
     </>

@@ -148,6 +148,8 @@ const ChartComponent = () => {
             />
           </div>
 
+          <h1 className='text-yellow-400 text-2xl font-bold '>Please select the proper data here</h1>
+
         </div>
       </nav>
 
